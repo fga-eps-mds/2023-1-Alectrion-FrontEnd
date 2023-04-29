@@ -1,0 +1,128 @@
+.react-datepicker {
+  font-family: inherit !important;
+  font-size: 0.9rem !important;
+  background-color: var(--chakra-colors-blackAlpha-800) !important;
+  backdrop-filter: blur(8px) !important;
+  cursor: auto !important;
+
+  &__month-container {
+    min-width: 260px !important;
+  }
+
+  &__header {
+    padding-top: 0.25rem !important;
+    background-color: var(--chakra-colors-blackAlpha-700) !important;
+
+    div {
+      color: white !important;
+    }
+  }
+
+  &__navigation {
+    top: 6px !important;
+  }
+
+  &__current-month {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem !important;
+    text-transform: capitalize;
+  }
+
+  &__day {
+    color: white !important;
+    font-weight: 500 !important;
+    margin: 0.186rem !important;
+    border: 1px solid transparent !important;
+    transition: all 0.2s ease-out !important;
+
+    &:hover {
+      background-color: var(--chakra-colors-whiteAlpha-400) !important;
+      color: var(--chakra-colors-primary) !important;
+    }
+
+    &-name {
+      font-weight: 600 !important;
+    }
+
+    &-name:first-child,
+    &-name:last-child {
+      font-weight: 400 !important;
+    }
+
+    &--today {
+      position: relative !important;
+      border: 1px solid transparent !important;
+      border-image-slice: 1 !important;
+      border-image-source: conic-gradient(
+        from 0deg,
+        #5cace2,
+        #71b8e7,
+        #696fdf,
+        #8287dd,
+        #9599e2,
+        #5cace2
+      ) !important;
+    }
+
+    &--weekend {
+      color: var(--chakra-colors-gray-600) !important;
+      font-weight: 400 !important;
+    }
+
+    &--outside-month {
+      color: var(--chakra-colors-gray-600) !important;
+      font-weight: 300 !important;
+    }
+
+    &--weekend.react-datepicker__day--outside-month {
+      color: var(--chakra-colors-gray-600) !important;
+      font-weight: 100 !important;
+    }
+
+    &--selected {
+      border-radius: 50% !important;
+      color: white !important;
+      background-color: var(--chakra-colors-primary) !important;
+    }
+
+    &--keyboard-selected {
+      //   color: var(--chakra-colors-primary) !important;
+      background-color: transparent !important;
+    }
+
+    &--in-selecting-range {
+      background-color: rgba(0, 0, 0, 0.15) !important;
+    }
+
+    &--in-range {
+      color: white !important;
+      background-color: #111 !important;
+    }
+
+    &--selecting-range-start,
+    &--selecting-range-end {
+      background-color: green !important;
+    }
+
+    &--range-end,
+    &--range-start {
+      background-color: green !important;
+    }
+
+    &--disabled {
+      color: var(--chakra-colors-gray-800) !important;
+      &:hover {
+        color: var(--chakra-colors-gray-400) !important;
+      }
+    }
+  }
+
+  &-time {
+    &__caption {
+      color: white !important;
+      font-weight: 500 !important;
+    }
+  }
+}
