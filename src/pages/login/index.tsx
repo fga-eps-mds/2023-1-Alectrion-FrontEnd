@@ -44,7 +44,7 @@ export function Login() {
           paddingX="20"
         >
           <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
-            Bem-vindo
+            Bem-vindo 2
           </Text>
           <Box marginBottom={10}>
             <Text
