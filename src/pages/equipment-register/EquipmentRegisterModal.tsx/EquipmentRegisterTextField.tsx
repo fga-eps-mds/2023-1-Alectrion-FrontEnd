@@ -1,10 +1,9 @@
-import { GridItem, Input, Text } from '@chakra-ui/react';
+import { GridItem, GridItemProps, Input, Text } from '@chakra-ui/react';
 
 type EquipmentRegisterTextFieldProps = {
   title: string;
   name: string;
-  [x: string]: any;
-};
+} & GridItemProps;
 
 export default function EquipmentRegisterTextField({
   title,

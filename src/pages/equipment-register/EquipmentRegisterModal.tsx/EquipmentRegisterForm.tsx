@@ -1,4 +1,4 @@
-import { Flex, Grid, GridItem } from '@chakra-ui/react';
+import { Grid } from '@chakra-ui/react';
 import EquipmentRegisterSelectField from './EquipmentRegisterSelectField';
 import EquipmentRegisterTextField from './EquipmentRegisterTextField';
 

@@ -1,14 +1,33 @@
-import { Flex } from '@chakra-ui/react';
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from '@chakra-ui/react';
 import EquipmentRegisterButtons from './EquipmentRegisterButtons';
 import EquipmentRegisterForm from './EquipmentRegisterForm';
 import EquipmentRegisterTitle from './EquipmentRegisterTitle';
 
 export default function EquipmentRegisterModal() {
   return (
-    <Flex flexDirection="column" boxShadow="lg" px="44px" pt="24px" pb="64px">
-      <EquipmentRegisterTitle />
-      <EquipmentRegisterForm />
-      <EquipmentRegisterButtons />
-    </Flex>
+    <Modal isOpen onClose={() => {}} size="4xl">
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>
+          <EquipmentRegisterTitle />
+        </ModalHeader>
+        <ModalCloseButton as="a" href="/" />
+        <ModalBody>
+          <EquipmentRegisterForm />
+        </ModalBody>
+
+        <ModalFooter>
+          <EquipmentRegisterButtons />
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }

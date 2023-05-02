@@ -17,7 +17,13 @@ export default function EquipmentRegisterSelectField({
   items,
 }: EquipmentRegisterSelectFieldProps) {
   return (
-    <GridItem w="100%" h="61px" display="flex" flexDirection="column">
+    <GridItem
+      minW="270px"
+      w="100%"
+      h="61px"
+      display="flex"
+      flexDirection="column"
+    >
       <Text>{title}</Text>
       <Select name={name}>
         {items.map((item) => (
