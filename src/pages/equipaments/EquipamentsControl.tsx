@@ -52,7 +52,49 @@ const equipmentList: Equipment[] = [
     NumSerie: "012345678",
     NumTombamento: "R42KXD546",
     DataMovimento: new Date("2022-01-30"),
-  }
+  },
+  {
+    id: 6,
+    type: "Teclado Sem Fio Logitech",
+    NumSerie: "124680246",
+    NumTombamento: "R42KXD546",
+    DataMovimento: new Date("2022-02-05"),
+  },
+  {
+    id: 7,
+    type: "Teclado Sem Fio Logitech",
+    NumSerie: "1246802468",
+    NumTombamento: "VZX231SD6",
+    DataMovimento: new Date("2022-02-05"),
+  },
+  {
+    id: 8,
+    type: "Mouse Óptico HP",
+    NumSerie: "999999999",
+    NumTombamento: "ABC098765",
+    DataMovimento: new Date("2022-02-10"),
+  },
+  {
+    id: 9,
+    type: "Notebook Lenovo Thinkpad",
+    NumSerie: "147258369",
+    NumTombamento: "YUT321XYZ",
+    DataMovimento: new Date("2022-02-15"),
+  },
+  {
+    id: 10,
+    type: "Monitor LG 4K UHD",
+    NumSerie: "222222222",
+    NumTombamento: "FDS789REW",
+    DataMovimento: new Date("2022-02-20"),
+  },
+  {
+    id: 11,
+    type: "Impressora Epson EcoTank",
+    NumSerie: "777777777",
+    NumTombamento: "IOP456QWE",
+    DataMovimento: new Date("2022-02-25"),
+  },
 ];
 //função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 const EquipmentTable = () => {
@@ -78,14 +120,18 @@ const EquipmentTable = () => {
       paddingY="10"
       paddingX="20"
     >
-      <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
+      <Text mb="10px" color="#000000" fontWeight="semibold" fontSize="4xl">
       Controle de Equipamento
       </Text>
-      <Text mb="39px" color="#605555" fontWeight="medium" fontSize = "2xl">
+      <Text mb="2px" color="#00000" fontWeight="medium" fontSize = "2xl">
         Últimos Equipamentos Modificados
       </Text>
     </Box>
-    <Divider/>
+    <Box paddingX="20">
+    <Divider borderColor="#00000"/>
+    </Box>
+    <Box as='button' borderRadius='md' bg='white' px={4} h={8}
+    paddingX ="860">
       <Input placeholder="Pesquisa" value={searchTerm} onChange={handleSearchTermChange} />
       <select value={searchType} onChange={handleSearchTypeChange}>
         <option value="">Todos</option>
@@ -95,11 +141,13 @@ const EquipmentTable = () => {
         <option value="Notebook">Notebook</option>
         <option value="Impressora">Impressora</option>
       </select>
-      <Center bg='white' h= '716x'>
+    </Box>
+    <Center>
+      <Box width="100%" bg='white' h= '716x' w='1100x'>
       <TableContainer>
-      <Table variant = 'striped'
-      colorScheme="orange">
-        <Thead>
+      <Table variant = 'striped' border="1px" borderColor="orange"
+      colorScheme="orange" >
+        <Thead bg="orange">
           <Tr>
             <Th>Equipamentos</Th>
             <Th>N Tombamento</Th>
@@ -107,7 +155,7 @@ const EquipmentTable = () => {
             <Th>Última Modificação</Th>
           </Tr>
         </Thead>
-        <Tbody>
+        <Tbody >
           {filteredEquipment.map((equipment) => (
             <Tr key={equipment.id}>
               <Td>{equipment.type}</Td>
@@ -119,8 +167,8 @@ const EquipmentTable = () => {
         </Tbody>
       </Table>
       </TableContainer>
-      </Center>
-
+    </Box>
+    </Center>
     </>
   );
 };
