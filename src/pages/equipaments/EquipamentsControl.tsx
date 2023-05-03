@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, Table, Thead, Tbody, Tr, Th, Td, Input, Button, TableContainer, Center, Heading, SimpleGrid, Divider, Box } from "@chakra-ui/react";
+import { Text, Table, Thead, Tbody, Tr, Th, Td, Input, Button, TableContainer, Center, Heading, SimpleGrid, Divider, Box, Tfoot } from "@chakra-ui/react";
 
 //Declaracao lista de equipamentos e equipamentos exemplo
 type Equipment = {
@@ -145,9 +145,9 @@ const EquipmentTable = () => {
     <Center>
       <Box width="100%" bg='white' h= '716x' w='1100x'>
       <TableContainer>
-      <Table variant = 'striped' border="1px" borderColor="orange"
+      <Table variant = 'striped' border="1px" borderColor="#F49320"
       colorScheme="orange" >
-        <Thead bg="orange">
+        <Thead bg="#F49320" >
           <Tr>
             <Th>Equipamentos</Th>
             <Th>N Tombamento</Th>
@@ -165,6 +165,9 @@ const EquipmentTable = () => {
             </Tr>
           ))}
         </Tbody>
+        <Tfoot>
+          <Button colorScheme="#F49320">Movimentar</Button>
+        </Tfoot>
       </Table>
       </TableContainer>
     </Box>
