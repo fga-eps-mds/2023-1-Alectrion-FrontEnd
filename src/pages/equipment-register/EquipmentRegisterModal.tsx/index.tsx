@@ -24,7 +24,7 @@ export default function EquipmentRegisterModal() {
           <EquipmentRegisterForm />
         </ModalBody>
 
-        <ModalFooter>
+        <ModalFooter justifyContent="center">
           <EquipmentRegisterButtons />
         </ModalFooter>
       </ModalContent>
