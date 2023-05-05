@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { HStack, Text, Table, Thead, Tbody, Tr, Th, Td, Input, Button, TableContainer, Center, Heading, SimpleGrid, Divider, Box, Tfoot, Stack } from "@chakra-ui/react";
+import { Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay,DrawerContent, 
+  DrawerCloseButton,HStack, Text, Table, Thead, Tbody, Tr, Th, Td, Input, Button, TableContainer, 
+  Center, Heading, SimpleGrid, Divider, Box, Tfoot, Stack } from "@chakra-ui/react";
 
 //Declaracao lista de equipamentos e equipamentos exemplo
 type Equipment = {
@@ -146,15 +148,15 @@ const EquipmentTable = () => {
     </Box>
     <Center>
       <Box width="100%" bg='white' h= '716x' w='1100x'>
-      <TableContainer>
+      <TableContainer borderRadius='md'>
       <Table variant = 'striped' border="1px" borderColor="#F49320"
       colorScheme="orange" >
-        <Thead bg="#F49320" >
+        <Thead bg="#F49320">
           <Tr>
-            <Th>Equipamentos</Th>
-            <Th>N Tombamento</Th>
-            <Th>N Série</Th>
-            <Th>Última Modificação</Th>
+            <Th color="white">Equipamentos</Th>
+            <Th color="white">N Tombamento</Th>
+            <Th color="white">N Série</Th>
+            <Th color="white">Última Modificação</Th>
           </Tr>
         </Thead>
         <Tbody >
@@ -167,16 +169,16 @@ const EquipmentTable = () => {
             </Tr>
           ))}
         </Tbody>
-        <Tfoot>
-          <Center bg="#F49320" >
-            <Button colorScheme="#F49320">Movimentar</Button>
-          </Center>
-        </Tfoot>
       </Table>
       </TableContainer>
+      <Box as='button' borderRadius='md' w="100%" p={3} 
+      bg="#F49320" mb='86px' color="white" fontWeight="semibold">
+        Movimentar
+      </Box>
     </Box>
     </Center>
     </>
+    
   );
 };
 
