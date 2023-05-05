@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, Table, Thead, Tbody, Tr, Th, Td, Input, Button, TableContainer, Center, Heading, SimpleGrid, Divider, Box, Tfoot } from "@chakra-ui/react";
+import { HStack, Text, Table, Thead, Tbody, Tr, Th, Td, Input, Button, TableContainer, Center, Heading, SimpleGrid, Divider, Box, Tfoot, Stack } from "@chakra-ui/react";
 
 //Declaracao lista de equipamentos e equipamentos exemplo
 type Equipment = {
@@ -123,15 +123,17 @@ const EquipmentTable = () => {
       <Text mb="10px" color="#000000" fontWeight="semibold" fontSize="4xl">
       Controle de Equipamento
       </Text>
-      <Text mb="2px" color="#00000" fontWeight="medium" fontSize = "2xl">
+      <Text color="#00000" fontWeight="medium" fontSize = "2xl">
         Últimos Equipamentos Modificados
       </Text>
+      <Box paddingX="720" mb="-5">
+        <Button colorScheme="#F49320">Cadastrar Equipamento</Button>
+      </Box>
     </Box>
     <Box paddingX="20">
-    <Divider borderColor="#00000"/>
+      <Divider borderColor="#00000"/>
     </Box>
-    <Box as='button' borderRadius='md' bg='white' px={4} h={8}
-    paddingX ="860">
+    <Box p={4} paddingLeft= "800" paddingRight="200">
       <Input placeholder="Pesquisa" value={searchTerm} onChange={handleSearchTermChange} />
       <select value={searchType} onChange={handleSearchTypeChange}>
         <option value="">Todos</option>
@@ -166,7 +168,9 @@ const EquipmentTable = () => {
           ))}
         </Tbody>
         <Tfoot>
-          <Button colorScheme="#F49320">Movimentar</Button>
+          <Center bg="#F49320" >
+            <Button colorScheme="#F49320">Movimentar</Button>
+          </Center>
         </Tfoot>
       </Table>
       </TableContainer>
