@@ -1,21 +1,13 @@
-import { Text, Flex } from '@chakra-ui/react';
-import EquipmentRegisterModal from './EquipmentRegisterModal.tsx';
+import { Button, useDisclosure } from '@chakra-ui/react';
+import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 
 export function EquipRegister() {
-  return (
-    <Flex
-      height="100%"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      gap="64px"
-      pt="32px"
-    >
-      <Text variant="h4" fontWeight="bold">
-        Cadastro de Equipamentos
-      </Text>
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
-      <EquipmentRegisterModal />
-    </Flex>
+  return (
+    <>
+      <Button onClick={onOpen}>Abrir modal temporário</Button>
+      <EquipmentRegisterModal onClose={onClose} isOpen={isOpen} />
+    </>
   );
 }

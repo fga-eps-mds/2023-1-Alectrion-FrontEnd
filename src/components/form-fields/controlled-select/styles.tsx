@@ -35,6 +35,7 @@ export const chakraStyles: ChakraStylesConfig = {
       transition: 'transform 0.2s ease',
     },
   }),
+
   menu: (provided) => ({
     ...provided,
     border: 0,

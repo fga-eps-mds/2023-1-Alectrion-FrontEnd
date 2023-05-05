@@ -29,22 +29,17 @@ export function Modal({ children, title, ...props }: ModalProps) {
       <ModalOverlay bg="blackAlpha.500" />
       <ModalContent
         transform="auto-gpu" // force the browser use GPU acceleration for that particular element instead of the CPU
-        bg="blackAlpha.600"
+        bg="white"
         backdropFilter="blur(8px)"
-        color="white"
       >
         <ModalCloseButton />
-        <ModalHeader
-          textAlign="center"
-          borderTopRadius="md"
-          bg="blackAlpha.600"
-        >
-          <Heading fontSize="2xl" color="white" fontWeight="semibold">
+        <ModalHeader pl="44px" borderTopRadius="md" bg="white">
+          <Heading fontWeight="normal" fontSize="48px" textColor="#212121">
             {title}
           </Heading>
         </ModalHeader>
 
-        <ModalBody p={[6, 8, 10, 12]} bg="blackAlpha.100">
+        <ModalBody px="44px" bg="white">
           {children}
         </ModalBody>
       </ModalContent>

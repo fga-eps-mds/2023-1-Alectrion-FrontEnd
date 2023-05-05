@@ -1,6 +1,6 @@
 export type SelectItem<T> = {
-  value: T;
-  key: string;
+  label: T;
+  value: string;
 };
 
 export type TipoEquipamento =
@@ -25,15 +25,15 @@ export const TIPOS_MONITOR: SelectItem<TipoMonitor>[] = [
 ];
 
 export const TIPOS_EQUIPAMENTO: SelectItem<TipoEquipamento>[] = [
-  { value: 'CPU', key: 'cpu' },
-  { value: 'Escaneador', key: 'escaneador' },
-  { value: 'Estabilizador', key: 'estabilizador' },
-  { value: 'Monitor', key: 'monitor' },
-  { value: 'Nobreak', key: 'nobreak' },
-  { value: 'Webcam', key: 'webcam' },
+  { label: 'CPU', value: 'cpu' },
+  { label: 'Escaneador', value: 'escaneador' },
+  { label: 'Estabilizador', value: 'estabilizador' },
+  { label: 'Monitor', value: 'monitor' },
+  { label: 'Nobreak', value: 'nobreak' },
+  { label: 'Webcam', value: 'webcam' },
 ];
 
 export const ESTADOS_EQUIPAMENTO = [
-  { value: 'NOVO', key: 'novo' },
-  { value: 'USADO', key: 'usado' },
+  { label: 'NOVO', value: 'novo' },
+  { label: 'USADO', value: 'usado' },
 ];

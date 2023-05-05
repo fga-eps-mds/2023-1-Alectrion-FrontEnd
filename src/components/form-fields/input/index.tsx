@@ -19,6 +19,7 @@ import {
   InputElementProps,
   InputGroup,
   InputProps as ChakraInputProps,
+  InputRightElement,
 } from '@chakra-ui/react';
 
 export interface InputProps extends ChakraInputProps {
@@ -47,9 +48,9 @@ export const Input = forwardRef<InputProps, 'input'>((props, ref) => {
       <InputGroup>
         {leftAddon ?? null}
         {leftElement ?? null}
-        <ChakraInput {...rest} ref={ref} />
+        <ChakraInput {...rest} ref={ref} borderColor="#212121" />
+        {rightElement && <InputRightElement>{rightElement}</InputRightElement>}
         {rightAddon ?? null}
-        {rightElement ?? null}
       </InputGroup>
       <FormErrorMessage>{errors?.message}</FormErrorMessage>
     </FormControl>
