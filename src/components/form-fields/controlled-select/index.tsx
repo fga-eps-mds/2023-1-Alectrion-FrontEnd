@@ -59,6 +59,7 @@ export function ControlledSelect<FormValues extends FieldValues>({
         hideSelectedOptions={false}
         tabSelectsValue={false}
         components={customComponents}
+        placeholder="Selecione"
         {...props}
       />
 

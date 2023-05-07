@@ -31,6 +31,7 @@ export function TextArea(props: InputProps) {
         borderColor="#212121"
         resize="none"
         maxLength={maxChars}
+        focusBorderColor="primary"
       />
       <FormHelperText>{`${text.length} / ${maxChars} caracteres`}</FormHelperText>
     </FormControl>

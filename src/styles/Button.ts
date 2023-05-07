@@ -20,6 +20,7 @@ export const Button: ComponentStyleConfig = {
       backgroundImage:
         'linear-gradient(to right, #FF8008 0%, #FFA03A 51%, #FF8008 100%);',
       backgroundSize: '200% auto',
+      borderRadius: '45px',
       boxShadow: 'soft',
       transition: '0.5s',
       _hover: {
@@ -33,11 +34,12 @@ export const Button: ComponentStyleConfig = {
       },
     },
     secondary: {
-      minWidth: '150px',
-      color: '#F4F7F5',
+      minWidth: '175px',
+      color: '#FFFFFF',
       backgroundImage:
-        'linear-gradient(to right, #000428 0%, #004e92  51%, #000428  100%)',
+        'linear-gradient(to right, #212121 0%, #333333  51%, #4D4D4D  100%)',
       backgroundSize: '200% auto',
+      borderRadius: '45px',
       boxShadow: 'soft',
       transition: '0.5s',
       _hover: {
