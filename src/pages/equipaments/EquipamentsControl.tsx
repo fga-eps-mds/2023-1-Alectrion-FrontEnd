@@ -119,67 +119,66 @@ const EquipmentTable = () => {
   return (
     <>
     <Box
-      paddingY="10"
-      paddingX="20"
-    >
-      <Text mb="10px" color="#000000" fontWeight="semibold" fontSize="4xl">
-      Controle de Equipamento
-      </Text>
-      <Text color="#00000" fontWeight="medium" fontSize = "2xl">
+        paddingY="10"
+        paddingX="20"
+      >
+        <Text mb="10px" color="#000000" fontWeight="semibold" fontSize="4xl">
+        Controle de Equipamento
+        </Text>
+        <Text color="#00000" fontWeight="medium" fontSize = "2xl">
         Últimos Equipamentos Modificados
-      </Text>
-      <Box paddingX="720" mb="-5">
-        <Button colorScheme="#F49320">Cadastrar Equipamento</Button>
+        </Text>
+        <Box paddingX="720" mb="-5">
+          <Button colorScheme="#F49320">Cadastrar Equipamento</Button>
+        </Box>
       </Box>
-    </Box>
-    <Box
-    paddingX="20">
-      <Divider borderColor="#00000"/>
-    </Box>
-    <Box p={4} paddingLeft= "800" paddingRight="200">
-      <Input placeholder="Pesquisa" value={searchTerm} onChange={handleSearchTermChange} />
-      <select value={searchType} onChange={handleSearchTypeChange}>
-        <option value="">Todos</option>
-        <option value="Monitor">Monitor</option>
-        <option value="Teclado">Teclado</option>
-        <option value="Mouse">Mouse</option>
-        <option value="Notebook">Notebook</option>
-        <option value="Impressora">Impressora</option>
-      </select>
-    </Box>
-    <Center>
-      <Box width="100%" bg='white' h= '716x' w='1100x'>
-      <TableContainer borderRadius='md' style={{height:'500px', overflowY:'auto'}}>
-      <Table variant = 'striped' border="1px" borderColor="#F49320"
-      colorScheme="orange" >
-        <Thead bg="#F49320">
-          <Tr>
-            <Th color="white">Equipamentos</Th>
-            <Th color="white">N Tombamento</Th>
-            <Th color="white">N Série</Th>
-            <Th color="white">Última Modificação</Th>
-          </Tr>
-        </Thead>
-        <Tbody >
-          {filteredEquipment.map((equipment) => (
-            <Tr key={equipment.id}>
-              <Td>{equipment.type}</Td>
-              <Td>{equipment.NumTombamento}</Td>
-              <Td>{equipment.NumSerie}</Td>
-              <Td>{equipment.DataMovimento.toLocaleDateString()}</Td>
+      <Box paddingX="20">
+        <Divider borderColor="#00000"/>
+      </Box>
+      <Box p={4} paddingLeft= "800" paddingRight="200">
+        <Input placeholder="Pesquisa" value={searchTerm} onChange={handleSearchTermChange} />
+        <select value={searchType} onChange={handleSearchTypeChange}>
+          <option value="">Todos</option>
+          <option value="Monitor">Monitor</option>
+          <option value="Teclado">Teclado</option>
+          <option value="Mouse">Mouse</option>
+          <option value="Notebook">Notebook</option>
+          <option value="Impressora">Impressora</option>
+        </select>
+      </Box>
+      <Center>
+        <Box width="100%" bg='white' h= '716x' w='1100x'>
+        <TableContainer borderRadius='md'style={{height: '500px', overflowY:'auto'}}>
+        <Table variant = 'striped' border="1px" borderColor="#F49320"
+        colorScheme="orange" >
+          <Thead bg="#F49320">
+            <Tr>
+              <Th color="white">Equipamentos</Th>
+              <Th color="white">N Tombamento</Th>
+              <Th color="white">N Série</Th>
+              <Th color="white">Última Modificação</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
-      </TableContainer>
-      <Box as='button' borderRadius='md' w="100%" p={3} 
-      bg="#F49320" mb='86px' color="white" fontWeight="semibold">
-        Movimentar
+          </Thead>
+          <Tbody >
+            {filteredEquipment.map((equipment) => (
+              <Tr key={equipment.id}>
+                <Td>{equipment.type}</Td>
+                <Td>{equipment.NumTombamento}</Td>
+                <Td>{equipment.NumSerie}</Td>
+                <Td>{equipment.DataMovimento.toLocaleDateString()}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+        </TableContainer>
+        <Box as='button' borderRadius='md' w="100%" p={3} 
+        bg="#F49320" mb='86px' color="white" fontWeight="semibold">
+          Movimentar
+        </Box>
       </Box>
-    </Box>
-    </Center>
-    </>
-    
+      </Center>
+      </>
+
   );
 };
 
