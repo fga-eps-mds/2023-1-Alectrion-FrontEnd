@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { Grid } from '@chakra-ui/react';
-import { FaCalendar, FaCalendarAlt } from 'react-icons/fa';
+import { Grid, GridItem } from '@chakra-ui/react';
+import { Datepicker } from '../form-fields/date';
 import { ControlledSelect } from '../form-fields/controlled-select';
 import {
   ESTADOS_EQUIPAMENTO,
@@ -13,7 +12,7 @@ import {
   TipoMonitor,
 } from '@/constants/equipment';
 import { Input } from '../form-fields/input';
-import { Datepicker } from '../form-fields/date';
+import { TextArea } from '../form-fields/text-area';
 
 export default function EquipmentForm() {
   const { control } = useForm();
@@ -54,9 +53,11 @@ export default function EquipmentForm() {
           label="Data de aquisição"
           control={control}
         />
-      </Grid>
 
-      <Input label="Detalhes" errors={undefined} minH="8rem" />
+        <GridItem gridColumn="1 / span 3">
+          <TextArea label="Descrição" errors={undefined} maxChars={255} />
+        </GridItem>
+      </Grid>
     </form>
   );
 }
