@@ -13,7 +13,7 @@ import {
   TipoMonitor,
 } from '@/constants/equipment';
 import { Input } from '../form-fields/input';
-import { RiCalendar2Line } from 'react-icons/ri';
+import { Datepicker } from '../form-fields/date';
 
 export default function EquipmentForm() {
   const { control } = useForm();
@@ -49,10 +49,10 @@ export default function EquipmentForm() {
 
         <Input label="Ano do Equipamento" errors={undefined} />
 
-        <Input
-          label="Data de Aquisição"
-          errors={undefined}
-          rightElement={<RiCalendar2Line />}
+        <Datepicker
+          name="data-aquisição"
+          label="Data de aquisição"
+          control={control}
         />
       </Grid>
 
