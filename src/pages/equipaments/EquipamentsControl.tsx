@@ -132,7 +132,8 @@ const EquipmentTable = () => {
         <Button colorScheme="#F49320">Cadastrar Equipamento</Button>
       </Box>
     </Box>
-    <Box paddingX="20">
+    <Box
+    paddingX="20">
       <Divider borderColor="#00000"/>
     </Box>
     <Box p={4} paddingLeft= "800" paddingRight="200">
@@ -148,7 +149,7 @@ const EquipmentTable = () => {
     </Box>
     <Center>
       <Box width="100%" bg='white' h= '716x' w='1100x'>
-      <TableContainer borderRadius='md'>
+      <TableContainer borderRadius='md' style={{height:'500px', overflowY:'auto'}}>
       <Table variant = 'striped' border="1px" borderColor="#F49320"
       colorScheme="orange" >
         <Thead bg="#F49320">
