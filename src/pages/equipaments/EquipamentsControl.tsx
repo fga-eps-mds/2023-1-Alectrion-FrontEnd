@@ -120,11 +120,43 @@ const EquipmentTable = () => {
   return (
     <>
     <Box
-      paddingY="10"
-      paddingX="20"
-    >
+  position="fixed"
+  left="0"
+  top="0"
+  bottom="0"
+  backgroundColor="#000"
+  width="166px"
+  color="#fff"
+  padding="20px"
+>
+  <Text fontSize="2xl" fontWeight="bold">
+    Alectrion
+  </Text>
+  <Text fontSize="2xs" fontWeight="bold" marginTop="10">
+    Controle de Equipamento
+  </Text>
+  <Text fontSize="2xs" fontWeight="bold" marginTop="4">
+    Controle Ordem Serviço
+  </Text>
+  <Text fontSize="2xs" fontWeight="bold" marginTop="4">
+    Movimentações
+  </Text>
+  <Text fontSize="2xs" fontWeight="bold" marginTop="4">
+    Relatórios
+  </Text>
+  <Box position="absolute" bottom="20px">
+    <Text fontSize="xs" fontWeight="bold">
+      Cadastro Usuário
+    </Text>
+    <Text fontSize="xs" fontWeight="bold" marginTop="2">
+      Admin
+    </Text>
+  </Box>
+</Box>
+<Box paddingY="10" paddingX="20" marginLeft="166px">
+
       <Text mb="10px" color="#000000" fontWeight="semibold" fontSize="4xl">
-      Controle de Equipamento
+        Controle de Equipamento
       </Text>
       <Text color="#00000" fontWeight="medium" fontSize = "2xl">
         Últimos Equipamentos Modificados
@@ -133,7 +165,7 @@ const EquipmentTable = () => {
         <Button colorScheme="#F49320">Cadastrar Equipamento</Button>
       </Box>
     </Box>
-    <Box paddingX="20">
+    <Box paddingX="60">
       <Divider borderColor="#00000"/>
     </Box>
     <Box p={4}>
