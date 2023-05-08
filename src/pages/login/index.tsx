@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/newline-after-import */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -69,7 +70,8 @@ export function Login() {
           <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
             Bem-vindo 2
           </Text>
-          
+          <button onClick={() => Equip()}>Equipar</button>
+            <Equip />
           <Box marginBottom={10}>
             <Text
               pl="5px"

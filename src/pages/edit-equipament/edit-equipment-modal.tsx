@@ -15,9 +15,8 @@ import {
 import React from 'react';
 import { Text } from '@chakra-ui/react';
 import {BackButton} from '../../components/action-buttons/back-button/index';
-import {EditButton} from '../../components/action-buttons/edit-button/index';
 import EquipmentForm from '../../components/form-fields/equipment/equipment-form';
-
+import {ConfirmEditButton} from '../../components/action-buttons/confirm-edit-button/index';
 
 export function EquipmentTitle() {
   return (
@@ -41,8 +40,9 @@ export default function EditEquipmentModal() {
         </ModalBody>
 
         <ModalFooter justifyContent="center">
-          <EditButton/>
-          <BackButton/>
+          <BackButton />
+          <ConfirmEditButton />
+
         </ModalFooter>
       </ModalContent>
     </Modal>
