@@ -82,7 +82,7 @@ export const colors = {
     '900': '#332D00',
   },
   orange: {
-    '50': '#FEF3E7',
+    '50':  '#FEF3E7',
     '100': '#FCDEBB',
     '200': '#F9C98F',
     '300': '#F7B463',
