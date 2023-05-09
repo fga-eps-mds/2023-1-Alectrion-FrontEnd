@@ -15,7 +15,6 @@ import {
 import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
 import { Props, Select } from 'chakra-react-select';
 
-import React from 'react';
 import { handleEmptyOptions } from './handle-empty-options';
 import { chakraStyles, customComponents } from './styles';
 

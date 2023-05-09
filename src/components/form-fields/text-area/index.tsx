@@ -4,36 +4,58 @@ import {
   FormLabel,
   FormHelperText,
   InputProps as ChakraInputProps,
+  forwardRef,
+  MergeWithAs,
+  Flex,
+  FormErrorMessage,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  DetailedHTMLProps,
+  TextareaHTMLAttributes,
+  useCallback,
+  useState,
+} from 'react';
+// import { useState } from 'react';
 import { FieldError } from 'react-hook-form';
 
-export interface InputProps extends ChakraInputProps {
+export interface InputProps
+  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string | JSX.Element;
   errors: FieldError | undefined;
   maxChars: number;
 }
 
-export function TextArea(props: InputProps) {
-  const { label, errors, maxChars } = props;
+export const TextArea = forwardRef<InputProps, 'textarea'>((props, ref) => {
+  const { label, errors, maxChars, ...rest } = props;
+  const [length, setLength] = useState<string>('0');
 
-  const [text, setText] = useState('');
-  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(event.target.value);
-  };
+  const handleChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
+    setLength(e.target.value.length.toString());
+  }, []);
+
   return (
     <FormControl isInvalid={Boolean(errors)}>
       <FormLabel>{label}</FormLabel>
       <Textarea
-        value={text}
-        onChange={handleChange}
+        ref={ref}
+        {...rest}
+        cols={10}
+        rows={5}
+        textLength={100}
+        wrap="nowrap"
+        onChange={(e) => handleChange(e)}
         minH="7rem"
         borderColor="#212121"
         resize="none"
         maxLength={maxChars}
         focusBorderColor="primary"
       />
-      <FormHelperText>{`${text.length} / ${maxChars} caracteres`}</FormHelperText>
+      <Flex justifyContent="space-between">
+        <FormHelperText>{`${length} / ${maxChars} caracteres`}</FormHelperText>
+        <FormErrorMessage>{errors?.message}</FormErrorMessage>
+      </Flex>
     </FormControl>
   );
-}
+});

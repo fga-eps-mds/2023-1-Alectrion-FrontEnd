@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Grid, GridItem } from '@chakra-ui/react';
+import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
 import { ControlledSelect } from '../form-fields/controlled-select';
 import { ESTADOS_EQUIPAMENTO, TIPOS_EQUIPAMENTO } from '@/constants/equipment';
@@ -11,13 +11,14 @@ type FormValues = {
   modelo: string;
   tombamento: string;
   serie: string;
-  'nota-fiscal': string;
+  notaFiscal: string;
   aquisicao: string;
   descricao: string;
-  'tipo-equipamento': string;
-  'estado-equipamento': string;
-  'ano-aquisicao': string;
-  'data-aquisicao': string;
+  tipoEquipamento: string;
+  estadoEquipamento: string;
+  anoAquisicao: string;
+  dataAquisicao: string;
+  screenType: string;
 };
 
 export default function EquipmentForm() {
@@ -38,71 +39,104 @@ export default function EquipmentForm() {
     }).reverse();
   })();
 
-  const onSubmit = () => ({});
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      console.log(formData);
+    } catch {
+      console.log('error');
+    }
+  });
 
   return (
-    <form id="equipment-register-form" onSubmit={handleSubmit(onSubmit)}>
+    <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <ControlledSelect
           control={control}
-          label="Tipo de equipamento"
-          {...register('tipo-equipamento', { required: true })}
+          name="tipoEquipamento"
+          id="tipoEquipamento"
           options={TIPOS_EQUIPAMENTO}
+          placeholder="Selecione uma opção"
+          label="Tipo de equipamento"
+          rules={{ required: 'Campo obrigatório' }}
         />
 
         <Input
           label="Marca"
           errors={errors.marca}
-          {...register('marca', { required: true, maxLength: 20 })}
+          {...register('marca', {
+            required: 'Campo Obrigatório',
+            maxLength: 20,
+          })}
         />
 
         <Input
           label="Modelo"
           errors={errors.modelo}
-          {...register('modelo', { required: true, maxLength: 20 })}
+          {...register('modelo', {
+            required: 'Campo Obrigatório',
+            maxLength: 20,
+          })}
         />
 
         <Input
           label="Nº Tombamento"
           errors={errors.tombamento}
-          {...register('tombamento', { required: true, maxLength: 20 })}
+          {...register('tombamento', {
+            required: 'Campo Obrigatório',
+            maxLength: 20,
+          })}
         />
 
         <Input
           label="Nº Serie"
           errors={errors.serie}
-          {...register('serie', { required: true, maxLength: 20 })}
+          {...register('serie', {
+            required: 'Campo Obrigatório',
+            maxLength: 20,
+          })}
         />
 
         <Input
           label="Nº da Nota Fiscal"
-          errors={errors['nota-fiscal']}
-          {...register('nota-fiscal', { required: true, maxLength: 20 })}
+          errors={errors.notaFiscal}
+          {...register('notaFiscal', {
+            required: 'Campo Obrigatório',
+            maxLength: 20,
+          })}
         />
 
         <Input
           label="Tipo de aquisição"
           errors={errors.aquisicao}
-          {...register('aquisicao', { required: true, maxLength: 20 })}
+          {...register('aquisicao', {
+            required: 'Campo Obrigatório',
+            maxLength: 20,
+          })}
         />
 
         <ControlledSelect
           control={control}
-          label="Estado do equipamento"
-          {...register('estado-equipamento', { required: true })}
+          name="estadoEquipamento"
+          id="estadoEquipamento"
           options={ESTADOS_EQUIPAMENTO}
+          placeholder="Selecione uma opção"
+          label="Estado do equipamento"
+          rules={{ required: 'Campo obrigatório' }}
         />
 
         <ControlledSelect
           control={control}
-          label="Ano da aquisição"
-          {...register('ano-aquisicao', { required: true })}
+          name="anoAquisicao"
+          id="anoAquisicao"
           options={listOfYears}
+          placeholder="Selecione uma opção"
+          label="Ano da aquisição"
+          rules={{ required: 'Campo obrigatório' }}
         />
 
         <Datepicker
           label="Data de aquisição"
-          name="data-aquisicao"
+          name="dataAquisicao"
           required
           control={control}
         />
@@ -112,11 +146,19 @@ export default function EquipmentForm() {
             label="Descrição"
             errors={errors.descricao}
             maxChars={255}
-            isRequired
-            {...register('descricao', { required: true, maxLength: 255 })}
+            {...register('descricao', {
+              required: 'Campo Obrigatório',
+              maxLength: 255,
+            })}
           />
         </GridItem>
       </Grid>
+      <Flex gap="4rem" mt="2rem" mb="1rem">
+        <Button variant="secondary">Cancelar</Button>
+        <Button type="submit" form="equipment-register-form" variant="primary">
+          Confirmar
+        </Button>
+      </Flex>
     </form>
   );
 }

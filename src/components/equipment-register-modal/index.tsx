@@ -1,4 +1,5 @@
 import { Flex, Button } from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
 import { AddButton } from '../action-buttons/add-button';
 import { DeleteButton } from '../action-buttons/delete-button';
 import EquipmentForm from '../equipment-form';
@@ -28,19 +29,6 @@ export function EquipmentRegisterModal({
         gap="16px"
       >
         <EquipmentForm />
-
-        <Flex gap="4rem" mt="2rem" mb="1rem">
-          <Button variant="secondary" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button
-            type="submit"
-            form="equipment-register-form"
-            variant="primary"
-          >
-            Confirmar
-          </Button>
-        </Flex>
       </Flex>
     </Modal>
   );
