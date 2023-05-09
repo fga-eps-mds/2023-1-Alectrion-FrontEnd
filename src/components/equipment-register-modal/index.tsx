@@ -33,7 +33,11 @@ export function EquipmentRegisterModal({
           <Button variant="secondary" onClick={onClose}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={onClose}>
+          <Button
+            type="submit"
+            form="equipment-register-form"
+            variant="primary"
+          >
             Confirmar
           </Button>
         </Flex>
