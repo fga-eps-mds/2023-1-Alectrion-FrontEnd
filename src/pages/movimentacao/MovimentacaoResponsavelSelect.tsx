@@ -4,8 +4,8 @@ export function AtribuicaoDropdown() {
   return (
     <Flex
       position="absolute"
-      left="666px"
-      top="726px"
+      left="530px"
+      top="600px"
       width="269px"
       height="55px"
       flexDirection="column"
@@ -53,49 +53,43 @@ export function AtribuicaoDropdown() {
           height: "10px",
         }}
       >
-        <svg viewBox="0 0 10 10">
-          <polygon points="0,0 10,0 5,10" fill="#212121" />
-        </svg>
       </div>
     </Flex>
   );
 }
 
-export  function ResponsavelTermo() {
-    return (
+export function ResponsavelTermo() {
+  return (
+    <Flex
+      position="absolute"
+      left="50px"
+      top="600px"
+      width="150px"
+      height="55px"
+      borderRadius="10px"
+      backgroundColor="#FFFFFF"
+      boxShadow="lg"
+      flexDirection="column"
+    >
+      <span style={{ fontSize: "16px", color: "#212121", whiteSpace: "nowrap" }}>
+        Responsável pelo Termo de Responsabilidade
+      </span>
       <Box
-        position="absolute"
-        left="68px"
-        top="752px"
-        width="568px"
-        height="35px"
+        mt="5px"
+        width="450px"
+        height="100px"
         borderRadius="10px"
         backgroundColor="#FFFFFF"
         boxShadow="lg"
       >
-        <Text
-          position="absolute"
-          left="68px"
-          top="726px"
-          width="357px"
-          height="20px"
-          fontSize="16px"
-          color="#212121"
-        >
-          Responsável pelo Termo de Responsabilidade
-        </Text>
         <Input
-          position="absolute"
-          left="91px"
-          top="8px"
-          width="468px"
-          height="20px"
-          borderRadius="10px"
           border="none"
-          backgroundColor="#FFFFFF"
+          bg="#FFFFFF"
           color="#C6C6C6"
           placeholder="Nome da pessoa responsável"
+          _focus={{ outline: "none" }}
         />
       </Box>
-    );
-  }
+    </Flex>
+  );
+}

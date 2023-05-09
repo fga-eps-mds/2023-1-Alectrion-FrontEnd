@@ -4,9 +4,9 @@ export function PostoDeTrabalhoDropdown() {
     return (
       <Flex
         position="absolute"
-        left="913px" 
-        top="3300px"  
-        width="269px"
+        left="50px" 
+        top="143px"  
+        width="170px"
         height="35px"
         flexDirection="column"
       >
@@ -47,8 +47,8 @@ export function PostoDeTrabalhoDropdown() {
         <div
           style={{
             position: "absolute",
-            left: "1162.93px",
-            top: "3340px",
+            left: "68px",
+            top: "115px",
             width: "15px",
             height: "10px",
           }}
@@ -65,9 +65,9 @@ export function CidadeDropdown() {
     return (
         <Flex
         position="absolute"
-        left="1212px" 
-        top="1212px"  
-        width="269px"
+        left="350px" 
+        top="143px"  
+        width="170px"
         height="35px"
         flexDirection="column"
       >
@@ -126,9 +126,9 @@ export function TipoDeLotaçãoDropdown() {
     return (
       <Flex
         position="absolute"
-        left="913px" 
-        top="3326px"  
-        width="269px"
+        left="650px" 
+        top="143px"  
+        width="170px"
         height="35px"
         flexDirection="column"
       >
@@ -187,9 +187,9 @@ export function AtribuicaoDropdown2() {
     return (
       <Flex
         position="absolute"
-        left="1511px"
-        top="3399px"
-        width="269px"
+        left="650px"
+        top="260px"
+        width="170px"
         height="55px"
         flexDirection="column"
       >
@@ -244,41 +244,36 @@ export function AtribuicaoDropdown2() {
     );
 }
 
-export  function ResponsavelTexto() {
-    return (
+export function ResponsavelTexto() {
+  return (
+    <Flex
+      position="absolute"
+      left="50px"
+      top="260px" 
+      width="170px"
+      height="55px"
+      borderRadius="10px"
+      backgroundColor="#FFFFFF"
+      boxShadow="lg"
+      flexDirection="column"
+    >
+      <span style={{ fontSize: "16px", color: "#212121" }}>Responsável</span>
       <Box
-        position="absolute"
-        left="913x"
-        top="3373px"
-        width="568px"
-        height="61px"
+        mt="5px"
+        width="580px"
+        height="100px"
         borderRadius="10px"
         backgroundColor="#FFFFFF"
         boxShadow="lg"
       >
-        <Text
-          position="absolute"
-          left="913x"
-          top="3373px"
-          width="568px"
-          height="61px"
-          fontSize="16px"
-          color="#212121"
-        >
-          Responsável
-        </Text>
         <Input
-          position="absolute"
-          left="913x"
-          top="3373px"
-          width="568px"
-          height="61px"
-          borderRadius="10px"
           border="none"
-          backgroundColor="#FFFFFF"
+          bg="#FFFFFF"
           color="#C6C6C6"
           placeholder="Nome da pessoa responsável"
+          _focus={{ outline: "none" }}
         />
       </Box>
-    );
-  }
+    </Flex>
+  );
+}

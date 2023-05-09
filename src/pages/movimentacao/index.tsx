@@ -1,5 +1,5 @@
 import { Flex } from '@chakra-ui/react';
-import { MovimentacaoConfirmButton, MovimentacaoCancelButton } from './MovimentacaoButtons';
+import { MovimentacaoCancelButton } from './MovimentacaoButtons';
 import { NumeroTermoProps } from './MovimentacaoTitle';
 import { DataProps } from './MovimentacaoTitle';
 import { TotalEquipamentosProps } from './MovimentacaoTitle';
@@ -8,7 +8,7 @@ import { AtribuicaoDropdown, ResponsavelTermo } from './MovimentacaoResponsavelS
 import {ResponsavelTexto,AtribuicaoDropdown2,TipoDeLotaçãoDropdown,CidadeDropdown,PostoDeTrabalhoDropdown} from './MovimentacaoDetalhes'
 
 
-export default function MovimentacaoModal() {
+export function MovimentacaoModal() {
   const numeroTermo = '010101';
   const dataProps = new Date();
   const totalEquipamentosProps = '10';
@@ -19,7 +19,6 @@ export default function MovimentacaoModal() {
         <NumeroTermoProps numeroTermo={numeroTermo} />
         <DataProps dataProps={dataProps} />
         <TotalEquipamentosProps totalEquipamentosProps={totalEquipamentosProps} />
-        <MovimentacaoConfirmButton />
         <MovimentacaoCancelButton />
         <ResponsavelTermo/>
         <AtribuicaoDropdown/>
