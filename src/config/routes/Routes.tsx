@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* 
     Este código foi adaptado do repositório "2022-2-schedula-front":https://github.com/fga-eps-mds/2022-2-schedula-front/
 
@@ -11,8 +12,10 @@ import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
 import { DefaultLayout } from '@/components/layout/default-layout';
 import { EquipRegister } from '@/pages/equipment-register';
-import { EquipmentTable } from '@/pages/equipaments/EquipamentsControl';
+
+import { EquipmentTable }from '@/pages/equipaments/EquipamentsControl';
 import { MovementsTable } from '@/pages/movements/MovementControl';
+import ModalEditEquipment from '@/pages/edit-equipament';
 
 export function Router() {
   return (
@@ -43,6 +46,8 @@ export function Router() {
       <Route path="/equipaments" element={<EquipmentTable />} />
       <Route path="/movements" element={<MovementsTable />} />
       <Route path="*" element={<p>404</p>} />
+      <Route path="/edit-equipment" element={<ModalEditEquipment/>} />
+      
     </Routes>
   );
 }

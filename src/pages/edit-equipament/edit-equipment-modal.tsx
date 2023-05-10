@@ -26,6 +26,30 @@ export function EquipmentTitle() {
   );
 }
 
+type Equipment={
+  tippingNumber: string
+  id: string
+  serialNumber: string
+  type: string
+  situacao: string
+  estado: string
+  model: string
+  description?: string
+  initialUseDate: string
+  acquisitionDate: Date
+  screenSize?: string
+  invoiceNumber: string
+  power?: string
+  screenType?: string
+  processor?: string
+  storageType?: string
+  storageAmount?: string
+  brand: string
+  acquisition: string
+  unitId: string
+  ram_size?: string
+}
+
 export default function EditEquipmentModal() {
   return (
     <Modal isOpen onClose={() => {}} size="4xl">

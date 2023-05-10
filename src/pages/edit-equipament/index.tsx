@@ -2,7 +2,7 @@
 import { Text, Flex } from '@chakra-ui/react';
 import EditEquipmentModal from './edit-equipment-modal';
 
-export default function Equip() {
+export default function ModalEditEquipment() {
   return (
     <Flex
       height="100%"
