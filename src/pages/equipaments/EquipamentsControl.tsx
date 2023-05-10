@@ -22,7 +22,7 @@ import {
 import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
 import { AxiosResponse } from 'axios';
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify';
 import { config } from '../../config/env';
 
 interface equipament {
@@ -81,8 +81,16 @@ interface equipament {
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
   const [equipaments, setEquipaments] = useState<equipament[]>([]);
+  const [nextEquipaments, setNextEquipaments] = useState<equipament[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('');
+
+  const [items, setItems] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [offset, setOffset] = useState(0);
+  const limit = 1;
+
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
   const handleSearchTermChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -103,38 +111,35 @@ function EquipmentTable() {
   //     (searchType === '' || equipment.type === searchType)
   // );
 
-  const getEquipaments = async () => {
+  const fetchItems = async () => {
     try {
-      console.log("fazer requisição para:", config.url)
-      console.log("fazer requisição para: ", api.toString)
-      const queryParams = new URLSearchParams('')
-      // if (query) {
-        //   Object.entries(query).forEach((value) =>
-        //     queryParams.append(value[0], value[1])
-        //   )
-        // }
-      
-        const { data }: AxiosResponse<equipament[]> = await api.get(
-          'equipment/find',
-          {
-            params: queryParams
-          }
-          );
-          setEquipaments(data);
-         console.log("DADOS equipamentossssss", data)
-
-        } catch (error) {
-          setEquipaments([]);
-          toast.error('Nenhum Equipamento encontrado');
+      const { data }: AxiosResponse<equipament[]> = await api.get(
+        `equipment/find?take=${limit}&skip=${offset}`
+      );
+      setEquipaments(data);
+    } catch (error) {
+      setEquipaments([]);
+      toast.error('Nenhum Equipamento encontrado');
     }
   };
-  
+
+  const fetchNextItems = async () => {
+    try {
+      const { data }: AxiosResponse<equipament[]> = await api.get(
+        `equipment/find?take=${limit}&skip=${offset+limit}`
+      );
+      setNextEquipaments(data);
+    } catch (error) {
+      setNextEquipaments([]);
+      toast.error('Nenhum Equipamento encontrado');
+    }
+  };
+
   useEffect(() => {
-    getEquipaments()
-  }, [])
-  
-
-
+    
+    fetchItems();
+    fetchNextItems();
+  }, [currentPage]);
 
   return (
     <>
@@ -319,7 +324,7 @@ function EquipmentTable() {
                 </Tr>
               </Thead>
               <Tbody>
-              {equipaments.map((equipment) => (
+                {equipaments.map((equipment) => (
                   <Tr key={equipment.id}>
                     <Td>{equipment.type}</Td>
                     <Td>{equipment.tippingNumber}</Td>
@@ -342,6 +347,24 @@ function EquipmentTable() {
           >
             Movimentar
           </Box>
+          {currentPage > 1 && (
+            <Button
+              onClick={() => {
+                setCurrentPage(currentPage - 1);
+                setOffset(offset - limit);
+              }}
+            >
+              Anterior
+            </Button>
+          )}
+          {nextEquipaments.length > 0 && <Button
+            onClick={() => {
+              setCurrentPage(currentPage + 1);
+              setOffset(offset + limit);
+            }}
+          >
+            Próximo
+          </Button>}
         </Box>
       </Center>
     </>
