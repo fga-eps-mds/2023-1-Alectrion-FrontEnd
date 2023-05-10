@@ -91,7 +91,7 @@ export function TipoDeLotaçãoDropdown() {
     return (
       <Flex
         position="absolute"
-        left="650px" 
+        left="660px" 
         top="143px"  
         width="170px"
         height="35px"
@@ -134,8 +134,8 @@ export function AtribuicaoDropdown2() {
     return (
       <Flex
         position="absolute"
-        left="650px"
-        top="260px"
+        left="660px"
+        top="240px"
         width="170px"
         height="55px"
         flexDirection="column"
@@ -179,7 +179,7 @@ export function ResponsavelTexto() {
     <Flex
       position="absolute"
       left="50px"
-      top="260px" 
+      top="240px" 
       width="170px"
       height="55px"
       borderRadius="10px"

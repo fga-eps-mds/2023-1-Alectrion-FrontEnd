@@ -2,17 +2,26 @@ import { Box, Flex, Text, Checkbox, Table, Tbody, Td, Th, Thead, Tr, VStack } fr
 
 export function MovimentacaoTable() {
   return (
-    <Box className="material-specs-container">
-      <Text fontSize="20px" color="#000000" w="277.33px" h="24px">
-        Especificação do Material
-      </Text>
+    <Box className="material-specs-container" position="relative">
+   <Text
+   fontSize="20px"
+   color="#000000"
+   w="277.33px"
+   h="24px"
+   position="absolute"
+   top="-550px"
+   left="10px"
+   textTransform="uppercase"
+  >
+  Especificação do Material
+  </Text>
       <Box
-        w="937px"
+        w="895px"
         h="342px"
         backgroundColor="#ffffff"
         border="1px solid #f49320"
         borderRadius="10px"
-        mt="20px"
+        mt="-515px"
         overflow="auto"
         maxH="300px"
       >
@@ -28,8 +37,7 @@ export function MovimentacaoTable() {
               <Th fontSize="20px" color="#ffffff" backgroundColor="#f49320">
                 N° de Serie
               </Th>
-              <Th fontSize="20px" color="#ffffff" backgroundColor="#f49320">
-              </Th>
+              <Th fontSize="20px" color="#ffffff" backgroundColor="#f49320"></Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -38,7 +46,7 @@ export function MovimentacaoTable() {
               <Td>Tombamento 1</Td>
               <Td>{'000001'.padStart(6, '0')}</Td>
               <Td>
-                <Checkbox size="lg" colorScheme = "orange" />
+                <Checkbox size="lg" colorScheme="orange" />
               </Td>
             </Tr>
             <Tr>
@@ -46,7 +54,7 @@ export function MovimentacaoTable() {
               <Td>Tombamento 2</Td>
               <Td>{'000002'.padStart(6, '0')}</Td>
               <Td>
-              <Checkbox size="lg" colorScheme = "orange" />
+                <Checkbox size="lg" colorScheme="orange" />
               </Td>
             </Tr>
             {/* Adicione mais linhas aqui */}

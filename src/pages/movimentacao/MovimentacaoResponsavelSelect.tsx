@@ -5,7 +5,7 @@ export function AtribuicaoDropdown() {
     <Flex
       position="absolute"
       left="530px"
-      top="600px"
+      top="700px"
       width="269px"
       height="55px"
       flexDirection="column"
@@ -48,7 +48,7 @@ export function ResponsavelTermo() {
     <Flex
       position="absolute"
       left="50px"
-      top="600px"
+      top="700px"
       width="150px"
       height="55px"
       borderRadius="10px"
