@@ -1,13 +1,13 @@
 import { render } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
-import EquipamentsControl from '@/pages/equipaments/EquipamentsControl';
+import { EquipmentTable } from '@/pages/equipaments/EquipamentsControl';
 
 describe('Equipments', () => {
 
   it('should display a list', async () => {
     const { findByRole } = render(
         <ChakraProvider>
-          <EquipamentsControl />
+          <EquipmentTable />
         </ChakraProvider>
     );
 
@@ -19,7 +19,7 @@ describe('Equipments', () => {
   it('should display a button to create equipments', async () => {
     const { queryByText } = render(
         <ChakraProvider>
-          <EquipamentsControl />
+          <EquipmentTable />
         </ChakraProvider>
     );
 
@@ -32,7 +32,7 @@ describe('Equipments', () => {
   it('should display a button to move equipments', async () => {
     const { queryByText } = render(
         <ChakraProvider>
-          <EquipamentsControl />
+          <EquipmentTable />
         </ChakraProvider>
     );
 
@@ -45,7 +45,7 @@ describe('Equipments', () => {
   it('should display a search bar', async () => {
     const { findByPlaceholderText } = render(
         <ChakraProvider>
-          <EquipamentsControl />
+          <EquipmentTable />
         </ChakraProvider>
     );
 

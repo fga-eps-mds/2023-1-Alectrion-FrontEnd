@@ -40,43 +40,46 @@ export const SideBar = memo(() => {
     signOut();
   }
 
+  let options=[
+    { name: 'Controle de Equipamento' },
+    { name: 'Controle Ordem Serviço' },
+    { name: 'Movimentações' },
+    { name: 'Relatórios' }]
+
   return (
-    <Flex
-      flexDirection="column"
-      gap={2}
-      width="fit-content"
-      height="100%"
-      maxHeight="calc(100vh - 7rem)" // (--chakra-spacing-14)3.5rem padding 2x
-      position="sticky"
-      top={14}
+    <Box
+      position="fixed"
+      left="0"
+      top="0"
+      bottom="0"
+      backgroundColor="#000"
+      width="166px"
+      color="#fff"
+      padding="20px"
     >
-      <Heading margin="0 auto" textAlign="center" fontWeight="hairline">
+      <Text fontSize="2xl" fontWeight="bold">
         Alectrion
-      </Heading>
-      <Divider />
-
-      <VStack spacing={4} align="stretch">
-        {routes.map((route) => (
-          <SideBarItem key={route.label} {...route} />
-        ))}
-      </VStack>
-
-      <Box marginTop="auto" shadow="xl" p=".5rem">
-        <Divider marginBottom={2} />
-        <Flex gap={2} justifyContent="space-between" alignItems="center">
-          <FaRegUser size={25} />
-          <Text maxWidth={140} noOfLines={1}>
-            {user?.name ?? 'Usuário'}
-          </Text>
-          <Icon
-            as={RiLogoutCircleFill}
-            onClick={handleSignOut}
-            fontSize={24}
-            cursor="pointer"
-          />
-        </Flex>
+      </Text>
+      {options.map((option) => (
+        <Text
+          key={option.name}
+          fontSize="2xs"
+          fontWeight="bold"
+          marginTop="10"
+          _hover={{ cursor: 'pointer', color: 'orange.500' }}
+        >
+          {option.name}
+        </Text>
+      ))}
+      <Box position="absolute" bottom="20px">
+        <Text fontSize="xs" fontWeight="bold">
+          Cadastro Usuário
+        </Text>
+        <Text fontSize="xs" fontWeight="bold" marginTop="2">
+          Admin
+        </Text>
       </Box>
-    </Flex>
+    </Box>
   );
 });
 
