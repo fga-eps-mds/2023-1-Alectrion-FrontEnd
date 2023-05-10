@@ -3,6 +3,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { AxiosResponse } from 'axios';
 import { Button, Flex, Grid } from '@chakra-ui/react';
 // eslint-disable-next-line no-useless-escape
 import EquipmentSelectField from './equipment-select-field';
@@ -16,7 +17,7 @@ import {
   TipoMonitor,
 } from '@/constants/equipment';
 import EquipmentTextField from './equipment-text-field';
-import { api } from '@/config/lib/axios';
+import { api } from '@/services/api';
 import { Equipment } from '@/pages/edit-equipament/edit-equipment-modal';
 import EquipmentDateField from './equipment-date-field';
 
@@ -30,8 +31,17 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
   const { handleSubmit } = useForm<FormValues>();
 
   const onSubmit = handleSubmit(async (formData: Equipment) => {
+    console.log('entrei', formData)
     try {
-        await api.put("equipment/updateEquipment",formData);
+
+    // const payload = {
+    //   type: type.value,
+    //   estado: estado.value,
+    //   initialUseDate: initialUseDate.value,
+    //   ...rest,
+    // };
+
+      const { data }: AxiosResponse<any> = await api.put('equipment/updateEquipment',formData);
       } catch (error) {
           console.log(`erro: ${error}`);
       }
