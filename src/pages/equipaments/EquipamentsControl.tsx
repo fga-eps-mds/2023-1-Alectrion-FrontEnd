@@ -89,7 +89,7 @@ function EquipmentTable() {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
-  const limit = 1;
+  const limit = 10;
 
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
   const handleSearchTermChange = (
@@ -144,22 +144,22 @@ function EquipmentTable() {
   return (
     <>
       <SideBar />
-      <Box paddingY="10" paddingX="20">
+      <Box paddingY="10" paddingX="300">
         <Text mb="10px" color="#000000" fontWeight="semibold" fontSize="4xl">
           Controle de Equipamento
         </Text>
         <Text color="#00000" fontWeight="medium" fontSize="2xl">
           Últimos Equipamentos Modificados
         </Text>
-        <Box paddingX="720" mb="-5">
+        <Box paddingX="550" mb="-5">
           <Button colorScheme="#F49320">Cadastrar Equipamento</Button>
         </Box>
       </Box>
-      <Box paddingX="20">
+      <Box paddingLeft="300">
         <Divider borderColor="#00000" />
       </Box>
       <Box p={4}>
-        <Box paddingLeft="165" h="0">
+        <Box paddingLeft="190" h="0">
           <Select
             variant="unstyled"
             placeholder="Tipos"
@@ -204,7 +204,7 @@ function EquipmentTable() {
             <option value="option34">Protetor Eletrônico</option>
           </Select>
         </Box>
-        <Box paddingLeft="250" h="0">
+        <Box paddingLeft="270" h="0">
           <Select
             variant="unstyled"
             placeholder="Marcas"
@@ -221,7 +221,7 @@ function EquipmentTable() {
             <option value="option6">Logitech</option>
           </Select>
         </Box>
-        <Box paddingLeft="345" h="0">
+        <Box paddingLeft="365" h="0">
           <Select
             variant="unstyled"
             placeholder="Modelos"
@@ -237,7 +237,7 @@ function EquipmentTable() {
             <option value="option5">Thinkpad</option>
           </Select>
         </Box>
-        <Box paddingLeft="440" h="0">
+        <Box paddingLeft="460" h="0">
           <Select
             variant="unstyled"
             placeholder="Datas"
@@ -260,7 +260,7 @@ function EquipmentTable() {
             <option value="option12">Dezembro</option>
           </Select>
         </Box>
-        <Box paddingLeft="535" h="0">
+        <Box paddingLeft="550" h="0">
           <Select
             variant="unstyled"
             placeholder="Local"
@@ -273,7 +273,7 @@ function EquipmentTable() {
             <option value="option2">2dp Goiânia</option>
           </Select>
         </Box>
-        <Box paddingLeft="630" h="0">
+        <Box paddingLeft="640" h="0">
           <Select
             variant="unstyled"
             placeholder="Status"
@@ -286,7 +286,7 @@ function EquipmentTable() {
             <option value="option2">Usado</option>
           </Select>
         </Box>
-        <Box paddingLeft="820" paddingRight="270">
+        <Box paddingLeft="820" paddingRight="180">
           <Input
             placeholder="Pesquisa"
             size="sm"
@@ -304,10 +304,25 @@ function EquipmentTable() {
         </Box>
       </Box>
       <Center>
-        <Box width="100%" bg="white" h="716x" w="1100x">
-          <TableContainer
+        <Box width="68%" bg="white" paddingLeft={100}>
+          <TableContainer 
             borderRadius="md"
-            style={{ height: '500px', overflowY: 'auto' }}
+            minW="68%"
+            style={{ height: '500px', overflowY: 'auto'}}
+            css={{
+              '&::-webkit-scrollbar':{
+                width: '4px'
+              },
+              '&::-webkit-scrollbar-track':{
+                width: '6px',
+                background: "#C6C6C6",
+              },
+              '&::-webkit-scrollbar-thumb':{
+                background: "#F49320",
+                borderRadius: '24px',
+              },
+
+            }}
           >
             <Table
               variant="striped"
@@ -315,12 +330,12 @@ function EquipmentTable() {
               borderColor="#F49320"
               colorScheme="orange"
             >
-              <Thead bg="#F49320">
+              <Thead bg="#F49320" fontWeight="semibold">
                 <Tr>
-                  <Th color="white">Equipamentos</Th>
-                  <Th color="white">N Tombamento</Th>
-                  <Th color="white">N Série</Th>
-                  <Th color="white">Última Modificação</Th>
+                  <Td color="white" >Equipamento</Td>
+                  <Td color="white">N Tombamento</Td>
+                  <Td color="white">N Série</Td>
+                  <Td color="white">Última Modificação</Td>
                 </Tr>
               </Thead>
               <Tbody>
