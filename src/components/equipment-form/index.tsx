@@ -1,24 +1,34 @@
 import { useForm } from 'react-hook-form';
+import { AxiosResponse } from 'axios';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
 import { ControlledSelect } from '../form-fields/controlled-select';
 import { ESTADOS_EQUIPAMENTO, TIPOS_EQUIPAMENTO } from '@/constants/equipment';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
+import { api } from '@/services/api';
 
 type FormValues = {
-  marca: string;
-  modelo: string;
-  tombamento: string;
-  serie: string;
-  notaFiscal: string;
-  aquisicao: string;
-  descricao: string;
-  tipoEquipamento: string;
-  estadoEquipamento: string;
-  anoAquisicao: string;
-  dataAquisicao: string;
-  screenType: string;
+  tippingNumber: string;
+  serialNumber: string;
+  type: { value: string; label: string };
+  situacao: string;
+  model: string;
+  description?: string;
+  initialUseDate: { value: string; label: string };
+  acquisitionDate: string;
+  screenSize?: string;
+  invoiceNumber: string;
+  power?: string;
+  screenType?: string;
+  processor?: string;
+  storageType?: string;
+  storageAmount?: string;
+  brandName: string;
+  acquisitionName: string;
+  unitId?: string;
+  ram_size?: string;
+  estado: { value: string; label: string };
 };
 
 export default function EquipmentForm() {
@@ -41,7 +51,19 @@ export default function EquipmentForm() {
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      console.log(formData);
+      const { type, estado, initialUseDate, ...rest } = formData;
+
+      const payload = {
+        type: type.value,
+        estado: estado.value,
+        initialUseDate: initialUseDate.value,
+        ...rest,
+      };
+
+      const { data }: AxiosResponse<any> = await api.post(
+        'equipment/createEquipment',
+        payload
+      );
     } catch {
       console.log('error');
     }
@@ -52,8 +74,8 @@ export default function EquipmentForm() {
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <ControlledSelect
           control={control}
-          name="tipoEquipamento"
-          id="tipoEquipamento"
+          name="type"
+          id="type"
           options={TIPOS_EQUIPAMENTO}
           placeholder="Selecione uma opção"
           label="Tipo de equipamento"
@@ -62,8 +84,8 @@ export default function EquipmentForm() {
 
         <Input
           label="Marca"
-          errors={errors.marca}
-          {...register('marca', {
+          errors={errors.brandName}
+          {...register('brandName', {
             required: 'Campo Obrigatório',
             maxLength: 20,
           })}
@@ -71,8 +93,8 @@ export default function EquipmentForm() {
 
         <Input
           label="Modelo"
-          errors={errors.modelo}
-          {...register('modelo', {
+          errors={errors.model}
+          {...register('model', {
             required: 'Campo Obrigatório',
             maxLength: 20,
           })}
@@ -80,8 +102,8 @@ export default function EquipmentForm() {
 
         <Input
           label="Nº Tombamento"
-          errors={errors.tombamento}
-          {...register('tombamento', {
+          errors={errors.tippingNumber}
+          {...register('tippingNumber', {
             required: 'Campo Obrigatório',
             maxLength: 20,
           })}
@@ -89,8 +111,8 @@ export default function EquipmentForm() {
 
         <Input
           label="Nº Serie"
-          errors={errors.serie}
-          {...register('serie', {
+          errors={errors.serialNumber}
+          {...register('serialNumber', {
             required: 'Campo Obrigatório',
             maxLength: 20,
           })}
@@ -98,8 +120,8 @@ export default function EquipmentForm() {
 
         <Input
           label="Nº da Nota Fiscal"
-          errors={errors.notaFiscal}
-          {...register('notaFiscal', {
+          errors={errors.invoiceNumber}
+          {...register('invoiceNumber', {
             required: 'Campo Obrigatório',
             maxLength: 20,
           })}
@@ -107,8 +129,8 @@ export default function EquipmentForm() {
 
         <Input
           label="Tipo de aquisição"
-          errors={errors.aquisicao}
-          {...register('aquisicao', {
+          errors={errors.acquisitionName}
+          {...register('acquisitionName', {
             required: 'Campo Obrigatório',
             maxLength: 20,
           })}
@@ -116,8 +138,8 @@ export default function EquipmentForm() {
 
         <ControlledSelect
           control={control}
-          name="estadoEquipamento"
-          id="estadoEquipamento"
+          name="estado"
+          id="estado"
           options={ESTADOS_EQUIPAMENTO}
           placeholder="Selecione uma opção"
           label="Estado do equipamento"
@@ -126,8 +148,8 @@ export default function EquipmentForm() {
 
         <ControlledSelect
           control={control}
-          name="anoAquisicao"
-          id="anoAquisicao"
+          name="initialUseDate"
+          id="initialUseDate"
           options={listOfYears}
           placeholder="Selecione uma opção"
           label="Ano da aquisição"
@@ -136,7 +158,7 @@ export default function EquipmentForm() {
 
         <Datepicker
           label="Data de aquisição"
-          name="dataAquisicao"
+          name="acquisitionDate"
           required
           control={control}
         />
@@ -144,9 +166,9 @@ export default function EquipmentForm() {
         <GridItem gridColumn="1 / span 3">
           <TextArea
             label="Descrição"
-            errors={errors.descricao}
+            errors={errors.description}
             maxChars={255}
-            {...register('descricao', {
+            {...register('description', {
               required: 'Campo Obrigatório',
               maxLength: 255,
             })}

@@ -15,25 +15,25 @@ export type TipoArmazenamento = 'HD' | 'SSD';
 export type TipoMonitor = 'LCD' | 'LED';
 
 export const TIPOS_ARMAZENAMENTO: SelectItem<TipoArmazenamento>[] = [
-  { value: 'HD', key: 'hd' },
-  { value: 'SSD', key: 'ssd' },
+  { value: 'HD', key: 'HD' },
+  { value: 'SSD', key: 'SSD' },
 ];
 
 export const TIPOS_MONITOR: SelectItem<TipoMonitor>[] = [
-  { value: 'LCD', key: 'lcd' },
-  { value: 'LED', key: 'led' },
+  { value: 'LCD', key: 'LCD' },
+  { value: 'LED', key: 'LED' },
 ];
 
 export const TIPOS_EQUIPAMENTO: SelectItem<TipoEquipamento>[] = [
-  { label: 'CPU', value: 'cpu' },
-  { label: 'Escaneador', value: 'escaneador' },
-  { label: 'Estabilizador', value: 'estabilizador' },
-  { label: 'Monitor', value: 'monitor' },
-  { label: 'Nobreak', value: 'nobreak' },
-  { label: 'Webcam', value: 'webcam' },
+  { label: 'CPU', value: 'CPU' },
+  { label: 'Escaneador', value: 'Escaneador' },
+  { label: 'Estabilizador', value: 'Estabilizador' },
+  { label: 'Monitor', value: 'Monitor' },
+  { label: 'Nobreak', value: 'Nobreak' },
+  { label: 'Webcam', value: 'Webcam' },
 ];
 
 export const ESTADOS_EQUIPAMENTO = [
-  { label: 'NOVO', value: 'novo' },
-  { label: 'USADO', value: 'usado' },
+  { label: 'NOVO', value: 'Novo' },
+  { label: 'USADO', value: 'Usado' },
 ];

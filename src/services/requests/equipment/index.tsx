@@ -7,7 +7,7 @@ export const createEquipment = async (
   equipmentPayload: CreateEquipmentPayload
 ): Promise<Result<{ result: any }>> => {
   try {
-    const response = await api.post('/', {
+    const response = await api.post('equipment/createEquipment', {
       ...equipmentPayload,
     });
 
