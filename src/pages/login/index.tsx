@@ -14,6 +14,23 @@ import { Box, Button, Center, Input, Text } from '@chakra-ui/react';
 export function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
+  const generalTypes = ['Webcam', 'Escaneador'];
+
+  const equipmentDataType = 'Webcam';
+
+  console.log(generalTypes.find((item) => item === equipmentDataType));
+
+  switch (equipmentDataType) {
+    case generalTypes.find((item) => item === 'Tipo 1'):
+      console.log('found ?');
+      break;
+    case generalTypes.find((item) => item === equipmentDataType):
+      console.log('found');
+      break;
+    default:
+      break;
+  }
+
   const {
     register,
     handleSubmit,
