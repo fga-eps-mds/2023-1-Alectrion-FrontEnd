@@ -305,7 +305,7 @@ function EquipmentTable() {
             style={{ height: '500px', overflowY: 'auto'}}
             css={{
               '&::-webkit-scrollbar':{
-                width: '4px'
+                width: '8px'
               },
               '&::-webkit-scrollbar-track':{
                 width: '6px',
@@ -323,8 +323,9 @@ function EquipmentTable() {
               border="1px"
               borderColor="#F49320"
               colorScheme="orange"
+              size='sm'
             >
-              <Thead bg="#F49320" fontWeight="semibold">
+              <Thead bg="#F49320" fontWeight="semibold" h='14'>
                 <Tr>
                   <Td color="white" >Equipamento</Td>
                   <Td color="white">N Tombamento</Td>
@@ -335,10 +336,12 @@ function EquipmentTable() {
               <Tbody fontWeight="semibold">
                 {equipaments.map((equipment) => (
                   <Tr key={equipment.id}>
-                    <Td>{equipment.type}</Td>
+                    <Td fontWeight="medium">{equipment.situacao} - {equipment.unit.name}
+                      <Td p={0} fontWeight="semibold">{equipment.type} {equipment.brand.name}</Td>
+                    </Td>
                     <Td>{equipment.tippingNumber}</Td>
                     <Td>{equipment.serialNumber}</Td>
-                    <Td>{equipment.updatedAt}</Td>
+                    <Td>{new Date(equipment.updatedAt).toLocaleDateString()}</Td>
                   </Tr>
                 ))}
               </Tbody>
