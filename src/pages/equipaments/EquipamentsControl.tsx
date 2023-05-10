@@ -3,6 +3,8 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 /* eslint-disable import/export */
 import { useState, useEffect } from 'react';
+import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons'
+import { MdBuild , MdCall } from "react-icons/md"
 import {
   Select,
   Text,
@@ -293,18 +295,10 @@ function EquipmentTable() {
             value={searchTerm}
             onChange={handleSearchTermChange}
           />
-          <select value={searchType} onChange={handleSearchTypeChange}>
-            <option value="">Todos</option>
-            <option value="Monitor">Monitor</option>
-            <option value="Teclado">Teclado</option>
-            <option value="Mouse">Mouse</option>
-            <option value="Notebook">Notebook</option>
-            <option value="Impressora">Impressora</option>
-          </select>
         </Box>
       </Box>
       <Center>
-        <Box width="68%" bg="white" paddingLeft={100}>
+        <Box width="68%" bg="white" paddingLeft={100} h='500px'>
           <TableContainer 
             borderRadius="md"
             minW="68%"
@@ -338,7 +332,7 @@ function EquipmentTable() {
                   <Td color="white">Última Modificação</Td>
                 </Tr>
               </Thead>
-              <Tbody>
+              <Tbody fontWeight="semibold">
                 {equipaments.map((equipment) => (
                   <Tr key={equipment.id}>
                     <Td>{equipment.type}</Td>
@@ -362,8 +356,13 @@ function EquipmentTable() {
           >
             Movimentar
           </Box>
+          <Center>
           {currentPage > 1 && (
-            <Button
+            <Button 
+              variant='link' color="#00000"
+              p={2}
+              leftIcon={<ArrowLeftIcon/>}
+              _hover={{ cursor: 'pointer', color: 'orange.500' }}
               onClick={() => {
                 setCurrentPage(currentPage - 1);
                 setOffset(offset - limit);
@@ -373,6 +372,10 @@ function EquipmentTable() {
             </Button>
           )}
           {nextEquipaments.length > 0 && <Button
+            variant='link' color="#00000"
+            p={2}
+            rightIcon={<ArrowRightIcon/>}
+            _hover={{ cursor: 'pointer', color: 'orange.500' }}
             onClick={() => {
               setCurrentPage(currentPage + 1);
               setOffset(offset + limit);
@@ -380,6 +383,7 @@ function EquipmentTable() {
           >
             Próximo
           </Button>}
+          </Center>
         </Box>
       </Center>
     </>
