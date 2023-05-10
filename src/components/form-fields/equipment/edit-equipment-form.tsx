@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/no-useless-path-segments */
 
+import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { Button, Flex, Grid } from '@chakra-ui/react';
 // eslint-disable-next-line no-useless-escape
@@ -19,44 +20,22 @@ import { api } from '@/config/lib/axios';
 import { Equipment } from '@/pages/edit-equipament/edit-equipment-modal';
 import EquipmentDateField from './equipment-date-field';
 
-// type FormValues = {
-//   marca: string;
-//   modelo: string;
-//   tombamento: string;
-//   serie: string;
-//   notaFiscal: string;
-//   aquisicao: string;
-//   descricao: string;
-//   tipoEquipamento: string;
-//   estadoEquipamento: string;
-//   anoAquisicao: string;
-//   dataAquisicao: string;
-//   screenType: string;
-// };
+type FormValues = Equipment
 
-type FormValues = Equipment;
-
-export default function EditEquipmentForm(props?: { equip: Equipment }) {
-  const [tipoEquipamento, setTipoEquipamento] = useState(
+export default function EditEquipmentForm(props?: {equip: Equipment}) {
+  const [tipoEquipamento, setTipoEquipamento] = useState<TipoEquipamento>(
     TIPOS_EQUIPAMENTO[0].value
   );
 
   const { handleSubmit } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
+  const onSubmit = handleSubmit(async (formData: Equipment) => {
     try {
-      await axios.put("equipment/updateEquipment", formData);
-    } catch (error) {
-      console.log(`erro: ${error}`);
-    }
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEquipment({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
+        await api.put("equipment/updateEquipment",formData);
+      } catch (error) {
+          console.log(`erro: ${error}`);
+      }
+  })
 
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
@@ -121,8 +100,8 @@ export default function EditEquipmentForm(props?: { equip: Equipment }) {
               title="Tipo de Armazenamento"
               name="tipo-armazenamento"
               items={TIPOS_ARMAZENAMENTO}
+              onChange={() => {}}
               defaultValue={props?.equip.storageType}
-              onChange={(event) => handleChange(event)}
             />
             <EquipmentTextField
               title="Processador"
@@ -163,3 +142,33 @@ export default function EditEquipmentForm(props?: { equip: Equipment }) {
     </form>
   );
 }
+
+
+
+
+
+
+
+// {
+//   tippingNumber: formData.tippingNumber,
+//   id: formData.id,
+//   serialNumber: formData.serialNumber,
+//   type: formData.type,
+//   situacao: formData.situacao ,
+//   estado: formData.estado,
+//   model: formData.model,
+//   description: formData.description,
+//   initialUseDate: formData.initialUseDate,
+//   acquisitionDate: formData.acquisitionDate,
+//   screenSize: formData.screenSize,
+//   invoiceNumber: formData.invoiceNumber,
+//   power: formData.power,
+//   screenType: formData.screenType,
+//   processor: formData.processor,
+//   storageType: formData.storageType,
+//   storageAmount: formData.storageAmount,
+//   brand: formData.brand,
+//   acquisition: formData.acquisition,
+//   unitId: formData.unitId,
+//   ram_size: formData.ram_size,
+// }

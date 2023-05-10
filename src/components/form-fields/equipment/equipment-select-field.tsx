@@ -8,6 +8,7 @@ type EquipmentSelectFieldProps<T> = {
   title: string;
   name: string;
   items: SelectItem<T>[];
+  defaultValue?: string;
   onChange: (tipo: T) => void;
 };
 
@@ -15,6 +16,7 @@ export default function EquipmentSelectField<T>({
   title,
   name,
   items,
+  defaultValue,
   onChange,
 }: EquipmentSelectFieldProps<T>) {
   return (
@@ -28,6 +30,7 @@ export default function EquipmentSelectField<T>({
       <Text>{title}</Text>
       <Select
         name={name}
+        defaultValue={defaultValue}
         onChange={(event) => onChange(event.target.value as unknown as T)}
       >
         {items.map((item) => (

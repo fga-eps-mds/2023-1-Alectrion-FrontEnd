@@ -1,18 +1,18 @@
 /* eslint-disable prettier/prettier */
 import { GridItem, GridItemProps, Input, Text } from '@chakra-ui/react';
 
-type EquipmentTextFieldProps = {
+type EquipmentDateFieldProps = {
   title: string;
   name: string;
-  defaultValue?: string | Date;
-} & GridItemProps;
+  defaultValue?: string;
+};
 
-export default function EquipmentTextField({
+export default function EquipmentDateField({
   title,
   name,
   defaultValue,
   ...props
-}: EquipmentTextFieldProps) {
+}: EquipmentDateFieldProps) {
   return (
     <GridItem
       w="100%"
@@ -22,7 +22,7 @@ export default function EquipmentTextField({
       {...props}
     >
       <Text>{title}</Text>
-      <Input name={name} defaultValue={defaultValue}/>
+      <Input name={name} defaultValue={defaultValue} type="date"/>
     </GridItem>
   );
 }
