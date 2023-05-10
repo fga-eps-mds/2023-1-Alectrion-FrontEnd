@@ -1,5 +1,6 @@
-import { Text } from '@chakra-ui/react';
-import moment from 'moment';
+
+import { Box, Flex, Text, Checkbox, Table, Tbody, Td, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+{/*import moment from 'moment';*/}
 
 type NumeroTermoProps = {
     numeroTermo : string;
@@ -42,7 +43,7 @@ export function DataProps({ dataProps }: DataProps) {
         height: "24px",
       }}
     >
-      <span style={{ whiteSpace: "nowrap" }}><strong>Data:</strong> {moment(dataProps).format("DD/MM/YYYY HH:mm:ss")}</span>
+      <span style={{ whiteSpace: "nowrap" }}><strong>Data:</strong> {/*moment(dataProps).format("DD/MM/YYYY HH:mm:ss")*/}</span>
     </div>
   );
 }
@@ -62,11 +63,33 @@ export function NumeroTermoProps({ numeroTermo }: NumeroTermoProps) {
       </div>
     );
 }
-export  function MovimentacaoTitle() {
+
+
+export function MovimentacaoTitle() {
   return (
-    <Text fontSize="40px" textColor="#212121" mb="33px">
-      Movimentação
-    </Text>
+    <Flex alignItems="center" justifyContent="space-between" mb="33px">
+      <Flex alignItems="center">
+        <Text fontSize="40px" textColor="#212121">
+          Movimentação
+        </Text>
+        <Box ml="30px">
+        <Checkbox size="md" colorScheme="orange" mr="10px" borderRadius="50%">
+          <Text fontSize="16px" color="#212121">
+            Baixa
+          </Text>
+        </Checkbox>
+        <Checkbox size="md" colorScheme="orange" mr="10px" borderRadius="50%">
+          <Text fontSize="16px" color="#212121">
+            Empréstimo
+          </Text>
+        </Checkbox>
+        <Checkbox size="md" colorScheme="orange" borderRadius="50%">
+          <Text fontSize="16px" color="#212121">
+            Responsabilidade
+          </Text>
+        </Checkbox>
+        </Box>
+      </Flex>
+    </Flex>
   );
-}   
-  
+}

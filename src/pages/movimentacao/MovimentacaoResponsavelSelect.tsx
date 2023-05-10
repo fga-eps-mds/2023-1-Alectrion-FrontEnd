@@ -15,8 +15,9 @@ export function AtribuicaoDropdown() {
         mt="5px"
         placeholder="Selecione uma opção"
         borderRadius="10px"
+        borderColor="#212121"
         bg="#FFFFFF"
-        color="#212121"
+        color="#C9C9C9"
         width="269px"
         height="35px"
         _hover={{ borderColor: "#F49320" }}
@@ -36,24 +37,8 @@ export function AtribuicaoDropdown() {
         paddingLeft="5px"
         color="#212121"
       >
-        <Input
-          border="none"
-          bg="#FFFFFF"
-          color="#C6C6C6"
-          placeholder="Delegado de Polícia"
-          _focus={{ outline: "none" }}
-        />
       </Flex>
-      <div
-        style={{
-          position: "absolute",
-          left: "915.93px",
-          top: "766px",
-          width: "15px",
-          height: "10px",
-        }}
-      >
-      </div>
+     
     </Flex>
   );
 }
@@ -67,17 +52,19 @@ export function ResponsavelTermo() {
       width="150px"
       height="55px"
       borderRadius="10px"
+      
       backgroundColor="#FFFFFF"
       boxShadow="lg"
       flexDirection="column"
     >
-      <span style={{ fontSize: "16px", color: "#212121", whiteSpace: "nowrap" }}>
+      <span style={{ fontSize: "16px", color: "#212121", whiteSpace: "nowrap" ,borderColor: "#212121"}}>
         Responsável pelo Termo de Responsabilidade
       </span>
       <Box
         mt="5px"
         width="450px"
         height="100px"
+        borderColor="#212121"
         borderRadius="10px"
         backgroundColor="#FFFFFF"
         boxShadow="lg"

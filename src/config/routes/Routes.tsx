@@ -10,8 +10,7 @@
  */
 import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
-import { DefaultLayout } from '@/components/layout/default-layout';
-/*import {Movimentacao} from '@/pages/movimentacao';*/
+
 
 import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';

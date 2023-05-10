@@ -15,8 +15,9 @@ export function PostoDeTrabalhoDropdown() {
           mt="5px"
           placeholder="Selecione uma opção"
           borderRadius="10px"
+          borderColor="#212121"
           bg="#FFFFFF"
-          color="#212121"
+          color="#C9C9C9"
           width="269px"
           height="35px"
           _hover={{ borderColor: "#F49320" }}
@@ -36,27 +37,8 @@ export function PostoDeTrabalhoDropdown() {
           paddingLeft="5px"
           color="#212121"
         >
-          <Input
-            border="none"
-            bg="#FFFFFF"
-            color="#C6C6C6"
-            placeholder="01° Delegacia de Policia"
-            _focus={{ outline: "none" }}
-          />
         </Flex>
-        <div
-          style={{
-            position: "absolute",
-            left: "68px",
-            top: "115px",
-            width: "15px",
-            height: "10px",
-          }}
-        >
-          <svg viewBox="0 0 10 10">
-            <polygon points="0,0 10,0 5,10" fill="#212121" />
-          </svg>
-        </div>
+          
       </Flex>
     );
 }
@@ -76,8 +58,9 @@ export function CidadeDropdown() {
           mt="5px"
           placeholder="Selecione uma opção"
           borderRadius="10px"
+          borderColor="#212121"
           bg="#FFFFFF"
-          color="#212121"
+          color="#C9C9C9"
           width="269px"
           height="35px"
           _hover={{ borderColor: "#F49320" }}
@@ -97,27 +80,9 @@ export function CidadeDropdown() {
           paddingLeft="5px"
           color="#212121"
         >
-          <Input
-            border="none"
-            bg="#FFFFFF"
-            color="#C6C6C6"
-            placeholder="Cidade"
-            _focus={{ outline: "none" }}
-          />
+        
         </Flex>
-        <div
-          style={{
-            position: "absolute",
-            left: "1461.93px",
-            top: "3340px",
-            width: "15px",
-            height: "10px",
-          }}
-        >
-          <svg viewBox="0 0 10 10">
-            <polygon points="0,0 10,0 5,10" fill="#212121" />
-          </svg>
-        </div>
+       
       </Flex>
     );
 }
@@ -137,8 +102,9 @@ export function TipoDeLotaçãoDropdown() {
           mt="5px"
           placeholder="Selecione uma opção"
           borderRadius="10px"
+          borderColor="#212121"
           bg="#FFFFFF"
-          color="#212121"
+          color="#C9C9C9"
           width="269px"
           height="35px"
           _hover={{ borderColor: "#F49320" }}
@@ -158,27 +124,8 @@ export function TipoDeLotaçãoDropdown() {
           paddingLeft="5px"
           color="#212121"
         >
-          <Input
-            border="none"
-            bg="#FFFFFF"
-            color="#C6C6C6"
-            placeholder="Tipo de Lotação"
-            _focus={{ outline: "none" }}
-          />
         </Flex>
-        <div
-          style={{
-            position: "absolute",
-            left: "1760.93px",
-            top: "3340px",
-            width: "15px",
-            height: "10px",
-          }}
-        >
-          <svg viewBox="0 0 10 10">
-            <polygon points="0,0 10,0 5,10" fill="#212121" />
-          </svg>
-        </div>
+       
       </Flex>
     );
 }
@@ -198,8 +145,9 @@ export function AtribuicaoDropdown2() {
           mt="5px"
           placeholder="Selecione uma opção"
           borderRadius="10px"
+          borderColor="#212121"
           bg="#FFFFFF"
-          color="#212121"
+          color="#C9C9C9"
           width="269px"
           height="35px"
           _hover={{ borderColor: "#F49320" }}
@@ -219,27 +167,9 @@ export function AtribuicaoDropdown2() {
           paddingLeft="5px"
           color="#212121"
         >
-          <Input
-            border="none"
-            bg="#FFFFFF"
-            color="#C6C6C6"
-            placeholder="Delegado de Polícia"
-            _focus={{ outline: "none" }}
-          />
+          
         </Flex>
-        <div
-          style={{
-            position: "absolute",
-            left: "1760.93px",
-            top: "3413px",
-            width: "15px",
-            height: "10px",
-          }}
-        >
-          <svg viewBox="0 0 10 10">
-            <polygon points="0,0 10,0 5,10" fill="#212121" />
-          </svg>
-        </div>
+
       </Flex>
     );
 }
@@ -253,6 +183,7 @@ export function ResponsavelTexto() {
       width="170px"
       height="55px"
       borderRadius="10px"
+      borderColor = '#212121'
       backgroundColor="#FFFFFF"
       boxShadow="lg"
       flexDirection="column"
@@ -262,6 +193,7 @@ export function ResponsavelTexto() {
         mt="5px"
         width="580px"
         height="100px"
+        borderColor = '#212121'
         borderRadius="10px"
         backgroundColor="#FFFFFF"
         boxShadow="lg"

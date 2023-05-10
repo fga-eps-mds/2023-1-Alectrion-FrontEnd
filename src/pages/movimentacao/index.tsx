@@ -6,7 +6,7 @@ import { TotalEquipamentosProps } from './MovimentacaoTitle';
 import { MovimentacaoTitle } from './MovimentacaoTitle';
 import { AtribuicaoDropdown, ResponsavelTermo } from './MovimentacaoResponsavelSelect';
 import {ResponsavelTexto,AtribuicaoDropdown2,TipoDeLotaçãoDropdown,CidadeDropdown,PostoDeTrabalhoDropdown} from './MovimentacaoDetalhes'
-
+import {MovimentacaoTable} from './MovimentacaoTable'
 
 export function MovimentacaoModal() {
   const numeroTermo = '010101';
@@ -27,6 +27,7 @@ export function MovimentacaoModal() {
         <TipoDeLotaçãoDropdown/>
         <AtribuicaoDropdown2/>
         <ResponsavelTexto/>
+        <MovimentacaoTable/>
     </Flex>
   );
 }
