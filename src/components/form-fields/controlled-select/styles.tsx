@@ -19,15 +19,16 @@ import {
 import React from 'react';
 
 export const chakraStyles: ChakraStylesConfig = {
+  control: (styles) => ({ ...styles, borderColor: '#212121' }),
   loadingIndicator: (provided, state) => ({
     ...provided,
     color: state.isDisabled ? 'gray.300' : 'primary',
   }),
   dropdownIndicator: (prev, { selectProps }) => ({
     ...prev,
-    color: selectProps.menuIsOpen ? 'white' : 'gray.800',
-    paddingInlineStart: 3,
-    paddingInlineEnd: 3,
+    color: selectProps.menuIsOpen ? 'white' : 'grey.300',
+    paddingInlineStart: 1,
+    paddingInlineEnd: 1,
     background: selectProps.menuIsOpen ? 'blackAlpha.600' : 'blackAlpha.50',
     '> svg': {
       transform: `rotate(${selectProps.menuIsOpen ? -180 : 0}deg)`,
@@ -35,11 +36,13 @@ export const chakraStyles: ChakraStylesConfig = {
       transition: 'transform 0.2s ease',
     },
   }),
+
   menu: (provided) => ({
     ...provided,
     border: 0,
     boxShadow: 'xl',
     backdropFilter: 'blur(8px)',
+    zIndex: 2,
   }),
   menuList: (provided) => ({
     ...provided,

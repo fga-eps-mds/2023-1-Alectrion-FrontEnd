@@ -10,12 +10,14 @@
 import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
 import { DefaultLayout } from '@/components/layout/default-layout';
+import { EquipRegister } from '@/pages/equipment-register';
 
 export function Router() {
   return (
     <Routes>
       {/* ROTAS PRIVADAS */}
       <Route path="/" element={<DefaultLayout />}>
+        <Route path="/equipment-register" element={<EquipRegister />} />
         {/* <Route
           index
           element={
