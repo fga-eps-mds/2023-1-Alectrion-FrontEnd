@@ -1,7 +1,4 @@
-import { Flex, Button } from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
-import { AddButton } from '../action-buttons/add-button';
-import { DeleteButton } from '../action-buttons/delete-button';
+import { Flex } from '@chakra-ui/react';
 import EquipmentForm from '../equipment-form';
 import { Modal } from '../modal';
 
@@ -28,7 +25,7 @@ export function EquipmentRegisterModal({
         flexDirection="column"
         gap="16px"
       >
-        <EquipmentForm />
+        <EquipmentForm onClose={onClose} />
       </Flex>
     </Modal>
   );

@@ -1,12 +1,20 @@
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
+import { useEffect } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
 import { ControlledSelect } from '../form-fields/controlled-select';
-import { ESTADOS_EQUIPAMENTO, TIPOS_EQUIPAMENTO } from '@/constants/equipment';
+
+import {
+  ESTADOS_EQUIPAMENTO,
+  TIPOS_ARMAZENAMENTO,
+  TIPOS_EQUIPAMENTO,
+  TIPOS_MONITOR,
+} from '@/constants/equipment';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { api } from '@/services/api';
+import { toast } from '@/utils/toast';
 
 type FormValues = {
   tippingNumber: string;
@@ -20,9 +28,9 @@ type FormValues = {
   screenSize?: string;
   invoiceNumber: string;
   power?: string;
-  screenType?: string;
+  screenType?: { value: string; label: string };
   processor?: string;
-  storageType?: string;
+  storageType?: { value: string; label: string };
   storageAmount?: string;
   brandName: string;
   acquisitionName: string;
@@ -31,13 +39,31 @@ type FormValues = {
   estado: { value: string; label: string };
 };
 
-export default function EquipmentForm() {
+interface EquipmentFormProps {
+  onClose: () => void;
+}
+
+export default function EquipmentForm({ onClose }: EquipmentFormProps) {
   const {
     control,
     register,
     handleSubmit,
+    watch,
+    resetField,
     formState: { errors },
   } = useForm<FormValues>();
+
+  const watchType = watch('type', { label: '', value: '' });
+
+  useEffect(() => {
+    resetField('power');
+    resetField('screenSize');
+    resetField('screenType');
+    resetField('ram_size');
+    resetField('processor');
+    resetField('storageType');
+    resetField('storageAmount');
+  }, [resetField, watchType]);
 
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
@@ -51,21 +77,28 @@ export default function EquipmentForm() {
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { type, estado, initialUseDate, ...rest } = formData;
+      const { type, estado, initialUseDate, storageType, screenType, ...rest } =
+        formData;
 
       const payload = {
         type: type.value,
         estado: estado.value,
         initialUseDate: initialUseDate.value,
+        storageType: storageType?.value,
+        screenType: screenType?.value,
         ...rest,
       };
 
-      const { data }: AxiosResponse<any> = await api.post(
-        'equipment/createEquipment',
-        payload
-      );
+      const response = await api.post('equipment/createEquipment', payload);
+
+      if (response.status === 200) {
+        toast.success('Equipamento cadastrado com sucesso', 'Sucesso');
+        onClose();
+        return;
+      }
+      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
     } catch {
-      console.log('error');
+      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
     }
   });
 
@@ -79,15 +112,14 @@ export default function EquipmentForm() {
           options={TIPOS_EQUIPAMENTO}
           placeholder="Selecione uma opção"
           label="Tipo de equipamento"
-          rules={{ required: 'Campo obrigatório' }}
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
-
         <Input
           label="Marca"
           errors={errors.brandName}
           {...register('brandName', {
             required: 'Campo Obrigatório',
-            maxLength: 20,
+            maxLength: 50,
           })}
         />
 
@@ -96,7 +128,7 @@ export default function EquipmentForm() {
           errors={errors.model}
           {...register('model', {
             required: 'Campo Obrigatório',
-            maxLength: 20,
+            maxLength: 50,
           })}
         />
 
@@ -105,7 +137,10 @@ export default function EquipmentForm() {
           errors={errors.tippingNumber}
           {...register('tippingNumber', {
             required: 'Campo Obrigatório',
-            maxLength: 20,
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
           })}
         />
 
@@ -114,7 +149,10 @@ export default function EquipmentForm() {
           errors={errors.serialNumber}
           {...register('serialNumber', {
             required: 'Campo Obrigatório',
-            maxLength: 20,
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
           })}
         />
 
@@ -123,7 +161,11 @@ export default function EquipmentForm() {
           errors={errors.invoiceNumber}
           {...register('invoiceNumber', {
             required: 'Campo Obrigatório',
-            maxLength: 20,
+            maxLength: 50,
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
           })}
         />
 
@@ -132,7 +174,7 @@ export default function EquipmentForm() {
           errors={errors.acquisitionName}
           {...register('acquisitionName', {
             required: 'Campo Obrigatório',
-            maxLength: 20,
+            maxLength: 50,
           })}
         />
 
@@ -143,7 +185,7 @@ export default function EquipmentForm() {
           options={ESTADOS_EQUIPAMENTO}
           placeholder="Selecione uma opção"
           label="Estado do equipamento"
-          rules={{ required: 'Campo obrigatório' }}
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 
         <ControlledSelect
@@ -153,7 +195,7 @@ export default function EquipmentForm() {
           options={listOfYears}
           placeholder="Selecione uma opção"
           label="Ano da aquisição"
-          rules={{ required: 'Campo obrigatório' }}
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 
         <Datepicker
@@ -162,21 +204,99 @@ export default function EquipmentForm() {
           required
           control={control}
         />
+        {watchType.value === 'CPU' && (
+          <>
+            <Input
+              label="Qtd. Memória RAM (GB)"
+              errors={errors.ram_size}
+              {...register('ram_size', {
+                required: 'Campo Obrigatório',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Por favor, digite apenas números.',
+                },
+              })}
+            />
+            <ControlledSelect
+              control={control}
+              name="storageType"
+              id="storageType"
+              options={TIPOS_ARMAZENAMENTO}
+              placeholder="Selecione uma opção"
+              label="Tipo de armazenamento"
+              rules={{ required: 'Campo obrigatório' }}
+            />
+            <Input
+              label="Qtd. Armazenamento (GB)"
+              errors={errors.storageAmount}
+              {...register('storageAmount', {
+                required: 'Campo Obrigatório',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Por favor, digite apenas números.',
+                },
+              })}
+            />
+            <Input
+              label="Processador"
+              errors={errors.processor}
+              {...register('processor', {
+                required: 'Campo Obrigatório',
+              })}
+            />
+          </>
+        )}
 
+        {watchType.value === 'Monitor' && (
+          <>
+            <ControlledSelect
+              control={control}
+              name="screenType"
+              id="screenType"
+              options={TIPOS_MONITOR}
+              placeholder="Selecione uma opção"
+              label="Tipo de monitor"
+              rules={{ required: 'Campo obrigatório' }}
+            />
+            <Input
+              label="Tamanho do Monitor"
+              errors={errors.storageAmount}
+              {...register('screenSize', {
+                required: 'Campo Obrigatório',
+              })}
+            />
+          </>
+        )}
+
+        {(watchType.value === 'Estabilizador' ||
+          watchType.value === 'Nobreak') && (
+          <Input
+            label="Potência (VA)"
+            errors={errors.storageAmount}
+            {...register('power', {
+              required: 'Campo Obrigatório',
+              pattern: {
+                value: /^[0-9]+$/,
+                message: 'Por favor, digite apenas números.',
+              },
+            })}
+          />
+        )}
         <GridItem gridColumn="1 / span 3">
           <TextArea
             label="Descrição"
             errors={errors.description}
             maxChars={255}
             {...register('description', {
-              required: 'Campo Obrigatório',
               maxLength: 255,
             })}
           />
         </GridItem>
       </Grid>
-      <Flex gap="4rem" mt="2rem" mb="1rem">
-        <Button variant="secondary">Cancelar</Button>
+      <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
+        <Button variant="secondary" onClick={onClose}>
+          Cancelar
+        </Button>
         <Button type="submit" form="equipment-register-form" variant="primary">
           Confirmar
         </Button>
