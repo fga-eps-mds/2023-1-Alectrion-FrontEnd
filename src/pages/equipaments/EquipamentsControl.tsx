@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @typescript-eslint/no-redeclare */
 /* eslint-disable import/export */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Select,
   Text,
@@ -20,105 +20,67 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { SideBar } from '@/components/side-bar';
+import { api } from '../../config/lib/axios';
+import { AxiosResponse } from 'axios';
+import { toast } from 'react-toastify'
+import { config } from '../../config/env';
 
-// Declaracao lista de equipamentos e equipamentos exemplo
-type Equipment = {
-  id: number;
+interface equipament {
+  tippingNumber: string;
+
+  serialNumber: string;
+
   type: string;
-  NumSerie: string;
-  NumTombamento: string;
-  DataMovimento: Date;
-};
-// pré-set dos equipamentos
-const equipmentList: Equipment[] = [
-  {
-    id: 1,
-    type: 'Monitor LG 22MK400H',
-    NumSerie: '123456789',
-    NumTombamento: 'ABC123456',
-    DataMovimento: new Date('2022-01-10'),
-  },
-  {
-    id: 2,
-    type: 'Estabilizador 16520',
-    NumSerie: '987654321',
-    NumTombamento: 'DEF654321',
-    DataMovimento: new Date('2022-01-15'),
-  },
-  {
-    id: 3,
-    type: 'Monitor Dell 1080p24',
-    NumSerie: '246810121',
-    NumTombamento: 'GHI789456',
-    DataMovimento: new Date('2022-01-20'),
-  },
-  {
-    id: 4,
-    type: 'Notebook Galaxy Book2',
-    NumSerie: '135792468',
-    NumTombamento: 'JKL123789',
-    DataMovimento: new Date('2022-01-25'),
-  },
-  {
-    id: 5,
-    type: 'Impressora Hp Ink 416',
-    NumSerie: '369121518',
-    NumTombamento: 'MNO456123',
-    DataMovimento: new Date('2022-01-30'),
-  },
-  {
-    id: 5,
-    type: 'Monitor Dell 1080p24',
-    NumSerie: '012345678',
-    NumTombamento: 'R42KXD546',
-    DataMovimento: new Date('2022-01-30'),
-  },
-  {
-    id: 6,
-    type: 'Teclado Sem Fio Logitech',
-    NumSerie: '124680246',
-    NumTombamento: 'R42KXD546',
-    DataMovimento: new Date('2022-02-05'),
-  },
-  {
-    id: 7,
-    type: 'Teclado Sem Fio Logitech',
-    NumSerie: '1246802468',
-    NumTombamento: 'VZX231SD6',
-    DataMovimento: new Date('2022-02-05'),
-  },
-  {
-    id: 8,
-    type: 'Mouse Óptico HP',
-    NumSerie: '999999999',
-    NumTombamento: 'ABC098765',
-    DataMovimento: new Date('2022-02-10'),
-  },
-  {
-    id: 9,
-    type: 'Notebook Lenovo Thinkpad',
-    NumSerie: '147258369',
-    NumTombamento: 'YUT321XYZ',
-    DataMovimento: new Date('2022-02-15'),
-  },
-  {
-    id: 10,
-    type: 'Monitor LG 4K UHD',
-    NumSerie: '222222222',
-    NumTombamento: 'FDS789REW',
-    DataMovimento: new Date('2022-02-20'),
-  },
-  {
-    id: 11,
-    type: 'Impressora Epson EcoTank',
-    NumSerie: '777777777',
-    NumTombamento: 'IOP456QWE',
-    DataMovimento: new Date('2022-02-25'),
-  },
-];
+
+  situacao: string;
+
+  estado: string;
+
+  model: string;
+
+  acquisitionDate: Date;
+
+  description?: string;
+
+  initialUseDate: Date;
+
+  screenSize?: string;
+
+  invoiceNumber: string;
+
+  power?: string;
+
+  screenType?: string;
+
+  processor?: string;
+
+  storageType?: string;
+
+  storageAmount?: string;
+
+  brand: {
+    name: string;
+  };
+
+  acquisition: any;
+
+  unit: {
+    name: string;
+    localization: string;
+  };
+
+  ram_size?: string;
+
+  createdAt?: string;
+
+  updatedAt: string;
+
+  id: string;
+}
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
+  const [equipaments, setEquipaments] = useState<equipament[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('');
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
@@ -135,11 +97,44 @@ function EquipmentTable() {
   };
   // verificar se o número de série do equipamento inclui
   // o termo de pesquisa inserido pelo usuário e se o tipo de equipamento corresponde ao tipo selecionado pelo usuário no menu suspenso
-  const filteredEquipment = equipmentList.filter(
-    (equipment) =>
-      equipment.NumSerie.includes(searchTerm) &&
-      (searchType === '' || equipment.type === searchType)
-  );
+  // const filteredEquipment = equipmentList.filter(
+  //   (equipment) =>
+  //     equipment.NumSerie.includes(searchTerm) &&
+  //     (searchType === '' || equipment.type === searchType)
+  // );
+
+  const getEquipaments = async () => {
+    try {
+      console.log("fazer requisição para:", config.url)
+      console.log("fazer requisição para: ", api.toString)
+      const queryParams = new URLSearchParams('')
+      // if (query) {
+        //   Object.entries(query).forEach((value) =>
+        //     queryParams.append(value[0], value[1])
+        //   )
+        // }
+      
+        const { data }: AxiosResponse<equipament[]> = await api.get(
+          'equipment/find',
+          {
+            params: queryParams
+          }
+          );
+          setEquipaments(data);
+         console.log("DADOS equipamentossssss", data)
+
+        } catch (error) {
+          setEquipaments([]);
+          toast.error('Nenhum Equipamento encontrado');
+    }
+  };
+  
+  useEffect(() => {
+    getEquipaments()
+  }, [])
+  
+
+
 
   return (
     <>
@@ -324,12 +319,12 @@ function EquipmentTable() {
                 </Tr>
               </Thead>
               <Tbody>
-                {filteredEquipment.map((equipment) => (
+              {equipaments.map((equipment) => (
                   <Tr key={equipment.id}>
                     <Td>{equipment.type}</Td>
-                    <Td>{equipment.NumTombamento}</Td>
-                    <Td>{equipment.NumSerie}</Td>
-                    <Td>{equipment.DataMovimento.toLocaleDateString()}</Td>
+                    <Td>{equipment.tippingNumber}</Td>
+                    <Td>{equipment.serialNumber}</Td>
+                    <Td>{equipment.updatedAt}</Td>
                   </Tr>
                 ))}
               </Tbody>
