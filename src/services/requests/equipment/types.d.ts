@@ -14,9 +14,9 @@ export interface CreateEquipmentPayload {
   processor?: string;
   storageType?: string;
   storageAmount?: string;
-  brandName: string;
-  acquisitionName: string;
-  unitId?: string;
+  brand: string;
+  acquisition: string;
+  unit?: string;
   ram_size?: string;
   estado: string;
 }

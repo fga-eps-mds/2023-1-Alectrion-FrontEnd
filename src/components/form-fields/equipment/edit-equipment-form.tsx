@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/no-useless-path-segments */
 
-import { useForm } from 'react-hook-form';
+import { useForm, registerOptions } from 'react-hook-form';
 import { useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { Button, Flex, Grid } from '@chakra-ui/react';
@@ -28,10 +28,11 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
     TIPOS_EQUIPAMENTO[0].value
   );
 
-  const { handleSubmit } = useForm<FormValues>();
+  const { handleSubmit, register } = useForm<FormValues>();
 
   const onSubmit = handleSubmit(async (formData: Equipment) => {
     console.log('entrei', formData)
+    console.log(formData.screenSize)
     try {
 
     // const payload = {
@@ -41,9 +42,9 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
     //   ...rest,
     // };
 
-      const { data }: AxiosResponse<any> = await api.put('equipment/updateEquipment',formData);
+      const response: AxiosResponse<any> = await api.put('equipment/updateEquipment',formData);
       } catch (error) {
-          console.log(`erro: ${error}`);
+          console.log(`aqui erro: ${error}`);
       }
   })
 
@@ -62,8 +63,12 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
 
         <EquipmentTextField
           title="N° Tombamento"
-          name="numero-tombamento"
+          id="tippingNumber"
           defaultValue={props?.equip.tippingNumber}
+          {...register('tippingNumber', {
+            required: 'Campo Obrigatório',
+            maxLength: 20,
+          })}
         />
         <EquipmentTextField title="N° Série" name="numero-serie" defaultValue={props?.equip.serialNumber}/>
         <EquipmentTextField
@@ -132,7 +137,8 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
             />
             <EquipmentTextField
               title="Tamanho do Monitor"
-              name="tamanho-monitor"
+              name="screenSize"
+              id="screenSize"
               defaultValue={props?.equip.screenSize}
             />
           </>
@@ -152,12 +158,6 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
     </form>
   );
 }
-
-
-
-
-
-
 
 // {
 //   tippingNumber: formData.tippingNumber,
