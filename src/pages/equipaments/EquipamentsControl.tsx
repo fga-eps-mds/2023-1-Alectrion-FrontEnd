@@ -20,12 +20,13 @@ import {
   Center,
   Divider,
   Box,
+  useDisclosure
 } from '@chakra-ui/react';
 import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
-import { config } from '../../config/env';
+import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 
 interface equipament {
   tippingNumber: string;
@@ -93,6 +94,8 @@ function EquipmentTable() {
   const [offset, setOffset] = useState(0);
   const limit = 10;
 
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
   const handleSearchTermChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -143,6 +146,7 @@ function EquipmentTable() {
     fetchNextItems();
   }, [currentPage]);
 
+  
   return (
     <>
       <SideBar />
@@ -154,7 +158,7 @@ function EquipmentTable() {
           Últimos Equipamentos Modificados
         </Text>
         <Box paddingX="550" mb="-5">
-          <Button colorScheme="#F49320">Cadastrar Equipamento</Button>
+          <Button colorScheme="#F49320" onClick={onOpen}>Cadastrar Equipamento</Button>
         </Box>
       </Box>
       <Box paddingLeft="300">
@@ -389,6 +393,7 @@ function EquipmentTable() {
           </Center>
         </Box>
       </Center>
+      <EquipmentRegisterModal onClose={onClose} isOpen={isOpen} />
     </>
   );
 }
