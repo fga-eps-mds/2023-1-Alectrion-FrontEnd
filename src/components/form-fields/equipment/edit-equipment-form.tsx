@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/no-useless-path-segments */
 
-import { useForm, registerOptions } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { Button, Flex, Grid } from '@chakra-ui/react';
@@ -28,21 +28,15 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
     TIPOS_EQUIPAMENTO[0].value
   );
 
-  const { handleSubmit, register } = useForm<FormValues>();
+  const { control, handleSubmit, register } = useForm<FormValues>({
+    defaultValues: props?.equip,
+  });
 
   const onSubmit = handleSubmit(async (formData: Equipment) => {
-    console.log('entrei', formData)
-    console.log(formData.screenSize)
+    console.log(formData)
     try {
-
-    // const payload = {
-    //   type: type.value,
-    //   estado: estado.value,
-    //   initialUseDate: initialUseDate.value,
-    //   ...rest,
-    // };
-
       const response: AxiosResponse<any> = await api.put('equipment/updateEquipment',formData);
+
       } catch (error) {
           console.log(`aqui erro: ${error}`);
       }
@@ -51,134 +45,241 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        <EquipmentSelectField<TipoEquipamento>
-          title="Tipo de Equipamento"
-          name="tipo-equipamento"
-          onChange={setTipoEquipamento}
-          items={TIPOS_EQUIPAMENTO}
-          defaultValue={props?.equip.type}
+        
+        <Controller
+          name="type"
+          control={control}
+          render={({field}) => (
+            <EquipmentSelectField<TipoEquipamento>
+            title="Tipo de Equipamento"
+            items={TIPOS_EQUIPAMENTO}
+            defaultValue={props?.equip.type}
+            {...field}
+          />
+          )}
         />
-        <EquipmentTextField title="Marca" name="marca" defaultValue={props?.equip.brand}/>
-        <EquipmentTextField title="Modelo" name="modelo" defaultValue={props?.equip.model}/>
-
-        <EquipmentTextField
-          title="N° Tombamento"
-          id="tippingNumber"
-          defaultValue={props?.equip.tippingNumber}
-          {...register('tippingNumber', {
-            required: 'Campo Obrigatório',
-            maxLength: 20,
-          })}
+        
+        <Controller
+          name="brandName"
+          control={control}
+          render={({ field }) => (
+            <EquipmentTextField
+              defaultValue={props?.equip.brandName}
+              title="Marca"
+              {...field}
+            />
+          )}
         />
-        <EquipmentTextField title="N° Série" name="numero-serie" defaultValue={props?.equip.serialNumber}/>
-        <EquipmentTextField
-          title="Tipo de aquisição"
-          name="tipo-aquisicao"
-          defaultValue={props?.equip.acquisition}
-        />
-
-        <EquipmentSelectField
-          title="Estado do equipamento"
-          name="estado-equipamento"
-          items={ESTADOS_EQUIPAMENTO}
-          defaultValue={props?.equip.estado}
-          onChange={() => {}}
-        />
-        <EquipmentTextField
-          title="Ano do equipamento"
-          name="ano-equipamento"
-          defaultValue={props?.equip.initialUseDate}
-        />
-        <EquipmentDateField
-          title="Data de aquisição"
-          name="data-aquisicao"
-          defaultValue={props?.equip.acquisitionDate}
+        
+        <Controller
+          name="model"
+          control={control}
+          render={({ field }) => (
+            <EquipmentTextField
+              defaultValue={props?.equip.model}
+              title="Modelo"
+              {...field}
+            />
+          )}
         />
 
-        <EquipmentTextField
-          title="Detalhes"
-          name="data-aquisicao"
-          colSpan={3}
-          rowSpan={2}
-          defaultValue={props?.equip.description}
+        <Controller
+          name="tippingNumber"
+          control={control}
+          render={({ field }) => (
+            <EquipmentTextField
+              defaultValue={props?.equip.tippingNumber}
+              title="Nº de tombamento"
+              {...field}
+            />
+          )}
+        />
+        
+        <Controller
+          name="acquisitionName"
+          control={control}
+          render={({ field }) => (
+            <EquipmentTextField
+              defaultValue={props?.equip.acquisitionName}
+              title="Tipo de aquisição"
+              {...field}
+            />
+          )}
         />
 
+        <Controller
+          name="serialNumber"
+          control={control}
+          render={({ field }) => (
+            <EquipmentTextField
+              defaultValue={props?.equip.serialNumber}
+              title="Nº de série"
+              {...field}
+            />
+          )}
+        />
+
+        <Controller
+          name="estado"
+          control={control}
+          render={({ field }) => (
+            <EquipmentSelectField
+            title="Estado do equipamento"
+            items={ESTADOS_EQUIPAMENTO}
+            defaultValue={props?.equip.estado}
+            {...field}
+          />
+          )}
+        />
+        
+        <Controller
+          name="initialUseDate"
+          control={control}
+          render={({ field }) => (
+            <EquipmentTextField
+              defaultValue={props?.equip.initialUseDate}
+              title="Ano de equipamento"
+              {...field}
+            />
+          )}
+        />
+        
+        <Controller
+          name = "acquisitionDate"
+          control={control}
+          render={({ field }) => (
+            <EquipmentDateField
+              defaultValue={props?.equip.acquisitionDate}
+              title="Data de aquisição"
+              {...field}
+            />
+          )}
+        />
+     
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <EquipmentTextField
+            title="Detalhes"
+            colSpan={3}
+            rowSpan={2}
+            defaultValue={props?.equip.description}
+            {...field}
+            />
+          )}
+        />
+        
         {tipoEquipamento === 'CPU' && (
           <>
-            <EquipmentTextField title="Qtd. Memória RAM" name="ram" defaultValue={props?.equip.ram_size}/>
-            <EquipmentTextField
-              title="Qtd. Armazenamento"
-              name="qtd-armazenamento"
-              defaultValue={props?.equip.storageAmount}
+            <Controller
+              name="ram_size"
+              control={control}
+              render={({ field }) => (
+                <EquipmentTextField
+                defaultValue={props?.equip.ram_size}
+                title="Qtd. Memória RAM"
+                {...field}
+                />
+              )}
             />
-            <EquipmentSelectField<TipoArmazenamento>
-              title="Tipo de Armazenamento"
-              name="tipo-armazenamento"
-              items={TIPOS_ARMAZENAMENTO}
-              onChange={() => {}}
-              defaultValue={props?.equip.storageType}
+            
+            <Controller
+              name="storageAmount"
+              control={control}
+              render={({ field }) => (
+                <EquipmentTextField
+                defaultValue={props?.equip.storageAmount}
+                title="Qtd. Armazenamento"
+                {...field}
+                />
+              )}
             />
-            <EquipmentTextField
-              title="Processador"
-              name="processador"
-              defaultValue={props?.equip.processor}
+
+            <Controller
+              name="storageType"
+              control={control}
+              render={({ field }) => (
+                <EquipmentSelectField<TipoArmazenamento>
+                defaultValue={props?.equip.storageType}
+                title="Tipo de Armazenamento"
+                items={TIPOS_ARMAZENAMENTO}
+                {...field}
+                />
+              )}
+            />
+
+            <Controller
+              name="processor"
+              control={control}
+              render={({ field }) => (
+                <EquipmentTextField
+                  title="Processador"
+                  defaultValue={props?.equip.processor}
+                  {...field}
+                />
+              )}
             />
           </>
         )}
 
         {tipoEquipamento === 'Monitor' && (
           <>
-            <EquipmentSelectField<TipoMonitor>
-              title="Tipo de Monitor"
-              name="tipo-monitor"
-              items={TIPOS_MONITOR}
-              onChange={() => {}}
-              defaultValue={props?.equip.screenType}
+            <Controller
+              name="screenType"
+              control={control}
+              render={({ field }) => (
+                <EquipmentSelectField<TipoMonitor>
+                  title="Tipo de Monitor"
+                  items={TIPOS_MONITOR}
+                  defaultValue={props?.equip.screenType}
+                  {...field}
+                />
+              )}
             />
-            <EquipmentTextField
-              title="Tamanho do Monitor"
+
+            <Controller
               name="screenSize"
-              id="screenSize"
-              defaultValue={props?.equip.screenSize}
+              control={control}
+              render={({ field }) => (
+                <EquipmentTextField
+                  title="Tamanho do Monitor"
+                  id="screenSize"
+                  defaultValue={props?.equip.screenSize}
+                  {...field}
+                />
+              )}
             />
+            
           </>
         )}
 
         {(tipoEquipamento === 'Estabilizador' ||
           tipoEquipamento === 'Nobreak') && (
-          <EquipmentTextField title="Potência" name="potencia" defaultValue={props?.equip.power} />
+
+          <Controller
+            name="power"
+            control={control}
+            render={({ field }) => (
+            <EquipmentTextField
+            title="power"
+            defaultValue={props?.equip.power}
+            {...field}
+            />
+            )}
+          />
         )}
+        
       </Grid>
-      <Flex gap="4rem" mt="2rem" mb="1rem">
+
+      <Flex gap="4rem" mt="2rem" mb="1rem" justifyContent="space-around">
         <Button variant="secondary">Cancelar</Button>
         <Button type="submit" form="equipment-register-form" variant="primary">
           Confirmar
         </Button>
       </Flex>
+      
     </form>
   );
 }
 
-// {
-//   tippingNumber: formData.tippingNumber,
-//   id: formData.id,
-//   serialNumber: formData.serialNumber,
-//   type: formData.type,
-//   situacao: formData.situacao ,
-//   estado: formData.estado,
-//   model: formData.model,
-//   description: formData.description,
-//   initialUseDate: formData.initialUseDate,
-//   acquisitionDate: formData.acquisitionDate,
-//   screenSize: formData.screenSize,
-//   invoiceNumber: formData.invoiceNumber,
-//   power: formData.power,
-//   screenType: formData.screenType,
-//   processor: formData.processor,
-//   storageType: formData.storageType,
-//   storageAmount: formData.storageAmount,
-//   brand: formData.brand,
-//   acquisition: formData.acquisition,
-//   unitId: formData.unitId,
-//   ram_size: formData.ram_size,
-// }

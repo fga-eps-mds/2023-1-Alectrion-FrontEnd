@@ -31,13 +31,14 @@ export function EquipmentTitle({ id }: EquipmentTitleProps) {
 }
 
 export type Equipment = {
-  tippingNumber: string
   id: string
   serialNumber: string
   type: string
   situacao: string
   estado: string
   model: string
+  brandName: string
+  acquisitionName: string
   description?: string
   initialUseDate: string
   acquisitionDate: string
@@ -48,21 +49,19 @@ export type Equipment = {
   processor?: string
   storageType?: string
   storageAmount?: string
-  brand: string
-  acquisition: string
-  unitId: string
   ram_size?: string
+  tippingNumber: string
 }
 
 export default function EditEquipmentModal() {
 
-  const equip:Equipment = {
+  const equip: Equipment = {
     tippingNumber: "teste123",
-    id: "19b9b9dc-7e8b-49fd-b0df-b8dd05cfce40",
+    id: "b4809047-638e-4001-830d-b538ea1f01a4",
     serialNumber: "teste123",
     type: "Monitor",
-    situacao: "teste123",
-    estado: "USADO",
+    situacao: "Ativo",
+    estado: "Novo",
     model: "teste123",
     description: "teste123",
     initialUseDate: "teste123",
@@ -70,33 +69,31 @@ export default function EditEquipmentModal() {
     screenSize: "teste123",
     invoiceNumber: "teste123",
     power: "teste123",
-    screenType: "teste123",
+    screenType: "LED",
     processor: "teste123",
     storageType: "SSD",
     storageAmount: "teste123",
-    brand: "teste123",
-    acquisition: "teste123",
-    unitId: "teste123",
+    brandName: "teste123",
+    acquisitionName: "teste123",
     ram_size: "teste123",
   }
 
   return (
     <Modal isOpen onClose={() => {}} size="4xl">
       <ModalOverlay />
+
       <ModalContent>
+
         <ModalHeader>
           <EquipmentTitle id={equip.id}/>
         </ModalHeader>
+
         <ModalCloseButton as="a" href="/" />
+
         <ModalBody>
           <EditEquipmentForm equip={equip}/>
         </ModalBody>
 
-        <ModalFooter justifyContent="center">
-          <BackButton />
-          <ConfirmEditButton />
-
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );
