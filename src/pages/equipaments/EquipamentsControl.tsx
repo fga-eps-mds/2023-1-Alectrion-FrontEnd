@@ -27,6 +27,7 @@ import { toast } from 'react-toastify';
 import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
+import { EquipmentViewModal } from '@/components/equipment-view-modal';
 
 interface equipament {
   tippingNumber: string;
@@ -80,6 +81,7 @@ interface equipament {
 
   id: string;
 }
+const { isOpen, onClose, onOpen } = useDisclosure();
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
@@ -160,6 +162,9 @@ function EquipmentTable() {
           <Button colorScheme="#F49320" onClick={onOpen}>
             Cadastrar Equipamento
           </Button>
+        </Box>
+        <Box paddingX="550" mb="-5">
+          <Button colorScheme="#F49320" onClick={onOpen}>Detalhes do Equipamento</Button>
         </Box>
       </Box>
       <Box paddingLeft="300">
@@ -403,6 +408,7 @@ function EquipmentTable() {
         </Box>
       </Center>
       <EquipmentRegisterModal onClose={onClose} isOpen={isOpen} />
+      <EquipmentViewModal onClose={onClose} isOpen={isOpen} />
     </>
   );
 }
