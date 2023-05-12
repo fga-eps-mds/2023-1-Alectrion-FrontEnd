@@ -7,7 +7,7 @@ import fallback from 'express-history-api-fallback';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const port = import.meta.env?.PORT ? import.meta.env.PORT : 3000;
+const port = process.env?.PORT ? process.env.PORT : 3000;
 const app = express();
 
 const staticFilesRegex = /\.(?:jpg|jpeg|gif|png|mp3|js|css|ttf|woff2)/;
