@@ -2,9 +2,9 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @typescript-eslint/no-redeclare */
 /* eslint-disable import/export */
-import { useState, useEffect } from 'react';
-import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
-import { MdBuild, MdCall } from 'react-icons/md';
+import { useState, useEffect, SetStateAction } from 'react';
+import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons'
+import { MdBuild , MdCall } from "react-icons/md"
 import {
   Select,
   Text,
@@ -81,7 +81,7 @@ interface equipament {
 
   id: string;
 }
-const { isOpen, onClose, onOpen } = useDisclosure();
+
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
@@ -96,8 +96,17 @@ function EquipmentTable() {
   const [offset, setOffset] = useState(0);
   const limit = 10;
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
 
+  const { isOpen: isRegisterOpen, onClose: onRegisterClose, onOpen: onRegisterOpen } = useDisclosure();
+  const { isOpen: isViewOpen, onClose: onViewClose, onOpen: onViewOpen } = useDisclosure();
+
+  const handleView = (equipmentId: string) => {
+    if(equipmentId)
+      setSelectedEquipmentId(equipmentId);
+    onViewOpen();
+  };
+  
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
   const handleSearchTermChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -153,7 +162,7 @@ function EquipmentTable() {
       <SideBar />
       <Box paddingY="10" paddingX="300">
         <Text mb="10px" color="#000000" fontWeight="semibold" fontSize="4xl">
-          Controle de Equipamento
+          Controle de Equipamento {nextEquipaments.length}
         </Text>
         <Text color="#00000" fontWeight="medium" fontSize="2xl">
           Últimos Equipamentos Modificados
@@ -407,8 +416,8 @@ function EquipmentTable() {
           </Center>
         </Box>
       </Center>
-      <EquipmentRegisterModal onClose={onClose} isOpen={isOpen} />
-      <EquipmentViewModal onClose={onClose} isOpen={isOpen} />
+      <EquipmentRegisterModal onClose={onRegisterClose} isOpen={isRegisterOpen} />
+      <EquipmentViewModal onClose={onViewClose} selectedEquipmentId={selectedEquipmentId} isOpen={isViewOpen}/>
     </>
   );
 }
