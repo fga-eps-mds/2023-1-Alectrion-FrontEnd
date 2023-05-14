@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @typescript-eslint/no-redeclare */
@@ -122,6 +123,7 @@ function EquipmentTable() {
         `equipment/find?take=${limit}&skip=${offset}`
       );
       setEquipaments(data);
+      setFilteredEquipaments(data);
     } catch (error) {
       setEquipaments([]);
       toast.error('Nenhum Equipamento encontrado');
@@ -146,7 +148,21 @@ function EquipmentTable() {
     fetchNextItems();
   }, [currentPage]);
 
-  
+  const [filteredEquipaments, setFilteredEquipaments] = useState<equipament[]>([]);
+
+  useEffect(() => {
+    const filtered = equipaments.filter((equipment) =>
+      (equipment.tippingNumber.startsWith(searchTerm) &&
+      (searchType === '' || equipment.type === searchType))
+      || (equipment.serialNumber.startsWith(searchTerm) &&
+      (searchType === '' || equipment.type === searchType))
+      || (equipment.type.toLowerCase().startsWith(searchTerm.toLowerCase()) &&
+      (searchType === '' || equipment.type.toLowerCase() === searchType.toLowerCase()))
+      
+    );
+    setFilteredEquipaments(filtered);
+  }, [equipaments, searchTerm, searchType]);
+
   return (
     <>
       <SideBar />
@@ -338,7 +354,7 @@ function EquipmentTable() {
                 </Tr>
               </Thead>
               <Tbody fontWeight="semibold">
-                {equipaments.map((equipment) => (
+                {filteredEquipaments.map((equipment) => (
                   <Tr key={equipment.id}>
                     <Td fontWeight="medium">{equipment.situacao} - {equipment.unit.name}
                       <Td p={0} fontWeight="semibold">{equipment.type} {equipment.brand.name}</Td>
