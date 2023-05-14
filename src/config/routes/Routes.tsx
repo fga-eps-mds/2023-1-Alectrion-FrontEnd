@@ -16,6 +16,7 @@ import { EquipRegister } from '@/pages/equipment-register';
 import { EquipmentTable }from '@/pages/equipaments/EquipamentsControl';
 import { MovementsTable } from '@/pages/movements/MovementControl';
 import ModalEditEquipment from '@/pages/edit-equipament';
+import { EquipEdit } from '@/pages/equipment-edit';
 
 export function Router() {
   return (
@@ -46,7 +47,7 @@ export function Router() {
       <Route path="/equipaments" element={<EquipmentTable />} />
       <Route path="/movements" element={<MovementsTable />} />
       <Route path="*" element={<p>404</p>} />
-      <Route path="/edit-equipment" element={<ModalEditEquipment/>} />
+      <Route path="/equipment-edit" element={<EquipEdit/>} />
       
     </Routes>
   );

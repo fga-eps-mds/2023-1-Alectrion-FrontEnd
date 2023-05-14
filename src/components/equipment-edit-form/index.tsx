@@ -79,7 +79,7 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
 
       const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
       const dateString = formatDate(acquisitionDate);
-      
+
       const payload = {
         type: type.value,
         estado: estado.value,
@@ -89,18 +89,17 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
         acquisitionDate: dateString,
         ...rest,
       };
-      console.log(payload);
-      
+
       const response = await api.put('equipment/updateEquipment', payload);
 
       if (response.status === 200) {
-        toast.success('Equipamento cadastrado com sucesso', 'Sucesso');
+        toast.success('Equipamento editado com sucesso', 'Sucesso');
         onClose();
         return;
       }
-      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+      toast.error('Erro ao tentar editar o equipamento', 'Erro');
     } catch {
-      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+      toast.error('Erro ao tentar editar o equipamento', 'Erro');
     }
   });
 

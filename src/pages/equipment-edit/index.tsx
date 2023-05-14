@@ -6,7 +6,7 @@ export function EquipEdit() {
 
 
 const equip = {
-  id: "b4809047-638e-4001-830d-b538ea1f01a4",
+  id: "3f5c98eb-dda8-4d72-9978-8fa6594611e2",
 
   tippingNumber: "123456",
   serialNumber: "654123",
