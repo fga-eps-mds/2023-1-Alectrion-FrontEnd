@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    networks:
+      - alectrion-network
+    ports:
+      - 3000:3000
+    command: sh -c "yarn && yarn build && yarn start"
+
+networks:
+  alectrion-network:
+    external: true

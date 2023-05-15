@@ -1,0 +1,26 @@
+/* 
+    Este código foi adaptado do repositório "2022-2-schedula-front":https://github.com/fga-eps-mds/2022-2-schedula-front/
+
+    Agradecemos aos contribuidores desse projeto por fornecer um ponto de partida útil para nossa 
+    implementação.
+
+    Aqui, fizemos modificações no código original para se adequar ao nosso caso específico de uso.
+    Quaisquer erros ou bugs nesta implementação são de nossa responsabilidade.
+ */
+type SignInCredentials = {
+  username: string;
+  password: string;
+};
+
+type SignedUser = {
+  id: string;
+  name: string;
+  token: string;
+  email: string;
+  profile: 'ADMIN' | 'BASIC' | 'USER';
+  // permissions: Array<string>;
+};
+
+type AuthResponse = {
+  token: string;
+};

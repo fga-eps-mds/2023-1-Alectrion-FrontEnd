@@ -1,0 +1,36 @@
+name: Análise de Código
+on: [push]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 
+
+      - name: Instala dependências
+        run: yarn
+
+      - name: Executa linter
+        run: yarn lint
+
+      - name: Executa testes e gera cobertura
+        run: yarn coverage
+
+      - name: Executa SonarCloud Scan
+        if: ${{ always() }}
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+
+      - name: Envia cobertura para o Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          flags: jest
+          name: 2023-1-Alectrion-FrontEnd
+          verbose: true
