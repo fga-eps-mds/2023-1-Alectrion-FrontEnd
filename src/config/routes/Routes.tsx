@@ -11,7 +11,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
 import { DefaultLayout } from '@/components/layout/default-layout';
 import { EquipRegister } from '@/pages/equipment-register';
-import { EquipmentTable }from '@/pages/equipaments/EquipamentsControl';
+import { EquipmentTable } from '@/pages/equipaments/EquipamentsControl';
 
 export function Router() {
   return (

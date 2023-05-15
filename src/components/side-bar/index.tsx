@@ -40,11 +40,12 @@ export const SideBar = memo(() => {
     signOut();
   }
 
-  let options=[
+  const options = [
     { name: 'Controle de Equipamento' },
     { name: 'Controle Ordem Serviço' },
     { name: 'Movimentações' },
-    { name: 'Relatórios' }]
+    { name: 'Relatórios' },
+  ];
 
   return (
     <Box

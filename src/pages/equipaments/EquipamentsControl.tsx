@@ -3,8 +3,8 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 /* eslint-disable import/export */
 import { useState, useEffect } from 'react';
-import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons'
-import { MdBuild , MdCall } from "react-icons/md"
+import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
+import { MdBuild, MdCall } from 'react-icons/md';
 import {
   Select,
   Text,
@@ -20,12 +20,12 @@ import {
   Center,
   Divider,
   Box,
-  useDisclosure
+  useDisclosure,
 } from '@chakra-ui/react';
-import { SideBar } from '@/components/side-bar';
-import { api } from '../../config/lib/axios';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { SideBar } from '@/components/side-bar';
+import { api } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 
 interface equipament {
@@ -131,7 +131,7 @@ function EquipmentTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<equipament[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset+limit}`
+        `equipment/find?take=${limit}&skip=${offset + limit}`
       );
       setNextEquipaments(data);
     } catch (error) {
@@ -141,12 +141,11 @@ function EquipmentTable() {
   };
 
   useEffect(() => {
-    
     fetchItems();
     fetchNextItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
-  
   return (
     <>
       <SideBar />
@@ -158,7 +157,9 @@ function EquipmentTable() {
           Últimos Equipamentos Modificados
         </Text>
         <Box paddingX="550" mb="-5">
-          <Button colorScheme="#F49320" onClick={onOpen}>Cadastrar Equipamento</Button>
+          <Button colorScheme="#F49320" onClick={onOpen}>
+            Cadastrar Equipamento
+          </Button>
         </Box>
       </Box>
       <Box paddingLeft="300">
@@ -302,24 +303,23 @@ function EquipmentTable() {
         </Box>
       </Box>
       <Center>
-        <Box width="68%" bg="white" paddingLeft={100} h='500px'>
-          <TableContainer 
+        <Box width="68%" bg="white" paddingLeft={100} h="500px">
+          <TableContainer
             borderRadius="md"
             minW="68%"
-            style={{ height: '500px', overflowY: 'auto'}}
+            style={{ height: '500px', overflowY: 'auto' }}
             css={{
-              '&::-webkit-scrollbar':{
-                width: '8px'
+              '&::-webkit-scrollbar': {
+                width: '8px',
               },
-              '&::-webkit-scrollbar-track':{
+              '&::-webkit-scrollbar-track': {
                 width: '6px',
-                background: "#C6C6C6",
+                background: '#C6C6C6',
               },
-              '&::-webkit-scrollbar-thumb':{
-                background: "#F49320",
+              '&::-webkit-scrollbar-thumb': {
+                background: '#F49320',
                 borderRadius: '24px',
               },
-
             }}
           >
             <Table
@@ -327,11 +327,11 @@ function EquipmentTable() {
               border="1px"
               borderColor="#F49320"
               colorScheme="orange"
-              size='sm'
+              size="sm"
             >
-              <Thead bg="#F49320" fontWeight="semibold" h='14'>
+              <Thead bg="#F49320" fontWeight="semibold" h="14">
                 <Tr>
-                  <Td color="white" >Equipamento</Td>
+                  <Td color="white">Equipamento</Td>
                   <Td color="white">N Tombamento</Td>
                   <Td color="white">N Série</Td>
                   <Td color="white">Última Modificação</Td>
@@ -340,12 +340,17 @@ function EquipmentTable() {
               <Tbody fontWeight="semibold">
                 {equipaments.map((equipment) => (
                   <Tr key={equipment.id}>
-                    <Td fontWeight="medium">{equipment.situacao} - {equipment.unit.name}
-                      <Td p={0} fontWeight="semibold">{equipment.type} {equipment.brand.name}</Td>
+                    <Td fontWeight="medium">
+                      {equipment.situacao} - {equipment.unit.name}
+                      <Td p={0} fontWeight="semibold">
+                        {equipment.type} {equipment.brand.name}
+                      </Td>
                     </Td>
                     <Td>{equipment.tippingNumber}</Td>
                     <Td>{equipment.serialNumber}</Td>
-                    <Td>{new Date(equipment.updatedAt).toLocaleDateString()}</Td>
+                    <Td>
+                      {new Date(equipment.updatedAt).toLocaleDateString()}
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>
@@ -364,32 +369,36 @@ function EquipmentTable() {
             Movimentar
           </Box>
           <Center>
-          {currentPage > 1 && (
-            <Button 
-              variant='link' color="#00000"
-              p={2}
-              leftIcon={<ArrowLeftIcon/>}
-              _hover={{ cursor: 'pointer', color: 'orange.500' }}
-              onClick={() => {
-                setCurrentPage(currentPage - 1);
-                setOffset(offset - limit);
-              }}
-            >
-              Anterior
-            </Button>
-          )}
-          {nextEquipaments.length > 0 && <Button
-            variant='link' color="#00000"
-            p={2}
-            rightIcon={<ArrowRightIcon/>}
-            _hover={{ cursor: 'pointer', color: 'orange.500' }}
-            onClick={() => {
-              setCurrentPage(currentPage + 1);
-              setOffset(offset + limit);
-            }}
-          >
-            Próximo
-          </Button>}
+            {currentPage > 1 && (
+              <Button
+                variant="link"
+                color="#00000"
+                p={2}
+                leftIcon={<ArrowLeftIcon />}
+                _hover={{ cursor: 'pointer', color: 'orange.500' }}
+                onClick={() => {
+                  setCurrentPage(currentPage - 1);
+                  setOffset(offset - limit);
+                }}
+              >
+                Anterior
+              </Button>
+            )}
+            {nextEquipaments.length > 0 && (
+              <Button
+                variant="link"
+                color="#00000"
+                p={2}
+                rightIcon={<ArrowRightIcon />}
+                _hover={{ cursor: 'pointer', color: 'orange.500' }}
+                onClick={() => {
+                  setCurrentPage(currentPage + 1);
+                  setOffset(offset + limit);
+                }}
+              >
+                Próximo
+              </Button>
+            )}
           </Center>
         </Box>
       </Center>
