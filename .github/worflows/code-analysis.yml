@@ -1,9 +1,5 @@
-name: CodeAnalysis
-on:
-  pull_request:
-    branches:
-      - main
-      - dev
+name: Análise de Código
+on: [push]
 
 jobs:
   sonarcloud:
@@ -13,15 +9,28 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0 
-      - name: Install dependencies
+
+      - name: Instala dependências
         run: yarn
-      - name: Build
-        run: yarn build
-      - name: Test and coverage
-        run: yarn test
-      - name: SonarCloud Scan
+
+      - name: Executa linter
+        run: yarn lint
+
+      - name: Executa testes e gera cobertura
+        run: yarn coverage
+
+      - name: Executa SonarCloud Scan
         if: ${{ always() }}
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{secrets.GIT_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+
+      - name: Envia cobertura para o Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          flags: jest
+          name: 2023-1-Alectrion-FrontEnd
+          verbose: true
