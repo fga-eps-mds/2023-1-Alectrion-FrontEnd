@@ -150,7 +150,6 @@ function EquipmentTable() {
       toast.error('Nenhum Equipamento encontrado');
     }
   };
-
   useEffect(() => {
     fetchItems();
     fetchNextItems();
@@ -162,7 +161,7 @@ function EquipmentTable() {
       <SideBar />
       <Box paddingY="10" paddingX="300">
         <Text mb="10px" color="#000000" fontWeight="semibold" fontSize="4xl">
-          Controle de Equipamento {nextEquipaments.length}
+          Controle de Equipamento
         </Text>
         <Text color="#00000" fontWeight="medium" fontSize="2xl">
           Últimos Equipamentos Modificados

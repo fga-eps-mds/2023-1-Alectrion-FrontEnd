@@ -39,8 +39,7 @@ interface MovementHistoryProps {
 function MovementHistory ({equipmentId}: MovementHistoryProps) {
   const [movements, setMovements] = useState<movement[]>([]);
   
-  const f = async () => {
-
+  const fetchMovements = async () => {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
         `equipment/findMovements`,
@@ -48,6 +47,7 @@ function MovementHistory ({equipmentId}: MovementHistoryProps) {
         );
 
         setMovements(data);
+
       } catch (error) {
         setMovements([]);
         toast.error('Nenhuma moviementacao encontrada');
@@ -56,7 +56,7 @@ function MovementHistory ({equipmentId}: MovementHistoryProps) {
 
     return (
       <>
-      <Box width="68%" bg="white" paddingLeft={100} h="500px">
+      <Box width="90%" bg="white" paddingLeft={100} h="300px">
       <TableContainer
             borderRadius="md"
             minW="68%"

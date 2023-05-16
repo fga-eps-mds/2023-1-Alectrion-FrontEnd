@@ -25,8 +25,15 @@ export type Equipment = {
   situacao: string
   estado: string
   model: string
-  brandName: string
+  brand: {
+    id: string,
+    name: string
+  }
   acquisitionName: string
+  acquisition: {
+    id: string, 
+    name: string
+  };
   description?: string
   initialUseDate: string
   acquisitionDate: string
@@ -62,8 +69,8 @@ export function EquipmentViewModal({
       >
         <EquipmentViewForm equipmentId = {selectedEquipmentId} onClose={onClose} />
 
+        <MovementHistory equipmentId = {selectedEquipmentId}/>
       </Flex>
-      <MovementHistory equipmentId = {selectedEquipmentId}/>
      </Modal>
   );
 }

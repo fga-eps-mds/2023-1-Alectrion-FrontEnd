@@ -15,8 +15,8 @@ import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/services/api';
-import { TRUE } from 'sass';
-import { d } from 'vitest/dist/index-761e769b';
+
+import { format, addDays } from 'date-fns';
 
 type FormValues = {
   tippingNumber: string;
@@ -42,6 +42,7 @@ type FormValues = {
 };
 
 
+
 interface EquipmentFormProps {
   equipmentId: string | null,
   onClose: () => void
@@ -61,60 +62,43 @@ export default function EquipmentViewForm({
     setValue,
     formState: { errors },
   } = useForm<FormValues>();
-
-  const listOfYears: Array<{ value: number; label: string }> = (() => {
-    const endYear: number = new Date().getFullYear();
-    const startYear: number = endYear - 30;
-
-    return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
-      const year = startYear + index;
-      return { value: year, label: year.toString() };
-    }).reverse();
-  })();
+  
+  const [equipmentType, setEquipmentType] = useState('');
 
   useEffect(() => {
-    // Função para buscar os dados do equipamento usando o ID
     const fetchEquipmentData = async () => {
       try {
-        /*if (equipmentId !== null) {
-          const formFields = document.querySelectorAll('form#equipment-register-form input, form#equipment-register-form select, form#equipment-register-form textarea');
-          formFields.forEach(field => {
-            field.setAttribute('readonly', 'true');
-          });
-        }*/
-
         const { data }: AxiosResponse<Equipment[]> = await api.get(
           'equipment/find',
           {params: {id: equipmentId}},
         )
+        
+        const equipment = data[0];
+        setEquipmentType(equipment.type);
+        console.log(equipment);
+      
+        const acquisitionDate = equipment?.acquisitionDate;
+        const formattedAcquisitionDate = acquisitionDate ? format(addDays(new Date(acquisitionDate), 1), 'dd-MM-yyyy') : '';
 
-        const d = data[0]
-        // Fazer a requisição GET para obter os dados do equipamento pelo ID
-        console.log(d, data);
-
-        // Preencher os campos do formulário com os dados obtidos
-        setValue('tippingNumber', d.tippingNumber ?? '');
-        setValue('serialNumber', d.serialNumber ?? '');
-        setValue('type', d.type);
-        setValue('situacao', d.situacao ?? '');
-        setValue('model', d.model ?? '');
-        setValue('description', d.description ?? '');
-        setValue('screenSize', d.screenSize ?? '');
-        setValue('invoiceNumber', d.invoiceNumber ?? '');
-        setValue('power', d.power ?? '');
-        setValue('screenType', d.screenType);
-        setValue('processor', d.processor ?? '');
-        setValue('storageType', d.storageType );
-        setValue('storageAmount', d.storageAmount ?? '');
-        setValue('brandName', d.brandName ?? '');
-        setValue('acquisitionName', d.acquisitionName ?? '');
-        setValue('initialUseDate', d.initialUseDate);
-
-        //setValue('unitId', d.unitId ?? '');
-        setValue('ram_size', d.ram_size ?? '');
-        setValue('estado',d.estado);
-
-        // Preencher os demais campos do formulário com as informações relevantes
+        setValue('tippingNumber', equipment?.tippingNumber ?? '');
+        setValue('serialNumber', equipment?.serialNumber ?? '');
+        setValue('type', equipment?.type ?? '');
+        setValue('situacao', equipment?.situacao ?? '');
+        setValue('model', equipment?.model ?? '');
+        setValue('description', equipment?.description ?? '');
+        setValue('screenSize', equipment?.screenSize ?? '');
+        setValue('invoiceNumber', equipment?.invoiceNumber ?? '');
+        setValue('power', equipment?.power ?? '');
+        setValue('screenType', equipment?.screenType);
+        setValue('processor', equipment?.processor ?? '');
+        setValue('storageType', equipment?.storageType );
+        setValue('storageAmount', equipment?.storageAmount ?? '');
+        setValue('brandName', equipment?.brand.name ?? '');
+        setValue('acquisitionName', equipment?.acquisition.name ?? '');
+        setValue('initialUseDate',equipment?.initialUseDate ?? '');
+        setValue('acquisitionDate',formattedAcquisitionDate ?? '');
+        setValue('ram_size', equipment?.ram_size ?? '');
+        setValue('estado',equipment?.estado ?? '');
 
       } catch (error) {
         console.error('Erro ao obter os dados do equipamento:', error);
@@ -128,155 +112,92 @@ export default function EquipmentViewForm({
  
   
   return (
-    <form id="equipment-register-form">
+    <form id="equipment?-register-form">
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <Input
           id="type"
-          placeholder="Selecione uma opção"
           label="Tipo de equipamento"
           errors={errors.type}
-          {...register('type', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
+          {...register('type')}
           isReadOnly
         />
         <Input
           label="Marca"
           errors={errors.brandName}
-          {...register('brandName', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
+          {...register('brandName')}
           isReadOnly
         />
 
         <Input
           label="Modelo"
           errors={errors.model}
-          {...register('model', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
+          {...register('model')}
           isReadOnly
         />
 
         <Input
           label="Nº Tombamento"
           errors={errors.tippingNumber}
-          {...register('tippingNumber', {
-            required: 'Campo Obrigatório',
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
-          isReadOnly
-        />
-        
-        <Input
-          label="Nº Serie"
-          errors={errors.serialNumber}
-          {...register('serialNumber', {
-            required: 'Campo Obrigatório',
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
+          {...register('tippingNumber')}
           isReadOnly
         />
 
         <Input
-          label="Nº da Nota Fiscal"
-          errors={errors.invoiceNumber}
-          {...register('invoiceNumber', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
+          label="Nº Serie"
+          errors={errors.serialNumber}
+          {...register('serialNumber')}
+          
           isReadOnly
         />
 
         <Input
           label="Tipo de aquisição"
           errors={errors.acquisitionName}
-          {...register('acquisitionName', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
+          {...register('acquisitionName')}
           isReadOnly
         />
 
         <Input
+          {...register('estado')}
           id="estado"
           label="Estado do equipamento"
           errors={errors.estado}
-          {...register('estado', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
           isReadOnly
         />
 
         <Input
+          {...register('initialUseDate')}
           id="initialUseDate"
-          label="Ano da aquisição"
           errors={errors.initialUseDate}
-          {...register('initialUseDate', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}          isReadOnly
+          label="Ano da aquisição"
+          isReadOnly
         />
 
         <Input
-          type='date'
-          id='acquisitionDate'
-          errors={errors.acquisitionDate}
-          {...register('acquisitionDate', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
           label="Data de aquisição"
-          required
+          {...register('acquisitionDate')}
+          errors={errors.acquisitionDate}
+          disabled
         />
-        {d.type == 'CPU' (
+        {equipmentType === 'CPU' && (
           <>
             <Input
               label="Qtd. Memória RAM (GB)"
               errors={errors.ram_size}
-              {...register('ram_size', {
-                required: 'Campo Obrigatório',
-                pattern: {
-                  value: /^[0-9]+$/,
-                  message: 'Por favor, digite apenas números.',
-                },
-              })}
+              {...register('ram_size')}
               isReadOnly
             />
-            <ControlledSelect
-              control={control}
-              name="storageType"
+            <Input
+              {...register('storageType')}
               id="storageType"
-              options={TIPOS_ARMAZENAMENTO}
-              placeholder="Selecione uma opção"
               label="Tipo de armazenamento"
-              rules={{ required: 'Campo obrigatório' }}
+              errors={errors.storageType}
               isReadOnly
             />
             <Input
               label="Qtd. Armazenamento (GB)"
               errors={errors.storageAmount}
-              {...register('storageAmount', {
-                required: 'Campo Obrigatório',
-                pattern: {
-                  value: /^[0-9]+$/,
-                  message: 'Por favor, digite apenas números.',
-                },
-              })}
+              {...register('storageAmount')}
               isReadOnly
             />
             <Input
@@ -290,42 +211,29 @@ export default function EquipmentViewForm({
           </>
         )}
 
-        {watchType.value === 'Monitor' && (
+        {equipmentType === 'Monitor' && (
           <>
-            <ControlledSelect
-              control={control}
-              name="screenType"
+            <Input
+              {...register('screenType')}
               id="screenType"
-              options={TIPOS_MONITOR}
               placeholder="Selecione uma opção"
               label="Tipo de monitor"
-              rules={{ required: 'Campo obrigatório' }}
-              isReadOnly
+              errors={errors.screenType}
             />
             <Input
               label="Tamanho do Monitor"
               errors={errors.storageAmount}
-              {...register('screenSize', {
-                required: 'Campo Obrigatório',
-              })}
-              isReadOnly
+              {...register('screenSize')}
             />
           </>
         )}
 
-        {(watchType.value === 'Estabilizador' ||
-          watchType.value === 'Nobreak') && (
+        {(equipmentType === 'Estabilizador' ||
+          equipmentType === 'Nobreak') && (
           <Input
             label="Potência (VA)"
             errors={errors.storageAmount}
-            {...register('power', {
-              required: 'Campo Obrigatório',
-              pattern: {
-                value: /^[0-9]+$/,
-                message: 'Por favor, digite apenas números.',
-              },
-            })}
-            isReadOnly
+            {...register('power')}
           />
         )}
         <GridItem gridColumn="1 / span 3">
@@ -336,6 +244,7 @@ export default function EquipmentViewForm({
             {...register('description', {
               maxLength: 255,
             })}
+            readOnly
           />
         </GridItem>
       </Grid>
@@ -343,7 +252,7 @@ export default function EquipmentViewForm({
         <Button variant="secondary" onClick={onClose}>
           Voltar
         </Button>
-        <Button type="submit" form="equipment-register-form" variant="primary">
+        <Button variant="primary">
           Editar
         </Button>
       </Flex>
