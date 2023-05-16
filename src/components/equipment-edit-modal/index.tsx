@@ -36,6 +36,7 @@ export function EquipmentEditModal({
   onClose,
   equip,
 }: EquipmentEditModalProps) {
+  console.log(equip)
   return (
     <Modal
       title="Edição de Equipamentos"

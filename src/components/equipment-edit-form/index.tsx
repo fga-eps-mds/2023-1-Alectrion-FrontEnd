@@ -35,8 +35,6 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
     defaultValues: equip,
   });
 
-  console.log(equip.acquisitionDate)
-
   const watchType = watch('type', { label: '', value: '' });
 
   useEffect(() => {
@@ -53,8 +51,6 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
   useEffect(() => {
     resetField('type');
   }, []);
-
-
 
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
@@ -200,13 +196,13 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
           label="Ano da aquisição"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
-
-        {/* <Datepicker
+{/* 
+        <Datepicker
           label="Data de aquisição"
           name="acquisitionDate"
           required
           control={control}
-        />
+        /> */}
         {watchType.value === 'CPU' && (
           <>
             <Input
@@ -248,7 +244,7 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
               })}
             />
           </>
-        )} */}
+        )}
 
         {watchType.value === 'Monitor' && (
           <>

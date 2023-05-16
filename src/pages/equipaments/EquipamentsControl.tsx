@@ -95,6 +95,9 @@ function EquipmentTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
+  const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] = useState<
+    string | null
+  >(null);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
@@ -122,6 +125,10 @@ function EquipmentTable() {
   //     equipment.NumSerie.includes(searchTerm) &&
   //     (searchType === '' || equipment.type === searchType)
   // );
+
+  const handleEdit = (equipment: equipment) => {
+    if (equipment) setSelectedEquipmentToEdit(equipment);
+  };
 
   const fetchItems = async () => {
     try {
@@ -360,15 +367,15 @@ function EquipmentTable() {
                       {new Date(equipment.updatedAt).toLocaleDateString()}
                     </Td>
                     <Td>
-                      <button onClick={onOpenEditEquipment}>
+                      <button
+                        onClick={() => {
+                          handleEdit(equipment);
+                          onOpenEditEquipment();
+                        }}
+                      >
                         <BiEditAlt />
                       </button>
                     </Td>
-                    <EquipmentEditModal
-                      onClose={onCloseEditEquipment}
-                      isOpen={isOpenEditEquipment}
-                      equip={equipment}
-                    />
                   </Tr>
                 ))}
               </Tbody>
@@ -421,6 +428,12 @@ function EquipmentTable() {
         </Box>
       </Center>
       <EquipmentRegisterModal onClose={onClose} isOpen={isOpen} />
+      console.log(selectedEquipmentToEdit)
+      <EquipmentEditModal
+        onClose={onCloseEditEquipment}
+        isOpen={isOpenEditEquipment}
+        equip={selectedEquipmentToEdit}
+      />
     </>
   );
 }
