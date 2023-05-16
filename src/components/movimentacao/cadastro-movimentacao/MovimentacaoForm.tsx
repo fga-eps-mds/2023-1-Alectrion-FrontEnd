@@ -1,16 +1,17 @@
 /* trazer logo todos os campos de preencher para este arquivo*/ 
 /*import moment from 'moment';*/
-import { Box, Flex, Text, Checkbox, Table, Tbody, Td, Th, Thead, Tr, Select, Input, Button} from '@chakra-ui/react';
-import formik;
+import { Box, Flex, Text, Checkbox, Table, Tbody, Td, Th, Thead, Tr, Select, Input, Button} from '@chakra-ui/react'
+import { useFormik, Formik } from 'formik'
+import { useHistory } from 'react-router-dom';
+
+
 
 type NumeroTermoProps = {
   numeroTermo : string;
 };
-
 type DataProps = {
   dataProps: Date;
 }
-
 type TotalEquipamentoProps = {
   totalEquipamentosProps: string;
 }
@@ -375,14 +376,28 @@ export class MovimentacaoForm{
     );
   };
   MovimentacaoCancelButton() {
-    return (
-      <Flex gap="60px" mt="720px" alignSelf="flex-start" marginLeft="200px">
-        <Button background="#212121" borderRadius="50px">
-          Cancelar
-        </Button>
-        <Button borderRadius="50px">Confirmar</Button>
-      </Flex>
-    );
+    
+      const history = useHistory();
+    
+      const handleCancel = () => {
+        history.push('/outra-pagina');
+      };
+
+      const handleCancel2 = () => {
+        history.push('/outra-pagina');
+      };
+    
+      return (
+        <Flex gap="60px" mt="720px" alignSelf="flex-start" marginLeft="200px">
+          <Button background="#212121" borderRadius="50px" onClick={handleCancel}>
+            Cancelar
+          </Button>
+          <Button borderRadius="50px" onClick={handleCancel2}>
+            Confirmar
+            </Button>
+        </Flex>
+      );
+    
   }
   TotalEquipamentosProps({ totalEquipamentosProps }: TotalEquipamentoProps) {
   return (
@@ -434,26 +449,23 @@ export class MovimentacaoForm{
     );
   }
   MovimentacaoTitle() {
-  return (
-    <Flex alignItems="center" justifyContent="space-between" mb="33px">
-      <Flex alignItems="center">
-        <Text fontSize="40px" textColor="#212121">
-          Movimentação
-        </Text>
-        <Box ml="30px">
+    return (
+      <Flex alignItems="center" justifyContent="space-between" mb="33px">
+        <Flex alignItems="center">
+          <Text fontSize="40px" textColor="#212121">
+            Movimentação
           </Text>
-        </Checkbox>
-        </Box>
+        </Flex>
       </Flex>
-    </Flex>
-  );
+    );
   }
+
   const formik = useFormik({
     initialValues: {
       data: '',
-      userId : '',
-      equipmentList : '',
-      tipo : '',
+      userId: '',
+      equipmentList: '',
+      tipo: '',
       inChargeName: '',
       inChargeRole: '',
       chiefName: '',
@@ -475,22 +487,21 @@ export class MovimentacaoForm{
         equipmentSnapshots: values.equipmentSnapshots,
         description: values.description,
         destination: values.destination,
-      }
+      };
       const formattedBody = Object.entries(body)
         .filter((object) => object[1] !== null)
         .reduce((newObj, [key, val]) => {
-          return { ...newObj, [key]: val }
-        }, {})
+          return { ...newObj, [key]: val };
+        }, {});
       try {
-        await api.post('equipment/createMovement', formattedBody)
-        toast.success('Movimentacao cadastrada com sucesso.')
+        await api.post('equipment/createMovement', formattedBody);
+        toast.success('Movimentacao cadastrada com sucesso.');
       } catch (error) {
-        toast.error('Aconteceu erro no front.')
+        toast.error('Aconteceu erro no front.');
       }
-      formik.resetForm()
+      formik.resetForm();
     }
-  })
-  
+  });
 }
 
 export default MovimentacaoForm
