@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
-import { useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
 import { ControlledSelect } from '../form-fields/controlled-select';
@@ -15,28 +15,30 @@ import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/services/api';
+import { TRUE } from 'sass';
+import { d } from 'vitest/dist/index-761e769b';
 
 type FormValues = {
   tippingNumber: string;
   serialNumber: string;
-  type: { value: string; label: string };
+  type: string;
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: { value: string; label: string };
+  initialUseDate: string;
   acquisitionDate: string;
   screenSize?: string;
   invoiceNumber: string;
   power?: string;
-  screenType?: { value: string; label: string };
+  screenType?: string;
   processor?: string;
-  storageType?: { value: string; label: string };
+  storageType?: string;
   storageAmount?: string;
   brandName: string;
   acquisitionName: string;
   unitId?: string;
   ram_size?: string;
-  estado: { value: string; label: string };
+  estado: string;
 };
 
 
@@ -60,9 +62,6 @@ export default function EquipmentViewForm({
     formState: { errors },
   } = useForm<FormValues>();
 
-  const watchType = watch('type', { label: '', value: '' });
-
-
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
     const startYear: number = endYear - 30;
@@ -77,10 +76,18 @@ export default function EquipmentViewForm({
     // Função para buscar os dados do equipamento usando o ID
     const fetchEquipmentData = async () => {
       try {
+        /*if (equipmentId !== null) {
+          const formFields = document.querySelectorAll('form#equipment-register-form input, form#equipment-register-form select, form#equipment-register-form textarea');
+          formFields.forEach(field => {
+            field.setAttribute('readonly', 'true');
+          });
+        }*/
+
         const { data }: AxiosResponse<Equipment[]> = await api.get(
           'equipment/find',
           {params: {id: equipmentId}},
         )
+
         const d = data[0]
         // Fazer a requisição GET para obter os dados do equipamento pelo ID
         console.log(d, data);
@@ -88,22 +95,24 @@ export default function EquipmentViewForm({
         // Preencher os campos do formulário com os dados obtidos
         setValue('tippingNumber', d.tippingNumber ?? '');
         setValue('serialNumber', d.serialNumber ?? '');
-        setValue('type', { value: d.type ?? '', label: '' });
+        setValue('type', d.type);
         setValue('situacao', d.situacao ?? '');
         setValue('model', d.model ?? '');
         setValue('description', d.description ?? '');
         setValue('screenSize', d.screenSize ?? '');
         setValue('invoiceNumber', d.invoiceNumber ?? '');
         setValue('power', d.power ?? '');
-        setValue('screenType', { value: d.screenType ?? '', label: '' });
+        setValue('screenType', d.screenType);
         setValue('processor', d.processor ?? '');
-        setValue('storageType', { value: d.storageType ?? '', label: '' });
+        setValue('storageType', d.storageType );
         setValue('storageAmount', d.storageAmount ?? '');
         setValue('brandName', d.brandName ?? '');
         setValue('acquisitionName', d.acquisitionName ?? '');
+        setValue('initialUseDate', d.initialUseDate);
+
         //setValue('unitId', d.unitId ?? '');
         setValue('ram_size', d.ram_size ?? '');
-        setValue('estado', { value: d.estado ?? '', label: '' });
+        setValue('estado',d.estado);
 
         // Preencher os demais campos do formulário com as informações relevantes
 
@@ -116,17 +125,21 @@ export default function EquipmentViewForm({
     fetchEquipmentData();
   }, [equipmentId, setValue]);
 
+ 
+  
   return (
     <form id="equipment-register-form">
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        <ControlledSelect
-          control={control}
-          name="type"
+        <Input
           id="type"
-          options={TIPOS_EQUIPAMENTO}
           placeholder="Selecione uma opção"
           label="Tipo de equipamento"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+          errors={errors.type}
+          {...register('type', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
+          isReadOnly
         />
         <Input
           label="Marca"
@@ -135,6 +148,7 @@ export default function EquipmentViewForm({
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}
+          isReadOnly
         />
 
         <Input
@@ -144,6 +158,7 @@ export default function EquipmentViewForm({
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}
+          isReadOnly
         />
 
         <Input
@@ -156,8 +171,9 @@ export default function EquipmentViewForm({
               message: 'Por favor, digite apenas números.',
             },
           })}
+          isReadOnly
         />
-
+        
         <Input
           label="Nº Serie"
           errors={errors.serialNumber}
@@ -168,6 +184,7 @@ export default function EquipmentViewForm({
               message: 'Por favor, digite apenas números.',
             },
           })}
+          isReadOnly
         />
 
         <Input
@@ -181,6 +198,7 @@ export default function EquipmentViewForm({
               message: 'Por favor, digite apenas números.',
             },
           })}
+          isReadOnly
         />
 
         <Input
@@ -190,35 +208,42 @@ export default function EquipmentViewForm({
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}
+          isReadOnly
         />
 
-        <ControlledSelect
-          control={control}
-          name="estado"
+        <Input
           id="estado"
-          options={ESTADOS_EQUIPAMENTO}
-          placeholder="Selecione uma opção"
           label="Estado do equipamento"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+          errors={errors.estado}
+          {...register('estado', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
+          isReadOnly
         />
 
-        <ControlledSelect
-          control={control}
-          name="initialUseDate"
+        <Input
           id="initialUseDate"
-          options={listOfYears}
-          placeholder="Selecione uma opção"
           label="Ano da aquisição"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+          errors={errors.initialUseDate}
+          {...register('initialUseDate', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}          isReadOnly
         />
 
-        <Datepicker
+        <Input
+          type='date'
+          id='acquisitionDate'
+          errors={errors.acquisitionDate}
+          {...register('acquisitionDate', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
           label="Data de aquisição"
-          name="acquisitionDate"
           required
-          control={control}
         />
-        {watchType.value === 'CPU' && (
+        {d.type == 'CPU' (
           <>
             <Input
               label="Qtd. Memória RAM (GB)"
@@ -230,6 +255,7 @@ export default function EquipmentViewForm({
                   message: 'Por favor, digite apenas números.',
                 },
               })}
+              isReadOnly
             />
             <ControlledSelect
               control={control}
@@ -239,6 +265,7 @@ export default function EquipmentViewForm({
               placeholder="Selecione uma opção"
               label="Tipo de armazenamento"
               rules={{ required: 'Campo obrigatório' }}
+              isReadOnly
             />
             <Input
               label="Qtd. Armazenamento (GB)"
@@ -250,6 +277,7 @@ export default function EquipmentViewForm({
                   message: 'Por favor, digite apenas números.',
                 },
               })}
+              isReadOnly
             />
             <Input
               label="Processador"
@@ -257,6 +285,7 @@ export default function EquipmentViewForm({
               {...register('processor', {
                 required: 'Campo Obrigatório',
               })}
+              isReadOnly
             />
           </>
         )}
@@ -271,6 +300,7 @@ export default function EquipmentViewForm({
               placeholder="Selecione uma opção"
               label="Tipo de monitor"
               rules={{ required: 'Campo obrigatório' }}
+              isReadOnly
             />
             <Input
               label="Tamanho do Monitor"
@@ -278,6 +308,7 @@ export default function EquipmentViewForm({
               {...register('screenSize', {
                 required: 'Campo Obrigatório',
               })}
+              isReadOnly
             />
           </>
         )}
@@ -294,6 +325,7 @@ export default function EquipmentViewForm({
                 message: 'Por favor, digite apenas números.',
               },
             })}
+            isReadOnly
           />
         )}
         <GridItem gridColumn="1 / span 3">
@@ -309,10 +341,10 @@ export default function EquipmentViewForm({
       </Grid>
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
         <Button variant="secondary" onClick={onClose}>
-          Cancelar
+          Voltar
         </Button>
         <Button type="submit" form="equipment-register-form" variant="primary">
-          Confirmar
+          Editar
         </Button>
       </Flex>
     </form>

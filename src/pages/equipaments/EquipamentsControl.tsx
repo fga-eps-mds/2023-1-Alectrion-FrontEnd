@@ -130,7 +130,7 @@ function EquipmentTable() {
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<equipament[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset}`
+        `equipment/find`
       );
       setEquipaments(data);
     } catch (error) {
@@ -168,12 +168,9 @@ function EquipmentTable() {
           Últimos Equipamentos Modificados
         </Text>
         <Box paddingX="550" mb="-5">
-          <Button colorScheme="#F49320" onClick={onOpen}>
+          <Button colorScheme="#F49320" onClick={onRegisterOpen}>
             Cadastrar Equipamento
           </Button>
-        </Box>
-        <Box paddingX="550" mb="-5">
-          <Button colorScheme="#F49320" onClick={onOpen}>Detalhes do Equipamento</Button>
         </Box>
       </Box>
       <Box paddingLeft="300">
@@ -353,7 +350,7 @@ function EquipmentTable() {
               </Thead>
               <Tbody fontWeight="semibold">
                 {equipaments.map((equipment) => (
-                  <Tr key={equipment.id}>
+                  <Tr onClick = {()=>{handleView(equipment.id)}} key={equipment.id}>
                     <Td fontWeight="medium">
                       {equipment.situacao} - {equipment.unit.name}
                       <Td p={0} fontWeight="semibold">

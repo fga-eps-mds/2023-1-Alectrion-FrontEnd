@@ -1,5 +1,15 @@
-import { Flex } from '@chakra-ui/react';
+import { 
+  Flex,
+  TableContainer,
+  Table,
+  Tbody,
+  Thead,
+  Tr,
+  Td,
+ } from '@chakra-ui/react';
+
 import EquipmentViewForm from '../equipment-view-form';
+import MovementHistory  from '../movement-history'
 import { Modal } from '../modal';
 
 type EquipmentViewModalProps = {
@@ -38,7 +48,7 @@ export function EquipmentViewModal({
 }: EquipmentViewModalProps) {
   return (
     <Modal
-      title={`Detalhes do Equipamento ${selectedEquipmentId}`}
+      title={`Equipamento #${selectedEquipmentId}`}
       isOpen={isOpen}
       onClose={onClose}
       size="4xl"
@@ -51,7 +61,9 @@ export function EquipmentViewModal({
         gap="16px"
       >
         <EquipmentViewForm equipmentId = {selectedEquipmentId} onClose={onClose} />
+
       </Flex>
-    </Modal>
+      <MovementHistory equipmentId = {selectedEquipmentId}/>
+     </Modal>
   );
 }
