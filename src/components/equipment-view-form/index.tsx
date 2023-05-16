@@ -41,11 +41,15 @@ type FormValues = {
 
 
 interface EquipmentFormProps {
-  onClose: () => void;
-  equipmentId: string | null;
+  equipmentId: string | null,
+  onClose: () => void
 }
 
-export default function EquipmentViewForm({ equipmentId, onClose }: EquipmentFormProps) {
+export default function EquipmentViewForm({ 
+  equipmentId, 
+  onClose 
+}: EquipmentFormProps) {
+
   const {
     control,
     register,
