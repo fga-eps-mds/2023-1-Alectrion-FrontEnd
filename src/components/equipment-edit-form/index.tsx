@@ -35,6 +35,8 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
     defaultValues: equip,
   });
 
+  console.log(equip.acquisitionDate)
+
   const watchType = watch('type', { label: '', value: '' });
 
   useEffect(() => {
@@ -199,7 +201,7 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 
-        <Datepicker
+        {/* <Datepicker
           label="Data de aquisição"
           name="acquisitionDate"
           required
@@ -246,7 +248,7 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
               })}
             />
           </>
-        )}
+        )} */}
 
         {watchType.value === 'Monitor' && (
           <>

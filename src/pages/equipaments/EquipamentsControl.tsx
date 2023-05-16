@@ -24,9 +24,11 @@ import {
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { BiEditAlt } from 'react-icons/bi';
 import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
+import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 
 interface equipament {
   tippingNumber: string;
@@ -95,6 +97,11 @@ function EquipmentTable() {
   const limit = 10;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: isOpenEditEquipment,
+    onClose: onCloseEditEquipment,
+    onOpen: onOpenEditEquipment,
+  } = useDisclosure();
 
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
   const handleSearchTermChange = (
@@ -335,6 +342,7 @@ function EquipmentTable() {
                   <Td color="white">N Tombamento</Td>
                   <Td color="white">N Série</Td>
                   <Td color="white">Última Modificação</Td>
+                  <Td />
                 </Tr>
               </Thead>
               <Tbody fontWeight="semibold">
@@ -351,6 +359,16 @@ function EquipmentTable() {
                     <Td>
                       {new Date(equipment.updatedAt).toLocaleDateString()}
                     </Td>
+                    <Td>
+                      <button onClick={onOpenEditEquipment}>
+                        <BiEditAlt />
+                      </button>
+                    </Td>
+                    <EquipmentEditModal
+                      onClose={onCloseEditEquipment}
+                      isOpen={isOpenEditEquipment}
+                      equip={equipment}
+                    />
                   </Tr>
                 ))}
               </Tbody>
