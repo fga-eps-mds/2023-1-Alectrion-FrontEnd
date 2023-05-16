@@ -1,12 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { AttachmentIcon } from '@chakra-ui/icons';
 import {
-  ArrowRightIcon,
-  ArrowLeftIcon,
-  AttachmentIcon,
-} from '@chakra-ui/icons';
-import { MdBuild, MdCall } from 'react-icons/md';
-import {
-  Select,
   Text,
   Table,
   Thead,
@@ -14,27 +8,34 @@ import {
   Tr,
   Th,
   Td,
-  Input,
-  Button,
-  Center,
   Divider,
   Box,
-  useDisclosure,
   IconButton,
 } from '@chakra-ui/react';
 import { SideBar } from '@/components/side-bar';
 import { MovementsModal } from '@/components/movements-modal';
 
 function Movimentacoes() {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [selectedMovimentacao, setSelectedMovimentacao] = useState(null);
+
+  const onOpen = (movimentacao: any) => setSelectedMovimentacao(movimentacao);
+  const onClose = () => setSelectedMovimentacao(null);
+  const isOpen = Boolean(selectedMovimentacao);
 
   const mockData = [
     {
-      Id: 13276989755488998,
+      id: 13276989755488998,
       tipo: 'Emprestimo',
       destino: 'Divisão de Suporte Técnico',
       data: '01/05/2023',
       quantidade: 2,
+      postoTrabalho: '01ª Delegacia Distrital',
+      cidade: 'Águas Lindas',
+      tipoLotacao: 'Empréstimo',
+      responsavel: 'Nome da pessoa responsável',
+      atribuicao: 'Delegado de Polícia',
+      responsavelTermo: 'Nome da pessoa responsável',
+      atribuicaoTermo: 'Delegado de Polícia',
     },
     {
       id: 7798791893792675,
@@ -42,6 +43,13 @@ function Movimentacoes() {
       destino: 'Escola Superior de Polícia Civil',
       data: '03/05/2023',
       quantidade: 1,
+      postoTrabalho: '01ª Delegacia Distrital',
+      cidade: 'Águas Lindas',
+      tipoLotacao: 'Empréstimo',
+      responsavel: 'Nome da pessoa responsável',
+      atribuicao: 'Delegado de Polícia',
+      responsavelTermo: 'Nome da pessoa responsável',
+      atribuicaoTermo: 'Delegado de Polícia',
     },
     {
       id: 34367686545435764,
@@ -49,13 +57,24 @@ function Movimentacoes() {
       destino: 'Escola Superior de Polícia Civil',
       data: '05/05/2023',
       quantidade: 3,
+      postoTrabalho: '01ª Delegacia Distrital',
+      cidade: 'Águas Lindas',
+      tipoLotacao: 'Empréstimo',
+      responsavel: 'Nome da pessoa responsável',
+      atribuicao: 'Delegado de Polícia',
+      responsavelTermo: 'Nome da pessoa responsável',
+      atribuicaoTermo: 'Delegado de Polícia',
     },
   ];
 
   return (
     <>
       <SideBar />
-      <MovementsModal isOpen={isOpen} onClose={onClose} />
+      <MovementsModal
+        isOpen={isOpen}
+        onClose={onClose}
+        selectedMovimentacao={selectedMovimentacao}
+      />
       <Box paddingY="10" paddingX="300">
         <Box mb="10px">
           <Text color="#000000" fontWeight="semibold" fontSize="4xl">
@@ -91,7 +110,7 @@ function Movimentacoes() {
                     <IconButton
                       aria-label="Abrir detalhes da movimentação"
                       variant="ghost"
-                      onClick={onOpen}
+                      onClick={() => onOpen(data)}
                       icon={<AttachmentIcon />}
                     />
                   </Td>
