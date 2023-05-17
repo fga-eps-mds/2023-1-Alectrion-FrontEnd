@@ -76,12 +76,13 @@ export function MovementsModal({
             <strong>Nº Termo:</strong> 010101
           </Text>
           <Text>
-            <strong>Data:</strong> {selectedMoviment?.data}
+            <strong>Data:</strong>
+            {new Date(selectedMoviment?.date).toLocaleDateString()}
           </Text>
           <Text>
             <>
               <strong>Total Equipamentos:</strong>{' '}
-              {selectedMoviment?.quantidade}
+              {selectedMoviment?.equipments.length}
             </>
           </Text>
         </Flex>
