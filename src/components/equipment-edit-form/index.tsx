@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useForm } from 'react-hook-form';
+import { AxiosResponse } from 'axios';
 import { useEffect } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
@@ -15,15 +17,15 @@ import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
 
-type FormValues = {
+export type EditEquipFormValues = {
   tippingNumber: string;
   serialNumber: string;
   type: { value: string; label: string };
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: { value: string; label: string };
-  acquisitionDate: string;
+  initialUseDate: { value: number; label: string };
+  acquisitionDate: Date;
   screenSize?: string;
   invoiceNumber: string;
   power?: string;
@@ -31,24 +33,26 @@ type FormValues = {
   processor?: string;
   storageType?: { value: string; label: string };
   storageAmount?: string;
-  brandName: string;
-  acquisitionName: string;
+  brand: { name: string };
+  acquisition: { name: string };
   unitId?: string;
   ram_size?: string;
   estado: { value: string; label: string };
 };
 
-interface EquipmentFormProps {
+interface EditEquipmentFormProps {
   onClose: () => void;
+  equip: EditEquipFormValues;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EquipmentForm({
+export default function EquipmentEditForm({
   onClose,
+  equip,
   refreshRequest,
   setRefreshRequest,
-}: EquipmentFormProps) {
+}: EditEquipmentFormProps) {
   const {
     control,
     register,
@@ -56,9 +60,12 @@ export default function EquipmentForm({
     watch,
     resetField,
     formState: { errors },
-  } = useForm<FormValues>();
+    setValue,
+  } = useForm<EditEquipFormValues>({
+    defaultValues: equip,
+  });
 
-  const watchType = watch('type', { label: '', value: '' });
+  const watchType = watch('type');
 
   useEffect(() => {
     resetField('power');
@@ -68,7 +75,11 @@ export default function EquipmentForm({
     resetField('processor');
     resetField('storageType');
     resetField('storageAmount');
-  }, [resetField, watchType]);
+  }, [resetField, watchType, setValue, equip]);
+
+  useEffect(() => {
+    resetField('type');
+  }, []);
 
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
@@ -80,10 +91,27 @@ export default function EquipmentForm({
     }).reverse();
   })();
 
+  function formatDate(date: Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { type, estado, initialUseDate, storageType, screenType, ...rest } =
-        formData;
+      const {
+        type,
+        estado,
+        initialUseDate,
+        storageType,
+        screenType,
+        acquisitionDate,
+        ...rest
+      } = formData;
+
+      const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+      const dateString = formatDate(acquisitionDate);
 
       const payload = {
         type: type.value,
@@ -91,20 +119,22 @@ export default function EquipmentForm({
         initialUseDate: initialUseDate.value,
         storageType: storageType?.value,
         screenType: screenType?.value,
+        acquisitionDate: dateString,
         ...rest,
       };
 
-      const response = await api.post('equipment/createEquipment', payload);
+      const response = await api.put('equipment/updateEquipment', payload);
 
       if (response.status === 200) {
-        toast.success('Equipamento cadastrado com sucesso', 'Sucesso');
+        toast.success('Equipamento editado com sucesso', 'Sucesso');
         setRefreshRequest(!refreshRequest);
         onClose();
         return;
       }
-      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+
+      toast.error('Erro ao tentar editar o equipamento', 'Erro');
     } catch {
-      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+      toast.error('Erro ao tentar editar o equipamento', 'Erro');
     }
   });
 
@@ -120,10 +150,11 @@ export default function EquipmentForm({
           label="Tipo de equipamento"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
+
         <Input
           label="Marca"
-          errors={errors.brandName}
-          {...register('brandName', {
+          errors={errors.brand?.name}
+          {...register('brand.name', {
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}
@@ -177,8 +208,8 @@ export default function EquipmentForm({
 
         <Input
           label="Tipo de aquisição"
-          errors={errors.acquisitionName}
-          {...register('acquisitionName', {
+          errors={errors.acquisition?.name}
+          {...register('acquisition.name', {
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}
@@ -210,6 +241,7 @@ export default function EquipmentForm({
           required
           control={control}
         />
+
         {watchType.value === 'CPU' && (
           <>
             <Input
@@ -223,6 +255,7 @@ export default function EquipmentForm({
                 },
               })}
             />
+
             <ControlledSelect
               control={control}
               name="storageType"
@@ -232,6 +265,7 @@ export default function EquipmentForm({
               label="Tipo de armazenamento"
               rules={{ required: 'Campo obrigatório' }}
             />
+
             <Input
               label="Qtd. Armazenamento (GB)"
               errors={errors.storageAmount}
@@ -243,6 +277,7 @@ export default function EquipmentForm({
                 },
               })}
             />
+
             <Input
               label="Processador"
               errors={errors.processor}
@@ -264,6 +299,7 @@ export default function EquipmentForm({
               label="Tipo de monitor"
               rules={{ required: 'Campo obrigatório' }}
             />
+
             <Input
               label="Tamanho do Monitor"
               errors={errors.storageAmount}
@@ -288,6 +324,7 @@ export default function EquipmentForm({
             })}
           />
         )}
+
         <GridItem gridColumn="1 / span 3">
           <TextArea
             label="Descrição"
@@ -299,12 +336,14 @@ export default function EquipmentForm({
           />
         </GridItem>
       </Grid>
+
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
         <Button variant="secondary" onClick={onClose}>
           Cancelar
         </Button>
+
         <Button type="submit" form="equipment-register-form" variant="primary">
-          Confirmar
+          Editar
         </Button>
       </Flex>
     </form>

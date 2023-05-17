@@ -12,7 +12,7 @@ export const SideBar = memo(() => {
   const navigate = useNavigate();
 
   const options = [
-    { name: 'Controle de Equipamento', link: '/equipaments' },
+    { name: 'Controle de Equipamento', link: '/equipments' },
     { name: 'Controle Ordem Serviço', link: '' },
     { name: 'Movimentações', link: '/movements' },
     { name: 'Relatórios', link: '' },

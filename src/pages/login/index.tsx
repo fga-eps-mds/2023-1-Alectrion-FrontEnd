@@ -1,3 +1,8 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
+/* eslint-disable prettier/prettier */
+/* eslint-disable import/newline-after-import */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* 
     Este código foi adaptado do repositório "2022-2-schedula-front":https://github.com/fga-eps-mds/2022-2-schedula-front/
 
@@ -10,7 +15,8 @@
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Input, Text } from '@chakra-ui/react';
-
+import {Modal} from '@/components/modal';
+import  Equip  from '../edit-equipment';
 export function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,6 +33,11 @@ export function Login() {
       break;
   }
 
+  const [statusModal, setStatusModal] = useState<boolean>(false);
+    const toggleModal = () => {
+       setStatusModal(!statusModal);
+    };
+  
   const {
     register,
     handleSubmit,
@@ -45,8 +56,8 @@ export function Login() {
       aria-label="form"
       bgGradient="linear(288.94deg, #F8B86D 0%, #F49320 90.96%)"
       h="100vh"
-      color="white"
-    >
+      color="white">
+      
       <form onSubmit={handleSubmit(onSubmit)} aria-label="form">
         <Box
           bg="white"
@@ -59,6 +70,8 @@ export function Login() {
           <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
             Bem-vindo 2
           </Text>
+          <button onClick={() => Equip()}>Equipar</button>
+            <Equip />
           <Box marginBottom={10}>
             <Text
               pl="5px"

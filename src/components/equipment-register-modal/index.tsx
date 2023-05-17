@@ -5,11 +5,15 @@ import { Modal } from '../modal';
 type EquipmentRegisterModalProps = {
   isOpen: boolean;
   onClose(): void;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export function EquipmentRegisterModal({
   isOpen,
   onClose,
+  refreshRequest,
+  setRefreshRequest,
 }: EquipmentRegisterModalProps) {
   return (
     <Modal
@@ -25,7 +29,11 @@ export function EquipmentRegisterModal({
         flexDirection="column"
         gap="16px"
       >
-        <EquipmentForm onClose={onClose} />
+        <EquipmentForm
+          onClose={onClose}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
       </Flex>
     </Modal>
   );
