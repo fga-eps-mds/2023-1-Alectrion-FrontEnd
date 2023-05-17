@@ -12,6 +12,23 @@ export const mockData = [
     atribuicao: 'Delegado de Polícia',
     responsavelTermo: 'Nome da pessoa responsável',
     atribuicaoTermo: 'Delegado de Polícia',
+    materiais: [
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '111111',
+      },
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '222222',
+      },
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '333333',
+      },
+    ],
   },
   {
     id: 7798791893792675,
@@ -26,6 +43,23 @@ export const mockData = [
     atribuicao: 'Delegado de Polícia',
     responsavelTermo: 'Nome da pessoa responsável',
     atribuicaoTermo: 'Delegado de Polícia',
+    materiais: [
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '444444',
+      },
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '555555',
+      },
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '666666',
+      },
+    ],
   },
   {
     id: 34367686545435764,
@@ -40,5 +74,22 @@ export const mockData = [
     atribuicao: 'Delegado de Polícia',
     responsavelTermo: 'Nome da pessoa responsável',
     atribuicaoTermo: 'Delegado de Polícia',
+    materiais: [
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '777777',
+      },
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '888888',
+      },
+      {
+        equipamento: 'Monitor Dell 1080p24',
+        tombamento: 'R42KXD546',
+        nmrSerie: '999999',
+      },
+    ],
   },
 ];

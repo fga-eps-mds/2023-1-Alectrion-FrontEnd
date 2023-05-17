@@ -34,7 +34,7 @@ export function Modal({ children, title, ...props }: ModalProps) {
       >
         <ModalCloseButton />
         <ModalHeader pl="44px" borderTopRadius="md" bg="white">
-          <Heading fontWeight="normal" fontSize="48px" textColor="#212121">
+          <Heading fontWeight="bold" fontSize="40px" textColor="#212121">
             {title}
           </Heading>
         </ModalHeader>
