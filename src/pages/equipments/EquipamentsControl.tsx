@@ -36,7 +36,7 @@ import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 import { theme } from '@/styles/theme';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 
-interface EquipmentData {
+export interface EquipmentData {
   tippingNumber: string;
 
   serialNumber: string;
@@ -97,6 +97,7 @@ function EquipmentTable() {
   const [searchType, setSearchType] = useState('');
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
+  const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
 
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -160,7 +161,7 @@ function EquipmentTable() {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage]);
+  }, [currentPage, refreshRequest]);
 
   const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
@@ -450,11 +451,18 @@ function EquipmentTable() {
             </Flex>
           </Flex>
         </Flex>
-        <EquipmentRegisterModal onClose={onClose} isOpen={isOpen} />
+        <EquipmentRegisterModal
+          onClose={onClose}
+          isOpen={isOpen}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
         <EquipmentEditModal
           onClose={onCloseEditEquipment}
           isOpen={isOpenEditEquipment}
           equip={selectedEquipmentToEdit}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
         />
       </GridItem>
     </Grid>

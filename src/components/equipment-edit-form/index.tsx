@@ -43,11 +43,15 @@ export type EditEquipFormValues = {
 interface EditEquipmentFormProps {
   onClose: () => void;
   equip: EditEquipFormValues;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function EquipmentEditForm({
   onClose,
   equip,
+  refreshRequest,
+  setRefreshRequest,
 }: EditEquipmentFormProps) {
   const {
     control,
@@ -123,6 +127,7 @@ export default function EquipmentEditForm({
 
       if (response.status === 200) {
         toast.success('Equipamento editado com sucesso', 'Sucesso');
+        setRefreshRequest(!refreshRequest);
         onClose();
         return;
       }

@@ -7,6 +7,8 @@ type EquipmentEditModalProps = {
   isOpen: boolean;
   onClose(): void;
   equip: EquipmentData | undefined;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function transformFields(data: any) {
@@ -47,6 +49,8 @@ export function EquipmentEditModal({
   isOpen,
   onClose,
   equip,
+  refreshRequest,
+  setRefreshRequest,
 }: EquipmentEditModalProps) {
   console.log(equip);
   return (
@@ -63,7 +67,12 @@ export function EquipmentEditModal({
         flexDirection="column"
         gap="16px"
       >
-        <EquipmentEditForm onClose={onClose} equip={transformFields(equip)} />
+        <EquipmentEditForm
+          onClose={onClose}
+          equip={transformFields(equip)}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
       </Flex>
     </Modal>
   );

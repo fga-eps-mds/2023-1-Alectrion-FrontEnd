@@ -40,9 +40,15 @@ type FormValues = {
 
 interface EquipmentFormProps {
   onClose: () => void;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EquipmentForm({ onClose }: EquipmentFormProps) {
+export default function EquipmentForm({
+  onClose,
+  refreshRequest,
+  setRefreshRequest,
+}: EquipmentFormProps) {
   const {
     control,
     register,
@@ -92,6 +98,7 @@ export default function EquipmentForm({ onClose }: EquipmentFormProps) {
 
       if (response.status === 200) {
         toast.success('Equipamento cadastrado com sucesso', 'Sucesso');
+        setRefreshRequest(!refreshRequest);
         onClose();
         return;
       }
