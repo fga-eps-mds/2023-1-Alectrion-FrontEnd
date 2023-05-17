@@ -2,9 +2,55 @@
 /*import moment from 'moment';*/
 import { Box, Flex, Text, Checkbox, Table, Tbody, Td, Th, Thead, Tr, Select, Input, Button} from '@chakra-ui/react'
 import { useFormik, Formik } from 'formik'
-import { useHistory } from 'react-router-dom';
+
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify'
+import axios from 'axios'
 
 
+const formik = useFormik({
+    initialValues: {
+    data: '',
+    userId: '',
+    equipmentList: '',
+    tipo: '',
+    inChargeName: '',
+    inChargeRole: '',
+    chiefName: '',
+    chiefRole: '',
+    equipmentSnapshots: '',
+    description: '',
+    destination: '',
+  },
+  onSubmit: async (values) => {
+    const body = {
+      data: values.data,
+      userId: values.userId,
+      equipmentList: values.equipmentList,
+      tipo: values.tipo,
+      inChargeName: values.inChargeName,
+      inChargeRole: values.inChargeRole,
+      chiefName: values.chiefName,
+      chiefRole: values.chiefRole,
+      equipmentSnapshots: values.equipmentSnapshots,
+      description: values.description,
+      destination: values.destination,
+    };
+    const formattedBody = Object.entries(body)
+      .filter((object) => object[1] !== null)
+      .reduce((newObj, [key, val]) => {
+        return { ...newObj, [key]: val };
+      }, {});
+    try {
+      await axios.create({baseURL:process.env.GATEWAY_URL}).post('equipment/createMovement', formattedBody);
+      toast.success('Movimentacao cadastrada com sucesso.');
+    } catch (error) {
+      toast.error('Aconteceu erro no front.');
+    }
+    formik.resetForm();
+  }
+});
 
 type NumeroTermoProps = {
   numeroTermo : string;
@@ -39,7 +85,7 @@ export class MovimentacaoForm{
             height="35px"
             _hover={{ borderColor: "#F49320" }}
             _focus={{ borderColor: "#F49320" }}
-            value={formik.values.destin}
+            value={formik.values.destination}
           >
             <option value="01° Delegacia de policia">01° Delegacia de policia</option>
             <option value="02° Delegacia de policia">02° Delegacia de policia</option>
@@ -311,21 +357,29 @@ export class MovimentacaoForm{
       </Flex>
     );
   }
-  MovimentacaoTable() {
+  MovimentacaoTable = () => {
+    const [dados, setDados] = useState([]);
+  
+    useEffect(() => {
+      fetch('/api/dados') // Substitua '/api/dados' pela URL correta 
+        .then(response => response.json())
+        .then(data => setDados(data));
+    }, []);
+  
     return (
       <Box className="material-specs-container" position="relative">
-     <Text
-     fontSize="20px"
-     color="#000000"
-     w="277.33px"
-     h="24px"
-     position="absolute"
-     top="-550px"
-     left="10px"
-     textTransform="uppercase"
-    >
-    Especificação do Material
-    </Text>
+        <Text
+          fontSize="20px"
+          color="#000000"
+          w="277.33px"
+          h="24px"
+          position="absolute"
+          top="-550px"
+          left="10px"
+          textTransform="uppercase"
+        >
+          Especificação do Material
+        </Text>
         <Box
           w="895px"
           h="342px"
@@ -352,23 +406,16 @@ export class MovimentacaoForm{
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>Equipamento 1</Td>
-                <Td>Tombamento 1</Td>
-                <Td>{'000001'.padStart(6, '0')}</Td>
-                <Td>
-                  <Checkbox size="lg" colorScheme="orange" />
-                </Td>
-              </Tr>
-              <Tr> 
-                <Td>Equipamento 2</Td>
-                <Td>Tombamento 2</Td>
-                <Td>{'000002'.padStart(6, '0')}</Td>
-                <Td>
-                  <Checkbox size="lg" colorScheme="orange" />
-                </Td>
-              </Tr>
-              {/* Adicione mais linhas aqui */}
+              {dados.map((item: any, index:number) => (
+                <Tr key={index}>
+                  <Td>{item.equipamento}</Td>
+                  <Td>{item.tombamento}</Td>
+                  <Td>{item.numeroSerie}</Td>
+                  <Td>
+                    <Checkbox size="lg" colorScheme="orange" />
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </Box>
@@ -377,22 +424,22 @@ export class MovimentacaoForm{
   };
   MovimentacaoCancelButton() {
     
-      const history = useHistory();
+      const navigate = useNavigate();
     
-      const handleCancel = () => {
-        history.push('/outra-pagina');
+      const navigateCancel = () => {
+        navigate('/outra-pagina');
       };
 
-      const handleCancel2 = () => {
-        history.push('/outra-pagina');
+      const navigateConfirm = () => {
+        navigate('/outra-pagina');
       };
     
       return (
         <Flex gap="60px" mt="720px" alignSelf="flex-start" marginLeft="200px">
-          <Button background="#212121" borderRadius="50px" onClick={handleCancel}>
+          <Button background="#212121" borderRadius="50px" onClick={navigateCancel}>
             Cancelar
           </Button>
-          <Button borderRadius="50px" onClick={handleCancel2}>
+          <Button borderRadius="50px" type ="submit">
             Confirmar
             </Button>
         </Flex>
@@ -459,49 +506,6 @@ export class MovimentacaoForm{
       </Flex>
     );
   }
-
-  const formik = useFormik({
-    initialValues: {
-      data: '',
-      userId: '',
-      equipmentList: '',
-      tipo: '',
-      inChargeName: '',
-      inChargeRole: '',
-      chiefName: '',
-      chiefRole: '',
-      equipmentSnapshots: '',
-      description: '',
-      destination: '',
-    },
-    onSubmit: async (values) => {
-      const body = {
-        data: values.date,
-        userId: values.userId,
-        equipmentList: values.equipmentList,
-        tipo: values.tipo,
-        inChargeName: values.inChargeName,
-        inChargeRole: values.inChargeRole,
-        chiefName: values.chiefName,
-        chiefRole: values.chiefRole,
-        equipmentSnapshots: values.equipmentSnapshots,
-        description: values.description,
-        destination: values.destination,
-      };
-      const formattedBody = Object.entries(body)
-        .filter((object) => object[1] !== null)
-        .reduce((newObj, [key, val]) => {
-          return { ...newObj, [key]: val };
-        }, {});
-      try {
-        await api.post('equipment/createMovement', formattedBody);
-        toast.success('Movimentacao cadastrada com sucesso.');
-      } catch (error) {
-        toast.error('Aconteceu erro no front.');
-      }
-      formik.resetForm();
-    }
-  });
 }
 
 export default MovimentacaoForm
