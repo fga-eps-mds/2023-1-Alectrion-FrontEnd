@@ -62,21 +62,20 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
     }).reverse();
   })();
 
-  // function formatDate(date: Date) {
-  //   const year = date.getFullYear();
-  //   const month = String(date.getMonth() + 1).padStart(2, '0');
-  //   const day = String(date.getDate()).padStart(2, '0');
-  //   return `${year}-${month}-${day}`;
-  // }
+  function formatDate(date: Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   const onSubmit = handleSubmit(async (formData) => {
-
     try {
       const { type, estado, initialUseDate, storageType, screenType, acquisitionDate, ...rest } =
       formData;
 
       const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-      // const dateString = formatDate(acquisitionDate);
+      const dateString = formatDate(acquisitionDate);
 
       const payload = {
         type: type.value,
@@ -84,7 +83,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
         initialUseDate: initialUseDate.value,
         storageType: storageType?.value,
         screenType: screenType?.value,
-        // acquisitionDate: dateString,
+        acquisitionDate: dateString,
         ...rest,
       };
 
@@ -95,6 +94,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
         onClose();
         return;
       }
+
       toast.error('Erro ao tentar editar o equipamento', 'Erro');
     } catch {
       toast.error('Erro ao tentar editar o equipamento', 'Erro');
@@ -113,6 +113,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
           label="Tipo de equipamento"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
+
         <Input
           label="Marca"
           errors={errors.brand?.name}
@@ -196,13 +197,14 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
           label="Ano da aquisição"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
-{/* 
+
         <Datepicker
           label="Data de aquisição"
           name="acquisitionDate"
           required
           control={control}
-        /> */}
+        />
+
         {watchType.value === 'CPU' && (
           <>
             <Input
@@ -216,6 +218,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
                 },
               })}
             />
+
             <ControlledSelect
               control={control}
               name="storageType"
@@ -225,6 +228,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
               label="Tipo de armazenamento"
               rules={{ required: 'Campo obrigatório' }}
             />
+
             <Input
               label="Qtd. Armazenamento (GB)"
               errors={errors.storageAmount}
@@ -236,6 +240,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
                 },
               })}
             />
+
             <Input
               label="Processador"
               errors={errors.processor}
@@ -257,6 +262,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
               label="Tipo de monitor"
               rules={{ required: 'Campo obrigatório' }}
             />
+
             <Input
               label="Tamanho do Monitor"
               errors={errors.storageAmount}
@@ -281,6 +287,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
             })}
           />
         )}
+
         <GridItem gridColumn="1 / span 3">
           <TextArea
             label="Descrição"
@@ -290,16 +297,22 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
               maxLength: 255,
             })}
           />
+
         </GridItem>
+
       </Grid>
+
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
         <Button variant="secondary" onClick={onClose}>
           Cancelar
         </Button>
+
         <Button type="submit" form="equipment-register-form" variant="primary">
           Editar
         </Button>
+
       </Flex>
+
     </form>
   );
 }
