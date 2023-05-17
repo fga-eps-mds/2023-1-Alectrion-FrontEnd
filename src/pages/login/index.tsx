@@ -18,14 +18,10 @@ export function Login() {
 
   const equipmentDataType = 'Webcam';
 
-  console.log(generalTypes.find((item) => item === equipmentDataType));
-
   switch (equipmentDataType) {
     case generalTypes.find((item) => item === 'Tipo 1'):
-      console.log('found ?');
       break;
     case generalTypes.find((item) => item === equipmentDataType):
-      console.log('found');
       break;
     default:
       break;

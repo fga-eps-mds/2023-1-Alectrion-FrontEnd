@@ -65,7 +65,7 @@ interface equipament {
     name: string;
   };
 
-  acquisition: any;
+  acquisition: string;
 
   unit: {
     name: string;

@@ -11,7 +11,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
 import { DefaultLayout } from '@/components/layout/default-layout';
 import { EquipRegister } from '@/pages/equipment-register';
-// import { EquipmentTable } from '@/pages/equipaments/EquipamentsControl';
+import { EquipmentTable } from '@/pages/equipaments/EquipamentsControl';
 import { MovementsTable } from '@/pages/movements/MovementControl';
 
 export function Router() {
@@ -40,7 +40,7 @@ export function Router() {
 
       {/* ROTAS PUBLICAS */}
       <Route path="/login" element={<Login />} />
-      {/* <Route path="/equipaments" element={<EquipmentTable />} /> */}
+      <Route path="/equipaments" element={<EquipmentTable />} />
       <Route path="/movements" element={<MovementsTable />} />
       <Route path="*" element={<p>404</p>} />
     </Routes>

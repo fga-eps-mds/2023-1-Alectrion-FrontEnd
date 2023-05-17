@@ -1,35 +1,14 @@
 import React, { memo } from 'react';
-import { FaRegUser } from 'react-icons/fa';
-import { RiLogoutCircleFill } from 'react-icons/ri';
-import {
-  Box,
-  Divider,
-  Flex,
-  Heading,
-  Icon,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { routes } from '../../constants/routes';
-import { SideBarItem } from './sidebar-item';
 
 export const SideBar = memo(() => {
   // Mocked
   // TODO: create an AuthContext and get it using useAuth
-  const user = {
-    name: 'Usuário',
-  };
 
   // Mocked
   // TODO: get function from authContext
-  const signOut = () => {
-    return null;
-  };
 
-  async function handleSignOut() {
-    signOut();
-  }
   const navigate = useNavigate();
 
   const options = [

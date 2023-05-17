@@ -26,11 +26,11 @@ import {
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
+import { FaFileAlt } from 'react-icons/fa';
 import { api } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
 import { MovimentacaoTipoMap } from '@/constants/movements';
-import { FaFileAlt } from 'react-icons/fa';
 import { MovementsModal } from '@/components/movements-modal';
 
 interface equipamentData {
@@ -307,7 +307,7 @@ export function MovementsTable() {
                 </Flex>
                 <Flex flexDirection="column" width="100%">
                   <TableContainer
-                    borderRadius="15px 15px 0 0 "
+                    borderRadius="15px"
                     height="55vh"
                     whiteSpace="inherit"
                     fontSize="sm"
@@ -340,7 +340,7 @@ export function MovementsTable() {
                           <Td>Destino</Td>
                           <Td>Data</Td>
                           <Td>Quantidade</Td>
-                          <Td></Td>
+                          <Td> </Td>
                         </Tr>
                       </Thead>
                       <Tbody
