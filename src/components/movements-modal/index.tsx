@@ -1,7 +1,23 @@
 import { useForm } from 'react-hook-form';
-import { Flex, Text, Grid, GridItem, Box, Button } from '@chakra-ui/react';
+import {
+  Flex,
+  Text,
+  Grid,
+  GridItem,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Divider,
+  IconButton,
+} from '@chakra-ui/react';
 import { Modal } from '../modal';
 import { Input } from '../form-fields/input';
+import { mockData } from '@/constants/movements';
+import { AttachmentIcon } from '@chakra-ui/icons';
 
 type MovementsModalProps = {
   isOpen: boolean;
@@ -112,7 +128,36 @@ export function MovementsModal({
           <Text fontWeight="bold" mt={8}>
             Especificação do material
           </Text>
-          <Box height="384px" />
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>ID Movimentação</Th>
+                <Th>Tipo</Th>
+                <Th>Destino</Th>
+                <Th>Data</Th>
+                <Th>Quantidade</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {mockData.map((data) => (
+                <Tr key={data.id}>
+                  <Td>{data.id}</Td>
+                  <Td>{data.tipo}</Td>
+                  <Td>{data.destino}</Td>
+                  <Td>{data.data}</Td>
+                  <Td>{data.quantidade}</Td>
+                  <Td>
+                    <IconButton
+                      aria-label="Abrir detalhes da movimentação"
+                      variant="ghost"
+                      onClick={() => onOpen(data)}
+                      icon={<AttachmentIcon />}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
 
           <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6}>
             <GridItem colSpan={2}>
