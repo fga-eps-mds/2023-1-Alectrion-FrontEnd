@@ -135,7 +135,7 @@ export function MovementsTable() {
   useEffect(() => {
     fetchItems();
     fetchNextItems();
-  }, [currentPage, fetchItems, fetchNextItems]);
+  }, [currentPage]);
 
   return (
     <>
