@@ -18,7 +18,7 @@ import {
 } from '@/constants/equipment';
 import EquipmentTextField from './equipment-text-field';
 import { api } from '@/services/api';
-import { Equipment } from '@/pages/edit-equipament/edit-equipment-modal';
+import { Equipment } from '@/pages/edit-equipment/edit-equipment-modal';
 import EquipmentDateField from './equipment-date-field';
 
 type FormValues = Equipment

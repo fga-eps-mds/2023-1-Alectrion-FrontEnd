@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Input, Text } from '@chakra-ui/react';
 import {Modal} from '@/components/modal';
-import  Equip  from '../edit-equipament';
+import  Equip  from '../edit-equipment';
 export function Login() {
   const [isLoading, setIsLoading] = useState(false);
 

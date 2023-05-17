@@ -30,7 +30,7 @@ import { api } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 
-export interface EquipamentData {
+export interface EquipmentData {
   tippingNumber: string;
   serialNumber: string;
   type: string;
@@ -65,8 +65,8 @@ export interface EquipamentData {
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
-  const [equipaments, setEquipaments] = useState<EquipamentData[]>([]);
-  const [nextEquipaments, setNextEquipaments] = useState<EquipamentData[]>([]);
+  const [equipments, setEquipments] = useState<EquipmentData[]>([]);
+  const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('');
 
@@ -76,7 +76,7 @@ function EquipmentTable() {
   const [offset, setOffset] = useState(0);
   const limit = 10;
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
-    useState<EquipamentData>();
+    useState<EquipmentData>();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
@@ -105,30 +105,30 @@ function EquipmentTable() {
   //     (searchType === '' || equipment.type === searchType)
   // );
 
-  const handleEdit = (equipment: EquipamentData) => {
+  const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
   };
 
   const fetchItems = async () => {
     try {
-      const { data }: AxiosResponse<EquipamentData[]> = await api.get(
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset}`
       );
-      setEquipaments(data);
+      setEquipments(data);
     } catch (error) {
-      setEquipaments([]);
+      setEquipments([]);
       toast.error('Nenhum Equipamento encontrado');
     }
   };
 
   const fetchNextItems = async () => {
     try {
-      const { data }: AxiosResponse<EquipamentData[]> = await api.get(
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset + limit}`
       );
-      setNextEquipaments(data);
+      setNextEquipments(data);
     } catch (error) {
-      setNextEquipaments([]);
+      setNextEquipments([]);
       toast.error('Nenhum Equipamento encontrado');
     }
   };
@@ -332,7 +332,7 @@ function EquipmentTable() {
                 </Tr>
               </Thead>
               <Tbody fontWeight="semibold">
-                {equipaments.map((equipment) => (
+                {equipments.map((equipment) => (
                   <Tr key={equipment.id}>
                     <Td fontWeight="medium">
                       {equipment.situacao} - {equipment.unit.name}
@@ -389,7 +389,7 @@ function EquipmentTable() {
                 Anterior
               </Button>
             )}
-            {nextEquipaments.length > 0 && (
+            {nextEquipments.length > 0 && (
               <Button
                 variant="link"
                 color="#00000"

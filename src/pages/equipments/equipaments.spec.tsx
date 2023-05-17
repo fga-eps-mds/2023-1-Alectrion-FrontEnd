@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { EquipmentTable } from '@/pages/equipaments/EquipamentsControl';
+import { EquipmentTable } from '@/pages/equipments/EquipamentsControl';
 
 describe('Equipments', () => {
   it('should display a list', async () => {

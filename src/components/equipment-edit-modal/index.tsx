@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import EquipmentEditForm from '../equipment-edit-form';
 import { Modal } from '../modal';
-import { EquipamentData } from '@/pages/equipaments/EquipamentsControl';
+import { EquipmentData } from '@/pages/equipments/EquipamentsControl';
 
 export type EditEquipFormValues = {
   tippingNumber: string;
@@ -30,7 +30,7 @@ export type EditEquipFormValues = {
 type EquipmentEditModalProps = {
   isOpen: boolean;
   onClose(): void;
-  equip: EquipamentData | undefined;
+  equip: EquipmentData | undefined;
 };
 
 function transformFields(data: any) {
