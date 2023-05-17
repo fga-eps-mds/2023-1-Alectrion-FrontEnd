@@ -30,7 +30,7 @@ import { api } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 
-interface EquipamentData {
+export interface EquipamentData {
   tippingNumber: string;
   serialNumber: string;
   type: string;
@@ -75,9 +75,8 @@ function EquipmentTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
-  const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] = useState<
-    EquipamentData | string | null
-  >(null);
+  const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
+    useState<EquipamentData>();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
@@ -409,7 +408,6 @@ function EquipmentTable() {
         </Box>
       </Center>
       <EquipmentRegisterModal onClose={onClose} isOpen={isOpen} />
-      console.log(selectedEquipmentToEdit)
       <EquipmentEditModal
         onClose={onCloseEditEquipment}
         isOpen={isOpenEditEquipment}

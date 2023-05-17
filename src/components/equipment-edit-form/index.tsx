@@ -15,14 +15,14 @@ import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { api } from '@/services/api';
 import { toast } from '@/utils/toast';
-import { FormValues } from '../equipment-edit-modal';
+import { EditEquipFormValues } from '../equipment-edit-modal';
 
-interface EquipmentFormProps {
+interface EditEquipmentFormProps {
   onClose: () => void;
-  equip: FormValues
+  equip: EditEquipFormValues
 }
 
-export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps) {
+export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormProps) {
   const {
     control,
     register,
@@ -31,11 +31,11 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
     resetField,
     formState: { errors },
     setValue,
-  } = useForm<FormValues>({
+  } = useForm<EditEquipFormValues>({
     defaultValues: equip,
   });
 
-  const watchType = watch('type', { label: '', value: '' });
+  const watchType = watch('type');
 
   useEffect(() => {
     resetField('power');
@@ -62,12 +62,12 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
     }).reverse();
   })();
 
-  function formatDate(date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
+  // function formatDate(date: Date) {
+  //   const year = date.getFullYear();
+  //   const month = String(date.getMonth() + 1).padStart(2, '0');
+  //   const day = String(date.getDate()).padStart(2, '0');
+  //   return `${year}-${month}-${day}`;
+  // }
 
   const onSubmit = handleSubmit(async (formData) => {
 
@@ -76,7 +76,7 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
       formData;
 
       const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-      const dateString = formatDate(acquisitionDate);
+      // const dateString = formatDate(acquisitionDate);
 
       const payload = {
         type: type.value,
@@ -84,7 +84,7 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
         initialUseDate: initialUseDate.value,
         storageType: storageType?.value,
         screenType: screenType?.value,
-        acquisitionDate: dateString,
+        // acquisitionDate: dateString,
         ...rest,
       };
 
@@ -115,8 +115,8 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
         />
         <Input
           label="Marca"
-          errors={errors.brandName}
-          {...register('brandName', {
+          errors={errors.brand?.name}
+          {...register('brand.name', {
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}
@@ -170,8 +170,8 @@ export default function EquipmentEditForm({ onClose, equip }: EquipmentFormProps
 
         <Input
           label="Tipo de aquisição"
-          errors={errors.acquisitionName}
-          {...register('acquisitionName', {
+          errors={errors.acquisition?.name}
+          {...register('acquisition.name', {
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}
