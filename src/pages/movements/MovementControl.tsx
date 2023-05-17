@@ -349,7 +349,10 @@ export function MovementsTable() {
                         height="200px"
                       >
                         {movements.map((movement) => (
-                          <Tr key={movement.id}>
+                          <Tr
+                            key={movement.id}
+                            onClick={openAndSelect(movement)}
+                          >
                             <Td fontWeight="medium">{movement.id}</Td>
                             <Td fontWeight="medium">
                               {MovimentacaoTipoMap.get(movement.type)}
@@ -367,7 +370,6 @@ export function MovementsTable() {
                               <IconButton
                                 aria-label="Abrir detalhes da movimentação"
                                 variant="ghost"
-                                onClick={openAndSelect(movement)}
                                 icon={<FaFileAlt />}
                               />
                             </Td>
