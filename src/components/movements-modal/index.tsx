@@ -9,48 +9,39 @@ import {
   Thead,
   Tbody,
   Tr,
-  Th,
   Td,
-  Divider,
-  IconButton,
   Checkbox,
   TableContainer,
 } from '@chakra-ui/react';
-import { AttachmentIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { Modal } from '../modal';
 import { Input } from '../form-fields/input';
-import { mockData } from '@/constants/movements';
-import { EspecificacaoMaterial } from '@/types/types';
+import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 
 type MovementsModalProps = {
   isOpen: boolean;
   onClose(): void;
-  selectedMovimentacao: any;
+  selectedMoviment: movement;
 };
 
 type FormValues = {
-  postoTrabalho: string;
-  cidade: string;
-  tipoLotacao: string;
-  responsavel: string;
-  atribuicao: string;
-  responsavelTermo: string;
-  atribuicaoTermo: string;
+  name: string;
+  localization: string;
+  type: number;
+  chiefName: string;
+  chiefRole: string;
+  inChargeName: string;
+  inChargeRole: string;
 };
 
 export function MovementsModal({
   isOpen,
   onClose,
-  selectedMovimentacao,
+  selectedMoviment,
 }: MovementsModalProps) {
   const [materiais, setMateriais] = useState<string[]>([]);
   const {
-    control,
     register,
-    handleSubmit,
-    watch,
-    resetField,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -59,11 +50,11 @@ export function MovementsModal({
     onClose();
   };
 
-  const toggleMaterial = (data: EspecificacaoMaterial) => () => {
-    if (materiais.includes(data.nmrSerie)) {
-      setMateriais(materiais.filter((material) => material !== data.nmrSerie));
+  const toggleMaterial = (serialNumber: string) => () => {
+    if (materiais.includes(serialNumber)) {
+      setMateriais(materiais.filter((material) => material !== serialNumber));
     } else {
-      setMateriais([...materiais, data.nmrSerie]);
+      setMateriais([...materiais, serialNumber]);
     }
   };
 
@@ -85,11 +76,13 @@ export function MovementsModal({
             <strong>Nº Termo:</strong> 010101
           </Text>
           <Text>
-            <strong>Data:</strong> {selectedMovimentacao?.data}
+            <strong>Data:</strong> {selectedMoviment?.data}
           </Text>
           <Text>
-            <strong>Total Equipamentos:</strong>{' '}
-            {selectedMovimentacao?.quantidade}
+            <>
+              <strong>Total Equipamentos:</strong>{' '}
+              {selectedMoviment?.quantidade}
+            </>
           </Text>
         </Flex>
 
@@ -97,10 +90,10 @@ export function MovementsModal({
           <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6}>
             <Input
               label="Posto de trabalho"
-              errors={errors.postoTrabalho}
+              errors={errors.name}
               isDisabled
-              defaultValue={selectedMovimentacao?.postoTrabalho}
-              {...register('postoTrabalho', {
+              defaultValue={selectedMoviment?.destination.name}
+              {...register('name', {
                 required: 'Campo Obrigatório',
                 maxLength: 50,
               })}
@@ -108,10 +101,10 @@ export function MovementsModal({
 
             <Input
               label="Cidade"
-              errors={errors.cidade}
+              errors={errors.localization}
               isDisabled
-              defaultValue={selectedMovimentacao?.cidade}
-              {...register('cidade', {
+              defaultValue={selectedMoviment?.destination.localization}
+              {...register('localization', {
                 required: 'Campo Obrigatório',
                 maxLength: 50,
               })}
@@ -119,10 +112,10 @@ export function MovementsModal({
 
             <Input
               label="Tipo de lotação"
-              errors={errors.tipoLotacao}
+              errors={errors.type}
               isDisabled
-              defaultValue={selectedMovimentacao?.tipoLotacao}
-              {...register('tipoLotacao', {
+              defaultValue={selectedMoviment?.type}
+              {...register('type', {
                 required: 'Campo Obrigatório',
                 maxLength: 50,
               })}
@@ -131,10 +124,10 @@ export function MovementsModal({
             <GridItem colSpan={2}>
               <Input
                 label="Responsável"
-                errors={errors.responsavel}
+                errors={errors.chiefName}
                 isDisabled
-                defaultValue={selectedMovimentacao?.responsavel}
-                {...register('responsavel', {
+                defaultValue={selectedMoviment?.chiefName}
+                {...register('chiefName', {
                   required: 'Campo Obrigatório',
                   maxLength: 50,
                 })}
@@ -143,10 +136,10 @@ export function MovementsModal({
 
             <Input
               label="Atribuição"
-              errors={errors.atribuicao}
+              errors={errors.chiefRole}
               isDisabled
-              defaultValue={selectedMovimentacao?.atribuicao}
-              {...register('atribuicao', {
+              defaultValue={selectedMoviment?.chiefRole}
+              {...register('chiefRole', {
                 required: 'Campo Obrigatório',
                 maxLength: 50,
               })}
@@ -187,23 +180,23 @@ export function MovementsModal({
                 </Tr>
               </Thead>
               <Tbody fontWeight="semibold">
-                {selectedMovimentacao?.materiais.map(
-                  (data: EspecificacaoMaterial) => (
+                {selectedMoviment?.equipments.map(
+                  (equipment: movementEquipment) => (
                     <Tr
-                      key={data.nmrSerie}
+                      key={equipment.serialNumber}
                       background={
-                        materiais.includes(data.nmrSerie)
+                        materiais.includes(equipment.serialNumber)
                           ? 'rgba(244, 147, 32, 0.2)'
                           : 'white'
                       }
                     >
-                      <Td>{data.equipamento}</Td>
-                      <Td>{data.tombamento}</Td>
-                      <Td>{data.nmrSerie}</Td>
+                      <Td>{equipment.id}</Td>
+                      <Td>{equipment.tippingNumber}</Td>
+                      <Td>{equipment.serialNumber}</Td>
                       <Td>
                         <Checkbox
-                          onChange={toggleMaterial(data)}
-                          isChecked={data.selected}
+                          onChange={toggleMaterial(equipment.serialNumber)}
+                          isChecked={equipment.selected}
                         />
                       </Td>
                     </Tr>
@@ -217,10 +210,10 @@ export function MovementsModal({
             <GridItem colSpan={2}>
               <Input
                 label="Responsável pelo Termo de Responsabilidade"
-                errors={errors.responsavelTermo}
+                errors={errors.inChargeName}
                 isDisabled
-                defaultValue={selectedMovimentacao?.responsavelTermo}
-                {...register('responsavelTermo', {
+                defaultValue={selectedMoviment?.inChargeName}
+                {...register('inChargeName', {
                   required: 'Campo Obrigatório',
                   maxLength: 50,
                 })}
@@ -229,10 +222,10 @@ export function MovementsModal({
 
             <Input
               label="Atribuição"
-              errors={errors.atribuicaoTermo}
+              errors={errors.inChargeRole}
               isDisabled
-              defaultValue={selectedMovimentacao?.atribuicaoTermo}
-              {...register('atribuicaoTermo', {
+              defaultValue={selectedMoviment?.inChargeRole}
+              {...register('inChargeRole', {
                 required: 'Campo Obrigatório',
                 maxLength: 50,
               })}
