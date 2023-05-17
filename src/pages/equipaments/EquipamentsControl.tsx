@@ -30,63 +30,43 @@ import { api } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 
-interface equipament {
+interface EquipamentData {
   tippingNumber: string;
-
   serialNumber: string;
-
   type: string;
-
   situacao: string;
-
   estado: string;
-
   model: string;
-
   acquisitionDate: Date;
-
   description?: string;
-
   initialUseDate: Date;
-
   screenSize?: string;
-
   invoiceNumber: string;
-
   power?: string;
-
   screenType?: string;
-
   processor?: string;
-
   storageType?: string;
-
   storageAmount?: string;
+  acquisition: any;
+  ram_size?: string;
+  createdAt?: string;
+  updatedAt: string;
+  id: string;
 
   brand: {
     name: string;
   };
 
-  acquisition: string;
-
   unit: {
     name: string;
     localization: string;
   };
-
-  ram_size?: string;
-
-  createdAt?: string;
-
-  updatedAt: string;
-
-  id: string;
 }
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
-  const [equipaments, setEquipaments] = useState<equipament[]>([]);
-  const [nextEquipaments, setNextEquipaments] = useState<equipament[]>([]);
+  const [equipaments, setEquipaments] = useState<EquipamentData[]>([]);
+  const [nextEquipaments, setNextEquipaments] = useState<EquipamentData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('');
 
@@ -96,7 +76,7 @@ function EquipmentTable() {
   const [offset, setOffset] = useState(0);
   const limit = 10;
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] = useState<
-    string | null
+    EquipamentData | string | null
   >(null);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -126,13 +106,13 @@ function EquipmentTable() {
   //     (searchType === '' || equipment.type === searchType)
   // );
 
-  const handleEdit = (equipment: equipment) => {
+  const handleEdit = (equipment: EquipamentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
   };
 
   const fetchItems = async () => {
     try {
-      const { data }: AxiosResponse<equipament[]> = await api.get(
+      const { data }: AxiosResponse<EquipamentData[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset}`
       );
       setEquipaments(data);
@@ -144,7 +124,7 @@ function EquipmentTable() {
 
   const fetchNextItems = async () => {
     try {
-      const { data }: AxiosResponse<equipament[]> = await api.get(
+      const { data }: AxiosResponse<EquipamentData[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset + limit}`
       );
       setNextEquipaments(data);
@@ -357,9 +337,10 @@ function EquipmentTable() {
                   <Tr key={equipment.id}>
                     <Td fontWeight="medium">
                       {equipment.situacao} - {equipment.unit.name}
-                      <Td p={0} fontWeight="semibold">
+                      <br />
+                      <b>
                         {equipment.type} {equipment.brand.name}
-                      </Td>
+                      </b>
                     </Td>
                     <Td>{equipment.tippingNumber}</Td>
                     <Td>{equipment.serialNumber}</Td>
