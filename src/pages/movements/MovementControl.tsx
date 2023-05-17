@@ -28,16 +28,25 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { api } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
+import { MovimentacaoTipoMap } from '@/constants/movements';
 
+interface equipamentData {
+  tippingNumber: string;
+
+  serialNumber: string;
+
+  id: string;
+}
 interface movement {
+  [x: string]: string | number | Date;
   updatedAt: string | number | Date;
-  Id: string;
+  id: string;
 
-  data: Date;
+  data: string;
 
   userId: string;
 
-  type: string;
+  type: number;
 
   description: string;
 
@@ -48,6 +57,19 @@ interface movement {
   chiefName: string;
 
   chiefRole: string;
+
+  destination: {
+    name: string;
+    localization: string;
+  };
+
+  equipments: {
+    tippingNumber: string;
+
+    serialNumber: string;
+
+    id: string;
+  }[];
 }
 
 export function MovementsTable() {
@@ -309,15 +331,19 @@ export function MovementsTable() {
                       height="200px"
                     >
                       {movements.map((movement) => (
-                        <Tr key={movement.Id}>
+                        <Tr key={movement.id}>
+                          <Td fontWeight="medium">{movement.id}</Td>
                           <Td fontWeight="medium">
-                            {movement.inChargeName}
-                            <Td p={0} fontWeight="semibold">
-                              {movement.type}
-                            </Td>
+                            {MovimentacaoTipoMap.get(movement.type)}
+                          </Td>
+                          <Td fontWeight="medium">
+                            {movement.destination.name}
                           </Td>
                           <Td>
-                            {new Date(movement.updatedAt).toLocaleDateString()}
+                            {new Date(movement.date).toLocaleDateString()}
+                          </Td>
+                          <Td fontWeight="medium">
+                            {movement.equipments.length}
                           </Td>
                         </Tr>
                       ))}
