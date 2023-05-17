@@ -6,6 +6,7 @@ import { RiEdit2Fill } from 'react-icons/ri';
 import { ActionButton } from '..';
 import { ActionButtonProps } from '../types';
 import { Button } from '@chakra-ui/react';
+
 type BackButtonProps<Data> = ActionButtonProps<Data>;
 
 export function BackButton<Data>({

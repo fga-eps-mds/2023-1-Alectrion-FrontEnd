@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { useEffect } from 'react';
@@ -15,14 +16,39 @@ import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { api } from '@/services/api';
 import { toast } from '@/utils/toast';
-import { EditEquipFormValues } from '../equipment-edit-modal';
+
+export type EditEquipFormValues = {
+  tippingNumber: string;
+  serialNumber: string;
+  type: { value: string; label: string };
+  situacao: string;
+  model: string;
+  description?: string;
+  initialUseDate: { value: number; label: string };
+  acquisitionDate: Date;
+  screenSize?: string;
+  invoiceNumber: string;
+  power?: string;
+  screenType?: { value: string; label: string };
+  processor?: string;
+  storageType?: { value: string; label: string };
+  storageAmount?: string;
+  brand: { name: string };
+  acquisition: { name: string };
+  unitId?: string;
+  ram_size?: string;
+  estado: { value: string; label: string };
+};
 
 interface EditEquipmentFormProps {
   onClose: () => void;
-  equip: EditEquipFormValues
+  equip: EditEquipFormValues;
 }
 
-export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormProps) {
+export default function EquipmentEditForm({
+  onClose,
+  equip,
+}: EditEquipmentFormProps) {
   const {
     control,
     register,
@@ -45,7 +71,6 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
     resetField('processor');
     resetField('storageType');
     resetField('storageAmount');
-    
   }, [resetField, watchType, setValue, equip]);
 
   useEffect(() => {
@@ -71,8 +96,15 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { type, estado, initialUseDate, storageType, screenType, acquisitionDate, ...rest } =
-      formData;
+      const {
+        type,
+        estado,
+        initialUseDate,
+        storageType,
+        screenType,
+        acquisitionDate,
+        ...rest
+      } = formData;
 
       const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
       const dateString = formatDate(acquisitionDate);
@@ -297,9 +329,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
               maxLength: 255,
             })}
           />
-
         </GridItem>
-
       </Grid>
 
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
@@ -310,9 +340,7 @@ export default function EquipmentEditForm({ onClose, equip }: EditEquipmentFormP
         <Button type="submit" form="equipment-register-form" variant="primary">
           Editar
         </Button>
-
       </Flex>
-
     </form>
   );
 }

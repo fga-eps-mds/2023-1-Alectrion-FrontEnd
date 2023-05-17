@@ -3,30 +3,6 @@ import EquipmentEditForm from '../equipment-edit-form';
 import { Modal } from '../modal';
 import { EquipmentData } from '@/pages/equipments/EquipamentsControl';
 
-export type EditEquipFormValues = {
-  tippingNumber: string;
-  serialNumber: string;
-  type: { value: string; label: string };
-  situacao: string;
-  model: string;
-  description?: string;
-  initialUseDate: { value: number; label: string };
-  acquisitionDate: Date;
-  screenSize?: string;
-  invoiceNumber: string;
-  power?: string;
-  screenType?: { value: string; label: string };
-  processor?: string;
-  storageType?: { value: string; label: string };
-  storageAmount?: string;
-  brand: { name: string };
-  acquisition: { name: string };
-  unitId?: string;
-  ram_size?: string;
-  estado: { value: string; label: string };
-
-};
-
 type EquipmentEditModalProps = {
   isOpen: boolean;
   onClose(): void;
@@ -58,12 +34,12 @@ function transformFields(data: any) {
   };
 
   transformedData.initialUseDate = {
-    label: transformedData.initialUseDate.split("-")[0],
-    value: transformedData.initialUseDate.split("-")[0],
+    label: transformedData.initialUseDate.split('-')[0],
+    value: transformedData.initialUseDate.split('-')[0],
   };
 
   transformedData.acquisitionDate = new Date(transformedData.acquisitionDate);
-  
+
   return transformedData;
 }
 
@@ -72,7 +48,7 @@ export function EquipmentEditModal({
   onClose,
   equip,
 }: EquipmentEditModalProps) {
-  console.log(equip)
+  console.log(equip);
   return (
     <Modal
       title="Edição de Equipamentos"
@@ -87,7 +63,7 @@ export function EquipmentEditModal({
         flexDirection="column"
         gap="16px"
       >
-        <EquipmentEditForm onClose={onClose} equip={transformFields(equip)}/>
+        <EquipmentEditForm onClose={onClose} equip={transformFields(equip)} />
       </Flex>
     </Modal>
   );

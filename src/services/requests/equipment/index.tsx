@@ -1,7 +1,6 @@
 import { Type } from 'react-toastify/dist/utils';
 import { api } from '@/services/api';
-import { CreateEquipmentPayload } from './types';
-import { UpdateEquipmentPayload } from './types';
+import { CreateEquipmentPayload, UpdateEquipmentPayload } from './types';
 
 export const createEquipment = async (
   equipmentPayload: CreateEquipmentPayload
