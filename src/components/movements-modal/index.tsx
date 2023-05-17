@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { Modal } from '../modal';
 import { Input } from '../form-fields/input';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
+import { MovimentacaoTipoMap } from '@/constants/movements';
 
 type MovementsModalProps = {
   isOpen: boolean;
@@ -115,7 +116,7 @@ export function MovementsModal({
               label="Tipo de lotação"
               errors={errors.type}
               isDisabled
-              defaultValue={selectedMoviment?.type}
+              defaultValue={MovimentacaoTipoMap.get(selectedMoviment?.type)}
               {...register('type', {
                 required: 'Campo Obrigatório',
                 maxLength: 50,
