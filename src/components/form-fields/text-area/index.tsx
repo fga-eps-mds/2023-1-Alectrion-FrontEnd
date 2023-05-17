@@ -3,16 +3,12 @@ import {
   Textarea,
   FormLabel,
   FormHelperText,
-  InputProps as ChakraInputProps,
   forwardRef,
-  MergeWithAs,
   Flex,
   FormErrorMessage,
 } from '@chakra-ui/react';
 import {
   ChangeEvent,
-  ChangeEventHandler,
-  DetailedHTMLProps,
   TextareaHTMLAttributes,
   useCallback,
   useState,
