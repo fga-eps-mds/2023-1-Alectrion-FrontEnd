@@ -54,17 +54,19 @@ export const SideBar = memo(() => {
       top="0"
       bottom="0"
       backgroundColor="#000"
-      width="166px"
+      width="16vw"
+      minWidth="166px"
       color="#fff"
       padding="20px"
+      height="100%"
     >
-      <Text fontSize="2xl" fontWeight="bold">
+      <Text fontSize="2.8vw" fontWeight="bold">
         Alectrion
       </Text>
       {options.map((option) => (
         <Text
           key={option.name}
-          fontSize="2xs"
+          fontSize="4xs"
           fontWeight="bold"
           marginTop="10"
           _hover={{ cursor: 'pointer', color: 'orange.500' }}
@@ -72,11 +74,9 @@ export const SideBar = memo(() => {
           {option.name}
         </Text>
       ))}
-      <Box position="absolute" bottom="20px">
-        <Text fontSize="xs" fontWeight="bold">
-          Cadastro Usuário
-        </Text>
-        <Text fontSize="xs" fontWeight="bold" marginTop="2">
+      <Box position="absolute" bottom="20px" fontSize="4xs">
+        <Text fontWeight="bold">Cadastro Usuário</Text>
+        <Text fontWeight="bold" marginTop="2">
           Admin
         </Text>
       </Box>
