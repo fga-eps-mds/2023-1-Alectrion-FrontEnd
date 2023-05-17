@@ -352,6 +352,7 @@ export function MovementsTable() {
                           <Tr
                             key={movement.id}
                             onClick={openAndSelect(movement)}
+                            cursor="pointer"
                           >
                             <Td fontWeight="medium">{movement.id}</Td>
                             <Td fontWeight="medium">
