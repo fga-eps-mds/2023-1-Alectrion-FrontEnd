@@ -9,7 +9,6 @@ import {
  } from '@chakra-ui/react';
 
 import EquipmentViewForm from '../equipment-view-form';
-import MovementHistory  from '../movement-history'
 import { Modal } from '../modal';
 
 type EquipmentViewModalProps = {
@@ -68,8 +67,6 @@ export function EquipmentViewModal({
         gap="16px"
       >
         <EquipmentViewForm equipmentId = {selectedEquipmentId} onClose={onClose} />
-
-        <MovementHistory equipmentId = {selectedEquipmentId}/>
       </Flex>
      </Modal>
   );

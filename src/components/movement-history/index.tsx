@@ -8,13 +8,12 @@ import {
     Thead,
     Tr,
     Td,
-   } from '@chakra-ui/react';
+} from '@chakra-ui/react';
 
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
-import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 interface movement  {
@@ -43,10 +42,11 @@ function MovementHistory ({equipmentId}: MovementHistoryProps) {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
         `equipment/findMovements`,
-        {params: {equipmentId: equipmentId}}
+        {params: {equipmentid: equipmentId}}
         );
 
         setMovements(data);
+        console.log(data);
 
       } catch (error) {
         setMovements([]);
@@ -54,13 +54,17 @@ function MovementHistory ({equipmentId}: MovementHistoryProps) {
       }
     }
 
+    useEffect(() => {
+      fetchMovements();
+    }, [equipmentId]);
+
     return (
       <>
-      <Box width="90%" bg="white" paddingLeft={100} h="300px">
+      <Box width="90%" bg="white" h="300px">
       <TableContainer
             borderRadius="md"
             minW="68%"
-            style={{ height: '500px', overflowY: 'auto' }}
+            style={{ height: '80%', overflowY: 'auto' }}
             css={{
               '&::-webkit-scrollbar': {
                 width: '8px',

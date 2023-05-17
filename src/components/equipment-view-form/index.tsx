@@ -2,15 +2,8 @@ import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { useState, useEffect, SetStateAction } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
-import { Datepicker } from '../form-fields/date';
-import { ControlledSelect } from '../form-fields/controlled-select';
+import MovementHistory  from '../movement-history'
 import { Equipment } from '../equipment-view-modal';
-import {
-  ESTADOS_EQUIPAMENTO,
-  TIPOS_ARMAZENAMENTO,
-  TIPOS_EQUIPAMENTO,
-  TIPOS_MONITOR,
-} from '@/constants/equipment';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
@@ -105,7 +98,6 @@ export default function EquipmentViewForm({
       }
     };
 
-    // Chamar a função para buscar os dados do equipamento ao carregar o componente
     fetchEquipmentData();
   }, [equipmentId, setValue]);
 
@@ -113,7 +105,7 @@ export default function EquipmentViewForm({
   
   return (
     <form id="equipment?-register-form">
-      <Grid templateColumns="repeat(3, 3fr)" gap={6}>
+      <Grid templateColumns="repeat(3, 3fr)" gap={4} height={"-moz-max-content"}>
         <Input
           id="type"
           label="Tipo de equipamento"
@@ -238,16 +230,16 @@ export default function EquipmentViewForm({
         )}
         <GridItem gridColumn="1 / span 3">
           <TextArea
+
             label="Descrição"
             errors={errors.description}
             maxChars={255}
-            {...register('description', {
-              maxLength: 255,
-            })}
+            {...register('description')}
             readOnly
           />
         </GridItem>
       </Grid>
+      <MovementHistory equipmentId = {equipmentId}/>
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
         <Button variant="secondary" onClick={onClose}>
           Voltar
