@@ -14,8 +14,8 @@ import {
 } from '@/constants/equipment';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
-import { api } from '@/services/api';
 import { toast } from '@/utils/toast';
+import { api } from '@/config/lib/axios';
 
 export type EditEquipFormValues = {
   tippingNumber: string;

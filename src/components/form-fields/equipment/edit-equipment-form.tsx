@@ -17,9 +17,9 @@ import {
   TipoMonitor,
 } from '@/constants/equipment';
 import EquipmentTextField from './equipment-text-field';
-import { api } from '@/services/api';
 import { Equipment } from '@/pages/edit-equipment/edit-equipment-modal';
 import EquipmentDateField from './equipment-date-field';
+import { api } from '@/config/lib/axios';
 
 type FormValues = Equipment
 

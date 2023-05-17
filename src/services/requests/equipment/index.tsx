@@ -1,5 +1,6 @@
 import { Type } from 'react-toastify/dist/utils';
-import { api } from '@/services/api';
+import { api } from '@/config/lib/axios';
+
 import { CreateEquipmentPayload, UpdateEquipmentPayload } from './types';
 
 export const createEquipment = async (
