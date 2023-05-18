@@ -24,7 +24,7 @@ import { api } from '@/config/lib/axios';
 type FormValues = Equipment
 
 export default function EditEquipmentForm(props?: {equip: Equipment}) {
-  const [tipoEquipamento, setTipoEquipamento] = useState<TipoEquipamento>(
+  const [tipoEquipamento, setTipoEquipamento] = useState<string>(
     TIPOS_EQUIPAMENTO[0].value
   );
 

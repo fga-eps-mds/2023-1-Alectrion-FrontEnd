@@ -33,14 +33,6 @@ import { theme } from '@/styles/theme';
 import { MovimentacaoTipoMap } from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
 
-interface equipamentData {
-  tippingNumber: string;
-
-  serialNumber: string;
-
-  id: string;
-}
-
 export interface movementEquipment {
   tippingNumber: string;
 
@@ -50,8 +42,8 @@ export interface movementEquipment {
   selected?: boolean;
 }
 export interface movement {
-  [x: string]: string | number | Date;
   updatedAt: string | number | Date;
+
   id: string;
 
   data: string;
@@ -83,10 +75,7 @@ export function MovementsTable() {
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('');
-  const [selectedMovement, setSelectedMovement] = useState<movement>();
-
-  const [items, setItems] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
+  const [selectedMovement, setSelectedMovement] = useState<any>();
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
@@ -362,7 +351,7 @@ export function MovementsTable() {
                               {movement.destination.name}
                             </Td>
                             <Td>
-                              {new Date(movement.date).toLocaleDateString()}
+                              {new Date(movement.data).toLocaleDateString()}
                             </Td>
                             <Td fontWeight="medium">
                               {movement.equipments.length}
