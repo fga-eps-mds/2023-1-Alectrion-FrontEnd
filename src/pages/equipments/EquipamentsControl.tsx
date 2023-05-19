@@ -383,7 +383,9 @@ function EquipmentTable() {
                           <Td>{equipment.tippingNumber}</Td>
                           <Td>{equipment.serialNumber}</Td>
                           <Td>
-                            {new Date(equipment.updatedAt).toLocaleDateString()}
+                            {new Date(equipment.updatedAt).toLocaleDateString(
+                              'pt-BR'
+                            )}
                           </Td>
                           <Td>
                             <button

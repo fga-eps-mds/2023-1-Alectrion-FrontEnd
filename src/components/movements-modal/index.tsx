@@ -79,7 +79,7 @@ export function MovementsModal({
             </Text>
             <Text>
               <strong>Data: </strong>
-              {new Date(selectedMoviment?.date).toLocaleDateString()}
+              {new Date(selectedMoviment?.date).toLocaleDateString('pt-BR')}
             </Text>
             <Text>
               <>

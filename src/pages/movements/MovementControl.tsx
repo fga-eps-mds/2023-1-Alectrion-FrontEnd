@@ -356,7 +356,9 @@ export function MovementsTable() {
                               {movement.destination.localization}
                             </Td>
                             <Td>
-                              {new Date(movement.date).toLocaleDateString()}
+                              {new Date(movement.date).toLocaleDateString(
+                                'pt-Br'
+                              )}
                             </Td>
                             <Td fontWeight="medium">
                               {movement.equipments.length}
