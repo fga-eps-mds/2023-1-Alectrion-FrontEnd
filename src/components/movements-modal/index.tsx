@@ -78,8 +78,8 @@ export function MovementsModal({
               <strong>Nº Termo:</strong> 010101
             </Text>
             <Text>
-              <strong>Data:</strong>
-              {new Date(selectedMoviment?.data).toLocaleDateString()}
+              <strong>Data: </strong>
+              {new Date(selectedMoviment?.date).toLocaleDateString('pt-BR')}
             </Text>
             <Text>
               <>
@@ -152,63 +152,73 @@ export function MovementsModal({
             <Text fontWeight="bold" mt={10}>
               Especificação do material
             </Text>
-
-            <TableContainer
-              borderRadius="md"
-              border="1px"
-              borderColor="#F49320"
-              minW="68%"
-              style={{ height: '500px', overflowY: 'auto' }}
-              css={{
-                '&::-webkit-scrollbar': {
-                  width: '8px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  width: '6px',
-                  background: '#C6C6C6',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background: '#F49320',
-                  borderRadius: '24px',
-                },
-              }}
-            >
-              <Table colorScheme="orange" size="sm">
-                <Thead bg="#F49320" fontWeight="semibold" h="14">
-                  <Tr>
-                    <Td color="white">Equipamento</Td>
-                    <Td color="white">Tombamento</Td>
-                    <Td color="white">N° Série</Td>
-                    <Td color="white" />
-                  </Tr>
-                </Thead>
-                <Tbody fontWeight="semibold">
-                  {selectedMoviment?.equipments.map(
-                    (equipment: movementEquipment) => (
-                      <Tr
-                        key={equipment.serialNumber}
-                        background={
-                          materiais.includes(equipment.serialNumber)
-                            ? 'rgba(244, 147, 32, 0.2)'
-                            : 'white'
-                        }
-                      >
-                        <Td>{equipment.id}</Td>
-                        <Td>{equipment.tippingNumber}</Td>
-                        <Td>{equipment.serialNumber}</Td>
-                        <Td>
-                          <Checkbox
-                            onChange={toggleMaterial(equipment.serialNumber)}
-                            isChecked={equipment.selected}
-                          />
-                        </Td>
-                      </Tr>
-                    )
-                  )}
-                </Tbody>
-              </Table>
-            </TableContainer>
-
+            <Flex flexDirection="column" width="100%">
+              <TableContainer
+                justifyContent="center"
+                alignItems="center"
+                borderRadius="md"
+                border="1px"
+                borderColor="#F49320"
+                minW="68%"
+                style={{ maxHeight: '500px', overflowY: 'auto' }}
+                css={{
+                  '&::-webkit-scrollbar': {
+                    width: '8px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    width: '6px',
+                    background: '#C6C6C6',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: '#F49320',
+                    borderRadius: '24px',
+                  },
+                }}
+              >
+                <Table colorScheme="orange" size="sm">
+                  <Thead bg="#F49320" fontWeight="semibold" h="14">
+                    <Tr>
+                      <Td textAlign="center" color="white">
+                        Equipamento
+                      </Td>
+                      <Td textAlign="center" color="white">
+                        Tombamento
+                      </Td>
+                      <Td textAlign="center" color="white">
+                        N° Série
+                      </Td>
+                      <Td color="white" />
+                    </Tr>
+                  </Thead>
+                  <Tbody fontWeight="normal">
+                    {selectedMoviment?.equipments.map(
+                      (equipment: movementEquipment) => (
+                        <Tr
+                          key={equipment.serialNumber}
+                          background={
+                            materiais.includes(equipment.serialNumber)
+                              ? 'rgba(244, 147, 32, 0.2)'
+                              : 'white'
+                          }
+                        >
+                          <Td textAlign="center">
+                            {equipment.type} {equipment.brand.name}
+                          </Td>
+                          <Td textAlign="center">{equipment.tippingNumber}</Td>
+                          <Td textAlign="center">{equipment.serialNumber}</Td>
+                          <Td textAlign="center">
+                            <Checkbox
+                              onChange={toggleMaterial(equipment.serialNumber)}
+                              isChecked={equipment.selected}
+                            />
+                          </Td>
+                        </Tr>
+                      )
+                    )}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Flex>
             <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6} mt={6}>
               <GridItem colSpan={2}>
                 <Input
