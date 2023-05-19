@@ -38,6 +38,12 @@ export interface movementEquipment {
 
   serialNumber: string;
 
+  brand: {
+    name: string;
+  };
+
+  type: string;
+
   id: string;
   selected?: boolean;
 }
@@ -346,7 +352,8 @@ export function MovementsTable() {
                               {MovimentacaoTipoMap.get(movement.type)}
                             </Td>
                             <Td fontWeight="medium">
-                              {movement.destination.name} - {movement.destination.localization}
+                              {movement.destination.name} -{' '}
+                              {movement.destination.localization}
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString()}
