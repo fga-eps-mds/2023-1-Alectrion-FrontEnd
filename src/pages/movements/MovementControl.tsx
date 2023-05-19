@@ -324,7 +324,6 @@ export function MovementsTable() {
                         order={theme.colors.primary}
                       >
                         <Tr width="100%" color={theme.colors.white}>
-                          <Td>ID Movimentação</Td>
                           <Td>Tipo</Td>
                           <Td>Destino</Td>
                           <Td>Data</Td>
@@ -343,12 +342,11 @@ export function MovementsTable() {
                             onClick={openAndSelect(movement)}
                             cursor="pointer"
                           >
-                            <Td fontWeight="medium">{movement.id}</Td>
                             <Td fontWeight="medium">
                               {MovimentacaoTipoMap.get(movement.type)}
                             </Td>
                             <Td fontWeight="medium">
-                              {movement.destination.name}
+                              {movement.destination.name} - {movement.destination.localization}
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString()}
