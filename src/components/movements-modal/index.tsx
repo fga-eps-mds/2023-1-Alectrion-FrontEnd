@@ -160,7 +160,7 @@ export function MovementsModal({
                 border="1px"
                 borderColor="#F49320"
                 minW="68%"
-                style={{ height: '500px', overflowY: 'auto' }}
+                style={{ maxHeight: '500px', overflowY: 'auto' }}
                 css={{
                   '&::-webkit-scrollbar': {
                     width: '8px',
