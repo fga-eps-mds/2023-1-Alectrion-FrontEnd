@@ -11,7 +11,6 @@ import {
   Grid,
   GridItem,
   IconButton,
-  Input,
   Select,
   Table,
   TableContainer,
@@ -32,7 +31,21 @@ import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
 import { MovimentacaoTipoMap } from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
+import { useForm } from 'react-hook-form';
+import { ControlledSelect } from '@/components/form-fields/controlled-select';
+import { TIPOS_EQUIPAMENTO } from '@/constants/equipment';
+import { Datepicker } from '@/components/form-fields/date';
+import { Input } from '@/components/form-fields/input';
 
+type FormValues={
+  type: string;
+  inChargeName: string;
+  destination: string;
+  equipmentId: string;
+  lowerDate: string;
+  higherDate: string;
+  id: string;
+}
 export interface movementEquipment {
   tippingNumber: string;
 
@@ -85,6 +98,9 @@ export function MovementsTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
+  const {control,register,handleSubmit,formState:{errors}}=useForm<FormValues>();
+
+  const [filter,setFilter]= useState<string[]>([]);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const openAndSelect = (movement: movement) => () => {
@@ -127,10 +143,28 @@ export function MovementsTable() {
     }
   };
 
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      const { type, inChargeName, destination, equipmentId, lowerDate, higherDate } =
+        formData;
+        console.log(formData);
+        const filteredObj = [
+          ...Object.entries(formData).filter(field => field[1]!==undefined && field[1]!== '') 
+        ];
+        const obj: { [key: string]: any } = Object.fromEntries(filteredObj)
+        console.log(filteredObj,obj);
+
+        setFilter([type, inChargeName, destination, equipmentId, lowerDate, higherDate])
+
+    }catch{
+      console.log("erro");
+    }
+  });
+
   useEffect(() => {
     fetchItems();
     fetchNextItems();
-  }, [currentPage]);
+  }, [currentPage,filter]);
 
   return (
     <>
@@ -173,132 +207,59 @@ export function MovementsTable() {
                 width="100%"
               >
                 <Flex width="100%" gap="5px" mb="15px">
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Tipos"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">CPU</option>
-                    <option value="option2">Monitor</option>
-                    <option value="option3">Estabilizador</option>
-                    <option value="option4">Nobreak</option>
-                    <option value="option5">Hub</option>
-                    <option value="option6">Switch</option>
-                    <option value="option7">Notebook</option>
-                    <option value="option8">Datashow</option>
-                    <option value="option9">Scanner</option>
-                    <option value="option10">Impressora</option>
-                    <option value="option11">Roteador</option>
-                    <option value="option12">Tablet</option>
-                    <option value="option13">TV</option>
-                    <option value="option14">Fax</option>
-                    <option value="option15">Telefone</option>
-                    <option value="option16">Smartphone</option>
-                    <option value="option17">Projetor</option>
-                    <option value="option18">Tela de Projeção</option>
-                    <option value="option19">Câmera</option>
-                    <option value="option20">Webcam</option>
-                    <option value="option21">Caixa de Som</option>
-                    <option value="option22">Impressora Térmica</option>
-                    <option value="option23">
-                      Leitor de Código de Barras/ CCD
-                    </option>
-                    <option value="option24">Mesa Digitalizadora</option>
-                    <option value="option25">Leitor Biométrico</option>
-                    <option value="option26">Receptor</option>
-                    <option value="option27">Extrator de Dados</option>
-                    <option value="option28">Transformador</option>
-                    <option value="option29">Coletor de Assinatura</option>
-                    <option value="option30">Kit Cenário</option>
-                    <option value="option31">
-                      Dispositivo de Biometria Facial
-                    </option>
-                    <option value="option32">Servidor de Rede</option>
-                    <option value="option33">HD Externo</option>
-                    <option value="option34">Protetor Eletrônico</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Marcas"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">Dell</option>
-                    <option value="option2">LG</option>
-                    <option value="option3">Galaxy</option>
-                    <option value="option4">HP</option>
-                    <option value="option5">Lenovo</option>
-                    <option value="option6">Logitech</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Modelos"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">Ink 416</option>
-                    <option value="option2">16520</option>
-                    <option value="option3">1080p24</option>
-                    <option value="option4">Book2</option>
-                    <option value="option5">Thinkpad</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Datas"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">Janeiro</option>
-                    <option value="option2">Fevereiro</option>
-                    <option value="option3">Março</option>
-                    <option value="option4">Abril</option>
-                    <option value="option5">Maio</option>
-                    <option value="option6">Junho</option>
-                    <option value="option7">Julho</option>
-                    <option value="option8">Agosto</option>
-                    <option value="option9">Setembro</option>
-                    <option value="option10">Outubro</option>
-                    <option value="option11">Novembro</option>
-                    <option value="option12">Dezembro</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Local"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">1dp Goiânia</option>
-                    <option value="option2">2dp Goiânia</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Status"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">Novo</option>
-                    <option value="option2">Usado</option>
-                  </Select>
-
-                  <Input
-                    placeholder="Pesquisa"
-                    size="sm"
-                    value={searchTerm}
-                    onChange={handleSearchTermChange}
-                    minWidth="max-content"
+                <form id="movement-filter" onSubmit={onSubmit}>
+                  <ControlledSelect
+                    control={control}
+                    name="type"
+                    id="type"
+                    options={TIPOS_EQUIPAMENTO}
+                    placeholder="Selecione uma opção"
+                    label="Tipo de equipamento"
                   />
+
+                  {/* <ControlledSelect
+                    control={control}
+                    name="inChargeName"
+                    id="inChargeName"
+                    options={TIPOS_EQUIPAMENTO}
+                    placeholder="Selecione uma opção"
+                    label="Nome do responsável"
+                  /> */}
+                  <ControlledSelect
+                    control={control}
+                    name="destination"
+                    id="destination"
+                    options={TIPOS_EQUIPAMENTO}
+                    placeholder="Selecione uma opção"
+                    label="Destino da movimentação"
+                  />
+                  <ControlledSelect
+                    control={control}
+                    name="equipmentId"
+                    id="equipmentId"
+                    options={TIPOS_EQUIPAMENTO}
+                    placeholder="Selecione uma opção"
+                    label="Equipamento"
+                  />
+                  <Datepicker
+                    label="Data inicial"
+                    name="lowerDate"
+                    control={control}
+                  />
+                  <Datepicker
+                    label="Data final"
+                    name="higherDate"
+                    control={control}
+                  />
+                  <Input
+                    label="Barra de pesquisa"
+                    errors={errors.id}
+                    {...register('id')}
+                  />
+                  <Button type="submit" form="movement-filter" variant="primary">
+                    Buscar
+                  </Button>
+                </form>
                 </Flex>
                 <Flex flexDirection="column" width="100%">
                   <TableContainer
