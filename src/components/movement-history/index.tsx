@@ -46,7 +46,7 @@ function MovementHistory ({equipmentId}: MovementHistoryProps) {
         );
 
         setMovements(data);
-        console.log(data);
+        console.log('Histórico de movimentações', data);
 
       } catch (error) {
         setMovements([]);

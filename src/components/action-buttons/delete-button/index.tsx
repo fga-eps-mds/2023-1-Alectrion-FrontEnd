@@ -51,7 +51,7 @@ export function DeleteButton<Data>({
   }, [onClose, onClick]);
 
   return (
-    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="auto">
+    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="top">
       <PopoverAnchor>
         <ActionButton
           label={`Excluir ${label}`}

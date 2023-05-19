@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { useState, useEffect, SetStateAction } from 'react';
-import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, Flex, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
 import MovementHistory  from '../movement-history'
 import { Equipment } from '../equipment-view-modal';
 import { Input } from '../form-fields/input';
@@ -10,6 +10,8 @@ import { toast } from '@/utils/toast';
 import { api } from '@/services/api';
 
 import { format, addDays } from 'date-fns';
+
+import { DeleteButton } from '../action-buttons/delete-button'
 
 type FormValues = {
   tippingNumber: string;
@@ -58,6 +60,7 @@ export default function EquipmentViewForm({
   
   const [equipmentType, setEquipmentType] = useState('');
 
+
   useEffect(() => {
     const fetchEquipmentData = async () => {
       try {
@@ -101,8 +104,29 @@ export default function EquipmentViewForm({
     fetchEquipmentData();
   }, [equipmentId, setValue]);
 
- 
-  
+  const handleDelete = async () => {
+    console.log('excluir', equipmentId);
+    try {
+      const response = await api.delete(
+       'equipment/deleteEquipment',
+       {
+          params: {id: equipmentId},
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('@App:token')}`
+          }
+        }
+      );
+      onClose();
+      
+      console.log('response', response)
+      toast.success('Equipamento excluído com sucesso.')
+    }
+    catch(error: any) {
+      console.log(error);
+      toast.error(error.response.data.error);
+    }
+  }
+
   return (
     <form id="equipment?-register-form">
       <Grid templateColumns="repeat(3, 3fr)" gap={4} height={"-moz-max-content"}>
@@ -247,6 +271,7 @@ export default function EquipmentViewForm({
         <Button variant="primary">
           Editar
         </Button>
+        <DeleteButton onClick={handleDelete} label="equipamento"/>
       </Flex>
     </form>
   );
