@@ -46,7 +46,7 @@ export interface movement {
 
   id: string;
 
-  data: string;
+  date: string;
 
   userId: string;
 
@@ -351,7 +351,7 @@ export function MovementsTable() {
                               {movement.destination.name}
                             </Td>
                             <Td>
-                              {new Date(movement.data).toLocaleDateString()}
+                              {new Date(movement.date).toLocaleDateString()}
                             </Td>
                             <Td fontWeight="medium">
                               {movement.equipments.length}

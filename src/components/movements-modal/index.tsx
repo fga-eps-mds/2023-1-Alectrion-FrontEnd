@@ -78,8 +78,8 @@ export function MovementsModal({
               <strong>Nº Termo:</strong> 010101
             </Text>
             <Text>
-              <strong>Data:</strong>
-              {new Date(selectedMoviment?.data).toLocaleDateString()}
+              <strong>Data: </strong>
+              {new Date(selectedMoviment?.date).toLocaleDateString()}
             </Text>
             <Text>
               <>
