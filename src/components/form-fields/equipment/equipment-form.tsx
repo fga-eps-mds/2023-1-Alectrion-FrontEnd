@@ -1,161 +1,302 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable import/no-useless-path-segments */
+import { useForm } from 'react-hook-form';
+import { AxiosResponse } from 'axios';
+import { useEffect } from 'react';
+import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 
-import { useState } from 'react';
-import { Button, Flex, Grid } from '@chakra-ui/react';
-// eslint-disable-next-line no-useless-escape
-import EquipmentSelectField from './equipment-select-field';
 import {
   ESTADOS_EQUIPAMENTO,
   TIPOS_ARMAZENAMENTO,
-  TipoEquipamento,
-  TipoArmazenamento,
   TIPOS_EQUIPAMENTO,
   TIPOS_MONITOR,
-  TipoMonitor,
 } from '@/constants/equipment';
-import EquipmentTextField from './equipment-text-field';
+import { toast } from '@/utils/toast';
+import { ControlledSelect } from '../controlled-select';
+import { Datepicker } from '../date';
+import { TextArea } from '../text-area';
+import { Input } from '../input';
 import { api } from '@/config/lib/axios';
-import { Equipment } from '@/pages/edit-equipment/edit-equipment-modal';
-import EquipmentDateField from './equipment-date-field';
 
-// type FormValues = {
-//   marca: string;
-//   modelo: string;
-//   tombamento: string;
-//   serie: string;
-//   notaFiscal: string;
-//   aquisicao: string;
-//   descricao: string;
-//   tipoEquipamento: string;
-//   estadoEquipamento: string;
-//   anoAquisicao: string;
-//   dataAquisicao: string;
-//   screenType: string;
-// };
+type FormValues = {
+  tippingNumber: string;
+  serialNumber: string;
+  type: { value: string; label: string };
+  situacao: string;
+  model: string;
+  description?: string;
+  initialUseDate: { value: string; label: string };
+  acquisitionDate: string;
+  screenSize?: string;
+  invoiceNumber: string;
+  power?: string;
+  screenType?: { value: string; label: string };
+  processor?: string;
+  storageType?: { value: string; label: string };
+  storageAmount?: string;
+  brandName: string;
+  acquisitionName: string;
+  unitId?: string;
+  ram_size?: string;
+  estado: { value: string; label: string };
+};
 
-type FormValues = Equipment;
+interface EquipmentFormProps {
+  onClose: () => void;
+}
 
-export default function EditEquipmentForm(props?: { equip: Equipment }) {
-  const [tipoEquipamento, setTipoEquipamento] = useState(
-    TIPOS_EQUIPAMENTO[0].value
-  );
+export default function EquipmentForm({ onClose }: EquipmentFormProps) {
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    resetField,
+    formState: { errors },
+  } = useForm<FormValues>();
 
-  const { handleSubmit } = useForm<FormValues>();
+  const watchType = watch('type', { label: '', value: '' });
 
-  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
+  useEffect(() => {
+    resetField('power');
+    resetField('screenSize');
+    resetField('screenType');
+    resetField('ram_size');
+    resetField('processor');
+    resetField('storageType');
+    resetField('storageAmount');
+  }, [resetField, watchType]);
+
+  const listOfYears: Array<{ value: number; label: string }> = (() => {
+    const endYear: number = new Date().getFullYear();
+    const startYear: number = endYear - 30;
+
+    return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
+      const year = startYear + index;
+      return { value: year, label: year.toString() };
+    }).reverse();
+  })();
+
+  const onSubmit = handleSubmit(async (formData) => {
     try {
-      await axios.put("equipment/updateEquipment", formData);
-    } catch (error) {
-      console.log(`erro: ${error}`);
-    }
-  };
+      const { type, estado, initialUseDate, storageType, screenType, ...rest } =
+        formData;
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEquipment({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
+      const payload = {
+        type: type.value,
+        estado: estado.value,
+        initialUseDate: initialUseDate.value,
+        storageType: storageType?.value,
+        screenType: screenType?.value,
+        ...rest,
+      };
+
+      const response = await api.post('equipment/createEquipment', payload);
+
+      if (response.status === 200) {
+        toast.success('Equipamento cadastrado com sucesso', 'Sucesso');
+        onClose();
+        return;
+      }
+      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+    } catch {
+      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+    }
+  });
 
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        <EquipmentSelectField<TipoEquipamento>
-          title="Tipo de Equipamento"
-          name="tipo-equipamento"
-          onChange={setTipoEquipamento}
-          items={TIPOS_EQUIPAMENTO}
-          defaultValue={props?.equip.type}
+        <ControlledSelect
+          control={control}
+          name="type"
+          id="type"
+          options={TIPOS_EQUIPAMENTO}
+          placeholder="Selecione uma opção"
+          label="Tipo de equipamento"
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
-        <EquipmentTextField title="Marca" name="marca" defaultValue={props?.equip.brand}/>
-        <EquipmentTextField title="Modelo" name="modelo" defaultValue={props?.equip.model}/>
-
-        <EquipmentTextField
-          title="N° Tombamento"
-          name="numero-tombamento"
-          defaultValue={props?.equip.tippingNumber}
-        />
-        <EquipmentTextField title="N° Série" name="numero-serie" defaultValue={props?.equip.serialNumber}/>
-        <EquipmentTextField
-          title="Tipo de aquisição"
-          name="tipo-aquisicao"
-          defaultValue={props?.equip.acquisition}
+        <Input
+          label="Marca"
+          errors={errors.brandName}
+          {...register('brandName', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
         />
 
-        <EquipmentSelectField
-          title="Estado do equipamento"
-          name="estado-equipamento"
-          items={ESTADOS_EQUIPAMENTO}
-          defaultValue={props?.equip.estado}
-          onChange={() => {}}
-        />
-        <EquipmentTextField
-          title="Ano do equipamento"
-          name="ano-equipamento"
-          defaultValue={props?.equip.initialUseDate}
-        />
-        <EquipmentDateField
-          title="Data de aquisição"
-          name="data-aquisicao"
-          defaultValue={props?.equip.acquisitionDate}
+        <Input
+          label="Modelo"
+          errors={errors.model}
+          {...register('model', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
         />
 
-        <EquipmentTextField
-          title="Detalhes"
-          name="data-aquisicao"
-          colSpan={3}
-          rowSpan={2}
-          defaultValue={props?.equip.description}
+        <Input
+          label="Nº Tombamento"
+          errors={errors.tippingNumber}
+          {...register('tippingNumber', {
+            required: 'Campo Obrigatório',
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
+          })}
         />
 
-        {tipoEquipamento === 'CPU' && (
+        <Input
+          label="Nº Serie"
+          errors={errors.serialNumber}
+          {...register('serialNumber', {
+            required: 'Campo Obrigatório',
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
+          })}
+        />
+
+        <Input
+          label="Nº da Nota Fiscal"
+          errors={errors.invoiceNumber}
+          {...register('invoiceNumber', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
+          })}
+        />
+
+        <Input
+          label="Tipo de aquisição"
+          errors={errors.acquisitionName}
+          {...register('acquisitionName', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
+        />
+
+        <ControlledSelect
+          control={control}
+          name="estado"
+          id="estado"
+          options={ESTADOS_EQUIPAMENTO}
+          placeholder="Selecione uma opção"
+          label="Estado do equipamento"
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+        />
+
+        <ControlledSelect
+          control={control}
+          name="initialUseDate"
+          id="initialUseDate"
+          options={listOfYears}
+          placeholder="Selecione uma opção"
+          label="Ano da aquisição"
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+        />
+
+        <Datepicker
+          label="Data de aquisição"
+          name="acquisitionDate"
+          required
+          control={control}
+        />
+        {watchType.value === 'CPU' && (
           <>
-            <EquipmentTextField title="Qtd. Memória RAM" name="ram" defaultValue={props?.equip.ram_size}/>
-            <EquipmentTextField
-              title="Qtd. Armazenamento"
-              name="qtd-armazenamento"
-              defaultValue={props?.equip.storageAmount}
+            <Input
+              label="Qtd. Memória RAM (GB)"
+              errors={errors.ram_size}
+              {...register('ram_size', {
+                required: 'Campo Obrigatório',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Por favor, digite apenas números.',
+                },
+              })}
             />
-            <EquipmentSelectField<TipoArmazenamento>
-              title="Tipo de Armazenamento"
-              name="tipo-armazenamento"
-              items={TIPOS_ARMAZENAMENTO}
-              defaultValue={props?.equip.storageType}
-              onChange={(event) => handleChange(event)}
+            <ControlledSelect
+              control={control}
+              name="storageType"
+              id="storageType"
+              options={TIPOS_ARMAZENAMENTO}
+              placeholder="Selecione uma opção"
+              label="Tipo de armazenamento"
+              rules={{ required: 'Campo obrigatório' }}
             />
-            <EquipmentTextField
-              title="Processador"
-              name="processador"
-              defaultValue={props?.equip.processor}
+            <Input
+              label="Qtd. Armazenamento (GB)"
+              errors={errors.storageAmount}
+              {...register('storageAmount', {
+                required: 'Campo Obrigatório',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Por favor, digite apenas números.',
+                },
+              })}
+            />
+            <Input
+              label="Processador"
+              errors={errors.processor}
+              {...register('processor', {
+                required: 'Campo Obrigatório',
+              })}
             />
           </>
         )}
 
-        {tipoEquipamento === 'Monitor' && (
+        {watchType.value === 'Monitor' && (
           <>
-            <EquipmentSelectField<TipoMonitor>
-              title="Tipo de Monitor"
-              name="tipo-monitor"
-              items={TIPOS_MONITOR}
-              onChange={() => {}}
-              defaultValue={props?.equip.screenType}
+            <ControlledSelect
+              control={control}
+              name="screenType"
+              id="screenType"
+              options={TIPOS_MONITOR}
+              placeholder="Selecione uma opção"
+              label="Tipo de monitor"
+              rules={{ required: 'Campo obrigatório' }}
             />
-            <EquipmentTextField
-              title="Tamanho do Monitor"
-              name="tamanho-monitor"
-              defaultValue={props?.equip.screenSize}
+            <Input
+              label="Tamanho do Monitor"
+              errors={errors.storageAmount}
+              {...register('screenSize', {
+                required: 'Campo Obrigatório',
+              })}
             />
           </>
         )}
 
-        {(tipoEquipamento === 'Estabilizador' ||
-          tipoEquipamento === 'Nobreak') && (
-          <EquipmentTextField title="Potência" name="potencia" defaultValue={props?.equip.power} />
+        {(watchType.value === 'Estabilizador' ||
+          watchType.value === 'Nobreak') && (
+          <Input
+            label="Potência (VA)"
+            errors={errors.storageAmount}
+            {...register('power', {
+              required: 'Campo Obrigatório',
+              pattern: {
+                value: /^[0-9]+$/,
+                message: 'Por favor, digite apenas números.',
+              },
+            })}
+          />
         )}
+        <GridItem gridColumn="1 / span 3">
+          <TextArea
+            label="Descrição"
+            errors={errors.description}
+            maxChars={255}
+            {...register('description', {
+              maxLength: 255,
+            })}
+          />
+        </GridItem>
       </Grid>
-      <Flex gap="4rem" mt="2rem" mb="1rem">
-        <Button variant="secondary">Cancelar</Button>
+      <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
+        <Button variant="secondary" onClick={onClose}>
+          Cancelar
+        </Button>
         <Button type="submit" form="equipment-register-form" variant="primary">
           Confirmar
         </Button>

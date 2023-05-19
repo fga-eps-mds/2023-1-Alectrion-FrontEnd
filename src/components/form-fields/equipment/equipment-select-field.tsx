@@ -2,7 +2,6 @@
 import React from 'react';
 import { GridItem, Select, Text } from '@chakra-ui/react';
 import { SelectItem } from '@/constants/equipment';
-import { ControlledSelect } from '@/components/form-fields/controlled-select';
 
 type EquipmentSelectFieldProps<T> = {
   title: string;
@@ -33,8 +32,8 @@ export default function EquipmentSelectField<T>({
         defaultValue={defaultValue}
         onChange={(event) => onChange(event.target.value as unknown as T)}
       >
-        {items.map((item) => (
-          <option key={item.key} value={item.value as unknown as string}>
+        {items.map((item, idx) => (
+          <option key={item?.value} value={item.value as unknown as string}>
             {item.value as unknown as string}
           </option>
         ))}

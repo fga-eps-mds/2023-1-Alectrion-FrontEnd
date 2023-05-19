@@ -99,8 +99,6 @@ function EquipmentTable() {
     useState<EquipmentData>();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
 
-  const [items, setItems] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;

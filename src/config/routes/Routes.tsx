@@ -11,11 +11,8 @@
 import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
 import { DefaultLayout } from '@/components/layout/default-layout';
-import { EquipRegister } from '@/pages/equipment-register';
 
 import { MovementsTable } from '@/pages/movements/MovementControl';
-import ModalEditEquipment from '@/pages/edit-equipament';
-import { EquipEdit } from '@/pages/equipment-edit';
 import { EquipmentTable }from '@/pages/equipments/EquipamentsControl';
 
 export function Router() {
@@ -23,7 +20,6 @@ export function Router() {
     <Routes>
       {/* ROTAS PRIVADAS */}
       <Route path="/" element={<DefaultLayout />}>
-        <Route path="/equipment-register" element={<EquipRegister />} />
         {/* <Route
           index
           element={
