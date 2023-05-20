@@ -23,7 +23,7 @@ type ControlledSelectProps<FormValues extends FieldValues> =
   UseControllerProps<FormValues> &
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Props<any> & {
-      label: string;
+      label?: string;
     };
 
 export function ControlledSelect<FormValues extends FieldValues>({

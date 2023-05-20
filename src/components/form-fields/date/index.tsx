@@ -39,7 +39,8 @@ type Props<FormValues extends FieldValues> = Omit<
   'onChange'
 > &
   UseControllerProps<FormValues> & {
-    label: string;
+    label?: string;
+    placeHolder?: string;
   };
 
 export function Datepicker<FormValues extends FieldValues>({
@@ -47,6 +48,7 @@ export function Datepicker<FormValues extends FieldValues>({
   name,
   id,
   label,
+  placeHolder,
   rules,
   ...props
 }: Props<FormValues>) {
@@ -75,6 +77,7 @@ export function Datepicker<FormValues extends FieldValues>({
             locale="pt"
             dateFormat="dd/MM/yyyy"
             minDate={new Date()}
+            placeholderText={placeHolder}
             // showTimeInput
             // timeInputLabel="Hora"
             fixedHeight

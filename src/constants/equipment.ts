@@ -96,3 +96,12 @@ export const ESTADOS_EQUIPAMENTO = [
   { label: 'NOVO', value: 'Novo' },
   { label: 'USADO', value: 'Usado' },
 ];
+
+export const STATUS = [
+  { label: 'Ativo', value: 'Ativo' },
+  { label: 'Baixado', value: 'Baixado' },
+  { label: 'Empréstimo', value: 'Empréstimo' },
+  { label: 'Estoque', value: 'Estoque' },
+  { label: 'Manutenção', value: 'Manutenção' },
+  { label: 'Reserva técnica', value: 'Reserva técnica' },
+];
