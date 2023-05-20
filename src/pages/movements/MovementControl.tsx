@@ -25,27 +25,33 @@ import {
 import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
 import { toast } from '@/utils/toast';
-import { api } from '../../config/lib/axios';
+import { api, schedulaApi } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
-import { MovimentacaoTipoMap } from '@/constants/movements';
+import { MovimentacaoTipoMap, TIPOS_MOVIMENTACAO } from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
-import { useForm } from 'react-hook-form';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { TIPOS_EQUIPAMENTO } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
+import { Item } from '@/components/list-item';
 
-type FormValues={
-  type: string;
-  inChargeName: string;
-  destination: string;
-  equipmentId: string;
+interface ISelectOption {
+  label: string;
+  value: number | string;
+}
+
+type FormValues = {
+  type: ISelectOption;
+  inChargeName: ISelectOption;
+  destinationId: ISelectOption;
+  equipmentId: ISelectOption;
   lowerDate: string;
   higherDate: string;
   id: string;
-}
+};
 export interface movementEquipment {
   tippingNumber: string;
 
@@ -92,79 +98,129 @@ export interface movement {
 export function MovementsTable() {
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchType, setSearchType] = useState('');
   const [selectedMovement, setSelectedMovement] = useState<any>();
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
-  const {control,register,handleSubmit,formState:{errors}}=useForm<FormValues>();
+  const {
+    control,
+    register,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>({ mode: 'onChange' });
+  const watchedData = watch();
+  const [filter, setFilter] = useState<string>('');
 
-  const [filter,setFilter]= useState<string[]>([]);
-
+  const [destinations, setDestinations] = useState<ISelectOption[]>([]);
   const { isOpen, onClose, onOpen } = useDisclosure();
   const openAndSelect = (movement: movement) => () => {
     setSelectedMovement(movement);
     onOpen();
   };
 
-  const handleSearchTermChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSearchTypeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSearchType(event.target.value);
-  };
-
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
-        `equipment/findMovements?resultquantity=${limit}&page=${offset}`
+        `equipment/findMovements?resultquantity=${limit}&page=${offset}&${filter}`
       );
+      console.log(data);
       setMovements(data);
     } catch (error) {
       setMovements([]);
-      toast.error('Nenhuma movimentação registrada');
+      toast.error('Não foi possível encontrar as movimentações');
     }
   };
+
+  const generateDestinationOptions = (apiData: Unit[]): ISelectOption[] => {
+    return (
+      apiData?.map((item) => ({ label: item?.name, value: item?.id })) || []
+    );
+  };
+
+  const fetchUnits = async () => {
+    try {
+      const { data }: AxiosResponse<Unit[]> = await schedulaApi.get('');
+      setDestinations(generateDestinationOptions(data));
+    } catch (error) {
+      setDestinations([]);
+      toast.error('Não foi possível encontrar destino');
+    }
+  };
+
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
-        `equipment/findMovements?resultquantity=${limit}&page=${offset + limit}`
+        `equipment/findMovements?resultquantity=${limit}&page=${
+          offset + limit
+        }&${filter}`
       );
       setNextMovements(data);
     } catch (error) {
       setNextMovements([]);
-      toast.error('Nenhuma movimentação registrada');
     }
   };
 
-  const onSubmit = handleSubmit(async (formData) => {
+  const handleChangeForm = async () => {
     try {
-      const { type, inChargeName, destination, equipmentId, lowerDate, higherDate } =
-        formData;
-        console.log(formData);
-        const filteredObj = [
-          ...Object.entries(formData).filter(field => field[1]!==undefined && field[1]!== '') 
-        ];
-        const obj: { [key: string]: any } = Object.fromEntries(filteredObj)
-        console.log(filteredObj,obj);
+      const {
+        type,
+        inChargeName,
+        destinationId,
+        equipmentId,
+        lowerDate,
+        higherDate,
+        id,
+      } = watchedData;
+      let formattedLowerDate;
 
-        setFilter([type, inChargeName, destination, equipmentId, lowerDate, higherDate])
+      if (lowerDate !== null && lowerDate !== '' && lowerDate) {
+        formattedLowerDate = new Date(lowerDate).toLocaleDateString('en-us');
+      }
 
-    }catch{
-      console.log("erro");
+      let formattedHigherDate;
+
+      if (higherDate !== null && higherDate !== '' && higherDate) {
+        formattedHigherDate = new Date(higherDate).toLocaleDateString('en-us');
+      }
+
+      const formattedFormData = {
+        type: type?.value,
+        inChargeName: inChargeName?.value,
+        destinationId: destinationId?.value,
+        equipmentId: equipmentId?.value,
+        lowerDate: formattedLowerDate,
+        higherDate: formattedHigherDate,
+        id,
+      };
+
+      const filteredFormData = [
+        ...Object.entries(formattedFormData).filter(
+          (field) => field[1] !== undefined && field[1] !== ''
+        ),
+      ];
+
+      const queryFormMovements = filteredFormData
+        .map((field) => `${field[0]}=${field[1]}`)
+        .join('&');
+      console.log(queryFormMovements);
+      setFilter(queryFormMovements);
+    } catch {
+      console.log('erro');
     }
-  });
+  };
 
   useEffect(() => {
     fetchItems();
     fetchNextItems();
-  }, [currentPage,filter]);
+  }, [currentPage, filter]);
+
+  useEffect(() => {
+    fetchUnits();
+  }, []);
+
+  useEffect(() => {
+    handleChangeForm();
+  }, [watchedData]);
 
   return (
     <>
@@ -206,18 +262,17 @@ export function MovementsTable() {
                 alignItems="center"
                 width="100%"
               >
-                <Flex width="100%" gap="5px" mb="15px">
-                <form id="movement-filter" onSubmit={onSubmit}>
-                  <ControlledSelect
-                    control={control}
-                    name="type"
-                    id="type"
-                    options={TIPOS_EQUIPAMENTO}
-                    placeholder="Selecione uma opção"
-                    label="Tipo de equipamento"
-                  />
-
-                  {/* <ControlledSelect
+                <form id="movement-filter">
+                  <Flex width="100%" gap="5px" mb="15px">
+                    <ControlledSelect
+                      control={control}
+                      name="type"
+                      id="type"
+                      options={TIPOS_MOVIMENTACAO}
+                      placeholder="Selecione"
+                      label="Tipo"
+                    />
+                    {/* <ControlledSelect
                     control={control}
                     name="inChargeName"
                     id="inChargeName"
@@ -225,42 +280,31 @@ export function MovementsTable() {
                     placeholder="Selecione uma opção"
                     label="Nome do responsável"
                   /> */}
-                  <ControlledSelect
-                    control={control}
-                    name="destination"
-                    id="destination"
-                    options={TIPOS_EQUIPAMENTO}
-                    placeholder="Selecione uma opção"
-                    label="Destino da movimentação"
-                  />
-                  <ControlledSelect
-                    control={control}
-                    name="equipmentId"
-                    id="equipmentId"
-                    options={TIPOS_EQUIPAMENTO}
-                    placeholder="Selecione uma opção"
-                    label="Equipamento"
-                  />
-                  <Datepicker
-                    label="Data inicial"
-                    name="lowerDate"
-                    control={control}
-                  />
-                  <Datepicker
-                    label="Data final"
-                    name="higherDate"
-                    control={control}
-                  />
-                  <Input
-                    label="Barra de pesquisa"
-                    errors={errors.id}
-                    {...register('id')}
-                  />
-                  <Button type="submit" form="movement-filter" variant="primary">
-                    Buscar
-                  </Button>
+                    <ControlledSelect
+                      control={control}
+                      name="destinationId"
+                      id="destinationId"
+                      options={destinations}
+                      placeholder="Selecione"
+                      label="Destino"
+                    />
+                    <Datepicker
+                      label="Data inicial"
+                      name="lowerDate"
+                      control={control}
+                    />
+                    <Datepicker
+                      label="Data final"
+                      name="higherDate"
+                      control={control}
+                    />
+                    <Input
+                      label="Barra de pesquisa"
+                      errors={errors.id}
+                      {...register('id')}
+                    />
+                  </Flex>
                 </form>
-                </Flex>
                 <Flex flexDirection="column" width="100%">
                   <TableContainer
                     borderRadius="15px"

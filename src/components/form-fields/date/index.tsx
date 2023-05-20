@@ -92,6 +92,9 @@ export function Datepicker<FormValues extends FieldValues>({
                 />
               )
             }
+            // minDate={new Date()}
+            // showTimeInput
+            // timeInputLabel="Hora"
             fixedHeight
             {...props}
           />
