@@ -1,17 +1,26 @@
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { useState, useEffect, SetStateAction } from 'react';
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, Flex, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
-import MovementHistory  from '../movement-history'
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { format, addDays } from 'date-fns';
+import MovementHistory from '../movement-history';
 import { Equipment } from '../equipment-view-modal';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
-import { api } from '@/services/api';
+import { api } from '../../config/lib/axios';
 
-import { format, addDays } from 'date-fns';
-
-import { DeleteButton } from '../action-buttons/delete-button'
+import { DeleteButton } from '../action-buttons/delete-button';
 
 type FormValues = {
   tippingNumber: string;
@@ -36,18 +45,15 @@ type FormValues = {
   estado: string;
 };
 
-
-
 interface EquipmentFormProps {
-  equipmentId: string | null,
-  onClose: () => void
+  equipmentId: string | null;
+  onClose: () => void;
 }
 
-export default function EquipmentViewForm({ 
-  equipmentId, 
-  onClose 
+export default function EquipmentViewForm({
+  equipmentId,
+  onClose,
 }: EquipmentFormProps) {
-
   const {
     control,
     register,
@@ -57,24 +63,25 @@ export default function EquipmentViewForm({
     setValue,
     formState: { errors },
   } = useForm<FormValues>();
-  
-  const [equipmentType, setEquipmentType] = useState('');
 
+  const [equipmentType, setEquipmentType] = useState('');
 
   useEffect(() => {
     const fetchEquipmentData = async () => {
       try {
         const { data }: AxiosResponse<Equipment[]> = await api.get(
           'equipment/find',
-          {params: {id: equipmentId}},
-        )
-        
+          { params: { id: equipmentId } }
+        );
+
         const equipment = data[0];
         setEquipmentType(equipment.type);
         console.log(equipment);
-      
+
         const acquisitionDate = equipment?.acquisitionDate;
-        const formattedAcquisitionDate = acquisitionDate ? format(addDays(new Date(acquisitionDate), 1), 'dd-MM-yyyy') : '';
+        const formattedAcquisitionDate = acquisitionDate
+          ? format(addDays(new Date(acquisitionDate), 1), 'dd-MM-yyyy')
+          : '';
 
         setValue('tippingNumber', equipment?.tippingNumber ?? '');
         setValue('serialNumber', equipment?.serialNumber ?? '');
@@ -87,15 +94,14 @@ export default function EquipmentViewForm({
         setValue('power', equipment?.power ?? '');
         setValue('screenType', equipment?.screenType);
         setValue('processor', equipment?.processor ?? '');
-        setValue('storageType', equipment?.storageType );
+        setValue('storageType', equipment?.storageType);
         setValue('storageAmount', equipment?.storageAmount ?? '');
         setValue('brandName', equipment?.brand.name ?? '');
         setValue('acquisitionName', equipment?.acquisition.name ?? '');
-        setValue('initialUseDate',equipment?.initialUseDate ?? '');
-        setValue('acquisitionDate',formattedAcquisitionDate ?? '');
+        setValue('initialUseDate', equipment?.initialUseDate ?? '');
+        setValue('acquisitionDate', formattedAcquisitionDate ?? '');
         setValue('ram_size', equipment?.ram_size ?? '');
-        setValue('estado',equipment?.estado ?? '');
-
+        setValue('estado', equipment?.estado ?? '');
       } catch (error) {
         console.error('Erro ao obter os dados do equipamento:', error);
       }
@@ -107,29 +113,25 @@ export default function EquipmentViewForm({
   const handleDelete = async () => {
     console.log('excluir', equipmentId);
     try {
-      const response = await api.delete(
-       'equipment/deleteEquipment',
-       {
-          params: {id: equipmentId},
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('@App:token')}`
-          }
-        }
-      );
+      const response = await api.delete('equipment/deleteEquipment', {
+        params: { id: equipmentId },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('@App:token')}`,
+        },
+      });
       onClose();
-      
-      console.log('response', response)
-      toast.success('Equipamento excluído com sucesso.')
-    }
-    catch(error: any) {
+
+      console.log('response', response);
+      toast.success('Equipamento excluído com sucesso.');
+    } catch (error: any) {
       console.log(error);
       toast.error(error.response.data.error);
     }
-  }
+  };
 
   return (
     <form id="equipment?-register-form">
-      <Grid templateColumns="repeat(3, 3fr)" gap={4} height={"-moz-max-content"}>
+      <Grid templateColumns="repeat(3, 3fr)" gap={4} height="-moz-max-content">
         <Input
           id="type"
           label="Tipo de equipamento"
@@ -162,7 +164,6 @@ export default function EquipmentViewForm({
           label="Nº Serie"
           errors={errors.serialNumber}
           {...register('serialNumber')}
-          
           isReadOnly
         />
 
@@ -244,8 +245,7 @@ export default function EquipmentViewForm({
           </>
         )}
 
-        {(equipmentType === 'Estabilizador' ||
-          equipmentType === 'Nobreak') && (
+        {(equipmentType === 'Estabilizador' || equipmentType === 'Nobreak') && (
           <Input
             label="Potência (VA)"
             errors={errors.storageAmount}
@@ -254,7 +254,6 @@ export default function EquipmentViewForm({
         )}
         <GridItem gridColumn="1 / span 3">
           <TextArea
-
             label="Descrição"
             errors={errors.description}
             maxChars={255}
@@ -263,15 +262,13 @@ export default function EquipmentViewForm({
           />
         </GridItem>
       </Grid>
-      <MovementHistory equipmentId = {equipmentId}/>
+      <MovementHistory equipmentId={equipmentId} />
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
         <Button variant="secondary" onClick={onClose}>
           Voltar
         </Button>
-        <Button variant="primary">
-          Editar
-        </Button>
-        <DeleteButton onClick={handleDelete} label="equipamento"/>
+        <Button variant="primary">Editar</Button>
+        <DeleteButton onClick={handleDelete} label="equipamento" />
       </Flex>
     </form>
   );

@@ -1,8 +1,7 @@
 import { useForm } from 'react-hook-form';
+import { AxiosResponse } from 'axios';
 import { useEffect } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
-import { Datepicker } from '../form-fields/date';
-import { ControlledSelect } from '../form-fields/controlled-select';
 
 import {
   ESTADOS_EQUIPAMENTO,
@@ -10,9 +9,11 @@ import {
   TIPOS_EQUIPAMENTO,
   TIPOS_MONITOR,
 } from '@/constants/equipment';
-import { Input } from '../form-fields/input';
-import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
+import { ControlledSelect } from '../controlled-select';
+import { Datepicker } from '../date';
+import { TextArea } from '../text-area';
+import { Input } from '../input';
 import { api } from '@/config/lib/axios';
 
 type FormValues = {
@@ -40,15 +41,9 @@ type FormValues = {
 
 interface EquipmentFormProps {
   onClose: () => void;
-  refreshRequest: boolean;
-  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EquipmentForm({
-  onClose,
-  refreshRequest,
-  setRefreshRequest,
-}: EquipmentFormProps) {
+export default function EquipmentForm({ onClose }: EquipmentFormProps) {
   const {
     control,
     register,
@@ -98,7 +93,6 @@ export default function EquipmentForm({
 
       if (response.status === 200) {
         toast.success('Equipamento cadastrado com sucesso', 'Sucesso');
-        setRefreshRequest(!refreshRequest);
         onClose();
         return;
       }

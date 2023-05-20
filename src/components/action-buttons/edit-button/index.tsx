@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* 
     Este código foi adaptado do repositório "2022-2-schedula-front":https://github.com/fga-eps-mds/2022-2-schedula-front/
 

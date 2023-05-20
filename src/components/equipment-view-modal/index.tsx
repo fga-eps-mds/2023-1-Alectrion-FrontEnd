@@ -1,4 +1,4 @@
-import { 
+import {
   Flex,
   TableContainer,
   Table,
@@ -6,7 +6,7 @@ import {
   Thead,
   Tr,
   Td,
- } from '@chakra-ui/react';
+} from '@chakra-ui/react';
 
 import EquipmentViewForm from '../equipment-view-form';
 import { Modal } from '../modal';
@@ -18,34 +18,34 @@ type EquipmentViewModalProps = {
 };
 
 export type Equipment = {
-  id: string
-  serialNumber: string
-  type: string
-  situacao: string
-  estado: string
-  model: string
+  id: string;
+  serialNumber: string;
+  type: string;
+  situacao: string;
+  estado: string;
+  model: string;
   brand: {
-    id: string,
-    name: string
-  }
-  acquisitionName: string
-  acquisition: {
-    id: string, 
-    name: string
+    id: string;
+    name: string;
   };
-  description?: string
-  initialUseDate: string
-  acquisitionDate: string
-  screenSize?: string
-  invoiceNumber: string
-  power?: string
-  screenType?: string
-  processor?: string
-  storageType?: string
-  storageAmount?: string
-  ram_size?: string
-  tippingNumber: string
-}
+  acquisitionName: string;
+  acquisition: {
+    id: string;
+    name: string;
+  };
+  description?: string;
+  initialUseDate: string;
+  acquisitionDate: string;
+  screenSize?: string;
+  invoiceNumber: string;
+  power?: string;
+  screenType?: string;
+  processor?: string;
+  storageType?: string;
+  storageAmount?: string;
+  ram_size?: string;
+  tippingNumber: string;
+};
 
 export function EquipmentViewModal({
   isOpen,
@@ -66,8 +66,11 @@ export function EquipmentViewModal({
         flexDirection="column"
         gap="16px"
       >
-        <EquipmentViewForm equipmentId = {selectedEquipmentId} onClose={onClose} />
+        <EquipmentViewForm
+          equipmentId={selectedEquipmentId}
+          onClose={onClose}
+        />
       </Flex>
-     </Modal>
+    </Modal>
   );
 }

@@ -12,6 +12,9 @@ jobs:
 
       - name: Instala dependências
         run: yarn
+      
+      - name: Testa o build
+        run: yarn build
 
       - name: Executa linter
         run: yarn lint

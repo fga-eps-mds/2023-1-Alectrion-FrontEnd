@@ -8,7 +8,6 @@
     Quaisquer erros ou bugs nesta implementação são de nossa responsabilidade.
  */
 import axios from 'axios';
-import { config } from '../../env';
 
 export const api = axios.create({
   baseURL: 'http://localhost:4000/',

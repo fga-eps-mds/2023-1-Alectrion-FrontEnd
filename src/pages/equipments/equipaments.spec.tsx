@@ -1,12 +1,17 @@
 import { render } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { EquipmentTable } from '@/pages/equipaments/EquipamentsControl';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { EquipmentTable } from '@/pages/equipments/EquipamentsControl';
 
 describe('Equipments', () => {
   it('should display a list', async () => {
     const { findByRole } = render(
       <ChakraProvider>
-        <EquipmentTable />
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<EquipmentTable />} />
+          </Routes>
+        </BrowserRouter>
       </ChakraProvider>
     );
 
@@ -17,7 +22,11 @@ describe('Equipments', () => {
   it('should display a button to create equipments', async () => {
     const { queryByText } = render(
       <ChakraProvider>
-        <EquipmentTable />
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<EquipmentTable />} />
+          </Routes>
+        </BrowserRouter>
       </ChakraProvider>
     );
 
@@ -30,7 +39,11 @@ describe('Equipments', () => {
   it('should display a button to move equipments', async () => {
     const { queryByText } = render(
       <ChakraProvider>
-        <EquipmentTable />
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<EquipmentTable />} />
+          </Routes>
+        </BrowserRouter>
       </ChakraProvider>
     );
 
@@ -43,7 +56,11 @@ describe('Equipments', () => {
   it('should display a search bar', async () => {
     const { findByPlaceholderText } = render(
       <ChakraProvider>
-        <EquipmentTable />
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<EquipmentTable />} />
+          </Routes>
+        </BrowserRouter>
       </ChakraProvider>
     );
 

@@ -73,5 +73,31 @@ export const theme = extendTheme({
       variants: {},
       defaultProps: {},
     },
+    Checkbox: {
+      baseStyle: {
+        icon: {
+          color: 'orange',
+        },
+        control: {
+          height: '24px',
+          width: '24px',
+          rounded: 'full',
+          borderColor: 'orange',
+          borderWidth: '3px',
+          _checked: {
+            background: 'unset',
+            borderColor: 'orange',
+            _hover: {
+              background: 'unset',
+              borderColor: 'orange',
+            },
+          },
+        },
+        label: {
+          fontWeight: 'medium',
+          color: 'gray.900',
+        },
+      },
+    },
   },
 });
