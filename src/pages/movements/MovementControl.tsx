@@ -222,6 +222,14 @@ export function MovementsTable() {
     handleChangeForm();
   }, [watchedData]);
 
+  useEffect(() => {
+    fetchUnits();
+  }, []);
+
+  useEffect(() => {
+    handleChangeForm();
+  }, [watchedData]);
+
   return (
     <>
       <MovementsModal

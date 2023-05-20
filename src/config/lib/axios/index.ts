@@ -16,6 +16,7 @@ export const api = axios.create({
 export const apiSchedula = axios.create({
   baseURL: 'https://prd-2023-1-schedula-localidade.herokuapp.com/',
 });
+
 export const schedulaApi = axios.create({
   baseURL: 'https://prd-2023-1-schedula-localidade.herokuapp.com/workstations',
 });
