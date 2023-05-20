@@ -8,7 +8,6 @@
     Quaisquer erros ou bugs nesta implementação são de nossa responsabilidade.
  */
 import { useCallback, useState } from 'react';
-import { FaTrash } from 'react-icons/fa';
 import {
   Button,
   Flex,
@@ -34,7 +33,7 @@ const tooltipStyle = {
   color: 'white',
 };
 
-export function DeleteButton<Data>({
+export function DeleteExtensiveButton<Data>({
   label,
   onClick,
   ...props
@@ -51,18 +50,17 @@ export function DeleteButton<Data>({
   }, [onClose, onClick]);
 
   return (
-    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="auto">
+    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="top">
       <PopoverAnchor>
-        <ActionButton
+        <Button
           label={`Excluir ${label}`}
-          icon={<FaTrash />}
           onClick={onOpen}
           isLoading={isLoading}
-          color="red.500"
           tooltipProps={tooltipStyle}
           tabIndex={0}
+          bg="red"
           {...props}
-        />
+        >Excluir</Button>
       </PopoverAnchor>
       <PopoverContent
         data-testid="delete-confirmation-popover"

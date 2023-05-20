@@ -1,6 +1,7 @@
 import {
   Flex,
   TableContainer,
+  Text,
   Table,
   Tbody,
   Thead,
@@ -10,54 +11,59 @@ import {
 
 import EquipmentViewForm from '../equipment-view-form';
 import { Modal } from '../modal';
+import { EquipmentData } from '../../pages/equipments/EquipamentsControl';
 
 type EquipmentViewModalProps = {
   isOpen: boolean;
   onClose(): void;
-  selectedEquipmentId: string | null;
+  selectedEquipment: EquipmentData | null;
 };
 
-export type Equipment = {
-  id: string;
-  serialNumber: string;
-  type: string;
-  situacao: string;
-  estado: string;
-  model: string;
-  brand: {
-    id: string;
-    name: string;
+function transformFields(data: any) {
+  if (!data) return;
+  const transformedData = { ...data };
+
+  transformedData.type = {
+    label: transformedData.type,
+    value: transformedData.type,
   };
-  acquisitionName: string;
-  acquisition: {
-    id: string;
-    name: string;
+
+  transformedData.estado = {
+    label: transformedData.estado,
+    value: transformedData.estado,
   };
-  description?: string;
-  initialUseDate: string;
-  acquisitionDate: string;
-  screenSize?: string;
-  invoiceNumber: string;
-  power?: string;
-  screenType?: string;
-  processor?: string;
-  storageType?: string;
-  storageAmount?: string;
-  ram_size?: string;
-  tippingNumber: string;
-};
+
+  transformedData.storageType = {
+    label: transformedData.storageType,
+    value: transformedData.storageType,
+  };
+
+  transformedData.screenType = {
+    label: transformedData.screenType,
+    value: transformedData.screenType,
+  };
+
+  transformedData.initialUseDate = {
+    label: transformedData.initialUseDate.split('-')[0],
+    value: transformedData.initialUseDate.split('-')[0],
+  };
+
+  transformedData.acquisitionDate = new Date(transformedData.acquisitionDate);
+
+  return transformedData;
+}
 
 export function EquipmentViewModal({
   isOpen,
   onClose,
-  selectedEquipmentId,
+  selectedEquipment,
 }: EquipmentViewModalProps) {
   return (
     <Modal
-      title={`Equipamento #${selectedEquipmentId}`}
+      title={`Equipamento #${selectedEquipment?.type}`}
       isOpen={isOpen}
       onClose={onClose}
-      size="4xl"
+      size="6xl"
     >
       <Flex
         height="100%"
@@ -67,7 +73,7 @@ export function EquipmentViewModal({
         gap="16px"
       >
         <EquipmentViewForm
-          equipmentId={selectedEquipmentId}
+          equipment={transformFields(selectedEquipment)}
           onClose={onClose}
         />
       </Flex>

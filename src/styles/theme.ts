@@ -16,9 +16,9 @@ export const theme = extendTheme({
   ...baseTheme,
   colors,
   fonts: {
-    heading: `'Poppins', sans-serif`,
-    body: `'Roboto', sans-serif`,
-    color: 'red',
+    heading: `'Overpass', sans-serif`,
+    body: `'Overpass', sans-serif`,
+    color: 'black',
   },
   shadows: {
     thin: 'rgba(27, 31, 35, 0.04) 0px 1px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px inset;',
@@ -34,10 +34,12 @@ export const theme = extendTheme({
         background: 'linear-gradient(135deg, #FFFFFF 20%, #F0F0F0 100%)',
         backgroundAttachment: 'fixed',
         minHeight: '100vh',
+        fontFamily: 'Overpass', 
       },
       html: {
         marginLeft: 'calc(100vw - 100%)', // Fix scrollbar jump
         marginRight: 0,
+        fontFamily: 'Overpass',
       },
     },
   },

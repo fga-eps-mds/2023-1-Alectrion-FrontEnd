@@ -42,7 +42,7 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
         `equipment/findMovements`,
         { params: { equipmentid: equipmentId } }
       );
-
+  
       setMovements(data);
       console.log('Histórico de movimentações', data);
     } catch (error) {
@@ -55,12 +55,19 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
     fetchMovements();
   }, [equipmentId]);
 
+  function formatDate(date: Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}/${month}/${year}`;
+  }
+
   return (
-    <Box width="90%" bg="white" h="300px">
+    <Box width="100%" bg="white" h="200px" border="1px solid #F49320" borderRadius="md">
       <TableContainer
         borderRadius="md"
         minW="68%"
-        style={{ height: '80%', overflowY: 'auto' }}
+        style={{ height: '100%', overflowY: 'auto' }}
         css={{
           '&::-webkit-scrollbar': {
             width: '8px',
@@ -84,7 +91,7 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
         >
           <Thead bg="#F49320" fontWeight="semibold" h="14">
             <Tr>
-              <Td color="white">Movimentação</Td>
+              <Td color="white">Movimentação </Td>
               <Td color="white">Data</Td>
               <Td color="white">Local</Td>
             </Tr>
@@ -96,7 +103,7 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
                   {movement.type}
                 </Td>
 
-                <Td>{movement.date}</Td>
+                <Td>{formatDate(new Date(movement.date))}</Td>
 
                 <Td>{movement.destination.name}</Td>
               </Tr>

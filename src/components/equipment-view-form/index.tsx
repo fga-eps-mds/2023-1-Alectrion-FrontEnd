@@ -12,211 +12,247 @@ import {
   GridItem,
   useDisclosure,
 } from '@chakra-ui/react';
+
 import { format, addDays } from 'date-fns';
 import MovementHistory from '../movement-history';
-import { Equipment } from '../equipment-view-modal';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
+import { ControlledSelect } from '../form-fields/controlled-select';
+import { Datepicker } from '../form-fields/date';
 import { toast } from '@/utils/toast';
 import { api } from '../../config/lib/axios';
+import { EquipmentData } from '../../pages/equipments/EquipamentsControl';
 
-import { DeleteButton } from '../action-buttons/delete-button';
+import { DeleteExtensiveButton } from '../action-buttons/delete-extensive-button';
 
-type FormValues = {
+export type ViewEquipFormValues = {
+  id: any;
   tippingNumber: string;
   serialNumber: string;
-  type: string;
+  type: { value: string; label: string };
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: string;
-  acquisitionDate: string;
+  initialUseDate: { value: number; label: string };
+  acquisitionDate: Date;
   screenSize?: string;
   invoiceNumber: string;
   power?: string;
-  screenType?: string;
+  screenType?: { value: string; label: string };
   processor?: string;
-  storageType?: string;
+  storageType?: { value: string; label: string };
   storageAmount?: string;
-  brandName: string;
-  acquisitionName: string;
+  brand: { name: string };
+  acquisition: { name: string };
   unitId?: string;
   ram_size?: string;
-  estado: string;
+  estado: { value: string; label: string };
 };
 
-interface EquipmentFormProps {
-  equipmentId: string | null;
+interface ViewEquipmentFormProps {
   onClose: () => void;
+  equipment: ViewEquipFormValues;
 }
 
 export default function EquipmentViewForm({
-  equipmentId,
   onClose,
-}: EquipmentFormProps) {
+  equipment,
+}: ViewEquipmentFormProps) {
   const {
     control,
     register,
     handleSubmit,
     watch,
     resetField,
-    setValue,
     formState: { errors },
-  } = useForm<FormValues>();
-
-  const [equipmentType, setEquipmentType] = useState('');
+    setValue,
+  } = useForm<ViewEquipFormValues>({
+    defaultValues: equipment,
+  });
 
   useEffect(() => {
-    const fetchEquipmentData = async () => {
+    resetField('power');
+    resetField('screenSize');
+    resetField('screenType');
+    resetField('ram_size');
+    resetField('processor');
+    resetField('storageType');
+    resetField('storageAmount');
+  }, [resetField, setValue, equipment]);
+
+  useEffect(() => {
+    resetField('type');
+  }, []);
+
+    const handleDelete = async () => {
+      console.log('excluir', equipment);
+      console.log('id', equipment.id);
       try {
-        const { data }: AxiosResponse<Equipment[]> = await api.get(
-          'equipment/find',
-          { params: { id: equipmentId } }
-        );
-
-        const equipment = data[0];
-        setEquipmentType(equipment.type);
-        console.log(equipment);
-
-        const acquisitionDate = equipment?.acquisitionDate;
-        const formattedAcquisitionDate = acquisitionDate
-          ? format(addDays(new Date(acquisitionDate), 1), 'dd-MM-yyyy')
-          : '';
-
-        setValue('tippingNumber', equipment?.tippingNumber ?? '');
-        setValue('serialNumber', equipment?.serialNumber ?? '');
-        setValue('type', equipment?.type ?? '');
-        setValue('situacao', equipment?.situacao ?? '');
-        setValue('model', equipment?.model ?? '');
-        setValue('description', equipment?.description ?? '');
-        setValue('screenSize', equipment?.screenSize ?? '');
-        setValue('invoiceNumber', equipment?.invoiceNumber ?? '');
-        setValue('power', equipment?.power ?? '');
-        setValue('screenType', equipment?.screenType);
-        setValue('processor', equipment?.processor ?? '');
-        setValue('storageType', equipment?.storageType);
-        setValue('storageAmount', equipment?.storageAmount ?? '');
-        setValue('brandName', equipment?.brand.name ?? '');
-        setValue('acquisitionName', equipment?.acquisition.name ?? '');
-        setValue('initialUseDate', equipment?.initialUseDate ?? '');
-        setValue('acquisitionDate', formattedAcquisitionDate ?? '');
-        setValue('ram_size', equipment?.ram_size ?? '');
-        setValue('estado', equipment?.estado ?? '');
-      } catch (error) {
-        console.error('Erro ao obter os dados do equipamento:', error);
+        const response = await api.delete('equipment/deleteEquipment', {
+          params: { id: equipment.id },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('@App:token')}`,
+          },
+        });
+        onClose();
+        toast.success('Equipamento excluído com sucesso.');
+        
+        console.log('response', response);
+      } catch (error: any) {
+        console.log('Erro ao obter os dados do equipamento:', error);
+        toast.error(error.response.data.error);
       }
-    };
-
-    fetchEquipmentData();
-  }, [equipmentId, setValue]);
-
-  const handleDelete = async () => {
-    console.log('excluir', equipmentId);
-    try {
-      const response = await api.delete('equipment/deleteEquipment', {
-        params: { id: equipmentId },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('@App:token')}`,
-        },
-      });
-      onClose();
-
-      console.log('response', response);
-      toast.success('Equipamento excluído com sucesso.');
-    } catch (error: any) {
-      console.log(error);
-      toast.error(error.response.data.error);
+      
     }
-  };
-
   return (
-    <form id="equipment?-register-form">
-      <Grid templateColumns="repeat(3, 3fr)" gap={4} height="-moz-max-content">
-        <Input
+    <form id="equipment-register-form">
+      <Grid templateColumns="repeat(5, 5fr)" gap={6} alignItems={"end"}>
+        <ControlledSelect
+          control={control}
+          name="type"
           id="type"
+          placeholder="Selecione uma opção"
           label="Tipo de equipamento"
-          errors={errors.type}
-          {...register('type')}
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
           isReadOnly
         />
+
         <Input
           label="Marca"
-          errors={errors.brandName}
-          {...register('brandName')}
+          errors={errors.brand?.name}
+          {...register('brand.name', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
           isReadOnly
         />
 
         <Input
           label="Modelo"
           errors={errors.model}
-          {...register('model')}
+          {...register('model', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
           isReadOnly
         />
 
         <Input
           label="Nº Tombamento"
           errors={errors.tippingNumber}
-          {...register('tippingNumber')}
+          {...register('tippingNumber', {
+            required: 'Campo Obrigatório',
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
+          })}
           isReadOnly
         />
 
         <Input
           label="Nº Serie"
           errors={errors.serialNumber}
-          {...register('serialNumber')}
+          {...register('serialNumber', {
+            required: 'Campo Obrigatório',
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
+          })}
+          isReadOnly
+        />
+
+        <Input
+          label="Nº da Nota Fiscal"
+          errors={errors.invoiceNumber}
+          {...register('invoiceNumber', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Por favor, digite apenas números.',
+            },
+          })}
           isReadOnly
         />
 
         <Input
           label="Tipo de aquisição"
-          errors={errors.acquisitionName}
-          {...register('acquisitionName')}
+          errors={errors.acquisition?.name}
+          {...register('acquisition.name', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
           isReadOnly
         />
 
-        <Input
-          {...register('estado')}
+        <ControlledSelect
+          control={control}
+          name="estado"
           id="estado"
+          placeholder="Selecione uma opção"
           label="Estado do equipamento"
-          errors={errors.estado}
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
           isReadOnly
         />
 
-        <Input
-          {...register('initialUseDate')}
+        <ControlledSelect
+          control={control}
+          name="initialUseDate"
           id="initialUseDate"
-          errors={errors.initialUseDate}
+          placeholder="Selecione uma opção"
           label="Ano da aquisição"
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
           isReadOnly
         />
 
-        <Input
+        <Datepicker
           label="Data de aquisição"
-          {...register('acquisitionDate')}
-          errors={errors.acquisitionDate}
-          disabled
+          name="acquisitionDate"
+          required
+          control={control}
+          readOnly
         />
-        {equipmentType === 'CPU' && (
+
+        {equipment.type.value === 'CPU' && (
           <>
             <Input
               label="Qtd. Memória RAM (GB)"
               errors={errors.ram_size}
-              {...register('ram_size')}
+              {...register('ram_size', {
+                required: 'Campo Obrigatório',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Por favor, digite apenas números.',
+                },
+              })}
               isReadOnly
             />
-            <Input
-              {...register('storageType')}
+
+            <ControlledSelect
+              control={control}
+              name="storageType"
               id="storageType"
+              placeholder="Selecione uma opção"
               label="Tipo de armazenamento"
-              errors={errors.storageType}
+              rules={{ required: 'Campo obrigatório' }}
               isReadOnly
             />
+
             <Input
               label="Qtd. Armazenamento (GB)"
               errors={errors.storageAmount}
-              {...register('storageAmount')}
+              {...register('storageAmount', {
+                required: 'Campo Obrigatório',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Por favor, digite apenas números.',
+                },
+              })}
               isReadOnly
             />
+
             <Input
               label="Processador"
               errors={errors.processor}
@@ -228,47 +264,65 @@ export default function EquipmentViewForm({
           </>
         )}
 
-        {equipmentType === 'Monitor' && (
+        {equipment.type.value === 'Monitor' && (
           <>
-            <Input
-              {...register('screenType')}
+            <ControlledSelect
+              control={control}
+              name="screenType"
               id="screenType"
               placeholder="Selecione uma opção"
               label="Tipo de monitor"
-              errors={errors.screenType}
+              rules={{ required: 'Campo obrigatório' }}
+              isReadOnly
             />
+
             <Input
               label="Tamanho do Monitor"
               errors={errors.storageAmount}
-              {...register('screenSize')}
+              {...register('screenSize', {
+                required: 'Campo Obrigatório',
+              })}
+              isReadOnly
             />
           </>
         )}
 
-        {(equipmentType === 'Estabilizador' || equipmentType === 'Nobreak') && (
+        {(equipment.type.value === 'Estabilizador' ||
+          equipment.type.value === 'Nobreak') && (
           <Input
             label="Potência (VA)"
             errors={errors.storageAmount}
-            {...register('power')}
+            {...register('power', {
+              required: 'Campo Obrigatório',
+              pattern: {
+                value: /^[0-9]+$/,
+                message: 'Por favor, digite apenas números.',
+              },
+            })}
+            isReadOnly
           />
         )}
-        <GridItem gridColumn="1 / span 3">
+
+        <GridItem gridColumn="1 / span 5">
           <TextArea
             label="Descrição"
             errors={errors.description}
             maxChars={255}
-            {...register('description')}
+            {...register('description', {
+              maxLength: 255,
+            })}
             readOnly
           />
         </GridItem>
       </Grid>
-      <MovementHistory equipmentId={equipmentId} />
-      <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
+      <p style={{ fontWeight: '900', fontSize: '1rem', padding: '2rem 0rem 0.5rem 0rem' }}>Histórico de Movimentações</p>
+      <MovementHistory equipmentId={equipment.id} />
+      <Flex gap="4rem" mt="2rem" mb="1rem" justify="space-between">
         <Button variant="secondary" onClick={onClose}>
           Voltar
         </Button>
         <Button variant="primary">Editar</Button>
-        <DeleteButton onClick={handleDelete} label="equipamento" />
+        <DeleteExtensiveButton onClick={handleDelete} label="equipamento" />
       </Flex>
     </form>
   );

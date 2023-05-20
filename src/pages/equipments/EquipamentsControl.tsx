@@ -16,6 +16,7 @@ import {
   Th,
   Td,
   Input,
+  IconButton,
   Button,
   TableContainer,
   Center,
@@ -30,6 +31,7 @@ import {
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { FaFileAlt } from 'react-icons/fa';
 import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
@@ -106,7 +108,7 @@ function EquipmentTable() {
   const [offset, setOffset] = useState(0);
   const limit = 10;
 
-  const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(
+  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData | null>(
     null
   );
 
@@ -129,10 +131,7 @@ function EquipmentTable() {
     onOpen: onViewOpen,
   } = useDisclosure();
 
-  const handleView = (equipmentId: string) => {
-    if (equipmentId) setSelectedEquipmentId(equipmentId);
-    onViewOpen();
-  };
+  
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
   const handleSearchTermChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -185,7 +184,11 @@ function EquipmentTable() {
   const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
   };
-
+  
+  const handleView = (equipment: EquipmentData) => {
+    if (equipment) setSelectedEquipment(equipment);
+    onViewOpen();
+  };
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>
@@ -396,10 +399,11 @@ function EquipmentTable() {
                       {equipaments.map((equipment) => (
                         <Tr
                           onClick={() => {
-                            handleView(equipment.id);
+                            handleView(equipment);
                           }}
                           key={equipment.id}
                           cursor="pointer"
+                          
                         >
                           <Td fontWeight="medium">
                             {equipment.situacao} - {equipment.unit.name}
@@ -422,7 +426,7 @@ function EquipmentTable() {
                             }}
                           >
                             <button>
-                              <BiEditAlt />
+                              <BiEditAlt size={23}/>
                             </button>
                           </Td>
                         </Tr>
@@ -494,8 +498,9 @@ function EquipmentTable() {
         />
         <EquipmentViewModal
           onClose={onViewClose}
-          selectedEquipmentId={selectedEquipmentId}
+          selectedEquipment={selectedEquipment}
           isOpen={isViewOpen}
+          
         />
       </GridItem>
     </Grid>
