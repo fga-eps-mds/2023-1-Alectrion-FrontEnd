@@ -399,6 +399,7 @@ function EquipmentTable() {
                             handleView(equipment.id);
                           }}
                           key={equipment.id}
+                          cursor="pointer"
                         >
                           <Td fontWeight="medium">
                             {equipment.situacao} - {equipment.unit.name}
@@ -413,13 +414,14 @@ function EquipmentTable() {
                               'pt-BR'
                             )}
                           </Td>
-                          <Td>
-                            <button
-                              onClick={() => {
-                                handleEdit(equipment);
-                                onOpenEditEquipment();
-                              }}
-                            >
+                          <Td
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleEdit(equipment);
+                              onOpenEditEquipment();
+                            }}
+                          >
+                            <button>
                               <BiEditAlt />
                             </button>
                           </Td>
