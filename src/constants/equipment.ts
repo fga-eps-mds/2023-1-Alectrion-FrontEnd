@@ -1,7 +1,10 @@
+/* eslint-disable prettier/prettier */
 export type SelectItem<T> = {
   label: T;
   value: string;
 };
+
+
 
 export type TipoEquipamento =
   | 'CPU'
@@ -103,5 +106,21 @@ export const STATUS = [
   { label: 'Empréstimo', value: 'Empréstimo' },
   { label: 'Estoque', value: 'Estoque' },
   { label: 'Manutenção', value: 'Manutenção' },
-  { label: 'Reserva técnica', value: 'Reserva técnica' },
+  { label: 'Reserva Técnica', value: 'Reserva Técnica' },
 ];
+
+export interface Workstation {
+  id: string;
+  name: string;
+  phone: string;
+  ip: string;
+  gateway: string;
+  is_regional: boolean;
+  city: {
+    id : string;
+    name: string;
+    state: string;
+  };
+  parent_workstation: Workstation | null;
+  child_workstations: Workstation[];
+}

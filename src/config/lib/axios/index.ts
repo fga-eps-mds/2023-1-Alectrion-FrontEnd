@@ -12,3 +12,7 @@ import axios from 'axios';
 export const api = axios.create({
   baseURL: 'https://alectrion-gateway-2023.herokuapp.com/',
 });
+
+export const apiSchedula = axios.create({
+  baseURL: 'https://prd-2023-1-schedula-localidade.herokuapp.com/',
+});

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @typescript-eslint/no-redeclare */
@@ -34,13 +35,13 @@ import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { FaFileAlt } from 'react-icons/fa';
 import { SideBar } from '@/components/side-bar';
-import { api } from '../../config/lib/axios';
+import { api, apiSchedula } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 import { EquipmentViewModal } from '@/components/equipment-view-modal';
 import { theme } from '@/styles/theme';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
-import { STATUS, TIPOS_EQUIPAMENTO } from '@/constants/equipment';
+import { STATUS, SelectItem, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 
 export interface EquipmentData {
@@ -93,10 +94,12 @@ function EquipmentTable() {
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [workstations, setWorkstations] = useState<Workstation[]>();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
-  const [filter, setFilter] = useState<FilterValues>();
+  const [filter, setFilter] = useState<string>('');
 
   const {
     control,
@@ -127,7 +130,7 @@ function EquipmentTable() {
     const query = `${filteredDataFormatted
       .map((field) => `${field[0]}=${field[1]}`)
       .join('&')}`;
-    console.log('Query: ', query);
+      setFilter(query);
   };
 
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
@@ -163,18 +166,28 @@ function EquipmentTable() {
   ) => {
     setSearchType(event.target.value);
   };
-  // verificar se o número de série do equipamento inclui
-  // o termo de pesquisa inserido pelo usuário e se o tipo de equipamento corresponde ao tipo selecionado pelo usuário no menu suspenso
-  // const filteredEquipment = equipmentList.filter(
-  //   (equipment) =>
-  //     equipment.NumSerie.includes(searchTerm) &&
-  //     (searchType === '' || equipment.type === searchType)
-  // );
+  
+  const formattedWorkstations = () => {
+    const listWorkstations = workstations?.map((workstation) => {return{label : workstation.name, value : workstation.name}});
+    return listWorkstations;
+  }
+
+  const getWorkstations = async () => {
+    apiSchedula
+      .get('workstations')
+      .then((response) => {
+        setWorkstations(response.data);
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset}`
+        `equipment/find?take=${limit}&skip=${offset}&${filter}`
       );
       setEquipaments(data);
     } catch (error) {
@@ -186,7 +199,7 @@ function EquipmentTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset + limit}`
+        `equipment/find?take=${limit}&skip=${offset + limit}&${filter}`
       );
       setNextEquipaments(data);
     } catch (error) {
@@ -195,6 +208,10 @@ function EquipmentTable() {
     }
   };
   useEffect(() => {
+    getWorkstations();
+    formattedWorkstations();
+  },[])
+  useEffect(() => {
     handleFilterChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchFilter]);
@@ -202,7 +219,7 @@ function EquipmentTable() {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, refreshRequest]);
+  }, [currentPage, refreshRequest, filter]);
 
   const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
@@ -270,7 +287,7 @@ function EquipmentTable() {
                     control={control}
                     name="location"
                     id="location"
-                    options={TIPOS_EQUIPAMENTO}
+                    options={formattedWorkstations()}
                     placeholder="Localização"
                   />
                   <ControlledSelect
