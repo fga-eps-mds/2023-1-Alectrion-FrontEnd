@@ -52,7 +52,6 @@ export function EquipmentEditModal({
   refreshRequest,
   setRefreshRequest,
 }: EquipmentEditModalProps) {
-  console.log(equip);
   return (
     <Modal
       title="Edição de Equipamentos"

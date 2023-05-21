@@ -101,16 +101,13 @@ function EquipmentTable() {
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
 
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData | null>(
-    null
-  );
+  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
 
   const {
     isOpen: isOpenEditEquipment,
@@ -155,7 +152,7 @@ function EquipmentTable() {
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find`
+        `equipment/find?take=${limit}&skip=${offset + limit}`
       );
       setEquipaments(data);
     } catch (error) {
@@ -183,6 +180,7 @@ function EquipmentTable() {
 
   const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
+    onOpenEditEquipment();
   };
   
   const handleView = (equipment: EquipmentData) => {
@@ -422,7 +420,6 @@ function EquipmentTable() {
                             onClick={(event) => {
                               event.stopPropagation();
                               handleEdit(equipment);
-                              onOpenEditEquipment();
                             }}
                           >
                             <button>
@@ -498,8 +495,11 @@ function EquipmentTable() {
         />
         <EquipmentViewModal
           onClose={onViewClose}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
           selectedEquipment={selectedEquipment}
           isOpen={isViewOpen}
+          handleEdit={handleEdit}
           
         />
       </GridItem>

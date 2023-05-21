@@ -44,7 +44,6 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
       );
   
       setMovements(data);
-      console.log('Histórico de movimentações', data);
     } catch (error) {
       setMovements([]);
       toast.error('Nenhuma moviementacao encontrada');

@@ -33,7 +33,7 @@ export type ViewEquipFormValues = {
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: { value: number; label: string };
+  initialUseDate: { value: string; label: string };
   acquisitionDate: Date;
   screenSize?: string;
   invoiceNumber: string;
@@ -50,13 +50,21 @@ export type ViewEquipFormValues = {
 };
 
 interface ViewEquipmentFormProps {
-  onClose: () => void;
+  equipmentEdit: EquipmentData | undefined;
   equipment: ViewEquipFormValues;
+  onClose: () => void;
+  handleEdit: (equipment:EquipmentData) => void;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function EquipmentViewForm({
-  onClose,
+  equipmentEdit,
   equipment,
+  onClose,
+  handleEdit,
+  refreshRequest,
+  setRefreshRequest,
 }: ViewEquipmentFormProps) {
   const {
     control,
@@ -85,8 +93,6 @@ export default function EquipmentViewForm({
   }, []);
 
     const handleDelete = async () => {
-      console.log('excluir', equipment);
-      console.log('id', equipment.id);
       try {
         const response = await api.delete('equipment/deleteEquipment', {
           params: { id: equipment.id },
@@ -96,10 +102,10 @@ export default function EquipmentViewForm({
         });
         onClose();
         toast.success('Equipamento excluído com sucesso.');
+        setRefreshRequest(!refreshRequest);
         
-        console.log('response', response);
       } catch (error: any) {
-        console.log('Erro ao obter os dados do equipamento:', error);
+        console.error(error);
         toast.error(error.response.data.error);
       }
       
@@ -321,9 +327,10 @@ export default function EquipmentViewForm({
         <Button variant="secondary" onClick={onClose}>
           Voltar
         </Button>
-        <Button variant="primary">Editar</Button>
+        <Button variant="primary" onClick={() => {handleEdit(equipmentEdit); onClose()}}>Editar</Button>
         <DeleteExtensiveButton onClick={handleDelete} label="equipamento" />
       </Flex>
+
     </form>
   );
 }

@@ -16,7 +16,10 @@ import { EquipmentData } from '../../pages/equipments/EquipamentsControl';
 type EquipmentViewModalProps = {
   isOpen: boolean;
   onClose(): void;
-  selectedEquipment: EquipmentData | null;
+  selectedEquipment: EquipmentData | undefined;
+  handleEdit(equipment: EquipmentData): void;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function transformFields(data: any) {
@@ -57,10 +60,13 @@ export function EquipmentViewModal({
   isOpen,
   onClose,
   selectedEquipment,
+  handleEdit,
+  refreshRequest,
+  setRefreshRequest
 }: EquipmentViewModalProps) {
   return (
     <Modal
-      title={`Equipamento #${selectedEquipment?.type}`}
+      title={`Equipamento: ${selectedEquipment?.type} ${selectedEquipment?.brand.name} `}
       isOpen={isOpen}
       onClose={onClose}
       size="6xl"
@@ -73,8 +79,12 @@ export function EquipmentViewModal({
         gap="16px"
       >
         <EquipmentViewForm
+          equipmentEdit={selectedEquipment}
           equipment={transformFields(selectedEquipment)}
           onClose={onClose}
+          handleEdit={handleEdit}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
         />
       </Flex>
     </Modal>
