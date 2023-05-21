@@ -123,13 +123,11 @@ function EquipmentTable() {
         (field) => field[1] !== undefined && field[1] !== ''
       ),
     ];
-    // const filteredDataFormatted = Object.values(dataFormatted).filter(
-    //   (key, value) => value !== undefined
-    // );
 
-    const query = `{${filteredDataFormatted
-      .map((field) => `"${field[0]}":"${field[1]}"`)
-      .join(', ')}}`;
+    const query = `${filteredDataFormatted
+      .map((field) => `${field[0]}=${field[1]}`)
+      .join('&')}`;
+    console.log('Query: ', query);
   };
 
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
@@ -253,7 +251,7 @@ function EquipmentTable() {
               alignItems="center"
               width="100%"
             >
-              <form id="equipment-filter" onSubmit={onSubmit}>
+              <form id="equipment-filter">
                 <Flex width="100%" gap="5px" mb="15px">
                   <ControlledSelect
                     control={control}
@@ -350,7 +348,9 @@ function EquipmentTable() {
                           <Td>{equipment.tippingNumber}</Td>
                           <Td>{equipment.serialNumber}</Td>
                           <Td>
-                            {new Date(equipment.updatedAt).toLocaleDateString()}
+                            {new Date(equipment.updatedAt).toLocaleDateString(
+                              'pt-BR'
+                            )}
                           </Td>
                           <Td
                             onClick={(event) => {
