@@ -1,19 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { AxiosResponse } from 'axios';
-import { useState, useEffect, SetStateAction } from 'react';
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  useDisclosure,
-} from '@chakra-ui/react';
-
-import { format, addDays } from 'date-fns';
+import { useEffect } from 'react';
+import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import MovementHistory from '../movement-history';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
@@ -69,8 +56,6 @@ export default function EquipmentViewForm({
   const {
     control,
     register,
-    handleSubmit,
-    watch,
     resetField,
     formState: { errors },
     setValue,
@@ -90,26 +75,25 @@ export default function EquipmentViewForm({
 
   useEffect(() => {
     resetField('type');
-  }, []);
+  }, [resetField]);
 
   const handleDelete = async () => {
-    const token = localStorage.getItem('@App:token');
     try {
       const response = await api.delete('equipment/deleteEquipment', {
         params: { id: equipment.id },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('@App:token')}`,
         },
       });
+
       onClose();
       toast.success('Equipamento excluído com sucesso.');
       setRefreshRequest(!refreshRequest);
     } catch (error: any) {
-      console.error(error);
-      if (token == null) error.response.data = {error: 'Você precisa fazer login'};
       toast.error(error.response.data.error);
     }
   };
+
   return (
     <form id="equipment-register-form">
       <Grid templateColumns="repeat(5, 5fr)" gap={6} alignItems="end">
@@ -332,7 +316,7 @@ export default function EquipmentViewForm({
       </p>
       <MovementHistory equipmentId={equipment.id} />
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="space-between">
-        <Button variant="secondary" onClick={onClose}>
+        <Button variant="secondary" onClick={onClose} name="Voltar">
           Voltar
         </Button>
         <Button
@@ -341,10 +325,15 @@ export default function EquipmentViewForm({
             handleEdit(equipmentEdit);
             onClose();
           }}
+          name="Editar"
         >
           Editar
         </Button>
-        <DeleteExtensiveButton onClick={handleDelete} label="equipamento" />
+        <DeleteExtensiveButton
+          onClick={handleDelete}
+          label="equipamento"
+          name="Excluir"
+        />
       </Flex>
     </form>
   );

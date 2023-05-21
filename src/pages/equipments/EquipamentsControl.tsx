@@ -41,55 +41,33 @@ import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 
 export interface EquipmentData {
   tippingNumber: string;
-
   serialNumber: string;
-
   type: string;
-
   situacao: string;
-
   estado: string;
-
   model: string;
-
   acquisitionDate: Date;
-
   description?: string;
-
   initialUseDate: Date;
-
   screenSize?: string;
-
   invoiceNumber: string;
-
   power?: string;
-
   screenType?: string;
-
   processor?: string;
-
   storageType?: string;
-
   storageAmount?: string;
-
+  ram_size?: string;
+  createdAt?: string;
+  updatedAt: string;
+  id: string;
   brand: {
     name: string;
   };
-
   acquisition: any;
-
   unit: {
     name: string;
     localization: string;
   };
-
-  ram_size?: string;
-
-  createdAt?: string;
-
-  updatedAt: string;
-
-  id: string;
 }
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -186,6 +164,7 @@ function EquipmentTable() {
     if (equipment) setSelectedEquipment(equipment);
     onViewOpen();
   };
+
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>

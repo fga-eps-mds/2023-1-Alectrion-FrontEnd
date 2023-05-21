@@ -1,13 +1,4 @@
-import {
-  Flex,
-  TableContainer,
-  Text,
-  Table,
-  Tbody,
-  Thead,
-  Tr,
-  Td,
-} from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 
 import EquipmentViewForm from '../equipment-view-form';
 import { Modal } from '../modal';
@@ -17,7 +8,7 @@ type EquipmentViewModalProps = {
   isOpen: boolean;
   onClose(): void;
   selectedEquipment: EquipmentData | undefined;
-  handleEdit(equipment: EquipmentData): void;
+  handleEdit(equipment: EquipmentData | undefined): void;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
