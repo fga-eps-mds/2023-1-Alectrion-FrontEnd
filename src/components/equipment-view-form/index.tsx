@@ -50,10 +50,10 @@ export type ViewEquipFormValues = {
 };
 
 interface ViewEquipmentFormProps {
-  equipmentEdit: EquipmentData | undefined;
+  equipmentEdit: EquipmentData;
   equipment: ViewEquipFormValues;
   onClose: () => void;
-  handleEdit: (equipment:EquipmentData) => void;
+  handleEdit: (equipment: EquipmentData) => void;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -92,27 +92,27 @@ export default function EquipmentViewForm({
     resetField('type');
   }, []);
 
-    const handleDelete = async () => {
-      try {
-        const response = await api.delete('equipment/deleteEquipment', {
-          params: { id: equipment.id },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('@App:token')}`,
-          },
-        });
-        onClose();
-        toast.success('Equipamento excluído com sucesso.');
-        setRefreshRequest(!refreshRequest);
-        
-      } catch (error: any) {
-        console.error(error);
-        toast.error(error.response.data.error);
-      }
-      
+  const handleDelete = async () => {
+    const token = localStorage.getItem('@App:token');
+    try {
+      const response = await api.delete('equipment/deleteEquipment', {
+        params: { id: equipment.id },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      onClose();
+      toast.success('Equipamento excluído com sucesso.');
+      setRefreshRequest(!refreshRequest);
+    } catch (error: any) {
+      console.error(error);
+      if (token == null) error.response.data = {error: 'Você precisa fazer login'};
+      toast.error(error.response.data.error);
     }
+  };
   return (
     <form id="equipment-register-form">
-      <Grid templateColumns="repeat(5, 5fr)" gap={6} alignItems={"end"}>
+      <Grid templateColumns="repeat(5, 5fr)" gap={6} alignItems="end">
         <ControlledSelect
           control={control}
           name="type"
@@ -321,16 +321,31 @@ export default function EquipmentViewForm({
           />
         </GridItem>
       </Grid>
-      <p style={{ fontWeight: '900', fontSize: '1rem', padding: '2rem 0rem 0.5rem 0rem' }}>Histórico de Movimentações</p>
+      <p
+        style={{
+          fontWeight: '900',
+          fontSize: '1rem',
+          padding: '2rem 0rem 0.5rem 0rem',
+        }}
+      >
+        Histórico de Movimentações
+      </p>
       <MovementHistory equipmentId={equipment.id} />
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="space-between">
         <Button variant="secondary" onClick={onClose}>
           Voltar
         </Button>
-        <Button variant="primary" onClick={() => {handleEdit(equipmentEdit); onClose()}}>Editar</Button>
+        <Button
+          variant="primary"
+          onClick={() => {
+            handleEdit(equipmentEdit);
+            onClose();
+          }}
+        >
+          Editar
+        </Button>
         <DeleteExtensiveButton onClick={handleDelete} label="equipamento" />
       </Flex>
-
     </form>
   );
 }

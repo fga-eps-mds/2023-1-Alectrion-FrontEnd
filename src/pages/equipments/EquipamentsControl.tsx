@@ -128,7 +128,6 @@ function EquipmentTable() {
     onOpen: onViewOpen,
   } = useDisclosure();
 
-  
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
   const handleSearchTermChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -182,7 +181,7 @@ function EquipmentTable() {
     if (equipment) setSelectedEquipmentToEdit(equipment);
     onOpenEditEquipment();
   };
-  
+
   const handleView = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipment(equipment);
     onViewOpen();
@@ -401,7 +400,6 @@ function EquipmentTable() {
                           }}
                           key={equipment.id}
                           cursor="pointer"
-                          
                         >
                           <Td fontWeight="medium">
                             {equipment.situacao} - {equipment.unit.name}
@@ -423,7 +421,7 @@ function EquipmentTable() {
                             }}
                           >
                             <button>
-                              <BiEditAlt size={23}/>
+                              <BiEditAlt size={23} />
                             </button>
                           </Td>
                         </Tr>
@@ -500,7 +498,6 @@ function EquipmentTable() {
           selectedEquipment={selectedEquipment}
           isOpen={isViewOpen}
           handleEdit={handleEdit}
-          
         />
       </GridItem>
     </Grid>

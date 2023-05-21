@@ -60,7 +60,9 @@ export function DeleteExtensiveButton<Data>({
           tabIndex={0}
           bg="red"
           {...props}
-        >Excluir</Button>
+        >
+          Excluir
+        </Button>
       </PopoverAnchor>
       <PopoverContent
         data-testid="delete-confirmation-popover"

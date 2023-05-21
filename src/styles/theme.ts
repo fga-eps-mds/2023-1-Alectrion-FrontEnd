@@ -34,7 +34,7 @@ export const theme = extendTheme({
         background: 'linear-gradient(135deg, #FFFFFF 20%, #F0F0F0 100%)',
         backgroundAttachment: 'fixed',
         minHeight: '100vh',
-        fontFamily: 'Overpass', 
+        fontFamily: 'Overpass',
       },
       html: {
         marginLeft: 'calc(100vw - 100%)', // Fix scrollbar jump

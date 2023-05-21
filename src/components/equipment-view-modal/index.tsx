@@ -62,7 +62,7 @@ export function EquipmentViewModal({
   selectedEquipment,
   handleEdit,
   refreshRequest,
-  setRefreshRequest
+  setRefreshRequest,
 }: EquipmentViewModalProps) {
   return (
     <Modal
@@ -79,7 +79,7 @@ export function EquipmentViewModal({
         gap="16px"
       >
         <EquipmentViewForm
-          equipmentEdit={selectedEquipment}
+          equipmentEdit={selectedEquipment as EquipmentData}
           equipment={transformFields(selectedEquipment)}
           onClose={onClose}
           handleEdit={handleEdit}

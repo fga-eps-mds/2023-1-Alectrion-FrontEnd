@@ -42,7 +42,7 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
         `equipment/findMovements`,
         { params: { equipmentid: equipmentId } }
       );
-  
+
       setMovements(data);
     } catch (error) {
       setMovements([]);
@@ -62,7 +62,13 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
   }
 
   return (
-    <Box width="100%" bg="white" h="200px" border="1px solid #F49320" borderRadius="md">
+    <Box
+      width="100%"
+      bg="white"
+      h="200px"
+      border="1px solid #F49320"
+      borderRadius="md"
+    >
       <TableContainer
         borderRadius="md"
         minW="68%"
