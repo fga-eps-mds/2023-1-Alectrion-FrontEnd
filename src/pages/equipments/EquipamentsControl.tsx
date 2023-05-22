@@ -44,6 +44,7 @@ import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, SelectItem, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 
+
 export interface EquipmentData {
   tippingNumber: string;
   serialNumber: string;
@@ -114,13 +115,26 @@ function EquipmentTable() {
   const handleFilterChange = () => {
     const { type, lastModifiedDate, situacao, location } = watchFilter;
 
+    const selectedDate = lastModifiedDate();
+    const year = selectedDate.getFullYear();
+    const month = ('0' + (selectedDate.getMonth() + 1)).slice(-2);
+    const day = ('0' + selectedDate.getDate()).slice(-2);
+    const hour = ('0' + selectedDate.getHours()).slice(-2);
+    const minute = ('0' + selectedDate.getMinutes()).slice(-2);
+    const second = ('0' + selectedDate.getSeconds()).slice(-2);
+    const millisecond = ('00' + selectedDate.getMilliseconds()).slice(-3);
+
+    const formattedDate = `${year}-${month}-${day}T${hour}:${minute}:${second}.${millisecond}Z`;
+
     const dataFormatted = {
       type: type?.value,
-      lastModifiedDate,
+      lastModifiedDate: formattedDate?.value,
       situacao: situacao?.value,
       location: location?.value,
     };
 
+
+    
     const filteredDataFormatted = [
       ...Object.entries(dataFormatted).filter(
         (field) => field[1] !== undefined && field[1] !== ''
