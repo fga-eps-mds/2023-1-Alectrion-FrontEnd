@@ -26,6 +26,7 @@ import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
+import { BiSearch } from 'react-icons/bi';
 import { toast } from '@/utils/toast';
 import { api, schedulaApi } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
@@ -33,7 +34,6 @@ import { theme } from '@/styles/theme';
 import { MovimentacaoTipoMap, TIPOS_MOVIMENTACAO } from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
-import { TIPOS_EQUIPAMENTO } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { Item } from '@/components/list-item';
@@ -222,14 +222,6 @@ export function MovementsTable() {
     handleChangeForm();
   }, [watchedData]);
 
-  useEffect(() => {
-    fetchUnits();
-  }, []);
-
-  useEffect(() => {
-    handleChangeForm();
-  }, [watchedData]);
-
   return (
     <>
       <MovementsModal
@@ -277,8 +269,11 @@ export function MovementsTable() {
                       name="type"
                       id="type"
                       options={TIPOS_MOVIMENTACAO}
-                      placeholder="Selecione"
-                      label="Tipo"
+                      placeholder="Tipos"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
                     />
                     {/* <ControlledSelect
                     control={control}
@@ -294,22 +289,28 @@ export function MovementsTable() {
                       id="destinationId"
                       options={destinations}
                       placeholder="Selecione"
-                      label="Destino"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
                     />
                     <Datepicker
-                      label="Data inicial"
                       name="lowerDate"
                       control={control}
+                      border={false}
+                      placeholderText="Data inicial"
                     />
                     <Datepicker
-                      label="Data final"
                       name="higherDate"
                       control={control}
+                      border={false}
+                      placeholderText="Data final"
                     />
                     <Input
-                      label="Barra de pesquisa"
+                      minWidth="15vw"
                       errors={errors.id}
                       {...register('id')}
+                      rightElement={<BiSearch />}
+                      placeholder="Pesquisa"
                     />
                   </Flex>
                 </form>
