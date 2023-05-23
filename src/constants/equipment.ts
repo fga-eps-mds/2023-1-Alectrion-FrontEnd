@@ -4,8 +4,6 @@ export type SelectItem<T> = {
   value: string;
 };
 
-
-
 export type TipoEquipamento =
   | 'CPU'
   | 'Escaneador'
@@ -103,7 +101,7 @@ export const ESTADOS_EQUIPAMENTO = [
 export const STATUS = [
   { label: 'Ativo', value: 'Ativo' },
   { label: 'Baixado', value: 'Baixado' },
-  { label: 'Empréstimo', value: 'Empréstimo' },
+  { label: 'Empréstimo', value: 'Ativo Empréstimo' },
   { label: 'Estoque', value: 'Estoque' },
   { label: 'Manutenção', value: 'Manutenção' },
   { label: 'Reserva Técnica', value: 'Reserva Técnica' },

@@ -44,6 +44,10 @@ import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, SelectItem, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 
+interface ISelectOption {
+  label: string;
+  value: number | string;
+}
 
 export interface EquipmentData {
   tippingNumber: string;
@@ -77,11 +81,11 @@ export interface EquipmentData {
 }
 
 type FilterValues = {
-  type?: { label: string; value: string };
+  type?: ISelectOption;
   // brand?: string;
   lastModifiedDate?: string;
-  location?: { label: string; value: string };
-  situacao?: { label: string; value: string };
+  unit?: ISelectOption;
+  situation?: ISelectOption;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -104,8 +108,6 @@ function EquipmentTable() {
 
   const {
     control,
-    register,
-    handleSubmit,
     watch,
     formState: { errors },
   } = useForm<FilterValues>({ mode: 'onChange' });
@@ -113,28 +115,21 @@ function EquipmentTable() {
   const watchFilter = watch();
 
   const handleFilterChange = () => {
-    const { type, lastModifiedDate, situacao, location } = watchFilter;
+    const { type, lastModifiedDate, situation, unit } = watchFilter;
 
-    const selectedDate = lastModifiedDate();
-    const year = selectedDate.getFullYear();
-    const month = ('0' + (selectedDate.getMonth() + 1)).slice(-2);
-    const day = ('0' + selectedDate.getDate()).slice(-2);
-    const hour = ('0' + selectedDate.getHours()).slice(-2);
-    const minute = ('0' + selectedDate.getMinutes()).slice(-2);
-    const second = ('0' + selectedDate.getSeconds()).slice(-2);
-    const millisecond = ('00' + selectedDate.getMilliseconds()).slice(-3);
-
-    const formattedDate = `${year}-${month}-${day}T${hour}:${minute}:${second}.${millisecond}Z`;
+    let formattedDate;
+    if (lastModifiedDate !== null && lastModifiedDate !== '' && lastModifiedDate){
+      formattedDate = new Date(lastModifiedDate).toLocaleDateString('en-us');
+      console.log(formattedDate)
+    }
 
     const dataFormatted = {
       type: type?.value,
-      lastModifiedDate: formattedDate?.value,
-      situacao: situacao?.value,
-      location: location?.value,
+      updatedAt: formattedDate,
+      situation: situation?.value,
+      unit: unit?.value,
     };
 
-
-    
     const filteredDataFormatted = [
       ...Object.entries(dataFormatted).filter(
         (field) => field[1] !== undefined && field[1] !== ''
@@ -181,17 +176,15 @@ function EquipmentTable() {
     setSearchType(event.target.value);
   };
   
-  const formattedWorkstations = () => {
-    const listWorkstations = workstations?.map((workstation) => {return{label : workstation.name, value : workstation.name}});
-    return listWorkstations;
+  const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
+    return data?.map((item: Workstation) => {return{label : item.name, value : item.name}});
   }
 
   const getWorkstations = async () => {
     apiSchedula
-      .get('workstations')
+      .get<Workstation[]>('workstations')
       .then((response) => {
-        setWorkstations(response.data);
-        
+        setWorkstations(formattedWorkstations(response.data));
       })
       .catch((error) => {
         console.log(error);
@@ -223,7 +216,6 @@ function EquipmentTable() {
   };
   useEffect(() => {
     getWorkstations();
-    formattedWorkstations();
   },[])
   useEffect(() => {
     handleFilterChange();
@@ -299,15 +291,15 @@ function EquipmentTable() {
                   />
                   <ControlledSelect
                     control={control}
-                    name="location"
-                    id="location"
-                    options={formattedWorkstations()}
+                    name="unit"
+                    id="unit"
+                    options={workstations}
                     placeholder="Localização"
                   />
                   <ControlledSelect
                     control={control}
-                    name="situacao"
-                    id="situacao"
+                    name="situation"
+                    id="situation"
                     options={STATUS}
                     placeholder="situacao"
                   />

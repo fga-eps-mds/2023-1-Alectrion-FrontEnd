@@ -76,7 +76,7 @@ export function Datepicker<FormValues extends FieldValues>({
             value={value as string}
             locale="pt"
             dateFormat="dd/MM/yyyy"
-            minDate={new Date()}
+            // minDate={new Date()}
             placeholderText={placeHolder}
             // showTimeInput
             // timeInputLabel="Hora"
