@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unstable-nested-components */
@@ -79,7 +80,7 @@ type FilterValues = {
   lastModifiedDate?: string;
   unit?: ISelectOption;
   situation?: ISelectOption;
-  search: string
+  searchId?: string;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -94,6 +95,7 @@ function EquipmentTable() {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [workstations, setWorkstations] = useState<Workstation[]>();
+  const [searchId, setSearchId] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
@@ -111,7 +113,7 @@ function EquipmentTable() {
   const watchFilter = watch();
 
   const handleFilterChange = () => {
-    const { type, lastModifiedDate, situation, unit } = watchFilter;
+    const { type, lastModifiedDate, situation, unit  } = watchFilter;
 
     let formattedDate;
     if (lastModifiedDate !== null && lastModifiedDate !== '' && lastModifiedDate){
@@ -124,7 +126,7 @@ function EquipmentTable() {
       updatedAt: formattedDate,
       situation: situation?.value,
       unit: unit?.value,
-      search: search
+      searchId: searchId
     };
 
     const filteredDataFormatted = [
@@ -164,7 +166,7 @@ function EquipmentTable() {
   const handleSearchTermChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSearchTerm(event.target.value);
+    setSearchId(event.target.value);
   };
   // handleSearchTypeChange atualiza o estado searchType com o valor selecionado no menu suspenso pelo usuário.
   const handleSearchTypeChange = (
@@ -325,11 +327,11 @@ function EquipmentTable() {
                     size="sm"
                   />
                   <Input
-                    placeholder='Pesquisa'
-                    minWidth="15vw"
-                    errors={errors.search}
-                    {...register('search')}
-                    rightElement={<BiSearch />}
+                    placeholder="Pesquisa"
+                    size="sm"
+                    value={searchId}
+                    onChange={handleSearchTermChange}
+                    minWidth="max-content"
                   />
                 </Flex>
               </form>
