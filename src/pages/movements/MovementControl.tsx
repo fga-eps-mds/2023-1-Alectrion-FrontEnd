@@ -27,6 +27,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { BiSearch } from 'react-icons/bi';
+import { debounce } from 'lodash';
 import { toast } from '@/utils/toast';
 import { api, schedulaApi } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
@@ -50,7 +51,7 @@ type FormValues = {
   equipmentId: ISelectOption;
   lowerDate: string;
   higherDate: string;
-  id: string;
+  searchTerm: string;
 };
 export interface movementEquipment {
   tippingNumber: string;
@@ -100,6 +101,7 @@ export function MovementsTable() {
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
   const [selectedMovement, setSelectedMovement] = useState<any>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const limit = 10;
   const {
@@ -118,12 +120,15 @@ export function MovementsTable() {
     onOpen();
   };
 
+  const handleSearch = debounce(() => {
+    setSearch(watchedData.searchTerm);
+  }, 400);
+
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
         `equipment/findMovements?resultquantity=${limit}&page=${offset}&${filter}`
       );
-      console.log(data);
       setMovements(data);
     } catch (error) {
       setMovements([]);
@@ -169,7 +174,6 @@ export function MovementsTable() {
         equipmentId,
         lowerDate,
         higherDate,
-        id,
       } = watchedData;
       let formattedLowerDate;
 
@@ -190,7 +194,7 @@ export function MovementsTable() {
         equipmentId: equipmentId?.value,
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
-        id,
+        searchTerm: search,
       };
 
       const filteredFormData = [
@@ -202,7 +206,6 @@ export function MovementsTable() {
       const queryFormMovements = filteredFormData
         .map((field) => `${field[0]}=${field[1]}`)
         .join('&');
-      console.log(queryFormMovements);
       setFilter(queryFormMovements);
     } catch {
       console.log('erro');
@@ -220,6 +223,7 @@ export function MovementsTable() {
 
   useEffect(() => {
     handleChangeForm();
+    handleSearch();
   }, [watchedData]);
 
   return (
@@ -270,6 +274,8 @@ export function MovementsTable() {
                       id="type"
                       options={TIPOS_MOVIMENTACAO}
                       placeholder="Tipos"
+                      color="tomato"
+                      _placeholder={{ opacity: 0.4, color: 'inherit' }}
                       cursor="pointer"
                       variant="unstyled"
                       fontWeight="semibold"
@@ -307,8 +313,8 @@ export function MovementsTable() {
                     />
                     <Input
                       minWidth="15vw"
-                      errors={errors.id}
-                      {...register('id')}
+                      errors={errors.searchTerm}
+                      {...register('searchTerm')}
                       rightElement={<BiSearch />}
                       placeholder="Pesquisa"
                     />
