@@ -93,10 +93,11 @@ export default function MovementForm({
   const date = new Date();
 
   const onCloseCallback = () => {
+    console.log('Botão "Cancelar" clicado');
     setMateriais([]);
     onClose();
   };
-
+  
   const toggleMaterial = (serialNumber: string) => () => {
     if (materiais.includes(serialNumber)) {
       setMateriais(materiais.filter((material) => material !== serialNumber));

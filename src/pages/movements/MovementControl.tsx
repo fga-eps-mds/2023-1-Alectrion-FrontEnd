@@ -268,14 +268,16 @@ function MovementsTable() {
                     Últimas Movimentações
                   </Text>
                 </Flex>
-                <Button
-                  colorScheme="#F49320"
-                  onClick={() => {
-                    setRegisterMovement(true);
-                  }}
-                >
-                  Cadastrar Movimentação
-                </Button>
+                <Flex justifyContent={"right"}>
+                  <Button
+                    colorScheme="#F49320"
+                    onClick={() => {
+                      setRegisterMovement(true);
+                    }}
+                  >
+                    Cadastrar Movimentação
+                  </Button>
+                </Flex>
               </Box>
               <Divider borderColor="#00000" margin="15px 0 15px 0" />
               <Flex

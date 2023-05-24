@@ -19,6 +19,7 @@ import { Input } from '../form-fields/input';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { MovimentacaoTipoMap } from '@/constants/movements';
 
+
 type MovementsModalProps = {
   isOpen: boolean;
   onClose(): void;
@@ -34,6 +35,19 @@ type FormValues = {
   inChargeName: string;
   inChargeRole: string;
 };
+
+function mapMovementType(type: number): string {
+  switch (type) {
+    case 1:
+      return 'Borrow';
+    case 2:
+      return 'Dismiss';
+    case 3:
+      return 'Ownership';
+    default:
+      return '';
+  }
+}
 
 export function MovementsModal({
   isOpen,
