@@ -22,7 +22,7 @@ import { MovimentacaoTipoMap } from '@/constants/movements';
 type MovementsModalProps = {
   isOpen: boolean;
   onClose(): void;
-  selectedMoviment: movement;
+  selectedMovement: movement;
 };
 
 type FormValues = {
@@ -51,7 +51,7 @@ function mapMovementType(type: number): string {
 export function MovementsModal({
   isOpen,
   onClose,
-  selectedMoviment,
+  selectedMovement,
 }: MovementsModalProps) {
   const [materiais, setMateriais] = useState<string[]>([]);
   const {
