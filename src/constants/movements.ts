@@ -1,4 +1,14 @@
-import { SelectItem } from './equipment';
+export type SelectItem<T> = {
+  label: T;
+  value: string;
+};
+export type TipoLotacao = 'Empréstimo' | 'Responsabilidade' | 'Baixa';
+
+export const TIPOS_LOTACAO: SelectItem<TipoLotacao>[] = [
+  { label: 'Empréstimo', value: 'Empréstimo' },
+  { label: 'Responsabilidade', value: 'Responsabilidade' },
+  { label: 'Baixa', value: 'Baixa' },
+];
 
 export const MovimentacaoTipoMap = new Map<number, string>([
   [0, 'Empréstimo'],

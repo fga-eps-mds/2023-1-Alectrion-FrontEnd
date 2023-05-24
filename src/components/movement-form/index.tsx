@@ -12,6 +12,12 @@ import {
   TableContainer,
   Tbody,
 } from '@chakra-ui/react';
+
+import {
+  TIPOS_LOTACAO,
+} from '@/constants/movements';
+
+import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
@@ -171,7 +177,7 @@ export default function MovementForm({
           </Text>
           <Text>
             <strong>Data:</strong>
-            {date.toString()}
+            {format(date, ' dd/MM/yyyy HH:mm:ss')}
           </Text>
           <Text>
             <>
@@ -207,7 +213,7 @@ export default function MovementForm({
             control={control}
             name="type"
             id="type"
-            options={['empréstimo', 'responsabilidade', 'baixa']}
+            options={TIPOS_LOTACAO}
             placeholder="Selecione uma opção"
             label="Tipo de lotação"
             rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
