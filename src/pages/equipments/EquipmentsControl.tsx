@@ -1,43 +1,41 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable @typescript-eslint/no-redeclare */
-/* eslint-disable import/export */
-import { useState, useEffect, SetStateAction } from 'react';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
-import { MdBuild, MdCall } from 'react-icons/md';
-import { BiEditAlt } from 'react-icons/bi';
+import { BiEditAlt, BiSearch } from 'react-icons/bi';
 import {
-  Select,
   Text,
   Table,
   Thead,
   Tbody,
   Tr,
-  Th,
   Td,
-  Input,
-  IconButton,
   Button,
   TableContainer,
-  Center,
   Divider,
   Box,
   useDisclosure,
   Flex,
   Grid,
   GridItem,
-  Tfoot,
-  TableCaption,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { FaFileAlt } from 'react-icons/fa';
 import { SideBar } from '@/components/side-bar';
-import { api } from '../../config/lib/axios';
+import { api, apiSchedula } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 import { EquipmentViewModal } from '@/components/equipment-view-modal';
 import { theme } from '@/styles/theme';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
+import { ControlledSelect } from '@/components/form-fields/controlled-select';
+import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
+import { Datepicker } from '@/components/form-fields/date';
+import { Input } from '@/components/form-fields/input';
+
+interface ISelectOption {
+  label: string;
+  value: number | string;
+}
 
 export interface EquipmentData {
   tippingNumber: string;
@@ -70,10 +68,19 @@ export interface EquipmentData {
   };
 }
 
+type FilterValues = {
+  type?: ISelectOption;
+  brand?: string;
+  lastModifiedDate?: string;
+  unit?: ISelectOption;
+  situation?: ISelectOption;
+  search: string;
+};
+
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
-  const [equipaments, setEquipaments] = useState<EquipmentData[]>([]);
-  const [nextEquipaments, setNextEquipaments] = useState<EquipmentData[]>([]);
+  const [equipments, setEquipments] = useState<EquipmentData[]>([]);
+  const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('');
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
@@ -81,9 +88,56 @@ function EquipmentTable() {
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [workstations, setWorkstations] = useState<Workstation[]>();
+  const [searchId, setSearchId] = useState('');
+
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
+  const [filter, setFilter] = useState<string>('');
+  const [search, setSearch] = useState<string>('');
+
+  const {
+    control,
+    watch,
+    register,
+    formState: { errors },
+  } = useForm<FilterValues>({ mode: 'onChange' });
+
+  const watchFilter = watch();
+
+  const handleFilterChange = () => {
+    const { type, lastModifiedDate, situation, unit } = watchFilter;
+
+    let formattedDate;
+    if (
+      lastModifiedDate !== null &&
+      lastModifiedDate !== '' &&
+      lastModifiedDate
+    ) {
+      formattedDate = new Date(lastModifiedDate).toLocaleDateString('en-us');
+      console.log(formattedDate);
+    }
+
+    const dataFormatted = {
+      type: type?.value,
+      updatedAt: formattedDate,
+      situation: situation?.value,
+      unit: unit?.value,
+      search,
+    };
+
+    const filteredDataFormatted = [
+      ...Object.entries(dataFormatted).filter(
+        (field) => field[1] !== undefined && field[1] !== ''
+      ),
+    ];
+
+    const query = `${filteredDataFormatted
+      .map((field) => `${field[0]}=${field[1]}`)
+      .join('&')}`;
+    setFilter(query);
+  };
 
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
 
@@ -110,7 +164,7 @@ function EquipmentTable() {
   const handleSearchTermChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSearchTerm(event.target.value);
+    setSearchId(event.target.value);
   };
   // handleSearchTypeChange atualiza o estado searchType com o valor selecionado no menu suspenso pelo usuário.
   const handleSearchTypeChange = (
@@ -118,22 +172,43 @@ function EquipmentTable() {
   ) => {
     setSearchType(event.target.value);
   };
-  // verificar se o número de série do equipamento inclui
-  // o termo de pesquisa inserido pelo usuário e se o tipo de equipamento corresponde ao tipo selecionado pelo usuário no menu suspenso
-  // const filteredEquipment = equipmentList.filter(
-  //   (equipment) =>
-  //     equipment.NumSerie.includes(searchTerm) &&
-  //     (searchType === '' || equipment.type === searchType)
-  // );
+
+  const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
+    return data?.map((item: Workstation) => {
+      return { label: item.name, value: item.name };
+    });
+  };
+
+  const getWorkstations = async () => {
+    apiSchedula
+      .get<Workstation[]>('workstations')
+      .then((response) => {
+        setWorkstations(formattedWorkstations(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return function (this: any, ...args: Parameters<T>) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    };
+  };
+  const handleSearch = debounce(() => {
+    setSearch(watchFilter.search);
+  }, 400);
 
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset}`
+        `equipment/find?take=${limit}&skip=${offset}&${filter}`
       );
-      setEquipaments(data);
+      setEquipments(data);
     } catch (error) {
-      setEquipaments([]);
+      setEquipments([]);
       toast.error('Nenhum Equipamento encontrado');
     }
   };
@@ -141,19 +216,30 @@ function EquipmentTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset + limit}`
+        `equipment/find?take=${limit}&skip=${offset + limit}&${filter}`
       );
-      setNextEquipaments(data);
+      setNextEquipments(data);
     } catch (error) {
-      setNextEquipaments([]);
+      setNextEquipments([]);
       toast.error('Nenhum Equipamento encontrado');
     }
   };
   useEffect(() => {
+    getWorkstations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    handleSearch();
+    handleFilterChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchFilter]);
+
+  useEffect(() => {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, refreshRequest]);
+  }, [currentPage, refreshRequest, filter]);
 
   const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
@@ -202,134 +288,56 @@ function EquipmentTable() {
               alignItems="center"
               width="100%"
             >
-              <Flex width="100%" gap="5px" mb="15px">
-                <Select
-                  cursor="pointer"
-                  variant="unstyled"
-                  placeholder="Tipos"
-                  fontWeight="semibold"
-                  size="xs"
-                >
-                  <option value="option1">CPU</option>
-                  <option value="option2">Monitor</option>
-                  <option value="option3">Estabilizador</option>
-                  <option value="option4">Nobreak</option>
-                  <option value="option5">Hub</option>
-                  <option value="option6">Switch</option>
-                  <option value="option7">Notebook</option>
-                  <option value="option8">Datashow</option>
-                  <option value="option9">Scanner</option>
-                  <option value="option10">Impressora</option>
-                  <option value="option11">Roteador</option>
-                  <option value="option12">Tablet</option>
-                  <option value="option13">TV</option>
-                  <option value="option14">Fax</option>
-                  <option value="option15">Telefone</option>
-                  <option value="option16">Smartphone</option>
-                  <option value="option17">Projetor</option>
-                  <option value="option18">Tela de Projeção</option>
-                  <option value="option19">Câmera</option>
-                  <option value="option20">Webcam</option>
-                  <option value="option21">Caixa de Som</option>
-                  <option value="option22">Impressora Térmica</option>
-                  <option value="option23">
-                    Leitor de Código de Barras/ CCD
-                  </option>
-                  <option value="option24">Mesa Digitalizadora</option>
-                  <option value="option25">Leitor Biométrico</option>
-                  <option value="option26">Receptor</option>
-                  <option value="option27">Extrator de Dados</option>
-                  <option value="option28">Transformador</option>
-                  <option value="option29">Coletor de Assinatura</option>
-                  <option value="option30">Kit Cenário</option>
-                  <option value="option31">
-                    Dispositivo de Biometria Facial
-                  </option>
-                  <option value="option32">Servidor de Rede</option>
-                  <option value="option33">HD Externo</option>
-                  <option value="option34">Protetor Eletrônico</option>
-                </Select>
-
-                <Select
-                  cursor="pointer"
-                  variant="unstyled"
-                  placeholder="Marcas"
-                  fontWeight="semibold"
-                  size="xs"
-                >
-                  <option value="option1">Dell</option>
-                  <option value="option2">LG</option>
-                  <option value="option3">Galaxy</option>
-                  <option value="option4">HP</option>
-                  <option value="option5">Lenovo</option>
-                  <option value="option6">Logitech</option>
-                </Select>
-
-                <Select
-                  cursor="pointer"
-                  variant="unstyled"
-                  placeholder="Modelos"
-                  fontWeight="semibold"
-                  size="xs"
-                >
-                  <option value="option1">Ink 416</option>
-                  <option value="option2">16520</option>
-                  <option value="option3">1080p24</option>
-                  <option value="option4">Book2</option>
-                  <option value="option5">Thinkpad</option>
-                </Select>
-
-                <Select
-                  cursor="pointer"
-                  variant="unstyled"
-                  placeholder="Datas"
-                  fontWeight="semibold"
-                  size="xs"
-                >
-                  <option value="option1">Janeiro</option>
-                  <option value="option2">Fevereiro</option>
-                  <option value="option3">Março</option>
-                  <option value="option4">Abril</option>
-                  <option value="option5">Maio</option>
-                  <option value="option6">Junho</option>
-                  <option value="option7">Julho</option>
-                  <option value="option8">Agosto</option>
-                  <option value="option9">Setembro</option>
-                  <option value="option10">Outubro</option>
-                  <option value="option11">Novembro</option>
-                  <option value="option12">Dezembro</option>
-                </Select>
-
-                <Select
-                  cursor="pointer"
-                  variant="unstyled"
-                  placeholder="Local"
-                  fontWeight="semibold"
-                  size="xs"
-                >
-                  <option value="option1">1dp Goiânia</option>
-                  <option value="option2">2dp Goiânia</option>
-                </Select>
-
-                <Select
-                  cursor="pointer"
-                  variant="unstyled"
-                  placeholder="Status"
-                  fontWeight="semibold"
-                  size="xs"
-                >
-                  <option value="option1">Novo</option>
-                  <option value="option2">Usado</option>
-                </Select>
-
-                <Input
-                  placeholder="Pesquisa"
-                  size="sm"
-                  value={searchTerm}
-                  onChange={handleSearchTermChange}
-                  minWidth="max-content"
-                />
-              </Flex>
+              <form id="equipment-filter" style={{ width: '100%' }}>
+                <Flex gap="5px" alignItems="5px" mb="15px">
+                  <ControlledSelect
+                    control={control}
+                    name="type"
+                    id="type"
+                    options={TIPOS_EQUIPAMENTO}
+                    placeholder="Tipo"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <Datepicker
+                    border={false}
+                    placeholderText="Última modificação"
+                    name="lastModifiedDate"
+                    control={control}
+                  />
+                  <ControlledSelect
+                    control={control}
+                    name="unit"
+                    id="unit"
+                    options={workstations}
+                    placeholder="Localização"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <ControlledSelect
+                    control={control}
+                    name="situation"
+                    id="situation"
+                    options={STATUS}
+                    placeholder="Situação"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <Input
+                    placeholder="Pesquisa"
+                    minWidth="15vw"
+                    errors={errors.search}
+                    {...register('search')}
+                    rightElement={<BiSearch />}
+                  />
+                </Flex>
+              </form>
               <Flex flexDirection="column" width="100%">
                 <TableContainer
                   borderRadius="15px 15px 0 0 "
@@ -372,7 +380,7 @@ function EquipmentTable() {
                       maxHeight="200px"
                       height="200px"
                     >
-                      {equipaments.map((equipment) => (
+                      {equipments.map((equipment) => (
                         <Tr
                           onClick={() => {
                             handleView(equipment);
@@ -437,7 +445,7 @@ function EquipmentTable() {
                       Anterior
                     </Button>
                   )}
-                  {nextEquipaments.length > 0 && (
+                  {nextEquipments.length > 0 && (
                     <Button
                       variant="link"
                       color="#00000"

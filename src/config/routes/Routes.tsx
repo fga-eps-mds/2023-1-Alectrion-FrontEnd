@@ -13,13 +13,13 @@ import { Login } from '@/pages/login';
 import { DefaultLayout } from '@/components/layout/default-layout';
 
 import { MovementsTable } from '@/pages/movements/MovementControl';
-import { EquipmentTable }from '@/pages/equipments/EquipamentsControl';
+import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
 
 export function Router() {
   return (
     <Routes>
       {/* ROTAS PRIVADAS */}
-      <Route path="/" element={<DefaultLayout />}>
+      <Route path="/" element={<EquipmentTable />}>
         {/* <Route
           index
           element={
@@ -43,7 +43,6 @@ export function Router() {
       <Route path="/movements" element={<MovementsTable />} />
       <Route path="/equipments" element={<EquipmentTable />} />
       <Route path="*" element={<p>404</p>} />
-      
     </Routes>
   );
 }

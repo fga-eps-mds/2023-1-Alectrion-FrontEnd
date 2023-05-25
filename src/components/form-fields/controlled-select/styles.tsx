@@ -19,6 +19,10 @@ import {
 import React from 'react';
 
 export const chakraStyles: ChakraStylesConfig = {
+  placeholder: (provided) => ({
+    ...provided,
+    color: '#212121',
+  }),
   control: (styles) => ({ ...styles, borderColor: '#212121' }),
   loadingIndicator: (provided, state) => ({
     ...provided,

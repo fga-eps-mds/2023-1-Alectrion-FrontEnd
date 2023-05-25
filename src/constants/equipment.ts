@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export type SelectItem<T> = {
   label: T;
   value: string;
@@ -96,3 +97,28 @@ export const ESTADOS_EQUIPAMENTO = [
   { label: 'NOVO', value: 'Novo' },
   { label: 'USADO', value: 'Usado' },
 ];
+
+export const STATUS = [
+  { label: 'Ativo', value: 'Ativo' },
+  { label: 'Baixado', value: 'Baixado' },
+  { label: 'Empréstimo', value: 'Ativo Empréstimo' },
+  { label: 'Estoque', value: 'Estoque' },
+  { label: 'Manutenção', value: 'Manutenção' },
+  { label: 'Reserva Técnica', value: 'Reserva Técnica' },
+];
+
+export interface Workstation {
+  id: string;
+  name: string;
+  phone: string;
+  ip: string;
+  gateway: string;
+  is_regional: boolean;
+  city: {
+    id : string;
+    name: string;
+    state: string;
+  };
+  parent_workstation: Workstation | null;
+  child_workstations: Workstation[];
+}
