@@ -98,7 +98,7 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
         >
           <Thead bg="#F49320" fontWeight="semibold" h="14">
             <Tr>
-              <Td color="white">Movimentação </Td>
+              <Td color="white">Tipo </Td>
               <Td color="white">Data</Td>
               <Td color="white">Local</Td>
             </Tr>
