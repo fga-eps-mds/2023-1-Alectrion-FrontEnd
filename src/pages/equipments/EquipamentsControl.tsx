@@ -129,7 +129,7 @@ function EquipmentTable() {
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset + limit}`
+        `equipment/find?take=${limit}&skip=${offset}`
       );
       setEquipaments(data);
     } catch (error) {
