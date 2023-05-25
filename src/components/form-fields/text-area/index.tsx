@@ -38,11 +38,11 @@ export const TextArea = forwardRef<InputProps, 'textarea'>((props, ref) => {
         ref={ref}
         {...rest}
         cols={10}
-        rows={5}
+        rows={1}
         textLength={100}
         wrap="nowrap"
         onChange={(e) => handleChange(e)}
-        minH="7rem"
+        minH="5rem"
         borderColor="#212121"
         resize="none"
         maxLength={maxChars}

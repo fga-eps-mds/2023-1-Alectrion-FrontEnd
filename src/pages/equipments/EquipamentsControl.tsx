@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @typescript-eslint/no-redeclare */
 /* eslint-disable import/export */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
 import { MdBuild, MdCall } from 'react-icons/md';
 import { BiEditAlt } from 'react-icons/bi';
@@ -16,6 +16,7 @@ import {
   Th,
   Td,
   Input,
+  IconButton,
   Button,
   TableContainer,
   Center,
@@ -30,63 +31,43 @@ import {
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { FaFileAlt } from 'react-icons/fa';
 import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
+import { EquipmentViewModal } from '@/components/equipment-view-modal';
 import { theme } from '@/styles/theme';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 
 export interface EquipmentData {
   tippingNumber: string;
-
   serialNumber: string;
-
   type: string;
-
   situacao: string;
-
   estado: string;
-
   model: string;
-
   acquisitionDate: Date;
-
   description?: string;
-
   initialUseDate: Date;
-
   screenSize?: string;
-
   invoiceNumber: string;
-
   power?: string;
-
   screenType?: string;
-
   processor?: string;
-
   storageType?: string;
-
   storageAmount?: string;
-
+  ram_size?: string;
+  createdAt?: string;
+  updatedAt: string;
+  id: string;
   brand: {
     name: string;
   };
-
   acquisition: any;
-
   unit: {
     name: string;
     localization: string;
   };
-
-  ram_size?: string;
-
-  createdAt?: string;
-
-  updatedAt: string;
-
-  id: string;
 }
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -98,10 +79,13 @@ function EquipmentTable() {
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-
+  const [items, setItems] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
+
+  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
 
   const {
     isOpen: isOpenEditEquipment,
@@ -110,6 +94,17 @@ function EquipmentTable() {
   } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const {
+    isOpen: isRegisterOpen,
+    onClose: onRegisterClose,
+    onOpen: onRegisterOpen,
+  } = useDisclosure();
+  const {
+    isOpen: isViewOpen,
+    onClose: onViewClose,
+    onOpen: onViewOpen,
+  } = useDisclosure();
 
   // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
   const handleSearchTermChange = (
@@ -154,7 +149,6 @@ function EquipmentTable() {
       toast.error('Nenhum Equipamento encontrado');
     }
   };
-
   useEffect(() => {
     fetchItems();
     fetchNextItems();
@@ -163,6 +157,12 @@ function EquipmentTable() {
 
   const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
+    onOpenEditEquipment();
+  };
+
+  const handleView = (equipment: EquipmentData) => {
+    if (equipment) setSelectedEquipment(equipment);
+    onViewOpen();
   };
 
   return (
@@ -373,7 +373,13 @@ function EquipmentTable() {
                       height="200px"
                     >
                       {equipaments.map((equipment) => (
-                        <Tr key={equipment.id}>
+                        <Tr
+                          onClick={() => {
+                            handleView(equipment);
+                          }}
+                          key={equipment.id}
+                          cursor="pointer"
+                        >
                           <Td fontWeight="medium">
                             {equipment.situacao} - {equipment.unit.name}
                             <Td p={0} fontWeight="semibold">
@@ -387,14 +393,14 @@ function EquipmentTable() {
                               'pt-BR'
                             )}
                           </Td>
-                          <Td>
-                            <button
-                              onClick={() => {
-                                handleEdit(equipment);
-                                onOpenEditEquipment();
-                              }}
-                            >
-                              <BiEditAlt />
+                          <Td
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleEdit(equipment);
+                            }}
+                          >
+                            <button>
+                              <BiEditAlt size={23} />
                             </button>
                           </Td>
                         </Tr>
@@ -463,6 +469,14 @@ function EquipmentTable() {
           equip={selectedEquipmentToEdit}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
+        />
+        <EquipmentViewModal
+          onClose={onViewClose}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+          selectedEquipment={selectedEquipment}
+          isOpen={isViewOpen}
+          handleEdit={handleEdit}
         />
       </GridItem>
     </Grid>

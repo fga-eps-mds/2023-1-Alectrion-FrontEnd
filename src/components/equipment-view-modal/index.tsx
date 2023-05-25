@@ -1,12 +1,14 @@
 import { Flex } from '@chakra-ui/react';
-import EquipmentEditForm from '../equipment-edit-form';
-import { Modal } from '../modal';
-import { EquipmentData } from '@/pages/equipments/EquipamentsControl';
 
-type EquipmentEditModalProps = {
+import EquipmentViewForm from '../equipment-view-form';
+import { Modal } from '../modal';
+import { EquipmentData } from '../../pages/equipments/EquipamentsControl';
+
+type EquipmentViewModalProps = {
   isOpen: boolean;
   onClose(): void;
-  equip: EquipmentData | undefined;
+  selectedEquipment: EquipmentData | undefined;
+  handleEdit(equipment: EquipmentData | undefined): void;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -45,19 +47,20 @@ function transformFields(data: any) {
   return transformedData;
 }
 
-export function EquipmentEditModal({
+export function EquipmentViewModal({
   isOpen,
   onClose,
-  equip,
+  selectedEquipment,
+  handleEdit,
   refreshRequest,
   setRefreshRequest,
-}: EquipmentEditModalProps) {
+}: EquipmentViewModalProps) {
   return (
     <Modal
-      title="Edição de Equipamentos"
+      title={`Equipamento: ${selectedEquipment?.type} ${selectedEquipment?.brand.name} `}
       isOpen={isOpen}
       onClose={onClose}
-      size="4xl"
+      size="6xl"
     >
       <Flex
         height="100%"
@@ -66,9 +69,11 @@ export function EquipmentEditModal({
         flexDirection="column"
         gap="16px"
       >
-        <EquipmentEditForm
+        <EquipmentViewForm
+          equipmentEdit={selectedEquipment as EquipmentData}
+          equipment={transformFields(selectedEquipment)}
           onClose={onClose}
-          equip={transformFields(equip)}
+          handleEdit={handleEdit}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
         />
