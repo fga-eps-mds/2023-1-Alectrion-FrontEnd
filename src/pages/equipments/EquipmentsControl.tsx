@@ -303,7 +303,7 @@ function EquipmentTable() {
                   />
                   <Datepicker
                     border={false}
-                    placeholderText="Última modificicação"
+                    placeholderText="Última modificação"
                     name="lastModifiedDate"
                     control={control}
                   />
