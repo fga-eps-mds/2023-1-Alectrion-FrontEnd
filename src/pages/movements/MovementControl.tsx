@@ -1,23 +1,18 @@
 /* eslint-disable import/export */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Box,
   Button,
-  Center,
   Divider,
   Flex,
   Grid,
   GridItem,
   IconButton,
-  Select,
   Table,
   TableContainer,
   Tbody,
   Td,
   Text,
-  Th,
   Thead,
   Tr,
   useDisclosure,
@@ -37,7 +32,6 @@ import { MovementsModal } from '@/components/movements-modal';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
-import { Item } from '@/components/list-item';
 
 interface ISelectOption {
   label: string;
@@ -96,7 +90,7 @@ export interface movement {
   equipments: movementEquipment[];
 }
 
-export function MovementsTable() {
+function MovementsTable() {
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
   const [selectedMovement, setSelectedMovement] = useState<any>();
@@ -281,14 +275,6 @@ export function MovementsTable() {
                       fontWeight="semibold"
                       size="sm"
                     />
-                    {/* <ControlledSelect
-                    control={control}
-                    name="inChargeName"
-                    id="inChargeName"
-                    options={TIPOS_EQUIPAMENTO}
-                    placeholder="Selecione uma opção"
-                    label="Nome do responsável"
-                  /> */}
                     <ControlledSelect
                       control={control}
                       name="destinationId"
@@ -436,4 +422,4 @@ export function MovementsTable() {
     </>
   );
 }
-export default { MovementsTable };
+export { MovementsTable };
