@@ -41,7 +41,7 @@ type Props<FormValues extends FieldValues> = Omit<
   UseControllerProps<FormValues> & {
     label?: string;
     placeHolder?: string;
-    border?: boolean
+    border?: boolean;
   };
 
 export function Datepicker<FormValues extends FieldValues>({
@@ -50,8 +50,8 @@ export function Datepicker<FormValues extends FieldValues>({
   id,
   label,
   placeHolder,
-  rules,
   border = true,
+  rules,
   ...props
 }: Props<FormValues>) {
   const {
@@ -68,7 +68,7 @@ export function Datepicker<FormValues extends FieldValues>({
       {label && <FormLabel cursor="pointer">{label}</FormLabel>}
 
       <InputGroup display="block" zIndex={+1}>
-        <Box width='200px'>
+        <Box>
           <ReactDatePicker
             selected={value as Date}
             name={name}
@@ -82,9 +82,16 @@ export function Datepicker<FormValues extends FieldValues>({
               border ? (
                 <Input borderColor="#212121" fontSize="sm" />
               ) : (
-                <Input fontSize="sm" border="0px" boxShadow="none" />
+                <Input
+                  fontSize="sm"
+                  border="0px"
+                  boxShadow="none"
+                  placeholder={placeHolder}
+                  sx={{ '::placeholder': { color: '#212121' } }}
+                  _focus={{ border: 'none', boxShadow: 'none' }}
+                />
               )
-            }            
+            }
             fixedHeight
             {...props}
           />

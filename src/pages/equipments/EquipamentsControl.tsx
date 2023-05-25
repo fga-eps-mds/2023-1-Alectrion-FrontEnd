@@ -1,10 +1,4 @@
-/* eslint-disable object-shorthand */
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable @typescript-eslint/no-redeclare */
-/* eslint-disable import/export */
-import { useState, useEffect, SetStateAction } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
 import { BiEditAlt, BiSearch } from 'react-icons/bi';
@@ -80,7 +74,7 @@ type FilterValues = {
   lastModifiedDate?: string;
   unit?: ISelectOption;
   situation?: ISelectOption;
-  search: string
+  search: string;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -113,12 +107,16 @@ function EquipmentTable() {
   const watchFilter = watch();
 
   const handleFilterChange = () => {
-    const { type, lastModifiedDate, situation, unit  } = watchFilter;
+    const { type, lastModifiedDate, situation, unit } = watchFilter;
 
     let formattedDate;
-    if (lastModifiedDate !== null && lastModifiedDate !== '' && lastModifiedDate){
+    if (
+      lastModifiedDate !== null &&
+      lastModifiedDate !== '' &&
+      lastModifiedDate
+    ) {
       formattedDate = new Date(lastModifiedDate).toLocaleDateString('en-us');
-      console.log(formattedDate)
+      console.log(formattedDate);
     }
 
     const dataFormatted = {
@@ -126,7 +124,7 @@ function EquipmentTable() {
       updatedAt: formattedDate,
       situation: situation?.value,
       unit: unit?.value,
-      search: search
+      search,
     };
 
     const filteredDataFormatted = [
@@ -138,7 +136,7 @@ function EquipmentTable() {
     const query = `${filteredDataFormatted
       .map((field) => `${field[0]}=${field[1]}`)
       .join('&')}`;
-      setFilter(query);
+    setFilter(query);
   };
 
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
@@ -174,10 +172,12 @@ function EquipmentTable() {
   ) => {
     setSearchType(event.target.value);
   };
-  
+
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
-    return data?.map((item: Workstation) => {return{label : item.name, value : item.name}});
-  }
+    return data?.map((item: Workstation) => {
+      return { label: item.name, value: item.name };
+    });
+  };
 
   const getWorkstations = async () => {
     apiSchedula
@@ -188,17 +188,18 @@ function EquipmentTable() {
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
-  const debounce = (fn: Function, ms = 400) => {
+  const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
-    return function (this: any, ...args: any[]) {
+    return function (this: any, ...args: Parameters<T>) {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => fn.apply(this, args), ms);
     };
   };
-  const handleSearch = debounce(()=>{setSearch(watchFilter.search)}, 400);
-
+  const handleSearch = debounce(() => {
+    setSearch(watchFilter.search);
+  }, 400);
 
   const fetchItems = async () => {
     try {
@@ -225,11 +226,13 @@ function EquipmentTable() {
   };
   useEffect(() => {
     getWorkstations();
-  },[])
-  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     handleSearch();
     handleFilterChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchFilter]);
 
   useEffect(() => {
@@ -285,8 +288,8 @@ function EquipmentTable() {
               alignItems="center"
               width="100%"
             >
-              <form id="equipment-filter" style={{width:'100%'}}>
-                <Flex  gap="5px" alignItems='5px' mb="15px">
+              <form id="equipment-filter" style={{ width: '100%' }}>
+                <Flex gap="5px" alignItems="5px" mb="15px">
                   <ControlledSelect
                     control={control}
                     name="type"
@@ -320,14 +323,14 @@ function EquipmentTable() {
                     name="situation"
                     id="situation"
                     options={STATUS}
-                    placeholder="situacao"
+                    placeholder="Situação"
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
                   />
                   <Input
-                    placeholder='Pesquisa'
+                    placeholder="Pesquisa"
                     minWidth="15vw"
                     errors={errors.search}
                     {...register('search')}

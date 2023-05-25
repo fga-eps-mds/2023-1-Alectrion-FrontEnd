@@ -13,7 +13,12 @@ import {
   useController,
   UseControllerProps,
 } from 'react-hook-form';
-import { FormControl, FormErrorMessage, FormLabel, SelectProps } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  SelectProps,
+} from '@chakra-ui/react';
 import { Props, Select } from 'chakra-react-select';
 
 import { handleEmptyOptions } from './handle-empty-options';
@@ -21,11 +26,10 @@ import { chakraStyles, customComponents } from './styles';
 
 type ControlledSelectProps<FormValues extends FieldValues> =
   UseControllerProps<FormValues> &
-  SelectProps & 
+    SelectProps &
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Props<any> & {
       label?: string;
-      
     };
 
 export function ControlledSelect<FormValues extends FieldValues>({
@@ -46,7 +50,7 @@ export function ControlledSelect<FormValues extends FieldValues>({
   });
 
   return (
-    <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none" >
+    <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none">
       {label && <FormLabel cursor="pointer">{label}</FormLabel>}
       <Select
         name={name}
