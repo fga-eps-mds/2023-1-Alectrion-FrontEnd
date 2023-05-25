@@ -182,10 +182,10 @@ function MovementsTable() {
       }
 
       const formattedFormData = {
-        type: type?.value,
-        inChargeName: inChargeName?.value,
-        destinationId: destinationId?.value,
-        equipmentId: equipmentId?.value,
+        type,
+        inChargeName,
+        destinationId,
+        equipmentId,
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
         searchTerm: search,
@@ -260,7 +260,7 @@ function MovementsTable() {
                 alignItems="center"
                 width="100%"
               >
-                <form id="movement-filter">
+                <form id="movement-filter" style={{ width: '100%' }}>
                   <Flex width="100%" gap="5px" mb="15px">
                     <ControlledSelect
                       control={control}
@@ -268,8 +268,6 @@ function MovementsTable() {
                       id="type"
                       options={TIPOS_MOVIMENTACAO}
                       placeholder="Tipos"
-                      color="tomato"
-                      _placeholder={{ opacity: 0.4, color: 'inherit' }}
                       cursor="pointer"
                       variant="unstyled"
                       fontWeight="semibold"
