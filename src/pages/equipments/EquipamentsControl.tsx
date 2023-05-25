@@ -80,7 +80,7 @@ type FilterValues = {
   lastModifiedDate?: string;
   unit?: ISelectOption;
   situation?: ISelectOption;
-  searchId?: string;
+  search: string
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -126,7 +126,7 @@ function EquipmentTable() {
       updatedAt: formattedDate,
       situation: situation?.value,
       unit: unit?.value,
-      searchId: searchId
+      search: search
     };
 
     const filteredDataFormatted = [
@@ -327,11 +327,11 @@ function EquipmentTable() {
                     size="sm"
                   />
                   <Input
-                    placeholder="Pesquisa"
-                    size="sm"
-                    value={searchId}
-                    onChange={handleSearchTermChange}
-                    minWidth="max-content"
+                    placeholder='Pesquisa'
+                    minWidth="15vw"
+                    errors={errors.search}
+                    {...register('search')}
+                    rightElement={<BiSearch />}
                   />
                 </Flex>
               </form>
