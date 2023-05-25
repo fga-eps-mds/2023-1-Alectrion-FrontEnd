@@ -107,7 +107,7 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
             {movements.map((movement) => (
               <Tr key={movement.id}>
                 <Td p={0} fontWeight="semibold">
-                  {movement.type}
+                  {MovimentacaoTipoMap.get(movement.type)}
                 </Td>
 
                 <Td>{formatDate(new Date(movement.date))}</Td>
