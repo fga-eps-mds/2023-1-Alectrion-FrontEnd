@@ -190,18 +190,18 @@ export default function MovementForm({
 
       <form id="movement-register-form" onSubmit={onSubmit}>
         <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6}>
-          <ControlledSelect
-            control={control}
-            name="destination"
-            id="destination"
-            options={units}
-            onChange={(it) => {
-              setUnit(it);
-            }}
-            placeholder="Selecione uma opção"
-            label="Posto de trabalho"
-            rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-          />
+        <ControlledSelect
+          control={control}
+          name="destination"
+          id="destination"
+          options={units.map(unit => ({ value: unit.id, label: unit.name }))}
+          onChange={(it) => {
+            setUnit(it);
+          }}
+          placeholder="Selecione uma opção"
+          label="Posto de trabalho"
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+        />
 
           <Input
             label="Cidade"
