@@ -115,6 +115,12 @@ function MovementsTable() {
   const [filter, setFilter] = useState<string>('');
 
   const [destinations, setDestinations] = useState<ISelectOption[]>([]);
+  const {
+    isOpen: isOpenRegister,
+    onClose: onCloseRegister,
+    onOpen: onOpenRegister,
+  } = useDisclosure();
+
   const { isOpen, onClose, onOpen } = useDisclosure();
   const openAndSelect = (movement: movement) => () => {
     setSelectedMovement(movement);
@@ -237,8 +243,8 @@ function MovementsTable() {
         selectedMovement={selectedMovement!}
       />
       <MovementRegisterModal
-        isOpen={registerMovement}
-        onClose={onClose}
+        isOpen={isOpenRegister}
+        onClose={onCloseRegister}
         lenghtMovements={movements.length}
       />
       <Grid templateColumns="1fr 5fr" gap={6}>
@@ -268,13 +274,8 @@ function MovementsTable() {
                     Últimas Movimentações
                   </Text>
                 </Flex>
-                <Flex justifyContent={"right"}>
-                  <Button
-                    colorScheme="#F49320"
-                    onClick={() => {
-                      setRegisterMovement(true);
-                    }}
-                  >
+                <Flex justifyContent="right">
+                  <Button colorScheme="#F49320" onClick={onOpenRegister}>
                     Cadastrar Movimentação
                   </Button>
                 </Flex>

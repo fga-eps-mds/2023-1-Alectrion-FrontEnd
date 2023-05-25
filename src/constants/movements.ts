@@ -5,9 +5,9 @@ export type SelectItem<T> = {
 export type TipoLotacao = 'Empréstimo' | 'Responsabilidade' | 'Baixa';
 
 export const TIPOS_LOTACAO: SelectItem<TipoLotacao>[] = [
-  { label: 'Empréstimo', value: 'Empréstimo' },
-  { label: 'Responsabilidade', value: 'Responsabilidade' },
-  { label: 'Baixa', value: 'Baixa' },
+  { label: 'Empréstimo', value: '0' },
+  { label: 'Baixa', value: '1' },
+  { label: 'Responsabilidade', value: '2' },
 ];
 
 export const MovimentacaoTipoMap = new Map<number, string>([

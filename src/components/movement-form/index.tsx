@@ -13,18 +13,15 @@ import {
   Tbody,
 } from '@chakra-ui/react';
 
-import {
-  TIPOS_LOTACAO,
-} from '@/constants/movements';
-
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
+import { TIPOS_LOTACAO } from '@/constants/movements';
 import { api } from '../../config/lib/axios';
 import { ControlledSelect } from '../form-fields/controlled-select';
 import { Input } from '../form-fields/input';
+import { toast } from '@/utils/toast';
 
 enum movementType {
   Borrow,
@@ -58,15 +55,14 @@ interface unit {
 type FormValues = {
   date: Date;
   userId: string;
-  equipments: [];
-  type: string;
+  equipments: string[];
+  type: SelectOption<number>;
   inChargeName: string;
   inChargeRole: string;
   chiefName: string;
   chiefRole: string;
-  equipmentSnapshots?: any;
   description?: string;
-  destination: unit;
+  destination: SelectOption<string>;
 };
 
 interface MovementFormProps {
@@ -83,21 +79,22 @@ export default function MovementForm({
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<FormValues>();
 
   const [equipments, setEquipments] = useState<equipamentData[]>([]);
   const [units, setUnits] = useState<unit[]>([]);
-  const [unit, setUnit] = useState<unit>();
   const [materiais, setMateriais] = useState<string[]>([]);
 
   const date = new Date();
 
-  const onCloseCallback = () => {
-    console.log('Botão "Cancelar" clicado');
+  const selectedUnit: SelectOption<string> = watch('destination');
+
+  const onCloseCallback = useCallback(() => {
     setMateriais([]);
     onClose();
-  };
-  
+  }, [onClose]);
+
   const toggleMaterial = (serialNumber: string) => () => {
     if (materiais.includes(serialNumber)) {
       setMateriais(materiais.filter((material) => material !== serialNumber));
@@ -109,17 +106,18 @@ export default function MovementForm({
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const body = {
+        // TODO: Alterar userid de acordo com a necessidade, inclusive para DEPLOY
+        userid: '162fba6b-1a56-4960-abf1-43be5b753697',
         date: formData.date,
         userId: formData.userId,
-        equipments: formData.equipments,
-        type: formData.type,
-        inChargeName: formData.inChargeName,
-        inChargeRole: formData.inChargeRole,
-        chiefName: formData.chiefName,
-        chiefRole: formData.chiefRole,
-        equipmentSnapshots: formData?.equipmentSnapshots || null,
+        type: formData.type?.value,
+        inchargename: formData.inChargeName,
+        inchargerole: formData.inChargeRole,
+        chiefname: formData.chiefName,
+        chiefrole: formData.chiefRole,
+        equipments: materiais || [],
         description: formData?.description || null,
-        destination: formData?.destination || '',
+        destination: formData?.destination?.value || '',
       };
 
       const response = await api.post('equipment/createMovement', body);
@@ -190,24 +188,28 @@ export default function MovementForm({
 
       <form id="movement-register-form" onSubmit={onSubmit}>
         <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6}>
-        <ControlledSelect
-          control={control}
-          name="destination"
-          id="destination"
-          options={units.map(unit => ({ value: unit.id, label: unit.name }))}
-          onChange={(it) => {
-            setUnit(it);
-          }}
-          placeholder="Selecione uma opção"
-          label="Posto de trabalho"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-        />
+          <ControlledSelect
+            control={control}
+            name="destination"
+            id="destination"
+            options={units.map((unit) => ({
+              value: unit.id,
+              label: unit.name,
+            }))}
+            placeholder="Selecione uma opção"
+            label="Posto de trabalho"
+            rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+          />
 
           <Input
             label="Cidade"
-            errors={errors.destination?.localization}
+            errors={errors.destination?.value}
             isDisabled
-            defaultValue={unit?.localization}
+            defaultValue={
+              units.find(
+                (iterationUnit) => iterationUnit.id === selectedUnit?.value
+              )?.localization
+            }
           />
 
           <ControlledSelect
@@ -277,9 +279,9 @@ export default function MovementForm({
             <Tbody fontWeight="semibold">
               {equipments.map((equipment: movementEquipment) => (
                 <Tr
-                  key={equipment.serialNumber}
+                  key={equipment.id}
                   background={
-                    materiais.includes(equipment.serialNumber)
+                    materiais.includes(equipment.id)
                       ? 'rgba(244, 147, 32, 0.2)'
                       : 'white'
                   }
@@ -289,7 +291,7 @@ export default function MovementForm({
                   <Td>{equipment.serialNumber}</Td>
                   <Td>
                     <Checkbox
-                      onChange={toggleMaterial(equipment.serialNumber)}
+                      onChange={toggleMaterial(equipment.id)}
                       isChecked={equipment.selected}
                     />
                   </Td>
