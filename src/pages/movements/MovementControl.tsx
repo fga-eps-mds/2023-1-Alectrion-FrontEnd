@@ -182,10 +182,10 @@ function MovementsTable() {
       }
 
       const formattedFormData = {
-        type,
-        inChargeName,
-        destinationId,
-        equipmentId,
+        type: type?.value,
+        inChargeName: inChargeName?.value,
+        destinationId: destinationId?.value,
+        equipmentId: equipmentId?.value,
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
         searchTerm: search,
@@ -270,6 +270,7 @@ function MovementsTable() {
                       placeholder="Tipos"
                       cursor="pointer"
                       variant="unstyled"
+                      _placeholder={{ opacity: 0.4, color: 'inherit' }}
                       fontWeight="semibold"
                       size="sm"
                     />
