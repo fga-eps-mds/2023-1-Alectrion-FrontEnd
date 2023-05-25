@@ -52,6 +52,7 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
 
   useEffect(() => {
     fetchMovements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [equipmentId]);
 
   function formatDate(date: Date) {
