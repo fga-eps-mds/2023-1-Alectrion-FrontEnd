@@ -123,6 +123,12 @@ function MovementsTable() {
     onOpen: onOpenRegister,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenRegister,
+    onClose: onCloseRegister,
+    onOpen: onOpenRegister,
+  } = useDisclosure();
+
   const { isOpen, onClose, onOpen } = useDisclosure();
   const openAndSelect = (movement: movement) => () => {
     setSelectedMovement(movement);

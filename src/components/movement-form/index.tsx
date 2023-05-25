@@ -88,7 +88,6 @@ export default function MovementForm({
 
   const [equipments, setEquipments] = useState<equipamentData[]>([]);
   const [units, setUnits] = useState<unit[]>([]);
-  const [unit, setUnit] = useState<unit>();
   const [materiais, setMateriais] = useState<string[]>([]);
 
   const date = new Date();
