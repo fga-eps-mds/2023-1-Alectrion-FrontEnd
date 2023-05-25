@@ -6,30 +6,22 @@
 import { useState, useEffect, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
-import { MdBuild, MdCall } from 'react-icons/md';
-import { BiEditAlt } from 'react-icons/bi';
+import { BiEditAlt, BiSearch } from 'react-icons/bi';
 import {
-  Select,
   Text,
   Table,
   Thead,
   Tbody,
   Tr,
-  Th,
   Td,
-  Input,
-  IconButton,
   Button,
   TableContainer,
-  Center,
   Divider,
   Box,
   useDisclosure,
   Flex,
   Grid,
   GridItem,
-  Tfoot,
-  TableCaption,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
@@ -41,8 +33,9 @@ import { EquipmentViewModal } from '@/components/equipment-view-modal';
 import { theme } from '@/styles/theme';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
-import { STATUS, SelectItem, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
+import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
+import { Input } from '@/components/form-fields/input';
 
 interface ISelectOption {
   label: string;
@@ -82,10 +75,11 @@ export interface EquipmentData {
 
 type FilterValues = {
   type?: ISelectOption;
-  // brand?: string;
+  brand?: string;
   lastModifiedDate?: string;
   unit?: ISelectOption;
   situation?: ISelectOption;
+  search: string
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -105,10 +99,12 @@ function EquipmentTable() {
   const [offset, setOffset] = useState(0);
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
+  const [search, setSearch] = useState<string>('');
 
   const {
     control,
     watch,
+    register,
     formState: { errors },
   } = useForm<FilterValues>({ mode: 'onChange' });
 
@@ -128,6 +124,7 @@ function EquipmentTable() {
       updatedAt: formattedDate,
       situation: situation?.value,
       unit: unit?.value,
+      search: search
     };
 
     const filteredDataFormatted = [
@@ -191,6 +188,16 @@ function EquipmentTable() {
       });
   }
 
+  const debounce = (fn: Function, ms = 400) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return function (this: any, ...args: any[]) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    };
+  };
+  const handleSearch = debounce(()=>{setSearch(watchFilter.search)}, 400);
+
+
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
@@ -217,10 +224,12 @@ function EquipmentTable() {
   useEffect(() => {
     getWorkstations();
   },[])
+  
   useEffect(() => {
+    handleSearch();
     handleFilterChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchFilter]);
+
   useEffect(() => {
     fetchItems();
     fetchNextItems();
@@ -274,18 +283,22 @@ function EquipmentTable() {
               alignItems="center"
               width="100%"
             >
-              <form id="equipment-filter">
-                <Flex width="100%" gap="5px" mb="15px">
+              <form id="equipment-filter" style={{width:'100%'}}>
+                <Flex  gap="5px" alignItems='5px' mb="15px">
                   <ControlledSelect
                     control={control}
                     name="type"
                     id="type"
                     options={TIPOS_EQUIPAMENTO}
-                    placeholder="Tipo de equipamento"
+                    placeholder="Tipo"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
                   />
                   <Datepicker
-                    // label="Data da última modificação"
-                    placeHolder="Última modificicação"
+                    border={false}
+                    placeholderText="Última modificicação"
                     name="lastModifiedDate"
                     control={control}
                   />
@@ -295,6 +308,10 @@ function EquipmentTable() {
                     id="unit"
                     options={workstations}
                     placeholder="Localização"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
                   />
                   <ControlledSelect
                     control={control}
@@ -302,13 +319,17 @@ function EquipmentTable() {
                     id="situation"
                     options={STATUS}
                     placeholder="situacao"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
                   />
                   <Input
-                    placeholder="Pesquisa"
-                    size="sm"
-                    value={searchTerm}
-                    onChange={handleSearchTermChange}
-                    minWidth="max-content"
+                    placeholder='Pesquisa'
+                    minWidth="15vw"
+                    errors={errors.search}
+                    {...register('search')}
+                    rightElement={<BiSearch />}
                   />
                 </Flex>
               </form>
