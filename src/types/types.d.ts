@@ -19,17 +19,17 @@ type SelectOption<Value = number> = {
 };
 
 type Unit = {
+  id: string;
+  name: string;
+  phone: string;
+  ip: string;
+  gateway: string;
+  is_regional: boolean;
+  city: {
     id: string;
     name: string;
-    phone: string;
-    ip: string;
-    gateway: string;
-    is_regional: boolean;
-    city: {
-        id: string;
-        name: string;
-        state: string;
-    },
-    parent_workstation: null;
-    child_workstations: [];
-} 
+    state: string;
+  };
+  parent_workstation: null;
+  child_workstations: [];
+};
