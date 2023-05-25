@@ -79,8 +79,8 @@ type FilterValues = {
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
-  const [equipaments, setEquipaments] = useState<EquipmentData[]>([]);
-  const [nextEquipaments, setNextEquipaments] = useState<EquipmentData[]>([]);
+  const [equipments, setEquipments] = useState<EquipmentData[]>([]);
+  const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('');
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
@@ -206,9 +206,9 @@ function EquipmentTable() {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset}&${filter}`
       );
-      setEquipaments(data);
+      setEquipments(data);
     } catch (error) {
-      setEquipaments([]);
+      setEquipments([]);
       toast.error('Nenhum Equipamento encontrado');
     }
   };
@@ -218,9 +218,9 @@ function EquipmentTable() {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset + limit}&${filter}`
       );
-      setNextEquipaments(data);
+      setNextEquipments(data);
     } catch (error) {
-      setNextEquipaments([]);
+      setNextEquipments([]);
       toast.error('Nenhum Equipamento encontrado');
     }
   };
@@ -445,7 +445,7 @@ function EquipmentTable() {
                       Anterior
                     </Button>
                   )}
-                  {nextEquipaments.length > 0 && (
+                  {nextEquipments.length > 0 && (
                     <Button
                       variant="link"
                       color="#00000"

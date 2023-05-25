@@ -8,12 +8,12 @@
     Aqui, fizemos modificações no código original para se adequar ao nosso caso específico de uso.
     Quaisquer erros ou bugs nesta implementação são de nossa responsabilidade.
  */
-import { Routes, Route, redirect } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
 import { DefaultLayout } from '@/components/layout/default-layout';
 
 import { MovementsTable } from '@/pages/movements/MovementControl';
-import { EquipmentTable } from '@/pages/equipments/EquipamentsControl';
+import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
 
 export function Router() {
   return (
