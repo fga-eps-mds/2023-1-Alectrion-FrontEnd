@@ -21,8 +21,9 @@ import {
 import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
+import { MdDeleteForever } from 'react-icons/md';
 import { BiSearch } from 'react-icons/bi';
+import { useForm } from 'react-hook-form';
 import { debounce } from 'lodash';
 import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -117,12 +118,6 @@ function MovementsTable() {
   const [filter, setFilter] = useState<string>('');
 
   const [destinations, setDestinations] = useState<ISelectOption[]>([]);
-  const {
-    isOpen: isOpenRegister,
-    onClose: onCloseRegister,
-    onOpen: onOpenRegister,
-  } = useDisclosure();
-
   const {
     isOpen: isOpenRegister,
     onClose: onCloseRegister,
@@ -233,7 +228,31 @@ function MovementsTable() {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, refreshRequest]);
+  }, [currentPage, filter, refreshRequest]);
+
+  useEffect(() => {
+    fetchUnits();
+  }, []);
+
+  useEffect(() => {
+    handleChangeForm();
+    handleSearch();
+  }, [watchedData]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { data }: AxiosResponse<boolean> = await api.delete(
+        `equipment/deleteMovement`,
+        {
+          params: {
+            id,
+          },
+        }
+      );
+    } catch (error) {
+      toast.error('Não é mais possível deletar a movimentação');
+    }
+  };
 
   return (
     <>
@@ -369,6 +388,7 @@ function MovementsTable() {
                           <Td>Data</Td>
                           <Td>Quantidade</Td>
                           <Td> </Td>
+                          <Td> </Td>
                         </Tr>
                       </Thead>
                       <Tbody
@@ -402,6 +422,16 @@ function MovementsTable() {
                                 aria-label="Abrir detalhes da movimentação"
                                 variant="ghost"
                                 icon={<FaFileAlt />}
+                              />
+                            </Td>
+                            <Td>
+                              <IconButton
+                                aria-label="Deletar movimentação"
+                                variant="ghost"
+                                icon={<MdDeleteForever />}
+                                onClick={() => {
+                                  handleDelete(movement.id);
+                                }}
                               />
                             </Td>
                           </Tr>
