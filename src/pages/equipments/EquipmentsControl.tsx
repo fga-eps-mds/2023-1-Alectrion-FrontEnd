@@ -380,7 +380,7 @@ function EquipmentTable() {
                       maxHeight="200px"
                       height="200px"
                     >
-                      {equipaments.map((equipment) => (
+                      {equipments.map((equipment) => (
                         <Tr
                           onClick={() => {
                             handleView(equipment);

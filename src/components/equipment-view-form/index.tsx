@@ -8,7 +8,7 @@ import { ControlledSelect } from '../form-fields/controlled-select';
 import { Datepicker } from '../form-fields/date';
 import { toast } from '@/utils/toast';
 import { api } from '../../config/lib/axios';
-import { EquipmentData } from '../../pages/equipments/EquipamentsControl';
+import { EquipmentData } from '../../pages/equipments/EquipmentsControl';
 
 import { DeleteExtensiveButton } from '../action-buttons/delete-extensive-button';
 

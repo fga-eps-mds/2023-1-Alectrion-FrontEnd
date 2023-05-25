@@ -2,7 +2,7 @@ import { Flex } from '@chakra-ui/react';
 
 import EquipmentViewForm from '../equipment-view-form';
 import { Modal } from '../modal';
-import { EquipmentData } from '../../pages/equipments/EquipamentsControl';
+import { EquipmentData } from '../../pages/equipments/EquipmentsControl';
 
 type EquipmentViewModalProps = {
   isOpen: boolean;
