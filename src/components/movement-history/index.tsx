@@ -13,6 +13,7 @@ import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { api } from '../../config/lib/axios';
+import { MovimentacaoTipoMap } from '@/constants/movements';
 
 interface movement {
   id: string;
