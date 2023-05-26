@@ -150,7 +150,7 @@ function MovementsTable() {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
         `equipment/findMovements?resultquantity=${limit}&page=${
-          offset + limit
+          offset + 1
         }&${filter}`
       );
       setNextMovements(data);
@@ -390,7 +390,7 @@ function MovementsTable() {
                         _hover={{ cursor: 'pointer', color: 'orange.500' }}
                         onClick={() => {
                           setCurrentPage(currentPage - 1);
-                          setOffset(offset - limit);
+                          setOffset(offset - 1);
                         }}
                       >
                         Anterior
@@ -405,7 +405,7 @@ function MovementsTable() {
                         _hover={{ cursor: 'pointer', color: 'orange.500' }}
                         onClick={() => {
                           setCurrentPage(currentPage + 1);
-                          setOffset(offset + limit);
+                          setOffset(offset + 1);
                         }}
                       >
                         Próximo

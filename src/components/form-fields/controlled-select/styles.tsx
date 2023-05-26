@@ -24,7 +24,6 @@ export const chakraStyles: ChakraStylesConfig = {
     color: '#212121',
   }),
   control: (styles) => ({ ...styles, borderColor: '#212121' }),
-  placeholder: (styles) => ({ ...styles, color: '#212121' }),
   loadingIndicator: (provided, state) => ({
     ...provided,
     color: state.isDisabled ? 'gray.300' : 'primary',
