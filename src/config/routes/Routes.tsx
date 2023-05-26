@@ -10,7 +10,7 @@
  */
 import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
-import { DefaultLayout } from '@/components/layout/default-layout';
+
 
 import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
@@ -40,6 +40,7 @@ export function Router() {
 
       {/* ROTAS PUBLICAS */}
       <Route path="/login" element={<Login />} />
+      <Route path="/equipaments" element={<EquipmentTable />} />
       <Route path="/movements" element={<MovementsTable />} />
       <Route path="/equipments" element={<EquipmentTable />} />
       <Route path="*" element={<p>404</p>} />

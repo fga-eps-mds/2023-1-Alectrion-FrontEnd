@@ -16,6 +16,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  Box,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
@@ -32,6 +33,7 @@ import { MovementsModal } from '@/components/movements-modal';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
+import { MovementRegisterModal } from '@/components/movement-register-modal';
 
 interface ISelectOption {
   label: string;
@@ -82,7 +84,7 @@ export interface movement {
 
   chiefRole: string;
 
-  destination: {
+  destination?: {
     name: string;
     localization: string;
   };
@@ -93,7 +95,14 @@ export interface movement {
 function MovementsTable() {
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
-  const [selectedMovement, setSelectedMovement] = useState<any>();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchType, setSearchType] = useState('');
+  const [selectedMovement, setSelectedMovement] = useState<movement>();
+  const [registerMovement, setRegisterMovement] = useState(false);
+  const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
+
+  const [items, setItems] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
@@ -108,6 +117,12 @@ function MovementsTable() {
   const [filter, setFilter] = useState<string>('');
 
   const [destinations, setDestinations] = useState<ISelectOption[]>([]);
+  const {
+    isOpen: isOpenRegister,
+    onClose: onCloseRegister,
+    onOpen: onOpenRegister,
+  } = useDisclosure();
+
   const { isOpen, onClose, onOpen } = useDisclosure();
   const openAndSelect = (movement: movement) => () => {
     setSelectedMovement(movement);
@@ -211,23 +226,22 @@ function MovementsTable() {
   useEffect(() => {
     fetchItems();
     fetchNextItems();
-  }, [currentPage, filter]);
-
-  useEffect(() => {
-    fetchUnits();
-  }, []);
-
-  useEffect(() => {
-    handleChangeForm();
-    handleSearch();
-  }, [watchedData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, refreshRequest]);
 
   return (
     <>
       <MovementsModal
         isOpen={isOpen}
         onClose={onClose}
-        selectedMoviment={selectedMovement}
+        selectedMoviment={selectedMovement!}
+      />
+      <MovementRegisterModal
+        isOpen={isOpenRegister}
+        onClose={onCloseRegister}
+        lenghtMovements={movements.length}
+        refreshRequest={refreshRequest}
+        setRefreshRequest={setRefreshRequest}
       />
       <Grid templateColumns="1fr 5fr" gap={6}>
         <GridItem>
@@ -250,11 +264,18 @@ function MovementsTable() {
               >
                 Movimentações
               </Text>
-              <Flex justifyContent="left" width="100%">
-                <Text color="#00000" fontWeight="medium" fontSize="2xl">
-                  Últimas Movimentações
-                </Text>
-              </Flex>
+              <Box>
+                <Flex justifyContent="left" width="100%">
+                  <Text color="#00000" fontWeight="medium" fontSize="2xl">
+                    Últimas Movimentações
+                  </Text>
+                </Flex>
+                <Flex justifyContent="right">
+                  <Button colorScheme="#F49320" onClick={onOpenRegister}>
+                    Cadastrar Movimentação
+                  </Button>
+                </Flex>
+              </Box>
               <Divider borderColor="#00000" margin="15px 0 15px 0" />
               <Flex
                 flexDirection="column"
@@ -359,8 +380,7 @@ function MovementsTable() {
                               {MovimentacaoTipoMap.get(movement.type)}
                             </Td>
                             <Td fontWeight="medium">
-                              {movement.destination.name} -{' '}
-                              {movement.destination.localization}
+                              {movement.destination?.name}
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString(

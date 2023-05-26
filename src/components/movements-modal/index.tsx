@@ -35,6 +35,19 @@ type FormValues = {
   inChargeRole: string;
 };
 
+function mapMovementType(type: number): string {
+  switch (type) {
+    case 1:
+      return 'Borrow';
+    case 2:
+      return 'Dismiss';
+    case 3:
+      return 'Ownership';
+    default:
+      return '';
+  }
+}
+
 export function MovementsModal({
   isOpen,
   onClose,
@@ -95,7 +108,7 @@ export function MovementsModal({
                 label="Posto de trabalho"
                 errors={errors.name}
                 isDisabled
-                defaultValue={selectedMoviment?.destination.name}
+                defaultValue={selectedMoviment?.destination?.name}
                 {...register('name', {
                   required: 'Campo Obrigatório',
                   maxLength: 50,
@@ -106,7 +119,7 @@ export function MovementsModal({
                 label="Cidade"
                 errors={errors.localization}
                 isDisabled
-                defaultValue={selectedMoviment?.destination.localization}
+                defaultValue={selectedMoviment?.destination?.localization}
                 {...register('localization', {
                   required: 'Campo Obrigatório',
                   maxLength: 50,
