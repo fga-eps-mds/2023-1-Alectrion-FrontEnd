@@ -24,7 +24,7 @@ import { useForm } from 'react-hook-form';
 import { BiSearch } from 'react-icons/bi';
 import { debounce } from 'lodash';
 import { toast } from '@/utils/toast';
-import { api, schedulaApi } from '../../config/lib/axios';
+import { api, apiSchedula } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
 import { MovimentacaoTipoMap, TIPOS_MOVIMENTACAO } from '@/constants/movements';
@@ -138,7 +138,9 @@ function MovementsTable() {
 
   const fetchUnits = async () => {
     try {
-      const { data }: AxiosResponse<Unit[]> = await schedulaApi.get('');
+      const { data }: AxiosResponse<Unit[]> = await apiSchedula.get(
+        '/workstations'
+      );
       setDestinations(generateDestinationOptions(data));
     } catch (error) {
       setDestinations([]);
