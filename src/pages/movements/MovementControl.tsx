@@ -85,7 +85,7 @@ export interface movement {
 
   chiefRole: string;
 
-  destination?: {
+  destination: {
     name: string;
     localization: string;
   };
@@ -397,16 +397,15 @@ function MovementsTable() {
                         height="200px"
                       >
                         {movements.map((movement) => (
-                          <Tr
-                            key={movement.id}
-                            onClick={openAndSelect(movement)}
-                            cursor="pointer"
-                          >
+                          <Tr key={movement.id} cursor="pointer">
                             <Td fontWeight="medium">
                               {MovimentacaoTipoMap.get(movement.type)}
                             </Td>
                             <Td fontWeight="medium">
-                              {movement.destination?.name}
+                              <Box onClick={openAndSelect(movement)}>
+                                {movement.destination.name} -{' '}
+                                {movement.destination.localization}
+                              </Box>
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString(
@@ -417,6 +416,7 @@ function MovementsTable() {
                             <Td fontWeight="medium">
                               {movement.equipments.length}
                             </Td>
+
                             <Td>
                               <IconButton
                                 aria-label="Abrir detalhes da movimentação"
@@ -429,9 +429,7 @@ function MovementsTable() {
                                 aria-label="Deletar movimentação"
                                 variant="ghost"
                                 icon={<MdDeleteForever />}
-                                onClick={() => {
-                                  handleDelete(movement.id);
-                                }}
+                                onClick={() => handleDelete(movement.id)}
                               />
                             </Td>
                           </Tr>
