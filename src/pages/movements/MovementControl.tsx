@@ -16,6 +16,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  Box,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
@@ -225,21 +226,8 @@ function MovementsTable() {
   useEffect(() => {
     fetchItems();
     fetchNextItems();
-<<<<<<< HEAD
-  }, [currentPage, filter]);
-
-  useEffect(() => {
-    fetchUnits();
-  }, []);
-
-  useEffect(() => {
-    handleChangeForm();
-    handleSearch();
-  }, [watchedData]);
-=======
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, refreshRequest]);
->>>>>>> 33797e5 (#80 fix: Correção de reloading da página)
 
   return (
     <>
