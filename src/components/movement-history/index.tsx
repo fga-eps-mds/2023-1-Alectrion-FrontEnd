@@ -10,8 +10,8 @@ import {
 } from '@chakra-ui/react';
 
 import { AxiosResponse } from 'axios';
-import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
+import { toast } from '@/utils/toast';
 import { api } from '../../config/lib/axios';
 import { MovimentacaoTipoMap } from '@/constants/movements';
 

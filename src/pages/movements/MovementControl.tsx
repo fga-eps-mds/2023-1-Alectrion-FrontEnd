@@ -24,9 +24,9 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { toast } from 'react-toastify';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
+import { toast } from '@/utils/toast';
 import { api } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';

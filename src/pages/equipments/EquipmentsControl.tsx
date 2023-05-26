@@ -19,8 +19,8 @@ import {
   GridItem,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { toast } from 'react-toastify';
 import { FaFileAlt } from 'react-icons/fa';
+import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
