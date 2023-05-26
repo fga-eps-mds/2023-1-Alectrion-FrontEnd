@@ -33,7 +33,7 @@ export const chakraStyles: ChakraStylesConfig = {
     color: selectProps.menuIsOpen ? 'white' : 'grey.300',
     paddingInlineStart: 1,
     paddingInlineEnd: 1,
-    background: selectProps.menuIsOpen ? 'blackAlpha.600' : 'blackAlpha.50',
+    // background: selectProps.menuIsOpen ? 'blackAlpha.600' : 'blackAlpha.50',
     '> svg': {
       transform: `rotate(${selectProps.menuIsOpen ? -180 : 0}deg)`,
       fontSize: '1.4rem',

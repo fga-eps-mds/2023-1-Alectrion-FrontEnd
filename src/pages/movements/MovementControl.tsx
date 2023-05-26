@@ -1,24 +1,18 @@
 /* eslint-disable import/export */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Box,
   Button,
-  Center,
   Divider,
   Flex,
   Grid,
   GridItem,
   IconButton,
-  Input,
-  Select,
   Table,
   TableContainer,
   Tbody,
   Td,
   Text,
-  Th,
   Thead,
   Tr,
   useDisclosure,
@@ -26,13 +20,33 @@ import {
 import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
+import { BiSearch } from 'react-icons/bi';
+import { debounce } from 'lodash';
 import { toast } from '@/utils/toast';
-import { api } from '../../config/lib/axios';
+import { api, apiSchedula } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
-import { MovimentacaoTipoMap } from '@/constants/movements';
+import { MovimentacaoTipoMap, TIPOS_MOVIMENTACAO } from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
+import { ControlledSelect } from '@/components/form-fields/controlled-select';
+import { Datepicker } from '@/components/form-fields/date';
+import { Input } from '@/components/form-fields/input';
 
+interface ISelectOption {
+  label: string;
+  value: number | string;
+}
+
+type FormValues = {
+  type: ISelectOption;
+  inChargeName: ISelectOption;
+  destinationId: ISelectOption;
+  equipmentId: ISelectOption;
+  lowerDate: string;
+  higherDate: string;
+  searchTerm: string;
+};
 export interface movementEquipment {
   tippingNumber: string;
 
@@ -76,61 +90,137 @@ export interface movement {
   equipments: movementEquipment[];
 }
 
-export function MovementsTable() {
+function MovementsTable() {
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchType, setSearchType] = useState('');
   const [selectedMovement, setSelectedMovement] = useState<any>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const limit = 10;
+  const {
+    control,
+    register,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>({ mode: 'onChange' });
+  const watchedData = watch();
+  const [filter, setFilter] = useState<string>('');
 
+  const [destinations, setDestinations] = useState<ISelectOption[]>([]);
   const { isOpen, onClose, onOpen } = useDisclosure();
   const openAndSelect = (movement: movement) => () => {
     setSelectedMovement(movement);
     onOpen();
   };
 
-  const handleSearchTermChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSearchTypeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSearchType(event.target.value);
-  };
+  const handleSearch = debounce(() => {
+    setSearch(watchedData.searchTerm);
+  }, 400);
 
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
-        `equipment/findMovements?resultquantity=${limit}&page=${offset}`
+        `equipment/findMovements?resultquantity=${limit}&page=${offset}&${filter}`
       );
       setMovements(data);
     } catch (error) {
       setMovements([]);
-      toast.error('Nenhuma movimentação registrada');
+      toast.error('Não foi possível encontrar as movimentações');
     }
   };
+
+  const generateDestinationOptions = (apiData: Unit[]): ISelectOption[] => {
+    return (
+      apiData?.map((item) => ({ label: item?.name, value: item?.id })) || []
+    );
+  };
+
+  const fetchUnits = async () => {
+    try {
+      const { data }: AxiosResponse<Unit[]> = await apiSchedula.get(
+        '/workstations'
+      );
+      setDestinations(generateDestinationOptions(data));
+    } catch (error) {
+      setDestinations([]);
+      toast.error('Não foi possível encontrar destino');
+    }
+  };
+
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
-        `equipment/findMovements?resultquantity=${limit}&page=${offset + limit}`
+        `equipment/findMovements?resultquantity=${limit}&page=${
+          offset + 1
+        }&${filter}`
       );
       setNextMovements(data);
     } catch (error) {
       setNextMovements([]);
-      toast.error('Nenhuma movimentação registrada');
+    }
+  };
+
+  const handleChangeForm = async () => {
+    try {
+      const {
+        type,
+        inChargeName,
+        destinationId,
+        equipmentId,
+        lowerDate,
+        higherDate,
+      } = watchedData;
+      let formattedLowerDate;
+
+      if (lowerDate !== null && lowerDate !== '' && lowerDate) {
+        formattedLowerDate = new Date(lowerDate).toLocaleDateString('en-us');
+      }
+
+      let formattedHigherDate;
+
+      if (higherDate !== null && higherDate !== '' && higherDate) {
+        formattedHigherDate = new Date(higherDate).toLocaleDateString('en-us');
+      }
+
+      const formattedFormData = {
+        type: type?.value,
+        inChargeName: inChargeName?.value,
+        destinationId: destinationId?.value,
+        equipmentId: equipmentId?.value,
+        lowerDate: formattedLowerDate,
+        higherDate: formattedHigherDate,
+        searchTerm: search,
+      };
+
+      const filteredFormData = [
+        ...Object.entries(formattedFormData).filter(
+          (field) => field[1] !== undefined && field[1] !== ''
+        ),
+      ];
+
+      const queryFormMovements = filteredFormData
+        .map((field) => `${field[0]}=${field[1]}`)
+        .join('&');
+      setFilter(queryFormMovements);
+    } catch {
+      console.log('erro');
     }
   };
 
   useEffect(() => {
     fetchItems();
     fetchNextItems();
-  }, [currentPage]);
+  }, [currentPage, filter]);
+
+  useEffect(() => {
+    fetchUnits();
+  }, []);
+
+  useEffect(() => {
+    handleChangeForm();
+    handleSearch();
+  }, [watchedData]);
 
   return (
     <>
@@ -172,134 +262,51 @@ export function MovementsTable() {
                 alignItems="center"
                 width="100%"
               >
-                <Flex width="100%" gap="5px" mb="15px">
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Tipos"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">CPU</option>
-                    <option value="option2">Monitor</option>
-                    <option value="option3">Estabilizador</option>
-                    <option value="option4">Nobreak</option>
-                    <option value="option5">Hub</option>
-                    <option value="option6">Switch</option>
-                    <option value="option7">Notebook</option>
-                    <option value="option8">Datashow</option>
-                    <option value="option9">Scanner</option>
-                    <option value="option10">Impressora</option>
-                    <option value="option11">Roteador</option>
-                    <option value="option12">Tablet</option>
-                    <option value="option13">TV</option>
-                    <option value="option14">Fax</option>
-                    <option value="option15">Telefone</option>
-                    <option value="option16">Smartphone</option>
-                    <option value="option17">Projetor</option>
-                    <option value="option18">Tela de Projeção</option>
-                    <option value="option19">Câmera</option>
-                    <option value="option20">Webcam</option>
-                    <option value="option21">Caixa de Som</option>
-                    <option value="option22">Impressora Térmica</option>
-                    <option value="option23">
-                      Leitor de Código de Barras/ CCD
-                    </option>
-                    <option value="option24">Mesa Digitalizadora</option>
-                    <option value="option25">Leitor Biométrico</option>
-                    <option value="option26">Receptor</option>
-                    <option value="option27">Extrator de Dados</option>
-                    <option value="option28">Transformador</option>
-                    <option value="option29">Coletor de Assinatura</option>
-                    <option value="option30">Kit Cenário</option>
-                    <option value="option31">
-                      Dispositivo de Biometria Facial
-                    </option>
-                    <option value="option32">Servidor de Rede</option>
-                    <option value="option33">HD Externo</option>
-                    <option value="option34">Protetor Eletrônico</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Marcas"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">Dell</option>
-                    <option value="option2">LG</option>
-                    <option value="option3">Galaxy</option>
-                    <option value="option4">HP</option>
-                    <option value="option5">Lenovo</option>
-                    <option value="option6">Logitech</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Modelos"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">Ink 416</option>
-                    <option value="option2">16520</option>
-                    <option value="option3">1080p24</option>
-                    <option value="option4">Book2</option>
-                    <option value="option5">Thinkpad</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Datas"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">Janeiro</option>
-                    <option value="option2">Fevereiro</option>
-                    <option value="option3">Março</option>
-                    <option value="option4">Abril</option>
-                    <option value="option5">Maio</option>
-                    <option value="option6">Junho</option>
-                    <option value="option7">Julho</option>
-                    <option value="option8">Agosto</option>
-                    <option value="option9">Setembro</option>
-                    <option value="option10">Outubro</option>
-                    <option value="option11">Novembro</option>
-                    <option value="option12">Dezembro</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Local"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">1dp Goiânia</option>
-                    <option value="option2">2dp Goiânia</option>
-                  </Select>
-
-                  <Select
-                    cursor="pointer"
-                    variant="unstyled"
-                    placeholder="Status"
-                    fontWeight="semibold"
-                    size="xs"
-                  >
-                    <option value="option1">Novo</option>
-                    <option value="option2">Usado</option>
-                  </Select>
-
-                  <Input
-                    placeholder="Pesquisa"
-                    size="sm"
-                    value={searchTerm}
-                    onChange={handleSearchTermChange}
-                    minWidth="max-content"
-                  />
-                </Flex>
+                <form id="movement-filter" style={{ width: '100%' }}>
+                  <Flex width="100%" gap="5px" mb="15px">
+                    <ControlledSelect
+                      control={control}
+                      name="type"
+                      id="type"
+                      options={TIPOS_MOVIMENTACAO}
+                      placeholder="Tipos"
+                      cursor="pointer"
+                      variant="unstyled"
+                      _placeholder={{ opacity: 0.4, color: 'inherit' }}
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                    <ControlledSelect
+                      control={control}
+                      name="destinationId"
+                      id="destinationId"
+                      options={destinations}
+                      placeholder="Selecione"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                    <Datepicker
+                      name="lowerDate"
+                      control={control}
+                      border={false}
+                      placeholderText="Data inicial"
+                    />
+                    <Datepicker
+                      name="higherDate"
+                      control={control}
+                      border={false}
+                      placeholderText="Data final"
+                    />
+                    <Input
+                      minWidth="15vw"
+                      errors={errors.searchTerm}
+                      {...register('searchTerm')}
+                      rightElement={<BiSearch />}
+                      placeholder="Pesquisa"
+                    />
+                  </Flex>
+                </form>
                 <Flex flexDirection="column" width="100%">
                   <TableContainer
                     borderRadius="15px"
@@ -357,7 +364,8 @@ export function MovementsTable() {
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString(
-                                'pt-Br'
+                                'pt-Br',
+                                { timeZone: 'UTC' }
                               )}
                             </Td>
                             <Td fontWeight="medium">
@@ -385,7 +393,7 @@ export function MovementsTable() {
                         _hover={{ cursor: 'pointer', color: 'orange.500' }}
                         onClick={() => {
                           setCurrentPage(currentPage - 1);
-                          setOffset(offset - limit);
+                          setOffset(offset - 1);
                         }}
                       >
                         Anterior
@@ -400,7 +408,7 @@ export function MovementsTable() {
                         _hover={{ cursor: 'pointer', color: 'orange.500' }}
                         onClick={() => {
                           setCurrentPage(currentPage + 1);
-                          setOffset(offset + limit);
+                          setOffset(offset + 1);
                         }}
                       >
                         Próximo
@@ -416,4 +424,4 @@ export function MovementsTable() {
     </>
   );
 }
-export default { MovementsTable };
+export { MovementsTable };
