@@ -68,11 +68,15 @@ type FormValues = {
 interface MovementFormProps {
   onClose: () => void;
   lenghtMovements: number;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function MovementForm({
   onClose,
   lenghtMovements,
+  refreshRequest,
+  setRefreshRequest,
 }: MovementFormProps) {
   const {
     control,
@@ -124,6 +128,7 @@ export default function MovementForm({
 
       if (response.status === 200) {
         toast.success('Movimentação cadastrada com sucesso');
+        setRefreshRequest(!refreshRequest);
         onClose();
         return;
       }

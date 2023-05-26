@@ -5,12 +5,16 @@ type MovementRegisterModalProps = {
   isOpen: boolean;
   onClose(): void;
   lenghtMovements: number;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export function MovementRegisterModal({
   isOpen,
   onClose,
   lenghtMovements,
+  refreshRequest,
+  setRefreshRequest,
 }: MovementRegisterModalProps) {
   return (
     <Modal
@@ -19,7 +23,12 @@ export function MovementRegisterModal({
       onClose={onClose}
       size="4xl"
     >
-      <MovementForm onClose={onClose} lenghtMovements={lenghtMovements} />
+      <MovementForm
+        onClose={onClose}
+        lenghtMovements={lenghtMovements}
+        refreshRequest={refreshRequest}
+        setRefreshRequest={setRefreshRequest}
+      />
     </Modal>
   );
 }

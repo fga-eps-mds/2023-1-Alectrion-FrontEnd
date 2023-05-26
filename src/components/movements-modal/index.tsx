@@ -19,11 +19,10 @@ import { Input } from '../form-fields/input';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { MovimentacaoTipoMap } from '@/constants/movements';
 
-
 type MovementsModalProps = {
   isOpen: boolean;
   onClose(): void;
-  selectedMovement: movement;
+  selectedMoviment: movement;
 };
 
 type FormValues = {
@@ -52,7 +51,7 @@ function mapMovementType(type: number): string {
 export function MovementsModal({
   isOpen,
   onClose,
-  selectedMovement,
+  selectedMoviment,
 }: MovementsModalProps) {
   const [materiais, setMateriais] = useState<string[]>([]);
   const {
@@ -109,7 +108,7 @@ export function MovementsModal({
                 label="Posto de trabalho"
                 errors={errors.name}
                 isDisabled
-                defaultValue={selectedMoviment?.destination.name}
+                defaultValue={selectedMoviment?.destination?.name}
                 {...register('name', {
                   required: 'Campo Obrigatório',
                   maxLength: 50,
@@ -120,7 +119,7 @@ export function MovementsModal({
                 label="Cidade"
                 errors={errors.localization}
                 isDisabled
-                defaultValue={selectedMoviment?.destination.localization}
+                defaultValue={selectedMoviment?.destination?.localization}
                 {...register('localization', {
                   required: 'Campo Obrigatório',
                   maxLength: 50,

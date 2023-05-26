@@ -98,6 +98,7 @@ function MovementsTable() {
   const [searchType, setSearchType] = useState('');
   const [selectedMovement, setSelectedMovement] = useState<movement>();
   const [registerMovement, setRegisterMovement] = useState(false);
+  const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
 
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -224,6 +225,7 @@ function MovementsTable() {
   useEffect(() => {
     fetchItems();
     fetchNextItems();
+<<<<<<< HEAD
   }, [currentPage, filter]);
 
   useEffect(() => {
@@ -234,18 +236,24 @@ function MovementsTable() {
     handleChangeForm();
     handleSearch();
   }, [watchedData]);
+=======
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, refreshRequest]);
+>>>>>>> 33797e5 (#80 fix: Correção de reloading da página)
 
   return (
     <>
       <MovementsModal
         isOpen={isOpen}
         onClose={onClose}
-        selectedMovement={selectedMovement!}
+        selectedMoviment={selectedMovement!}
       />
       <MovementRegisterModal
         isOpen={isOpenRegister}
         onClose={onCloseRegister}
         lenghtMovements={movements.length}
+        refreshRequest={refreshRequest}
+        setRefreshRequest={setRefreshRequest}
       />
       <Grid templateColumns="1fr 5fr" gap={6}>
         <GridItem>
