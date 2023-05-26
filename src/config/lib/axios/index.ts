@@ -10,7 +10,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: 'https://alectrion-gateway-2023-1.herokuapp.com/',
+  baseURL: 'https://alectrion-gateway-2023.herokuapp.com/',
 });
 
 export const apiSchedula = axios.create({
