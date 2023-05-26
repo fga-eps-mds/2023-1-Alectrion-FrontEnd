@@ -240,7 +240,7 @@ function MovementsTable() {
       <MovementsModal
         isOpen={isOpen}
         onClose={onClose}
-        selectedMovement={selectedMovement!}
+        selectedMoviment={selectedMovement!}
       />
       <MovementRegisterModal
         isOpen={isOpenRegister}
