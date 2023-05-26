@@ -362,7 +362,8 @@ function MovementsTable() {
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString(
-                                'pt-Br'
+                                'pt-Br',
+                                { timeZone: 'UTC' }
                               )}
                             </Td>
                             <Td fontWeight="medium">
