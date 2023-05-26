@@ -88,7 +88,7 @@ function EquipmentTable() {
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [workstations, setWorkstations] = useState<Workstation[]>();
+  const [workstations, setWorkstations] = useState<ISelectOption[]>();
   const [searchId, setSearchId] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
