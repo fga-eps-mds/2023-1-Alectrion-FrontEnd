@@ -249,6 +249,7 @@ function MovementsTable() {
           },
         }
       );
+      toast.success('Movimentação deletada com sucesso');
     } catch (error) {
       toast.error('Não é mais possível deletar a movimentação');
     }
@@ -403,8 +404,8 @@ function MovementsTable() {
                             </Td>
                             <Td fontWeight="medium">
                               <Box onClick={openAndSelect(movement)}>
-                                {movement.destination.name} -{' '}
-                                {movement.destination.localization}
+                                {movement.destination?.name} -{' '}
+                                {movement.destination?.localization}
                               </Box>
                             </Td>
                             <Td>
@@ -429,7 +430,10 @@ function MovementsTable() {
                                 aria-label="Deletar movimentação"
                                 variant="ghost"
                                 icon={<MdDeleteForever />}
-                                onClick={() => handleDelete(movement.id)}
+                                onClick={() => {
+                                  handleDelete(movement.id);
+                                  setRefreshRequest(true);
+                                }}
                               />
                             </Td>
                           </Tr>
