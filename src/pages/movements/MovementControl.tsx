@@ -96,18 +96,13 @@ export interface movement {
 function MovementsTable() {
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchType, setSearchType] = useState('');
   const [selectedMovement, setSelectedMovement] = useState<movement>();
-  const [registerMovement, setRegisterMovement] = useState(false);
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-
-  const [items, setItems] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const limit = 10;
+
   const {
     control,
     register,
@@ -382,6 +377,9 @@ function MovementsTable() {
                         bg={theme.colors.primary}
                         fontWeight="semibold"
                         order={theme.colors.primary}
+                        position="sticky"
+                        top="0"
+                        zIndex={+1}
                       >
                         <Tr width="100%" color={theme.colors.white}>
                           <Td>Tipo</Td>

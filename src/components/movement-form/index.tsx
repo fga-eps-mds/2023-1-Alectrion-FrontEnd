@@ -132,9 +132,9 @@ export default function MovementForm({
         onClose();
         return;
       }
-      toast.error('Erro ao tentar cadastrar o equipamento');
+      toast.error('Erro ao tentar cadastrar o movimentação');
     } catch {
-      toast.error('Erro ao tentar cadastrar o equipamento');
+      toast.error('Erro ao tentar cadastrar o movimentação');
     }
   });
 

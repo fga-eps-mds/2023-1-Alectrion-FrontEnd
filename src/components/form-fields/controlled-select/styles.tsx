@@ -46,7 +46,7 @@ export const chakraStyles: ChakraStylesConfig = {
     border: 0,
     boxShadow: 'xl',
     backdropFilter: 'blur(8px)',
-    zIndex: 2,
+    zIndex: 3,
   }),
   menuList: (provided) => ({
     ...provided,
