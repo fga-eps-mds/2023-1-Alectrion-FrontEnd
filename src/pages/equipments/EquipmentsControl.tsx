@@ -19,7 +19,6 @@ import {
   GridItem,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { FaFileAlt } from 'react-icons/fa';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -61,7 +60,7 @@ export interface EquipmentData {
   brand: {
     name: string;
   };
-  acquisition: any;
+  acquisition: { name: string };
   unit: {
     name: string;
     localization: string;
@@ -81,15 +80,11 @@ type FilterValues = {
 function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchType, setSearchType] = useState('');
+
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-  const [items, setItems] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
-  const [searchId, setSearchId] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
@@ -154,24 +149,12 @@ function EquipmentTable() {
     onClose: onRegisterClose,
     onOpen: onRegisterOpen,
   } = useDisclosure();
+
   const {
     isOpen: isViewOpen,
     onClose: onViewClose,
     onOpen: onViewOpen,
   } = useDisclosure();
-
-  // handleSearchTermChange atualiza o estado searchTerm com o valor inserido na caixa de entrada pelo usuário
-  const handleSearchTermChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchId(event.target.value);
-  };
-  // handleSearchTypeChange atualiza o estado searchType com o valor selecionado no menu suspenso pelo usuário.
-  const handleSearchTypeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSearchType(event.target.value);
-  };
 
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
     return data?.map((item: Workstation) => {
@@ -366,6 +349,9 @@ function EquipmentTable() {
                       bg={theme.colors.primary}
                       fontWeight="semibold"
                       order={theme.colors.primary}
+                      position="sticky"
+                      top="0"
+                      zIndex={+1}
                     >
                       <Tr width="100%" color={theme.colors.white}>
                         <Td>Equipamento</Td>

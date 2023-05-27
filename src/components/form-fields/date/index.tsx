@@ -67,7 +67,7 @@ export function Datepicker<FormValues extends FieldValues>({
     <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none">
       {label && <FormLabel cursor="pointer">{label}</FormLabel>}
 
-      <InputGroup display="block" zIndex={+1}>
+      <InputGroup display="block" zIndex={+2}>
         <Box>
           <ReactDatePicker
             selected={value as Date}

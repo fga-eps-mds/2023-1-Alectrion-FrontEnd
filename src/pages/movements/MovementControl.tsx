@@ -21,8 +21,9 @@ import {
 import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
+import { MdDeleteForever } from 'react-icons/md';
 import { BiSearch } from 'react-icons/bi';
+import { useForm } from 'react-hook-form';
 import { debounce } from 'lodash';
 import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -84,7 +85,7 @@ export interface movement {
 
   chiefRole: string;
 
-  destination?: {
+  destination: {
     name: string;
     localization: string;
   };
@@ -95,18 +96,13 @@ export interface movement {
 function MovementsTable() {
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchType, setSearchType] = useState('');
   const [selectedMovement, setSelectedMovement] = useState<movement>();
-  const [registerMovement, setRegisterMovement] = useState(false);
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-
-  const [items, setItems] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const limit = 10;
+
   const {
     control,
     register,
@@ -227,7 +223,32 @@ function MovementsTable() {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, refreshRequest]);
+  }, [currentPage, filter, refreshRequest]);
+
+  useEffect(() => {
+    fetchUnits();
+  }, []);
+
+  useEffect(() => {
+    handleChangeForm();
+    handleSearch();
+  }, [watchedData]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { data }: AxiosResponse<boolean> = await api.delete(
+        `equipment/deleteMovement`,
+        {
+          params: {
+            id,
+          },
+        }
+      );
+      toast.success('Movimentação deletada com sucesso');
+    } catch (error) {
+      toast.error('Não é mais possível deletar a movimentação');
+    }
+  };
 
   return (
     <>
@@ -356,12 +377,16 @@ function MovementsTable() {
                         bg={theme.colors.primary}
                         fontWeight="semibold"
                         order={theme.colors.primary}
+                        position="sticky"
+                        top="0"
+                        zIndex={+1}
                       >
                         <Tr width="100%" color={theme.colors.white}>
                           <Td>Tipo</Td>
                           <Td>Destino</Td>
                           <Td>Data</Td>
                           <Td>Quantidade</Td>
+                          <Td> </Td>
                           <Td> </Td>
                         </Tr>
                       </Thead>
@@ -371,16 +396,15 @@ function MovementsTable() {
                         height="200px"
                       >
                         {movements.map((movement) => (
-                          <Tr
-                            key={movement.id}
-                            onClick={openAndSelect(movement)}
-                            cursor="pointer"
-                          >
+                          <Tr key={movement.id} cursor="pointer">
                             <Td fontWeight="medium">
                               {MovimentacaoTipoMap.get(movement.type)}
                             </Td>
                             <Td fontWeight="medium">
-                              {movement.destination?.name}
+                              <Box onClick={openAndSelect(movement)}>
+                                {movement.destination?.name} -{' '}
+                                {movement.destination?.localization}
+                              </Box>
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString(
@@ -391,11 +415,23 @@ function MovementsTable() {
                             <Td fontWeight="medium">
                               {movement.equipments.length}
                             </Td>
+
                             <Td>
                               <IconButton
                                 aria-label="Abrir detalhes da movimentação"
                                 variant="ghost"
                                 icon={<FaFileAlt />}
+                              />
+                            </Td>
+                            <Td>
+                              <IconButton
+                                aria-label="Deletar movimentação"
+                                variant="ghost"
+                                icon={<MdDeleteForever />}
+                                onClick={() => {
+                                  handleDelete(movement.id);
+                                  setRefreshRequest(!refreshRequest);
+                                }}
                               />
                             </Td>
                           </Tr>
