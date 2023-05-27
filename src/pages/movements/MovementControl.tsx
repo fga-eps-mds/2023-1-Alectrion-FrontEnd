@@ -430,7 +430,7 @@ function MovementsTable() {
                                 icon={<MdDeleteForever />}
                                 onClick={() => {
                                   handleDelete(movement.id);
-                                  setRefreshRequest(true);
+                                  setRefreshRequest(!refreshRequest);
                                 }}
                               />
                             </Td>
