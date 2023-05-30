@@ -202,9 +202,8 @@ function OrderServiceTable() {
                         >
                           <Tr width="100%" color={theme.colors.white}>
                             <Td>Equipamento</Td>
-                            <Td>N Tombamento</Td>
-                            <Td>N Série</Td>
-                            <Td>Última Modificação</Td>
+                            <Td>Status</Td>
+                            <Td>Data</Td>
                             <Td />
                           </Tr>
                         </Thead>
@@ -218,13 +217,12 @@ function OrderServiceTable() {
                               key={equipment.id}
                             >
                               <Td fontWeight="medium">
-                                {equipment.situacao} - {equipment.unit.name}
+                                Tombamento - {equipment.tippingNumber}
                                 <Td p={0} fontWeight="semibold">
-                                  {equipment.type} {equipment.brand.name}
+                                  {equipment.type} {equipment.brand.name} {equipment.model}
                                 </Td>
                               </Td>
-                              <Td>{equipment.tippingNumber}</Td>
-                              <Td>{equipment.serialNumber}</Td>
+                              <Td>{equipment.situacao}</Td>
                               <Td>
                                 {new Date(equipment.updatedAt).toLocaleDateString(
                                   'pt-BR'
