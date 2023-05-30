@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { Modal } from '../modal';
+import movimentacaoPDF from '../pdf/pdf';
 
 type TermModalProps = {
   isOpen: boolean;
@@ -67,11 +68,11 @@ export function TermModal({
           <Button variant="secondary" onClick={onCloseCallback}>
             Fechar
           </Button>
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" onClick={movimentacaoPDF}>
             Imprimir
           </Button>
         </Flex>
-        
+
       </Modal>
     </>
   );
