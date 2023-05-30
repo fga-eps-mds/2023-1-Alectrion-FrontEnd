@@ -17,6 +17,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  Select,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { toast } from '@/utils/toast';
@@ -29,7 +30,7 @@ import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 
 
-export interface OrderServiceData {
+export interface EquipmentData {
   tippingNumber: string;
   serialNumber: string;
   type: string;
@@ -64,19 +65,14 @@ function OrderServiceTable() {
     const [equipments, setEquipments] = useState<EquipmentData[]>([]);
     const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
   
-    const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
-      useState<OrderServiceData>();
-    const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-  
     const [currentPage, setCurrentPage] = useState(1);
     const [offset, setOffset] = useState(0);
     const limit = 10;
-    const [filter, setFilter] = useState<string>('');
 
     const fetchItems = async () => {
         try {
-          const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-            `equipment/find?take=${limit}&skip=${offset}&${filter}`
+          const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+            `equipment/find?take=${limit}&skip=${offset}`
           );
           setEquipments(data);
         } catch (error) {
@@ -87,8 +83,8 @@ function OrderServiceTable() {
     
       const fetchNextItems = async () => {
         try {
-          const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-            `equipment/find?take=${limit}&skip=${offset + limit}&${filter}`
+          const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+            `equipment/find?take=${limit}&skip=${offset + limit}`
           );
           setNextEquipments(data);
         } catch (error) {
@@ -101,7 +97,7 @@ function OrderServiceTable() {
         fetchItems();
         fetchNextItems();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [currentPage, refreshRequest, filter]);
+      }, [currentPage]);
 
 
     return (
@@ -124,14 +120,15 @@ function OrderServiceTable() {
                   fontWeight="semibold"
                   fontSize="4xl"
                 >
-                  Controle Ordem 
+                  Ordem de Serviço
                 </Text>
                 <Flex justifyContent="space-between" width="100%">
                   <Text color="#00000" fontWeight="medium" fontSize="2xl">
-                    Últimos Equipamentos Modificados
+                    Últimas Ordens de Serviço
                   </Text>
-                  <Button colorScheme={theme.colors.primary} onClick={onOpen}>
-                    Cadastrar Ordem de Serviço
+                  <Button colorScheme={theme.colors.primary} //onClick={onOpen}
+                  >
+                    Nova Ordem de Serviço
                   </Button>
                 </Flex>
                 <Divider borderColor="#00000" margin="15px 0 15px 0" />
@@ -144,53 +141,31 @@ function OrderServiceTable() {
                   <form id="equipment-filter" style={{ width: '100%' }}>
                     <Flex gap="5px" alignItems="5px" mb="15px">
                       <Select
-                        control={control}
-                        name="type"
-                        id="type"
-                        options={TIPOS_EQUIPAMENTO}
                         placeholder="Tipo"
-                        cursor="pointer"
-                        variant="unstyled"
-                        fontWeight="semibold"
                         size="sm"
-                      />
-                      <Datepicker
-                        border={false}
-                        placeholderText="Última modificação"
-                        name="lastModifiedDate"
-                        control={control}
-                      />
-                      <ControlledSelect
-                        control={control}
-                        name="unit"
-                        id="unit"
-                        options={workstations}
+                        variant="unstyled"
+                      >
+                        <option value="option1">CPU</option>
+                      </Select>
+                      
+                      <Select
                         placeholder="Localização"
                         cursor="pointer"
                         variant="unstyled"
                         fontWeight="semibold"
                         size="sm"
-                      />
-                      <ControlledSelect
-                        control={control}
-                        name="situation"
-                        id="situation"
-                        options={STATUS}
+                      >
+                        <option value="option1">Goiania</option>
+                      </Select>
+                      <Select
                         placeholder="Situação"
                         cursor="pointer"
                         variant="unstyled"
                         fontWeight="semibold"
                         size="sm"
-                      />
-                      <Input
-                        placeholder="Pesquisa"
-                        minWidth="15vw"
-
-                        //// errors={errors.search}
-                        /// {...register('search')}
-                        /// rightElement={<BiSearch />}
-                    
-                      />
+                      >
+                        <option value="option1">Ativo</option>
+                      </Select>
                     </Flex>
                   </form>
                   <Flex flexDirection="column" width="100%">
@@ -240,11 +215,7 @@ function OrderServiceTable() {
                         >
                           {equipments.map((equipment) => (
                             <Tr
-                              onClick={() => {
-                                handleView(equipment);
-                              }}
                               key={equipment.id}
-                              cursor="pointer"
                             >
                               <Td fontWeight="medium">
                                 {equipment.situacao} - {equipment.unit.name}
@@ -258,16 +229,6 @@ function OrderServiceTable() {
                                 {new Date(equipment.updatedAt).toLocaleDateString(
                                   'pt-BR'
                                 )}
-                              </Td>
-                              <Td
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleEdit(equipment);
-                                }}
-                              >
-                                <button>
-                                  <BiEditAlt size={23} />
-                                </button>
                               </Td>
                             </Tr>
                           ))}

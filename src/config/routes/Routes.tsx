@@ -14,6 +14,7 @@ import { Login } from '@/pages/login';
 
 import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
+import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
 
 export function Router() {
   return (
