@@ -12,12 +12,8 @@ import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
 import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
-<<<<<<< HEAD
 import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
 import { RequireAuth } from './require-auth';
-=======
-import { OrderServiceTable } from '@/pages/order-service/order-service-control';
->>>>>>> 9a928a0 (#101 feat: novos arquivos para ordem de servico)
 
 export function Router() {
   return (
