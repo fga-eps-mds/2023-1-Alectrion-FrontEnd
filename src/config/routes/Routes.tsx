@@ -43,6 +43,7 @@ export function Router() {
       <Route path="/equipaments" element={<EquipmentTable />} />
       <Route path="/movements" element={<MovementsTable />} />
       <Route path="/equipments" element={<EquipmentTable />} />
+      <Route path="/order-service" element={<OrderServiceTable />} />
       <Route path="*" element={<p>404</p>} />
     </Routes>
   );
