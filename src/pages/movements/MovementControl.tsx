@@ -394,15 +394,17 @@ function MovementsTable() {
                         height="200px"
                       >
                         {movements.map((movement) => (
-                          <Tr key={movement.id} cursor="pointer">
+                          <Tr
+                            onClick={openAndSelect(movement)}
+                            key={movement.id}
+                            cursor="pointer"
+                          >
                             <Td fontWeight="medium">
                               {MovimentacaoTipoMap.get(movement.type)}
                             </Td>
                             <Td fontWeight="medium">
-                              <Box onClick={openAndSelect(movement)}>
-                                {movement.destination?.name} -{' '}
-                                {movement.destination?.localization}
-                              </Box>
+                              {movement.destination?.name} -{' '}
+                              {movement.destination?.localization}
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString(
@@ -426,7 +428,8 @@ function MovementsTable() {
                                 aria-label="Deletar movimentação"
                                 variant="ghost"
                                 icon={<MdDeleteForever />}
-                                onClick={() => {
+                                onClick={(event) => {
+                                  event.stopPropagation();
                                   handleDelete(movement.id);
                                   setRefreshRequest(!refreshRequest);
                                 }}
