@@ -11,6 +11,7 @@ import {
   TIPOS_MONITOR,
 } from '@/constants/equipment';
 import { Input } from '../form-fields/input';
+import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
@@ -30,6 +31,7 @@ export interface EquipmentData {
     localization: string;
   };
 }
+
 
 type FormValues = {
   tippingNumber: string;
@@ -189,6 +191,123 @@ export default function OrderServiceformRegisterForm({
             {...formRegister('situacao')}
           />
         </GridItem>
+        <GridItem gridColumn="1 / span 3">
+          <strong> Ordem de serviço</strong>
+          </GridItem>
+        <GridItem>
+          <strong>Funcional:</strong>
+          <select
+          placeholder='Funcional'
+          name='funcional'
+          className="select-input">
+            <option value=''>Selecione</option>
+            <option value='sim'>Sim</option>
+            <option value='nao'>Não</option>
+
+          </select>
+        </GridItem>
+        <GridItem>
+          <strong>Responsável pela entrega:</strong>
+          <Input
+            errors={errors.responsavelEntrega}
+            placeholder='Responsável'
+            type="text"
+            name="responsavelEntrega"
+            {...register('responsavelEntrega', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+            })}
+            />
+        </GridItem>
+        <GridItem>
+          <strong>Atribuição:</strong>
+          <select
+          placeholder='Atribuição'
+          name='atribuicao'
+          className="select-input">
+            <option value=''>Selecione</option>
+            <option value='sim'>Sim</option>
+            <option value='nao'>Não</option>
+
+          </select>
+        </GridItem>
+        <GridItem gridColumn= '1 / span 2'>
+          <strong>Responsável pelo recebimento:</strong>
+          <Input
+            errors={errors.responsavelRecebimento}
+            placeholder='Responsável'
+            type="text"
+            name="responsavelRecebimento"
+            {...register('responsavelRecebimento', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+            })}
+            />
+        </GridItem>
+        <GridItem>
+          <strong>Atribuição:</strong>
+          <select
+          placeholder='Atribuição'
+          name='atribuicao'
+          className="select-input">
+            <option value=''>Selecione</option>
+            <option value='sim'>Sim</option>
+            <option value='nao'>Não</option>
+
+          </select>
+        </GridItem>
+        <GridItem>
+          <strong>Posto de trabalho:</strong>
+          <select
+          placeholder='Posto de trabalho'
+          name='Posto de trabalho'
+          className="select-input">
+            <option value=''>Selecione</option>
+            <option value='sim'>Sim</option>
+            <option value='nao'>Não</option>
+
+          </select>
+        </GridItem>
+        <GridItem>
+          <strong>Cidade:</strong>
+          <select
+          placeholder='Cidade'
+          name='cidade'
+          className="select-input">
+            <option value=''>Selecione</option>
+            <option value='sim'>Sim</option>
+            <option value='nao'>Não</option>
+
+          </select>
+        </GridItem>
+        <GridItem>
+          <strong>Telefone:</strong>
+          <Input
+            errors={errors.telefone}
+            placeholder='Telefone'
+            type="text"
+            name="telefone"
+            {...register('telefone', {
+            required: 'Campo Obrigatório',
+            maxLength: 15,
+            pattern: {
+            value: /^[0-9]+$/,
+            message: 'Por favor, digite apenas números.',
+            },
+            })}
+          />
+        </GridItem>
+        <GridItem gridColumn="1 / span 3">
+          <strong>Descrição:</strong>
+          <Input
+            errors={errors.descricao}
+            placeholder='Descrição'
+            type="text"
+            name="descriçao"
+            {...register('descricao')}
+            />
+        </GridItem>
+        
       </Grid>
 
       <Grid templateColumns="repeat(3, 3fr)" gap={6} />
