@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
@@ -14,23 +15,22 @@ import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
 
-
 export interface EquipmentData {
-    tippingNumber: string;
-    serialNumber: string;
-    type: string;
-    situacao: string;
-    model: string;
-    id: string;
-    brand: {
-      name: string;
-    };
-    unit: {
-      name: string;
-      localization: string;
-    };
-  }
-  
+  tippingNumber: string;
+  serialNumber: string;
+  type: string;
+  situacao: string;
+  model: string;
+  id: string;
+  brand: {
+    name: string;
+  };
+  unit: {
+    name: string;
+    localization: string;
+  };
+}
+
 type FormValues = {
   tippingNumber: string;
   serialNumber: string;
@@ -55,8 +55,8 @@ type FormValues = {
 };
 
 type FilterValues = {
-    search: string;
-  };
+  search: string;
+};
 
 interface OrderServiceFormProps {
   onClose: () => void;
@@ -75,7 +75,7 @@ export default function OrderServiceformRegisterForm({
     control: formControl,
     register: formRegister,
     handleSubmit: formHandleSubmit,
-    formState: { errors : formErrors},
+    formState: { errors: formErrors },
   } = useForm<FormValues>();
 
   const {
@@ -88,7 +88,7 @@ export default function OrderServiceformRegisterForm({
 
   const handleFilterChange = () => {
     const {} = watchFilter;
-  }
+  };
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     return function (this: any, ...args: Parameters<T>) {
@@ -120,24 +120,87 @@ export default function OrderServiceformRegisterForm({
     <form id="equipment-formRegister-form">
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <GridItem gridColumn="1 / span 3">
-            <strong>Nº de tombamento do equipamento:</strong>
-            <Input
-                    placeholder="Pesquisa"
-                    minWidth="15vw"
-                    errors={errors.search}
-                    {...register('search')}
-                    rightElement={<BiSearch />}
-                  />
+          <strong>Nº de tombamento do equipamento:</strong>
+          <Input
+            placeholder="Pesquisa"
+            minWidth="15vw"
+            errors={errors.search}
+            {...register('search')}
+            rightElement={<BiSearch />}
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Tipo:</strong>
+          <Input
+            errors={undefined}
+            type="text"
+            name="tipo"
+            placeholder="Tipo"
+            {...formRegister('tipo')}
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Nº de série:</strong>
+          <Input
+            errors={undefined}
+            type="text"
+            name="serialNumber"
+            placeholder="Nº de série"
+            {...formRegister('serialNumber')}
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Marca:</strong>
+          <Input
+            errors={undefined}
+            type="text"
+            name="marca"
+            placeholder="Marca"
+            {...formRegister('brandName')}
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Modelo:</strong>
+          <Input
+            errors={undefined}
+            type="text"
+            name="modelo"
+            placeholder="Modelo"
+            {...formRegister('model')}
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Lotação:</strong>
+          <Input
+            errors={undefined}
+            type="text"
+            name="lotacao"
+            placeholder="Lotação"
+            {...formRegister('unitId')}
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Situação:</strong>
+          <Input
+            errors={undefined}
+            type="text"
+            name="situacao"
+            placeholder="Situação"
+            {...formRegister('situacao')}
+          />
         </GridItem>
       </Grid>
 
-      <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-      </Grid>
+      <Grid templateColumns="repeat(3, 3fr)" gap={6} />
       <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
         <Button variant="secondary" onClick={onClose}>
           Cancelar
         </Button>
-        <Button type="submit" form="equipment-formRegister-form" variant="primary">
+        <Button
+          type="submit"
+          form="equipment-formRegister-form"
+          variant="primary"
+        >
           Confirmar
         </Button>
       </Flex>
