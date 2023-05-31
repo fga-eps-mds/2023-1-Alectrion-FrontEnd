@@ -10,7 +10,6 @@ import {
   Tbody,
   Tr,
   Td,
-  Checkbox,
   TableContainer,
 } from '@chakra-ui/react';
 import { useState } from 'react';
@@ -62,14 +61,6 @@ export function MovementsModal({
   const onCloseCallback = () => {
     setMateriais([]);
     onClose();
-  };
-
-  const toggleMaterial = (serialNumber: string) => () => {
-    if (materiais.includes(serialNumber)) {
-      setMateriais(materiais.filter((material) => material !== serialNumber));
-    } else {
-      setMateriais([...materiais, serialNumber]);
-    }
   };
 
   return (
@@ -163,7 +154,7 @@ export function MovementsModal({
             </Grid>
 
             <Text fontWeight="bold" mt={10}>
-              Especificação do material
+              Especificação do equipamento
             </Text>
             <Flex flexDirection="column" width="100%">
               <TableContainer
@@ -192,15 +183,20 @@ export function MovementsModal({
                   <Thead bg="#F49320" fontWeight="semibold" h="14">
                     <Tr>
                       <Td textAlign="center" color="white">
+                        N° Tombamento
+                      </Td>
+                      <Td textAlign="center" color="white">
                         Equipamento
                       </Td>
                       <Td textAlign="center" color="white">
-                        Tombamento
+                        Marca
+                      </Td>
+                      <Td textAlign="center" color="white">
+                        Modelo
                       </Td>
                       <Td textAlign="center" color="white">
                         N° Série
                       </Td>
-                      <Td color="white" />
                     </Tr>
                   </Thead>
                   <Tbody fontWeight="normal">
@@ -214,17 +210,11 @@ export function MovementsModal({
                               : 'white'
                           }
                         >
-                          <Td textAlign="center">
-                            {equipment.type} {equipment.brand.name}
-                          </Td>
                           <Td textAlign="center">{equipment.tippingNumber}</Td>
+                          <Td textAlign="center">{equipment.type}</Td>
+                          <Td textAlign="center">{equipment.brand.name}</Td>
+                          <Td textAlign="center">{equipment.model}</Td>
                           <Td textAlign="center">{equipment.serialNumber}</Td>
-                          <Td textAlign="center">
-                            <Checkbox
-                              onChange={toggleMaterial(equipment.serialNumber)}
-                              isChecked={equipment.selected}
-                            />
-                          </Td>
                         </Tr>
                       )
                     )}
