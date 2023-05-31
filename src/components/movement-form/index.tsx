@@ -152,10 +152,14 @@ export default function MovementForm({
 
   const getEquipments = async () => {
     try {
-      const { data }: AxiosResponse<equipamentData[]> = await api.get(
-        `equipment/find`
-      );
-      setEquipments(data);
+      if (selectedEquipmentToMovement?.length === 0) {
+        const { data }: AxiosResponse<equipamentData[]> = await api.get(
+          `equipment/find`
+        );
+        setEquipments(data);
+      } else {
+        setEquipments(selectedEquipmentToMovement!);
+      }
     } catch (error) {
       setEquipments([]);
       toast.error('Nenhuma movimentação registrada');
@@ -175,14 +179,7 @@ export default function MovementForm({
   };
 
   const listEquipments = () => {
-    let listEquipments: EquipmentData[];
-    if (selectedEquipmentToMovement) {
-      listEquipments = selectedEquipmentToMovement;
-    } else {
-      listEquipments = equipments;
-    }
-
-    return listEquipments.map((equipment: movementEquipment) => (
+    return equipments.map((equipment: movementEquipment) => (
       <Tr
         key={equipment.id}
         background={
@@ -207,6 +204,7 @@ export default function MovementForm({
   useEffect(() => {
     getEquipments();
     getUnits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

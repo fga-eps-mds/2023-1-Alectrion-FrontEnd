@@ -33,7 +33,6 @@ import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
 
-
 interface ISelectOption {
   label: string;
   value: number | string;
@@ -96,6 +95,7 @@ function EquipmentTable() {
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const [isChecked, setIsChecked] = useState(false);
 
   const {
     control,
@@ -253,7 +253,16 @@ function EquipmentTable() {
   };
 
   const handleCheckboxClick = (equipment: EquipmentData) => {
-    setSelectedEquipmentToMovement([...selectedEquipmentToMovement, equipment]);
+    if (selectedEquipmentToMovement.includes(equipment)) {
+      setSelectedEquipmentToMovement(
+        selectedEquipmentToMovement.filter((equip) => equip.id !== equipment.id)
+      );
+    } else {
+      setSelectedEquipmentToMovement([
+        ...selectedEquipmentToMovement,
+        equipment,
+      ]);
+    }
   };
 
   return (
@@ -399,8 +408,9 @@ function EquipmentTable() {
                     <Tbody fontWeight="semibold" maxHeight="200px">
                       {equipments.map((equipment) => (
                         <Tr
-                          onClick={() => {
+                          onClick={(event) => {
                             handleView(equipment);
+                            event.stopPropagation();
                           }}
                           key={equipment.id}
                           cursor="pointer"
@@ -429,10 +439,15 @@ function EquipmentTable() {
                               <BiEditAlt size={23} />
                             </button>
                           </Td>
-                          <Td width="5%">
+                          <Td
+                            width="5%"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              console.log('clicou');
+                            }}
+                          >
                             <Checkbox
-                              onChange={(event) => {
-                                event.stopPropagation();
+                              onChange={() => {
                                 handleCheckboxClick(equipment);
                               }}
                             />
