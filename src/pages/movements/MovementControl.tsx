@@ -63,6 +63,7 @@ export interface movementEquipment {
 
   id: string;
   selected?: boolean;
+  model: string;
 }
 export interface movement {
   updatedAt: string | number | Date;
