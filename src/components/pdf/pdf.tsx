@@ -1,26 +1,34 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import { PageSize } from 'pdfmake/interfaces';
+import { PageSize, Content, TDocumentDefinitions } from 'pdfmake/interfaces';
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 function movimentacaoPDF() {
-    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    const reportTitle: Content[] = [
+        { text: 'ESTADO DE GOIÁS', fontSize: 8, alignment: 'center' },
+        { text: 'DIRETORIA GERAL DA POLÍCIA CIVIL', fontSize: 8, alignment: 'center' },
+        { text: 'SUPERINTENDÊNCIA DE GESTÃO INTEGRADA', fontSize: 8, alignment: 'center' },
+        { text: 'DIVISÃO DE SUPORTE TÉCNICO EM INFORMÁTICA', fontSize: 8, alignment: 'center' }
+    ];
 
-    const reportTitle: any[] = []; // Adicione o tipo explícito
+    const details: Content[] = [];
 
-    const details: any[] = []; // Adicione o tipo explícito
+    const rodape: Content[] = [
 
-    const rodape: any[] = []; // Adicione o tipo explícito
+    ];
 
-    const docDefinitios = {
+    const docDefinition: TDocumentDefinitions = {
         pageSize: 'A4' as PageSize,
-        pageMargins: [15, 50, 15, 40] as [number, number, number, number], // Corrija o tipo
+        pageOrientation: 'landscape',
+        pageMargins: [15, 50, 15, 40] as [number, number, number, number],
 
-        header: [reportTitle],
-        content: [details],
-        footer: [rodape]
+        header: reportTitle,
+        content: details,
+        footer: rodape
     };
 
-    pdfMake.createPdf(docDefinitios).download();
+    pdfMake.createPdf(docDefinition).download();
 }
 
 export default movimentacaoPDF;

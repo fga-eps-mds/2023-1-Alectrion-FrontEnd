@@ -35,6 +35,14 @@ import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
+import { TermModal } from '@/components/term-modal';
+
+type TermModalProps = {
+  isOpen: boolean;
+  onClose(): void;
+  refreshRequest: boolean;
+  setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 interface ISelectOption {
   label: string;
@@ -102,6 +110,11 @@ function MovementsTable() {
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const limit = 10;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
 
   const {
     control,
@@ -162,8 +175,7 @@ function MovementsTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<movement[]> = await api.get(
-        `equipment/findMovements?resultquantity=${limit}&page=${
-          offset + 1
+        `equipment/findMovements?resultquantity=${limit}&page=${offset + 1
         }&${filter}`
       );
       setNextMovements(data);
@@ -252,6 +264,12 @@ function MovementsTable() {
 
   return (
     <>
+      <TermModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        refreshRequest={refreshRequest}
+        setRefreshRequest={setRefreshRequest}
+      />
       <MovementsModal
         isOpen={isOpen}
         onClose={onClose}
@@ -421,6 +439,7 @@ function MovementsTable() {
                                 aria-label="Abrir detalhes da movimentação"
                                 variant="ghost"
                                 icon={<FaFileAlt />}
+                                onClick={() => setIsModalOpen(true)}
                               />
                             </Td>
                             <Td>
