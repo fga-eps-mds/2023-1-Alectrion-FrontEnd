@@ -187,8 +187,8 @@ export default function EquipmentEditForm({
           {...register('serialNumber', {
             required: 'Campo Obrigatório',
             pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
+              value: /^[0-9a-zA-Z]+$/,
+              message: 'Por favor, digite apenas letras e números.',
             },
           })}
         />
