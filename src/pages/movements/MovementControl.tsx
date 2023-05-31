@@ -390,11 +390,7 @@ function MovementsTable() {
                           <Td> </Td>
                         </Tr>
                       </Thead>
-                      <Tbody
-                        fontWeight="semibold"
-                        maxHeight="200px"
-                        height="200px"
-                      >
+                      <Tbody fontWeight="semibold" maxHeight="200px">
                         {movements.map((movement) => (
                           <Tr key={movement.id} cursor="pointer">
                             <Td fontWeight="medium">

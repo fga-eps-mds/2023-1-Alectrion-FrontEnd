@@ -361,11 +361,7 @@ function EquipmentTable() {
                         <Td />
                       </Tr>
                     </Thead>
-                    <Tbody
-                      fontWeight="semibold"
-                      maxHeight="200px"
-                      height="200px"
-                    >
+                    <Tbody fontWeight="semibold" maxHeight="200px">
                       {equipments.map((equipment) => (
                         <Tr
                           onClick={() => {
