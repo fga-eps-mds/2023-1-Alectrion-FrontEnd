@@ -22,24 +22,38 @@ import { api } from '../../config/lib/axios';
 import { ControlledSelect } from '../form-fields/controlled-select';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
+import { movementEquipment } from '@/pages/movements/MovementControl';
+import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 
 interface equipamentData {
   tippingNumber: string;
   serialNumber: string;
-  id: string;
   type: string;
+  situacao: string;
+  estado: string;
   model: string;
-  brand: { name: string };
-}
-
-interface movementEquipment {
-  tippingNumber: string;
-  serialNumber: string;
+  acquisitionDate: Date;
+  description?: string;
+  initialUseDate: Date;
+  screenSize?: string;
+  invoiceNumber: string;
+  power?: string;
+  screenType?: string;
+  processor?: string;
+  storageType?: string;
+  storageAmount?: string;
+  ram_size?: string;
+  createdAt?: string;
+  updatedAt: string;
   id: string;
-  selected?: boolean;
-  type: string;
-  model: string;
-  brand: { name: string };
+  brand: {
+    name: string;
+  };
+  acquisition: { name: string };
+  unit: {
+    name: string;
+    localization: string;
+  };
 }
 
 interface unit {
@@ -63,9 +77,10 @@ type FormValues = {
 
 interface MovementFormProps {
   onClose: () => void;
-  lenghtMovements: number;
+  lenghtMovements?: number;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedEquipmentToMovement?: EquipmentData[];
 }
 
 export default function MovementForm({
@@ -73,6 +88,7 @@ export default function MovementForm({
   lenghtMovements,
   refreshRequest,
   setRefreshRequest,
+  selectedEquipmentToMovement,
 }: MovementFormProps) {
   const {
     control,
@@ -156,6 +172,36 @@ export default function MovementForm({
       setUnits([]);
       toast.error('Nenhuma movimentação registrada');
     }
+  };
+
+  const listEquipments = () => {
+    let listEquipments: EquipmentData[];
+    if (selectedEquipmentToMovement) {
+      listEquipments = selectedEquipmentToMovement;
+    } else {
+      listEquipments = equipments;
+    }
+
+    return listEquipments.map((equipment: movementEquipment) => (
+      <Tr
+        key={equipment.id}
+        background={
+          materiais.includes(equipment.id) ? 'rgba(244, 147, 32, 0.2)' : 'white'
+        }
+      >
+        <Td>{equipment.type}</Td>
+        <Td>{equipment.brand.name}</Td>
+        <Td>{equipment.model}</Td>
+        <Td>{equipment.tippingNumber}</Td>
+        <Td>{equipment.serialNumber}</Td>
+        <Td>
+          <Checkbox
+            onChange={toggleMaterial(equipment.id)}
+            isChecked={equipment.selected}
+          />
+        </Td>
+      </Tr>
+    ));
   };
 
   useEffect(() => {
@@ -279,30 +325,7 @@ export default function MovementForm({
                 <Td color="white" />
               </Tr>
             </Thead>
-            <Tbody fontWeight="semibold">
-              {equipments.map((equipment: movementEquipment) => (
-                <Tr
-                  key={equipment.id}
-                  background={
-                    materiais.includes(equipment.id)
-                      ? 'rgba(244, 147, 32, 0.2)'
-                      : 'white'
-                  }
-                >
-                  <Td>{equipment.tippingNumber}</Td>
-                  <Td>{equipment.type}</Td>
-                  <Td>{equipment.brand.name}</Td>
-                  <Td>{equipment.model}</Td>
-                  <Td textAlign="center">{equipment.serialNumber}</Td>
-                  <Td>
-                    <Checkbox
-                      onChange={toggleMaterial(equipment.id)}
-                      isChecked={equipment.selected}
-                    />
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
+            <Tbody fontWeight="semibold">{listEquipments()}</Tbody>
           </Table>
         </TableContainer>
 
