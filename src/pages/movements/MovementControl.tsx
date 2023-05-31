@@ -286,12 +286,10 @@ function MovementsTable() {
                 Movimentações
               </Text>
               <Box>
-                <Flex justifyContent="left" width="100%">
+                <Flex justifyContent="space-between" width="100%">
                   <Text color="#00000" fontWeight="medium" fontSize="2xl">
                     Últimas Movimentações
                   </Text>
-                </Flex>
-                <Flex justifyContent="right">
                   <Button colorScheme="#F49320" onClick={onOpenRegister}>
                     Cadastrar Movimentação
                   </Button>
