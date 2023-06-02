@@ -27,12 +27,17 @@ import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
 import { FaTools } from 'react-icons/fa';
 import { theme } from '@/styles/theme';
-import { ControlledSelect } from '@/components/form-fields/controlled-select';
+import { ControlledSelect } from '@/components/form-fields/controlled-select/index';
 import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 import { OSStatusMap } from '@/constants/orderservice';
+
+interface ISelectOption {
+  label: string;
+  value: number | string;
+}
 
 export interface Equipment {
   tippingNumber: string;
@@ -68,13 +73,100 @@ export interface OrderServiceData {
   receiverDate?: Date
 }
 
+type FilterValues = {
+  type?: ISelectOption;
+  brand?: string;
+  DateOS?: string;
+  unit?: ISelectOption;
+  situation?: ISelectOption;
+  search: string;
+};
+
 function OrderServiceTable() {
     const [orderServices, setOrderServices] = useState<OrderServiceData[]>([]);
     const [nextOrderServices, setNextOrderServices] = useState<OrderServiceData[]>([]);
   
+    const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
+    useState<OrderServiceData>();
+    const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
+    // const [workstations, setWorkstations] = useState<ISelectOption[]>();
+
     const [currentPage, setCurrentPage] = useState(1);
     const [offset, setOffset] = useState(0);
     const limit = 10;
+    const [filter, setFilter] = useState<string>('');
+    const [search, setSearch] = useState<string>('');
+
+    const {
+      control,
+      watch,
+      register,
+      formState: { errors },
+    } = useForm<FilterValues>({ mode: 'onChange' });
+  
+    const watchFilter = watch();
+  
+    const handleFilterChange = () => {
+      const { type, DateOS, situation } = watchFilter;
+  
+      let formattedDate;
+      if (
+        DateOS !== null &&
+        DateOS !== '' &&
+        DateOS
+      ) {
+        formattedDate = new Date(DateOS).toLocaleDateString('en-us');
+        console.log(formattedDate);
+      }
+
+      const dataFormatted = {
+        type: type?.value,
+        updatedAt: formattedDate,
+        situation: situation?.value,
+        // unit: unit?.value,
+        search,
+      };
+  
+      const filteredDataFormatted = [
+        ...Object.entries(dataFormatted).filter(
+          (field) => field[1] !== undefined && field[1] !== ''
+        ),
+      ];
+  
+      const query = `${filteredDataFormatted
+        .map((field) => `${field[0]}=${field[1]}`)
+        .join('&')}`;
+      setFilter(query);
+  };
+
+
+    /*const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
+      return data?.map((item: Workstation) => {
+        return { label: item.name, value: item.name };
+      });
+    };*/
+
+    /* const getWorkstations = async () => {
+      apiSchedula
+        .get<Workstation[]>('workstations')
+        .then((response) => {
+        setWorkstations(formattedWorkstations(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };*/
+
+    const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
+      let timeoutId: ReturnType<typeof setTimeout>;
+      return function (this: any, ...args: Parameters<T>) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), ms);
+      };
+    };
+    const handleSearch = debounce(() => {
+      setSearch(watchFilter.search);
+    }, 400);
 
     const fetchItems = async () => {
         try {
@@ -101,10 +193,16 @@ function OrderServiceTable() {
       };
 
       useEffect(() => {
+        handleSearch();
+        handleFilterChange();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [watchFilter]);
+
+      useEffect(() => {
         fetchItems();
         fetchNextItems();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [currentPage]);
+      }, [currentPage, refreshRequest, filter]);
 
 
     return (
@@ -147,13 +245,17 @@ function OrderServiceTable() {
                 >
                   <form id="equipment-filter" style={{ width: '100%' }}>
                     <Flex gap="5px" alignItems="5px" mb="15px">
-                      <Select
+                      <ControlledSelect
+                        control={control}
+                        name="type"
+                        id="type"
+                        options={TIPOS_EQUIPAMENTO}
                         placeholder="Tipo"
-                        size="sm"
+                        cursor="pointer"
                         variant="unstyled"
-                      >
-                        <option value="option1">CPU</option>
-                      </Select>
+                        fontWeight="semibold"
+                        size="sm"
+                      />
                       
                       <Select
                         placeholder="Localização"
@@ -230,9 +332,9 @@ function OrderServiceTable() {
                               </Td>
                               <Td p={0} fontWeight="semibold">
                                   {OSStatusMap.get(orderService.status)}
-                                </Td>
+                              </Td>
                               
-                                <Td>
+                              <Td>
                                 {new Date(orderService.updatedAt).toLocaleDateString(
                                   'pt-BR'
                                 )}
