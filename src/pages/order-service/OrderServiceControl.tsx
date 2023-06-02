@@ -84,7 +84,7 @@ function OrderServiceTable() {
           setOrderServices(data);
         } catch (error) {
           setOrderServices([]);
-          toast.error('Nenhum Equipamento encontrado');
+          toast.error('Nenhum Ordem de Serviço encontrada');
         }
       };
     
@@ -217,7 +217,6 @@ function OrderServiceTable() {
                         <Tbody
                           fontWeight="semibold"
                           maxHeight="200px"
-                          height="200px"
                         >
                           {orderServices.map((orderService) => (
                             <Tr
@@ -226,20 +225,18 @@ function OrderServiceTable() {
                               <Td fontWeight="medium">
                                 Tombamento - {orderService.equipment.tippingNumber}
                                 <Td p={0} fontWeight="semibold">
-                                  {orderService.equipment.type} {orderService.equipment.brand.name} {orderService.equipment.model}
+                                  {orderService.equipment.type} {orderService.equipment.model}
                                 </Td>
-                              </Td>
-                              <Td fontWeight="medium">
-                                {orderService.equipment.unit.name}
-                              </Td>
-                              <Td>
-                                {new Date(orderService.updatedAt).toLocaleDateString(
-                                  'pt-BR'
-                                )}
                               </Td>
                               <Td p={0} fontWeight="semibold">
                                   {OSStatusMap.get(orderService.status)}
                                 </Td>
+                              
+                                <Td>
+                                {new Date(orderService.updatedAt).toLocaleDateString(
+                                  'pt-BR'
+                                )}
+                              </Td>
                               <Td>
                               <IconButton
                                 aria-label="Mudar status da ordem de serviço"
