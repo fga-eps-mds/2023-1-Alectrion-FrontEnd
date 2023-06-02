@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
 import { BiEditAlt, BiSearch } from 'react-icons/bi';
+import { EquipmentData } from '../equipments/EquipmentsControl';
 import {
   Text,
   Table,
@@ -10,6 +11,7 @@ import {
   Tr,
   Td,
   Button,
+  IconButton,
   TableContainer,
   Divider,
   Box,
@@ -23,47 +25,52 @@ import { AxiosResponse } from 'axios';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
+import { FaTools } from 'react-icons/fa';
 import { theme } from '@/styles/theme';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
+import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
+import { OSStatusMap } from '@/constants/orderservice';
 
-
-export interface EquipmentData {
+export interface Equipment {
   tippingNumber: string;
   serialNumber: string;
-  type: string;
-  situacao: string;
-  estado: string;
-  model: string;
-  acquisitionDate: Date;
-  description?: string;
-  initialUseDate: Date;
-  screenSize?: string;
-  invoiceNumber: string;
-  power?: string;
-  screenType?: string;
-  processor?: string;
-  storageType?: string;
-  storageAmount?: string;
-  ram_size?: string;
-  createdAt?: string;
-  updatedAt: string;
-  id: string;
   brand: {
     name: string;
   };
-  acquisition: { name: string };
+  type: string;
+  id: string;
+  model: string;
   unit: {
     name: string;
     localization: string;
   };
 }
 
+export interface OrderServiceData {
+  id: string
+  date: Date
+  description?: string
+  authorId: string
+  receiverName: string
+  sender?: string
+  equipmentSnapshot: any
+  senderFunctionalNumber: string
+  createdAt: Date
+  updatedAt: Date
+  equipment: Equipment
+  history: History
+  receiverFunctionalNumber: string
+  technicians?: string[]
+  status: string
+  receiverDate?: Date
+}
+
 function OrderServiceTable() {
-    const [equipments, setEquipments] = useState<EquipmentData[]>([]);
-    const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
+    const [orderServices, setOrderServices] = useState<OrderServiceData[]>([]);
+    const [nextOrderServices, setNextOrderServices] = useState<OrderServiceData[]>([]);
   
     const [currentPage, setCurrentPage] = useState(1);
     const [offset, setOffset] = useState(0);
@@ -71,24 +78,24 @@ function OrderServiceTable() {
 
     const fetchItems = async () => {
         try {
-          const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-            `equipment/find?take=${limit}&skip=${offset}`
+          const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+            `equipment/listOrderService?take=${limit}&skip=${offset}`
           );
-          setEquipments(data);
+          setOrderServices(data);
         } catch (error) {
-          setEquipments([]);
+          setOrderServices([]);
           toast.error('Nenhum Equipamento encontrado');
         }
       };
     
       const fetchNextItems = async () => {
         try {
-          const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-            `equipment/find?take=${limit}&skip=${offset + limit}`
+          const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+            `equipment/listOrderService?take=${limit}&skip=${offset + limit}`
           );
-          setNextEquipments(data);
+          setNextOrderServices(data);
         } catch (error) {
-          setNextEquipments([]);
+          setNextOrderServices([]);
           toast.error('Nenhum Equipamento encontrado');
         }
       };
@@ -170,7 +177,7 @@ function OrderServiceTable() {
                   </form>
                   <Flex flexDirection="column" width="100%">
                     <TableContainer
-                      borderRadius="15px 15px 0 0 "
+                      borderRadius="15px"
                       height="55vh"
                       whiteSpace="inherit"
                       fontSize="sm"
@@ -212,40 +219,40 @@ function OrderServiceTable() {
                           maxHeight="200px"
                           height="200px"
                         >
-                          {equipments.map((equipment) => (
+                          {orderServices.map((orderService) => (
                             <Tr
-                              key={equipment.id}
+                              key={orderService.id}
                             >
                               <Td fontWeight="medium">
-                                Tombamento - {equipment.tippingNumber}
+                                Tombamento - {orderService.equipment.tippingNumber}
                                 <Td p={0} fontWeight="semibold">
-                                  {equipment.type} {equipment.brand.name} {equipment.model}
+                                  {orderService.equipment.type} {orderService.equipment.brand.name} {orderService.equipment.model}
                                 </Td>
                               </Td>
-                              <Td>{equipment.situacao}</Td>
+                              <Td fontWeight="medium">
+                                {orderService.equipment.unit.name}
+                              </Td>
                               <Td>
-                                {new Date(equipment.updatedAt).toLocaleDateString(
+                                {new Date(orderService.updatedAt).toLocaleDateString(
                                   'pt-BR'
                                 )}
                               </Td>
+                              <Td p={0} fontWeight="semibold">
+                                  {OSStatusMap.get(orderService.status)}
+                                </Td>
+                              <Td>
+                              <IconButton
+                                aria-label="Mudar status da ordem de serviço"
+                                variant="ghost"
+                                icon={<FaTools />}
+                              />
+                            </Td>
                             </Tr>
                           ))}
                         </Tbody>
                       </Table>
                     </TableContainer>
-                    <Box
-                      bgColor={theme.colors.primary}
-                      cursor="pointer"
-                      fontSize="sm"
-                      fontWeight="semibold"
-                      width="100%"
-                      textAlign="center"
-                      color={theme.colors.white}
-                      padding="1rem 0 1rem 0"
-                      borderRadius=" 0  0 15px 15px"
-                    >
-                      Movimentar
-                    </Box>
+                    
                     <Flex justifyContent="center" mt="15px">
                       {currentPage > 1 && (
                         <Button
@@ -262,7 +269,7 @@ function OrderServiceTable() {
                           Anterior
                         </Button>
                       )}
-                      {nextEquipments.length > 0 && (
+                      {nextOrderServices.length > 0 && (
                         <Button
                           variant="link"
                           color="#00000"
