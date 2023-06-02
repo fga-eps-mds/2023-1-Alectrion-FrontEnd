@@ -24,7 +24,7 @@ import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
 import { theme } from '@/styles/theme';
 import { ControlledSelect } from '@/components/form-fields/controlled-select/index';
-import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
+import { STATUS, SelectItem, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
@@ -51,22 +51,29 @@ export interface Equipment {
 }
 
 export interface OrderServiceData {
-  id: string;
-  date: Date;
-  description?: string;
-  authorId: string;
-  receiverName: string;
-  sender?: string;
-  equipmentSnapshot: any;
-  senderFunctionalNumber: string;
-  createdAt: Date;
-  updatedAt: Date;
-  equipment: Equipment;
-  history: History;
-  receiverFunctionalNumber: string;
-  technicians?: string[];
-  status: string;
-  receiverDate?: Date;
+  id: string
+  date: Date
+  description?: string
+  authorId: string
+  receiverName: string
+  sender?: string
+  equipmentSnapshot: any
+  senderFunctionalNumber: string
+  createdAt: Date
+  updatedAt: Date
+  equipment: Equipment
+  history: History
+  receiverFunctionalNumber: string
+  technicians?: string[]
+  status: string
+  unit: {
+    name: string;
+    localization: string;
+  };
+  brand: {
+    name: string;
+  };
+  receiverDate?: Date
 }
 
 type FilterValues = {
@@ -78,14 +85,23 @@ type FilterValues = {
   search: string;
 };
 
+export type StatusOS = 'Em manutenção' | 'Concluída'  | 'Garantia';
+
+const STATUS_OS:SelectItem<StatusOS>[] = [
+  { label: 'Em manutenção', value: 'MAINTENANCE'},
+  { label: 'Concluída' , value: 'CONCLUDED'},
+  { label: 'Garantia', value: 'WARRANTY'},
+];
+
+
 function OrderServiceTable() {
     const [orderServices, setOrderServices] = useState<OrderServiceData[]>([]);
     const [nextOrderServices, setNextOrderServices] = useState<OrderServiceData[]>([]);
   
-    const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
-    useState<OrderServiceData>();
+    /*const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
+    useState<OrderServiceData>();*/
     const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-    // const [workstations, setWorkstations] = useState<ISelectOption[]>();
+    const [workstations, setWorkstations] = useState<ISelectOption[]>();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [offset, setOffset] = useState(0);
@@ -103,7 +119,7 @@ function OrderServiceTable() {
     const watchFilter = watch();
   
     const handleFilterChange = () => {
-      const { type, DateOS, situation } = watchFilter;
+      const { type, DateOS, situation, unit } = watchFilter;
   
       let formattedDate;
       if (
@@ -119,7 +135,7 @@ function OrderServiceTable() {
         type: type?.value,
         updatedAt: formattedDate,
         situation: situation?.value,
-        // unit: unit?.value,
+        unit: unit?.value,
         search,
       };
   
@@ -133,16 +149,16 @@ function OrderServiceTable() {
         .map((field) => `${field[0]}=${field[1]}`)
         .join('&')}`;
       setFilter(query);
-  };
+    };
 
 
-    /*const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
+    const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
       return data?.map((item: Workstation) => {
         return { label: item.name, value: item.name };
       });
-    };*/
+    };
 
-    /* const getWorkstations = async () => {
+    const getWorkstations = async () => {
       apiSchedula
         .get<Workstation[]>('workstations')
         .then((response) => {
@@ -151,7 +167,7 @@ function OrderServiceTable() {
       .catch((error) => {
         console.log(error);
       });
-  };*/
+    };
 
     const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
       let timeoutId: ReturnType<typeof setTimeout>;
@@ -164,29 +180,40 @@ function OrderServiceTable() {
       setSearch(watchFilter.search);
     }, 400);
 
-  const fetchItems = async () => {
-    try {
-      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService?take=${limit}&skip=${offset}`
-      );
-      setOrderServices(data);
-    } catch (error) {
-      setOrderServices([]);
-      toast.error('Nenhuma Ordem de Serviço encontrada');
-    }
-  };
+    const fetchItems = async () => {
+        try {
+          const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+            `equipment/listOrderService?take=${limit}&skip=${offset}&${filter}`
+          );
+          setOrderServices(data);
+        } catch (error) {
+          setOrderServices([]);
+          toast.error('Nenhuma Ordem de Serviço encontrada');
+        }
+      };
+    
+      const fetchNextItems = async () => {
+        try {
+          const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+            `equipment/listOrderService?take=${limit}&skip=${offset + limit}&${filter}`
+          );
+          setNextOrderServices(data);
+        } catch (error) {
+          setNextOrderServices([]);
+          toast.error('Nenhuma Ordem de Serviço encontrada');
+        }
+      };
 
-  const fetchNextItems = async () => {
-    try {
-      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService?take=${limit}&skip=${offset + limit}`
-      );
-      setNextOrderServices(data);
-    } catch (error) {
-      setNextOrderServices([]);
-      toast.error('Nenhuma Ordem de Serviço encontrada');
-    }
-  };
+      useEffect(() => {
+        getWorkstations();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+    
+      useEffect(() => {
+        handleSearch();
+        handleFilterChange();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [watchFilter]);
 
   useEffect(() => {
     handleSearch();
@@ -296,39 +323,54 @@ function OrderServiceTable() {
                     },
                   }}
                 >
-                  
-                  <form id="equipment-filter" style={{ width: '100%' }}>
+                  <form id="orderService-filter" style={{ width: '100%' }}>
                     <Flex gap="5px" alignItems="5px" mb="15px">
                       <ControlledSelect
-                        control={control}
-                        name="type"
-                        id="type"
-                        options={TIPOS_EQUIPAMENTO}
-                        placeholder="Tipo"
-                        cursor="pointer"
-                        variant="unstyled"
-                        fontWeight="semibold"
-                        size="sm"
+                      control={control}
+                      name="type"
+                      id="type"
+                      options={TIPOS_EQUIPAMENTO}
+                      placeholder="Tipo"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
                       />
-                      
-                      <Select
-                        placeholder="Localização"
-                        cursor="pointer"
-                        variant="unstyled"
-                        fontWeight="semibold"
-                        size="sm"
-                      >
-                        <option value="option1">Goiania</option>
-                      </Select>
-                      <Select
-                        placeholder="Situação"
-                        cursor="pointer"
-                        variant="unstyled"
-                        fontWeight="semibold"
-                        size="sm"
-                      >
-                        <option value="option1">Ativo</option>
-                      </Select>
+                      <ControlledSelect
+                      control={control}
+                      name="unit"
+                      id="unit"
+                      options={workstations}
+                      placeholder="Localização"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                      />
+                      <Datepicker
+                      border={false}
+                      placeholderText="Data OS"
+                      name="DateOS"
+                        control={control}
+                      />
+                      <ControlledSelect
+                      control={control}
+                      name="situation"
+                      id="situation"
+                      options={STATUS_OS}
+                      placeholder="Status OS"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                      />
+                      <Input
+                        placeholder="Pesquisa"
+                        minWidth="15vw"
+                        errors={errors.search}
+                        {...register('search')}
+                        rightElement={<BiSearch />}
+                      />
                     </Flex>
                   </form>
                   <Table variant="striped" colorScheme="orange" width="100%">
