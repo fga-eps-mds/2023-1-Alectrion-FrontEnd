@@ -2,63 +2,37 @@
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
-import { BiSearch } from 'react-icons/bi';
+import { AxiosResponse } from 'axios';
+import { Select, SingleValue } from 'chakra-react-select';
+import { Box } from '@chakra-ui/react'
 
-import {
-  ESTADOS_EQUIPAMENTO,
-  TIPOS_ARMAZENAMENTO,
-  TIPOS_EQUIPAMENTO,
-  TIPOS_MONITOR,
-} from '@/constants/equipment';
 import { Input } from '../form-fields/input';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
-
-export interface EquipmentData {
-  tippingNumber: string;
-  serialNumber: string;
-  type: string;
-  situacao: string;
-  model: string;
-  id: string;
-  brand: {
-    name: string;
-  };
-  unit: {
-    name: string;
-    localization: string;
-  };
-}
-
+import { EquipmentData } from '@/pages/order-service/order-service-control';
 
 type FormValues = {
   tippingNumber: string;
-  serialNumber: string;
-  type: { value: string; label: string };
-  situacao: string;
-  model: string;
   description?: string;
-  initialUseDate: { value: string; label: string };
-  acquisitionDate: string;
-  screenSize?: string;
-  invoiceNumber: string;
   power?: string;
-  screenType?: { value: string; label: string };
-  processor?: string;
-  storageType?: { value: string; label: string };
   storageAmount?: string;
-  brandName: string;
+  responsavelEntrega: {
+    telefone:string,
+    nome: string, 
+    atribuicao: string
+  },
+  model: string;
   acquisitionName: string;
   unitId?: string;
-  ram_size?: string;
-  estado: { value: string; label: string };
+  estado: { value: string; label: string }; 
 };
 
-type FilterValues = {
-  search: string;
-};
+interface ISelectOption {
+  label: string;
+  value: number | string;
+}
 
 interface OrderServiceFormProps {
   onClose: () => void;
@@ -66,31 +40,22 @@ interface OrderServiceFormProps {
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function OrderServiceformRegisterForm({
+export default function OrderServiceregisterForm({
   onClose,
   refreshRequest,
   setRefreshRequest,
 }: OrderServiceFormProps) {
-  const [search, setSearch] = useState<string>('');
+
+  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>()
+  const [equipments, setEquipments] = useState<EquipmentData[]>([])
 
   const {
-    control: formControl,
-    register: formRegister,
-    handleSubmit: formHandleSubmit,
-    formState: { errors: formErrors },
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
   } = useForm<FormValues>();
 
-  const {
-    watch,
-    register,
-    formState: { errors },
-  } = useForm<FilterValues>({ mode: 'onChange' });
-
-  const watchFilter = watch();
-
-  const handleFilterChange = () => {
-    const {} = watchFilter;
-  };
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     return function (this: any, ...args: Parameters<T>) {
@@ -98,47 +63,64 @@ export default function OrderServiceformRegisterForm({
       timeoutId = setTimeout(() => fn.apply(this, args), ms);
     };
   };
-  const handleSearch = debounce(() => {
-    setSearch(watch);
-  }, 400);
 
   useEffect(() => {
-    handleSearch();
-    handleFilterChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    console.log(selectedEquipment)
+  }, [selectedEquipment])
+  const fetchItems = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/find?searchTipping=${str}`
+      );
+      setEquipments(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
 
-  const listOfYears: Array<{ value: number; label: string }> = (() => {
-    const endYear: number = new Date().getFullYear();
-    const startYear: number = endYear - 30;
+  const formattedOptions = (data: EquipmentData[]): ISelectOption[] => {
+    return data?.map((item: EquipmentData) => {
+      return { label: item.tippingNumber, value: item.tippingNumber };
+    });
+  };
 
-    return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
-      const year = startYear + index;
-      return { value: year, label: year.toString() };
-    }).reverse();
-  })();
+  const handleSearch = debounce(async (str) => {
+    if (str !== '') {
+      fetchItems(str);
+    }
+  }, 500);
 
+  const handleChange = (event: SingleValue<ISelectOption>) => {    
+    const selectedOption = equipments.find(
+      (equipment) => equipment.tippingNumber === event?.value
+    );
+    setSelectedEquipment(selectedOption)
+  }
+  
   return (
-    <form id="equipment-formRegister-form">
+    <form id="equipment-register-form">
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        <GridItem gridColumn="1 / span 3">
-          <strong>Nº de tombamento do equipamento:</strong>
-          <Input
-            placeholder="Pesquisa"
-            minWidth="15vw"
-            errors={errors.search}
-            {...register('search')}
-            rightElement={<BiSearch />}
-          />
+        <GridItem gridColumn="1 / span 3" display="flex" alignItems="center" gap={4}>
+            <strong>Nº de tombamento do equipamento:</strong>
+            <Box flex="1">
+
+            <Select
+              placeholder="Pesquisa"
+              onInputChange={handleSearch}
+              onChange={handleChange}
+              options={formattedOptions(equipments)}
+              
+              />
+              </Box>
         </GridItem>
         <GridItem>
           <strong>Tipo:</strong>
           <Input
             errors={undefined}
             type="text"
-            name="tipo"
             placeholder="Tipo"
-            {...formRegister('tipo')}
+            defaultValue={selectedEquipment?.type || ''}
+            readOnly
           />
         </GridItem>
         <GridItem>
@@ -146,9 +128,9 @@ export default function OrderServiceformRegisterForm({
           <Input
             errors={undefined}
             type="text"
-            name="serialNumber"
             placeholder="Nº de série"
-            {...formRegister('serialNumber')}
+            defaultValue={selectedEquipment?.serialNumber || ''}
+            readOnly
           />
         </GridItem>
         <GridItem>
@@ -156,9 +138,9 @@ export default function OrderServiceformRegisterForm({
           <Input
             errors={undefined}
             type="text"
-            name="marca"
             placeholder="Marca"
-            {...formRegister('brandName')}
+            defaultValue={selectedEquipment?.brand.name || ''}
+            readOnly
           />
         </GridItem>
         <GridItem>
@@ -166,9 +148,10 @@ export default function OrderServiceformRegisterForm({
           <Input
             errors={undefined}
             type="text"
-            name="modelo"
             placeholder="Modelo"
-            {...formRegister('model')}
+            {...register('model')}
+            defaultValue={selectedEquipment?.model || ''}
+            readOnly
           />
         </GridItem>
         <GridItem>
@@ -176,9 +159,10 @@ export default function OrderServiceformRegisterForm({
           <Input
             errors={undefined}
             type="text"
-            name="lotacao"
             placeholder="Lotação"
-            {...formRegister('unitId')}
+            {...register('unitId')}
+            defaultValue={selectedEquipment?.unit.localization || ''}
+            readOnly
           />
         </GridItem>
         <GridItem>
@@ -186,9 +170,9 @@ export default function OrderServiceformRegisterForm({
           <Input
             errors={undefined}
             type="text"
-            name="situacao"
             placeholder="Situação"
-            {...formRegister('situacao')}
+            defaultValue={selectedEquipment?.situacao || ''}
+            readOnly
           />
         </GridItem>
         <GridItem gridColumn="1 / span 3">
@@ -209,10 +193,9 @@ export default function OrderServiceformRegisterForm({
         <GridItem>
           <strong>Responsável pela entrega:</strong>
           <Input
-            errors={errors.responsavelEntrega}
+            errors={errors.responsavelEntrega?.nome}
             placeholder='Responsável'
             type="text"
-            name="responsavelEntrega"
             {...register('responsavelEntrega', {
             required: 'Campo Obrigatório',
             maxLength: 50,
@@ -231,31 +214,7 @@ export default function OrderServiceformRegisterForm({
 
           </select>
         </GridItem>
-        <GridItem gridColumn= '1 / span 2'>
-          <strong>Responsável pelo recebimento:</strong>
-          <Input
-            errors={errors.responsavelRecebimento}
-            placeholder='Responsável'
-            type="text"
-            name="responsavelRecebimento"
-            {...register('responsavelRecebimento', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-            })}
-            />
-        </GridItem>
-        <GridItem>
-          <strong>Atribuição:</strong>
-          <select
-          placeholder='Atribuição'
-          name='atribuicao'
-          className="select-input">
-            <option value=''>Selecione</option>
-            <option value='sim'>Sim</option>
-            <option value='nao'>Não</option>
-
-          </select>
-        </GridItem>
+      
         <GridItem>
           <strong>Posto de trabalho:</strong>
           <select
@@ -283,11 +242,10 @@ export default function OrderServiceformRegisterForm({
         <GridItem>
           <strong>Telefone:</strong>
           <Input
-            errors={errors.telefone}
             placeholder='Telefone'
             type="text"
-            name="telefone"
-            {...register('telefone', {
+            errors={errors.responsavelEntrega?.telefone}
+            {...register('responsavelEntrega.telefone', {
             required: 'Campo Obrigatório',
             maxLength: 15,
             pattern: {
@@ -300,11 +258,10 @@ export default function OrderServiceformRegisterForm({
         <GridItem gridColumn="1 / span 3">
           <strong>Descrição:</strong>
           <Input
-            errors={errors.descricao}
+          errors={errors.description}
             placeholder='Descrição'
             type="text"
-            name="descriçao"
-            {...register('descricao')}
+            {...register('description')}
             />
         </GridItem>
         
@@ -317,7 +274,7 @@ export default function OrderServiceformRegisterForm({
         </Button>
         <Button
           type="submit"
-          form="equipment-formRegister-form"
+          form="equipment-register-form"
           variant="primary"
         >
           Confirmar
