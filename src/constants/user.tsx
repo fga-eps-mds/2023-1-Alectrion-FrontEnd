@@ -13,3 +13,46 @@ export enum USER_ACCESS {
   MANAGER = 'Gerente',
   ADMIN = 'Administrador',
 }
+
+export enum Role {
+  ADMIN = 'administrador',
+  GERENTE = 'gerente',
+  BASICO = 'basico',
+  CONSULTA = 'consulta'
+}
+
+export enum Job {
+  DELEGADO = 'delegado',
+  AGENTE_POLICIA = 'agente de policia',
+  ESCRIVAO = 'escrivao de policia',
+  COORDENADOR = 'coordenador',
+  CHEFE_SECAO = 'chefe de secao',
+  GENERICO = 'generico',
+  COMISSIONADO = 'comissionado',
+  ESTAGIARIO = 'estagiario',
+  SUPERINTENDENTE = 'superintendente',
+}
+
+export interface User {
+  id?: string
+
+  name: string
+
+  email: string
+
+  username: string
+
+  job: Job
+
+  role: Role
+
+  password: string
+
+  createdAt?: Date
+
+  updatedAt?: Date
+
+  deletedAt?: Date
+
+  isDeleted?: boolean
+}

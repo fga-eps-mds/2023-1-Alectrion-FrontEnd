@@ -10,24 +10,25 @@ import { Input } from '../form-fields/input';
 import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
-import { api } from '@/config/lib/axios';
+import { api, apiSchedula } from '@/config/lib/axios';
 import { EquipmentData } from '@/pages/order-service/order-service-control';
+import { User } from '../../constants/user'
+import { Workstation } from '@/constants/equipment';
 
 type FormValues = {
   tippingNumber: string;
-  description?: string;
-  power?: string;
-  storageAmount?: string;
-  responsavelEntrega: {
-    telefone:string,
-    nome: string, 
-    atribuicao: string
-  },
-  model: string;
-  acquisitionName: string;
-  unitId?: string;
-  estado: { value: string; label: string }; 
+  equipmentId: string
+  userId: string
+  receiverName: string
+  authorFunctionalNumber: string
+  senderName: string
+  senderFunctionalNumber: string
+  senderTelefone: string
+  date: string
+  receiverFunctionalNumber: string
+  description: string;
 };
+
 
 interface ISelectOption {
   label: string;
@@ -46,8 +47,15 @@ export default function OrderServiceregisterForm({
   setRefreshRequest,
 }: OrderServiceFormProps) {
 
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>()
-  const [equipments, setEquipments] = useState<EquipmentData[]>([])
+  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
+  const [equipments, setEquipments] = useState<EquipmentData[]>([]);
+  
+  const [selectedFuncionario, setSelectedFuncionario] = useState<User>()
+ 
+  const [workstations, setWorkstations] = useState<Workstation[]>([]);
+  const [selectedWorkstation, setSelectedWorkstation] = useState<Workstation>();
+  
+  const take = 5;
 
   const {
     control,
@@ -64,13 +72,11 @@ export default function OrderServiceregisterForm({
     };
   };
 
-  useEffect(() => {
-    console.log(selectedEquipment)
-  }, [selectedEquipment])
-  const fetchItems = async (str: string) => {
+
+  const fetchEquipments = async (str: string) => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?searchTipping=${str}`
+        `equipment/find?searchTipping=${str}&take=${take}`
       );
       setEquipments(data);
     } catch (error) {
@@ -78,15 +84,28 @@ export default function OrderServiceregisterForm({
     }
   };
 
-  const formattedOptions = (data: EquipmentData[]): ISelectOption[] => {
-    return data?.map((item: EquipmentData) => {
-      return { label: item.tippingNumber, value: item.tippingNumber };
+  const formattedOptions = < T, K extends keyof T > (data: T[], label: K, value: K): ISelectOption[] => {
+    return data?.map((item: T) => {
+      const optionLable: string = String(item[label]); // Converter para string
+      const optionValue: number | string = String(item[value]); // Converter para string
+      return { label: optionLable, value: optionValue };
     });
+  };
+
+  const getWorkstations = async () => {
+    apiSchedula
+      .get<Workstation[]>('workstations')
+      .then((response) => {
+        setWorkstations(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleSearch = debounce(async (str) => {
     if (str !== '') {
-      fetchItems(str);
+      fetchEquipments(str);
     }
   }, 500);
 
@@ -96,22 +115,90 @@ export default function OrderServiceregisterForm({
     );
     setSelectedEquipment(selectedOption)
   }
+  const handleWorkstationChange = (event: SingleValue<ISelectOption>) => {    
+    const selectedOption = workstations.find(
+      (workstation) => workstation.name === event?.value
+    );
+    setSelectedWorkstation(selectedOption)
+  }
+  const fetchUser = async (username: string) => {
+    const token = localStorage.getItem('@App:token') || '';
+    try {
+      const { data }: AxiosResponse<User[]> = await api.get(
+        `user/get`,
+          {
+            params: { userName: username },
+            headers: {
+              Authorization: `Bearer ${token}`,
+          },
+        });
+        setSelectedFuncionario(data[0]);
+    } catch (error) {
+      setSelectedFuncionario(undefined)
+      console.error(error);
+    }
+  }
+
+  const handleUsernameSearch = debounce(async (e) => {
+    const str = e.target.value
+    fetchUser(str);
+    console.log(str)
+  }, 500);
+
+  useEffect(() => {
+    console.log(selectedEquipment)
+  }, [selectedEquipment])
+
+  useEffect(() => {
+    getWorkstations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      const { 
+        equipmentId,
+        userId,
+        receiverName,
+        authorFunctionalNumber,
+        senderName,
+        senderFunctionalNumber,
+        description,
+        date,
+        receiverFunctionalNumber,
+      } = formData;
+
+      const payload = {
+       
+      };
+
+      const response = await api.post('equipment/createEquipment', payload);
+
+      if (response.status === 200) {
+        toast.success('Equipamento cadastrado com sucesso', 'Sucesso');
+        setRefreshRequest(!refreshRequest);
+        onClose();
+        return;
+      }
+      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+    } catch {
+      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+    }
+  })
   
   return (
-    <form id="equipment-register-form">
+    <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <GridItem gridColumn="1 / span 3" display="flex" alignItems="center" gap={4}>
             <strong>Nº de tombamento do equipamento:</strong>
             <Box flex="1">
-
-            <Select
-              placeholder="Pesquisa"
-              onInputChange={handleSearch}
-              onChange={handleChange}
-              options={formattedOptions(equipments)}
-              
+              <Select
+                placeholder="Pesquisa"
+                onInputChange={handleSearch}
+                onChange={handleChange}
+                options={formattedOptions(equipments, 'tippingNumber', 'tippingNumber')}
               />
-              </Box>
+            </Box>
         </GridItem>
         <GridItem>
           <strong>Tipo:</strong>
@@ -149,7 +236,6 @@ export default function OrderServiceregisterForm({
             errors={undefined}
             type="text"
             placeholder="Modelo"
-            {...register('model')}
             defaultValue={selectedEquipment?.model || ''}
             readOnly
           />
@@ -160,7 +246,6 @@ export default function OrderServiceregisterForm({
             errors={undefined}
             type="text"
             placeholder="Lotação"
-            {...register('unitId')}
             defaultValue={selectedEquipment?.unit.localization || ''}
             readOnly
           />
@@ -179,73 +264,58 @@ export default function OrderServiceregisterForm({
           <strong> Ordem de serviço</strong>
           </GridItem>
         <GridItem>
-          <strong>Funcional:</strong>
-          <select
-          placeholder='Funcional'
-          name='funcional'
-          className="select-input">
-            <option value=''>Selecione</option>
-            <option value='sim'>Sim</option>
-            <option value='nao'>Não</option>
-
-          </select>
+          <strong>Usuário:</strong>
+          <Input
+              placeholder="Usuário"
+              errors={errors.senderName}
+              onChange={handleUsernameSearch}
+            />
         </GridItem>
         <GridItem>
           <strong>Responsável pela entrega:</strong>
           <Input
-            errors={errors.responsavelEntrega?.nome}
+            errors={errors.receiverName}
             placeholder='Responsável'
             type="text"
-            {...register('responsavelEntrega', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-            })}
+            defaultValue={selectedFuncionario?.name}
             />
         </GridItem>
         <GridItem>
           <strong>Atribuição:</strong>
-          <select
-          placeholder='Atribuição'
-          name='atribuicao'
-          className="select-input">
-            <option value=''>Selecione</option>
-            <option value='sim'>Sim</option>
-            <option value='nao'>Não</option>
-
-          </select>
+          <Input
+            errors={undefined}
+            placeholder='Atribuição'
+            name='atribuicao'
+            defaultValue={selectedFuncionario?.job}
+          />
         </GridItem>
       
         <GridItem>
           <strong>Posto de trabalho:</strong>
-          <select
-          placeholder='Posto de trabalho'
-          name='Posto de trabalho'
-          className="select-input">
-            <option value=''>Selecione</option>
-            <option value='sim'>Sim</option>
-            <option value='nao'>Não</option>
-
-          </select>
+          <Select
+            placeholder='Posto de trabalho'
+            name='Posto de trabalho'
+            className="select-input"
+            options={formattedOptions(workstations, 'name', 'name')}
+            onChange={handleWorkstationChange}
+          />
         </GridItem>
         <GridItem>
           <strong>Cidade:</strong>
-          <select
-          placeholder='Cidade'
-          name='cidade'
-          className="select-input">
-            <option value=''>Selecione</option>
-            <option value='sim'>Sim</option>
-            <option value='nao'>Não</option>
-
-          </select>
+          <Input
+            placeholder='Cidade'
+            errors={undefined}
+            defaultValue={selectedWorkstation?.city.name || ''}
+            readOnly
+          />
         </GridItem>
         <GridItem>
           <strong>Telefone:</strong>
           <Input
             placeholder='Telefone'
             type="text"
-            errors={errors.responsavelEntrega?.telefone}
-            {...register('responsavelEntrega.telefone', {
+            errors={errors.senderTelefone}
+            {...register('senderTelefone', {
             required: 'Campo Obrigatório',
             maxLength: 15,
             pattern: {
