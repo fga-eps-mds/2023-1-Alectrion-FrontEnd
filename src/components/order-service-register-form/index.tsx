@@ -23,7 +23,7 @@ type FormValues = {
   authorFunctionalNumber: string
   senderName: string
   senderFunctionalNumber: string
-  senderTelefone: string
+  senderTelefone?: string
   date: string
   receiverFunctionalNumber: string
   description: string;
@@ -169,20 +169,28 @@ export default function OrderServiceregisterForm({
       } = formData;
 
       const payload = {
-       
+        equipmentId : selectedEquipment.id, 
+        userId: userId.value,
+        receiverName : receiverName.value,
+        authorFunctionalNumber : authorFunctionalNumber.value,
+        senderName : senderName.value,
+        senderFunctionalNumber : senderFunctionalNumber.value,
+        description : description.value,
+        date : date.value,
+        receiverFunctionalNumber : receiverFunctionalNumber.value
       };
 
-      const response = await api.post('equipment/createEquipment', payload);
+      const response = await api.post('create-order-service/:equipmentId', payload);
 
       if (response.status === 200) {
-        toast.success('Equipamento cadastrado com sucesso', 'Sucesso');
+        toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
         setRefreshRequest(!refreshRequest);
         onClose();
         return;
       }
-      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+      toast.error('Erro ao tentar cadastrar ordem de serviço', 'Erro');
     } catch {
-      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+      toast.error('Erro ao tentar cadastrar ordem de serviço', 'Erro');
     }
   })
   
@@ -279,35 +287,6 @@ export default function OrderServiceregisterForm({
             type="text"
             defaultValue={selectedFuncionario?.name}
             />
-        </GridItem>
-        <GridItem>
-          <strong>Atribuição:</strong>
-          <Input
-            errors={undefined}
-            placeholder='Atribuição'
-            name='atribuicao'
-            defaultValue={selectedFuncionario?.job}
-          />
-        </GridItem>
-      
-        <GridItem>
-          <strong>Posto de trabalho:</strong>
-          <Select
-            placeholder='Posto de trabalho'
-            name='Posto de trabalho'
-            className="select-input"
-            options={formattedOptions(workstations, 'name', 'name')}
-            onChange={handleWorkstationChange}
-          />
-        </GridItem>
-        <GridItem>
-          <strong>Cidade:</strong>
-          <Input
-            placeholder='Cidade'
-            errors={undefined}
-            defaultValue={selectedWorkstation?.city.name || ''}
-            readOnly
-          />
         </GridItem>
         <GridItem>
           <strong>Telefone:</strong>
