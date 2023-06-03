@@ -32,7 +32,7 @@ import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
-import { OSStatusMap } from '@/constants/orderservice';
+import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 
 interface ISelectOption {
   label: string;
@@ -327,11 +327,14 @@ function OrderServiceTable() {
                               <Td fontWeight="medium">
                                 Tombamento - {orderService.equipment.tippingNumber}
                                 <Td p={0} fontWeight="semibold">
-                                  {orderService.equipment.type} {orderService.equipment.model}
+                                  {orderService.equipment.type} {orderService.equipment.brand.name} {orderService.equipment.serialNumber}
                                 </Td>
                               </Td>
-                              <Td p={0} fontWeight="semibold">
-                                  {OSStatusMap.get(orderService.status)}
+                              <Td fontWeight="medium">
+                                {orderService.equipment.unit.name} - {orderService.equipment.unit.localization}
+                                <Td p={0} fontWeight="semibold" style={OSStatusStyleMap.get(orderService.status)}>
+                                    {OSStatusMap.get(orderService.status)}
+                                </Td>
                               </Td>
                               
                               <Td>
