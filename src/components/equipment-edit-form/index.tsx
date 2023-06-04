@@ -33,7 +33,7 @@ export type EditEquipFormValues = {
   processor?: string;
   storageType?: { value: string; label: string };
   storageAmount?: string;
-  brand: { name: string };
+  brandName: string;
   acquisition: { name: string };
   unitId?: string;
   ram_size?: string;
@@ -65,6 +65,7 @@ export default function EquipmentEditForm({
     defaultValues: equip,
   });
 
+  console.log(equip);
   const watchType = watch('type');
 
   useEffect(() => {
@@ -153,8 +154,8 @@ export default function EquipmentEditForm({
 
         <Input
           label="Marca"
-          errors={errors.brand?.name}
-          {...register('brand.name', {
+          errors={errors.brandName}
+          {...register('brandName', {
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}
