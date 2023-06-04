@@ -14,6 +14,7 @@ import { Login } from '@/pages/login';
 
 import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
+import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
 
 export function Router() {
   return (
@@ -43,6 +44,7 @@ export function Router() {
       <Route path="/equipaments" element={<EquipmentTable />} />
       <Route path="/movements" element={<MovementsTable />} />
       <Route path="/equipments" element={<EquipmentTable />} />
+      <Route path="/order-services" element={<OrderServiceTable />} />
       <Route path="*" element={<p>404</p>} />
     </Routes>
   );
