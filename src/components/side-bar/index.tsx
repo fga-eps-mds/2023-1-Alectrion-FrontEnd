@@ -13,7 +13,7 @@ export const SideBar = memo(() => {
 
   const options = [
     { name: 'Controle de Equipamento', link: '/equipments' },
-    { name: 'Controle Ordem Serviço', link: '' },
+    { name: 'Controle Ordem Serviço', link: '/order-services' },
     { name: 'Movimentações', link: '/movements' },
     { name: 'Relatórios', link: '' },
   ];

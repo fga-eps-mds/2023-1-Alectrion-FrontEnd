@@ -258,7 +258,7 @@ function OrderServiceTable() {
                       />
                       
                       <Select
-                        placeholder="Localização"
+                        placeholder="Local"
                         cursor="pointer"
                         variant="unstyled"
                         fontWeight="semibold"
@@ -267,7 +267,7 @@ function OrderServiceTable() {
                         <option value="option1">Goiania</option>
                       </Select>
                       <Select
-                        placeholder="Situação"
+                        placeholder="Status OS"
                         cursor="pointer"
                         variant="unstyled"
                         fontWeight="semibold"
