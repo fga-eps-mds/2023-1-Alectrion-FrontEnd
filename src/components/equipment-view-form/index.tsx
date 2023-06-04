@@ -109,8 +109,8 @@ export default function EquipmentViewForm({
 
         <Input
           label="Marca"
-          errors={errors.brand?.name}
-          {...register('brand.name', {
+          errors={errors.brandName}
+          {...register('brandName', {
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}

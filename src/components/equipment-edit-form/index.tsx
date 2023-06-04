@@ -65,7 +65,6 @@ export default function EquipmentEditForm({
     defaultValues: equip,
   });
 
-  console.log(equip);
   const watchType = watch('type');
 
   useEffect(() => {

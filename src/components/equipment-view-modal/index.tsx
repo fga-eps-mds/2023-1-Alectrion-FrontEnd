@@ -42,6 +42,8 @@ function transformFields(data: any) {
     value: transformedData.initialUseDate.split('-')[0],
   };
 
+  transformedData.brandName = transformedData.brand.name;
+
   transformedData.acquisitionDate = new Date(transformedData.acquisitionDate);
 
   return transformedData;
