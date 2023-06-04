@@ -47,6 +47,7 @@
     "react-hook-form": "^7.41.5",
     "react-icons": "^4.8.0",
     "react-input-mask": "^2.0.4",
+    "react-pdf": "^7.0.3",
     "react-render-if-visible": "^2.1.1",
     "react-router-dom": "^6.6.1",
     "react-toastify": "^9.1.2",
