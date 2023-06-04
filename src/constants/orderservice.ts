@@ -1,11 +1,22 @@
-export const OSStatusMap = new Map<string, string>([
-    ['MAINTENANCE', 'Em manutenção'],
-    ['CONCLUDED' , 'Concluído'],
-    ['WARRANTY', 'Garantia'],
-  ]);
+import { colors } from '@/styles/Colors';
 
-export const OSStatusStyleMap = new Map<string, { color: string; fontWeight: string }>([
-    ['MAINTENANCE', { color: 'black', fontWeight: 'semibold' }],
-    ['CONCLUDED', { color: 'green', fontWeight: 'semibold' }],
-    ['WARRANTY', { color: 'orange', fontWeight: 'semibold' }],
-  ]);
+export const OSStatusMap = new Map<string, string>([
+  ['MAINTENANCE', 'Em manutenção'],
+  ['CONCLUDED', 'Concluído'],
+  ['WARRANTY', 'Garantia'],
+]);
+
+export const OSStatusStyleMap = new Map<
+  string,
+  { color: string; fontWeight: string; fontSize: string }
+>([
+  [
+    'MAINTENANCE',
+    { color: colors.primary, fontWeight: 'bold', fontSize: '16px' },
+  ],
+  [
+    'CONCLUDED',
+    { color: colors.green[100], fontWeight: 'bold', fontSize: '16px' },
+  ],
+  ['WARRANTY', { color: colors.red, fontWeight: 'bold', fontSize: '16px' }],
+]);
