@@ -252,6 +252,16 @@ function EquipmentTable() {
     onViewOpen();
   };
 
+  const handleMovement = () => {
+    if (
+      selectedEquipmentToMovement === undefined ||
+      selectedEquipmentToMovement.length === 0
+    ) {
+      toast.error('Selecione ao menos um equipamento para movimentar');
+    } else {
+      onOpenRegister();
+    }
+  };
   const handleCheckboxClick = (equipment: EquipmentData) => {
     if (selectedEquipmentToMovement.includes(equipment)) {
       setSelectedEquipmentToMovement(
@@ -443,7 +453,6 @@ function EquipmentTable() {
                             width="5%"
                             onClick={(event) => {
                               event.stopPropagation();
-                              console.log('clicou');
                             }}
                           >
                             <Checkbox
@@ -467,7 +476,7 @@ function EquipmentTable() {
                   color={theme.colors.white}
                   padding="1rem 0 1rem 0"
                   borderRadius=" 0  0 15px 15px"
-                  onClick={onOpenRegister}
+                  onClick={handleMovement}
                 >
                   Movimentar
                 </Box>

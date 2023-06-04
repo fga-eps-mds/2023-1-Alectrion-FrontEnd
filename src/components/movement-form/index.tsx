@@ -152,13 +152,16 @@ export default function MovementForm({
 
   const getEquipments = async () => {
     try {
-      if (selectedEquipmentToMovement?.length === 0) {
+      if (selectedEquipmentToMovement === undefined) {
         const { data }: AxiosResponse<equipamentData[]> = await api.get(
           `equipment/find`
         );
         setEquipments(data);
       } else {
         setEquipments(selectedEquipmentToMovement!);
+        selectedEquipmentToMovement?.forEach((equip) => {
+          setMateriais((prev) => [...prev, equip.id]);
+        });
       }
     } catch (error) {
       setEquipments([]);
@@ -178,8 +181,12 @@ export default function MovementForm({
     }
   };
 
+  const isChecked = (id: string) => {
+    if (materiais.includes(id)) return true;
+    return false;
+  };
   const listEquipments = () => {
-    return equipments.map((equipment: movementEquipment) => (
+    return equipments?.map((equipment: movementEquipment) => (
       <Tr
         key={equipment.id}
         background={
@@ -194,7 +201,7 @@ export default function MovementForm({
         <Td>
           <Checkbox
             onChange={toggleMaterial(equipment.id)}
-            isChecked={equipment.selected}
+            isChecked={isChecked(equipment.id)}
           />
         </Td>
       </Tr>
