@@ -23,27 +23,23 @@ import { ControlledSelect } from '../form-fields/controlled-select';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
 
-enum movementType {
-  Borrow,
-  Dismiss,
-  Ownership,
-}
-
 interface equipamentData {
   tippingNumber: string;
-
   serialNumber: string;
-
   id: string;
+  type: string;
+  model: string;
+  brand: { name: string };
 }
 
 interface movementEquipment {
   tippingNumber: string;
-
   serialNumber: string;
-
   id: string;
   selected?: boolean;
+  type: string;
+  model: string;
+  brand: { name: string };
 }
 
 interface unit {
@@ -249,7 +245,7 @@ export default function MovementForm({
         </Grid>
 
         <Text fontWeight="bold" mt={10}>
-          Especificação do material
+          Especificação do equipamento
         </Text>
 
         <TableContainer
@@ -275,8 +271,10 @@ export default function MovementForm({
           <Table colorScheme="orange" size="sm">
             <Thead bg="#F49320" fontWeight="semibold" h="14">
               <Tr>
+                <Td color="white">N° Tombamento</Td>
                 <Td color="white">Equipamento</Td>
-                <Td color="white">Tombamento</Td>
+                <Td color="white">Marca</Td>
+                <Td color="white">Modelo</Td>
                 <Td color="white">N° Série</Td>
                 <Td color="white" />
               </Tr>
@@ -291,9 +289,11 @@ export default function MovementForm({
                       : 'white'
                   }
                 >
-                  <Td>{equipment.id}</Td>
                   <Td>{equipment.tippingNumber}</Td>
-                  <Td>{equipment.serialNumber}</Td>
+                  <Td>{equipment.type}</Td>
+                  <Td>{equipment.brand.name}</Td>
+                  <Td>{equipment.model}</Td>
+                  <Td textAlign="center">{equipment.serialNumber}</Td>
                   <Td>
                     <Checkbox
                       onChange={toggleMaterial(equipment.id)}
