@@ -103,8 +103,18 @@ export default function EquipmentForm({
         return;
       }
       toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
-    } catch {
-      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+    } catch (error: any) {
+      if (
+        error.response.data.error ===
+        'Tippingnumber nao pode ser igual ao de um equipamento ja cadastrado.'
+      ) {
+        toast.error(
+          'Já existe um equipamento cadastrado com este número de tombamento. Cadastre um equipamento com número de tombamento diferente.',
+          'Erro'
+        );
+      } else {
+        toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+      }
     }
   });
 
