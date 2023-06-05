@@ -51,7 +51,7 @@
       });
     
       const updatedOptions = options ? [{ label: 'Selecionar', value: undefined }, ...options]: [];
-    
+      
       return (
         <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none">
           {label && <FormLabel cursor="pointer">{label}</FormLabel>}
@@ -60,7 +60,7 @@
             ref={ref}
             onChange={onChange}
             onBlur={onBlur}
-            value={value}
+            value={value === undefined ? "" : value}
             chakraStyles={chakraStyles}
             openMenuOnFocus
             noOptionsMessage={handleEmptyOptions}
