@@ -12,11 +12,13 @@ import {
   Td,
   TableContainer,
 } from '@chakra-ui/react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { useState } from 'react';
 import { Modal } from '../modal';
 import { Input } from '../form-fields/input';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { MovimentacaoTipoMap } from '@/constants/movements';
+import { MovementsPDF } from '../movements-pdf/MovementsPdfDocument';
 
 type MovementsModalProps = {
   isOpen: boolean;
@@ -252,9 +254,25 @@ export function MovementsModal({
               <Button variant="secondary" onClick={onCloseCallback}>
                 Cancelar
               </Button>
-              <Button type="submit" variant="primary">
-                Gerar termo
-              </Button>
+              <PDFDownloadLink
+                document={
+                  <MovementsPDF
+                    title={
+                      MovimentacaoTipoMap.get(selectedMoviment?.type) as string
+                    }
+                    equipments={selectedMoviment.equipments}
+                    date={selectedMoviment.date}
+                    destination={selectedMoviment.destination.name}
+                  />
+                }
+                fileName="movements.pdf"
+              >
+                {({ loading }) => (
+                  <Button isLoading={loading} variant="primary">
+                    Gerar termo
+                  </Button>
+                )}
+              </PDFDownloadLink>
             </Flex>
           </form>
         </Flex>
