@@ -17,6 +17,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  Checkbox,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { toast } from '@/utils/toast';
@@ -30,6 +31,7 @@ import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
+import { MovementRegisterModal } from '@/components/movement-register-modal';
 
 interface ISelectOption {
   label: string;
@@ -83,6 +85,8 @@ function EquipmentTable() {
 
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
+  const [selectedEquipmentToMovement, setSelectedEquipmentToMovement] =
+    useState<EquipmentData[]>([]);
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
 
@@ -91,6 +95,7 @@ function EquipmentTable() {
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const [isChecked, setIsChecked] = useState(false);
 
   const {
     control,
@@ -155,6 +160,12 @@ function EquipmentTable() {
     isOpen: isRegisterOpen,
     onClose: onRegisterClose,
     onOpen: onRegisterOpen,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenRegister,
+    onClose: onCloseRegister,
+    onOpen: onOpenRegister,
   } = useDisclosure();
 
   const {
@@ -239,6 +250,29 @@ function EquipmentTable() {
   const handleView = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipment(equipment);
     onViewOpen();
+  };
+
+  const handleMovement = () => {
+    if (
+      selectedEquipmentToMovement === undefined ||
+      selectedEquipmentToMovement.length === 0
+    ) {
+      toast.error('Selecione ao menos um equipamento para movimentar');
+    } else {
+      onOpenRegister();
+    }
+  };
+  const handleCheckboxClick = (equipment: EquipmentData) => {
+    if (selectedEquipmentToMovement.includes(equipment)) {
+      setSelectedEquipmentToMovement(
+        selectedEquipmentToMovement.filter((equip) => equip.id !== equipment.id)
+      );
+    } else {
+      setSelectedEquipmentToMovement([
+        ...selectedEquipmentToMovement,
+        equipment,
+      ]);
+    }
   };
 
   return (
@@ -378,13 +412,15 @@ function EquipmentTable() {
                         <Td>N Série</Td>
                         <Td>Última Modificação</Td>
                         <Td />
+                        <Td />
                       </Tr>
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
                       {equipments.map((equipment) => (
                         <Tr
-                          onClick={() => {
+                          onClick={(event) => {
                             handleView(equipment);
+                            event.stopPropagation();
                           }}
                           key={equipment.id}
                           cursor="pointer"
@@ -407,10 +443,23 @@ function EquipmentTable() {
                               event.stopPropagation();
                               handleEdit(equipment);
                             }}
+                            width="5%"
                           >
                             <button>
                               <BiEditAlt size={23} />
                             </button>
+                          </Td>
+                          <Td
+                            width="5%"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                            }}
+                          >
+                            <Checkbox
+                              onChange={() => {
+                                handleCheckboxClick(equipment);
+                              }}
+                            />
                           </Td>
                         </Tr>
                       ))}
@@ -427,6 +476,7 @@ function EquipmentTable() {
                   color={theme.colors.white}
                   padding="1rem 0 1rem 0"
                   borderRadius=" 0  0 15px 15px"
+                  onClick={handleMovement}
                 >
                   Movimentar
                 </Box>
@@ -486,6 +536,13 @@ function EquipmentTable() {
           selectedEquipment={selectedEquipment}
           isOpen={isViewOpen}
           handleEdit={handleEdit}
+        />
+        <MovementRegisterModal
+          isOpen={isOpenRegister}
+          onClose={onCloseRegister}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+          selectedEquipmentToMovement={selectedEquipmentToMovement}
         />
       </GridItem>
     </Grid>
