@@ -19,7 +19,7 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
+import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
 import { MdDeleteForever } from 'react-icons/md';
 import { BiSearch } from 'react-icons/bi';
@@ -108,6 +108,7 @@ function MovementsTable() {
     control,
     register,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
   const watchedData = watch();
@@ -219,6 +220,11 @@ function MovementsTable() {
       console.log('erro');
     }
   };
+  const cleanFilters = () => {
+    setFilter('');
+    setSearch('');
+    reset();
+  };
 
   useEffect(() => {
     fetchItems();
@@ -322,7 +328,7 @@ function MovementsTable() {
                       name="destinationId"
                       id="destinationId"
                       options={destinations}
-                      placeholder="Selecione"
+                      placeholder="Destino"
                       variant="unstyled"
                       fontWeight="semibold"
                       size="sm"
@@ -348,6 +354,18 @@ function MovementsTable() {
                     />
                   </Flex>
                 </form>
+                {filter !== '' ? (
+                  <Flex w="100%" alignItems="center" justifyContent="start">
+                    <Button
+                      variant="unstyled"
+                      fontSize="14px"
+                      leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
+                      onClick={cleanFilters}
+                    >
+                      Limpar filtros aplicados
+                    </Button>
+                  </Flex>
+                ) : null}
                 <Flex flexDirection="column" width="100%">
                   <TableContainer
                     borderRadius="15px"
