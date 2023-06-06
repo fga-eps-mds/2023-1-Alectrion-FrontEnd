@@ -82,7 +82,7 @@ export interface OrderServiceData {
 type FilterValues = {
   type?: ISelectOption;
   brand?: string;
-  DateOS?: string;
+  dateOS?: string;
   unit?: ISelectOption;
   status: ISelectOption;
   search: string;
@@ -122,11 +122,11 @@ function OrderServiceTable() {
   const watchFilter = watch();
 
   const handleFilterChange = () => {
-    const { type, DateOS, status, unit } = watchFilter;
+    const { type, dateOS, status, unit } = watchFilter;
 
     let formattedDate;
-    if (DateOS !== null && DateOS !== '' && DateOS) {
-      formattedDate = new Date(DateOS).toLocaleDateString('en-us');
+    if (dateOS !== null && dateOS !== '' && dateOS) {
+      formattedDate = new Date(dateOS).toLocaleDateString('en-us');
     }
 
     const dataFormatted = {
@@ -150,7 +150,7 @@ function OrderServiceTable() {
   };
 
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
-    return data?.map((item: Workstation) => {
+    return data?.map((item) => {
       return { label: item.name, value: item.name };
     });
   };
@@ -197,7 +197,6 @@ function OrderServiceTable() {
       setNextOrderServices(data);
     } catch (error) {
       setNextOrderServices([]);
-      toast.error('Nenhuma Ordem de Serviço encontrada');
     }
   };
 
@@ -284,7 +283,7 @@ function OrderServiceTable() {
                   <Datepicker
                     border={false}
                     placeholderText="Data OS"
-                    name="DateOS"
+                    name="dateOS"
                     control={control}
                   />
                   <ControlledSelect
