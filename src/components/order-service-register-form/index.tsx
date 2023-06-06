@@ -13,6 +13,7 @@ import { api, apiSchedula } from '@/config/lib/axios';
 import { EquipmentData } from '@/pages/order-service/order-service-control';
 import { User, LoginResponse } from '../../constants/user';
 import { Workstation } from '@/constants/equipment';
+import { lookup } from 'dns';
 
 type FormValues = {
   tippingNumber: string;
@@ -49,15 +50,13 @@ export default function OrderServiceregisterForm({
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
 
   const [selectedSender, setSelectedSender] = useState<User>();
+  const [selectedReceiver, setSelectedReceiver] = useState<User>();
 
   const [workstations, setWorkstations] = useState<Workstation[]>([]);
   const [selectedWorkstation, setSelectedWorkstation] = useState<Workstation>();
   
   const take = 5;
-
-  const loggedUser = JSON.parse(localStorage.getItem('@App:user') || '') as unknown as LoginResponse;
   
-
   const {
     control,
     register,
@@ -127,9 +126,9 @@ export default function OrderServiceregisterForm({
     setSelectedWorkstation(selectedOption);
   };
 
-  const fetchSender = async (username: string) => {
-    const token = localStorage.getItem('@App:token') || '';
+  const fetchSender = async (username: string) => {   
     try {
+      const token = localStorage.getItem('@App:token') || '';
       const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
         params: { userName: username },
         headers: {
@@ -143,6 +142,22 @@ export default function OrderServiceregisterForm({
     }
   };
 
+  const fetchReceiver = async () => {
+    try {
+      const loggedUser = JSON.parse(localStorage.getItem('@App:user') || '') as unknown as LoginResponse;
+      const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
+        params: { email: loggedUser.email },
+        headers: {
+          Authorization: `Bearer ${loggedUser.token}`,
+        },
+      });
+      setSelectedReceiver(data[0]);
+    } catch (error) {
+      setSelectedReceiver(undefined);
+      console.error(error);
+    }
+  }
+
   const handleSenderSearch = debounce(async (e) => {
     const str = e.target.value;
     fetchSender(str);
@@ -151,6 +166,7 @@ export default function OrderServiceregisterForm({
 
   useEffect(() => {
     getWorkstations();
+    fetchReceiver();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -160,34 +176,30 @@ export default function OrderServiceregisterForm({
         description,
         senderPhone,
       } = formData;
-      console.log("Formdata:", formData)
 
       const payload = {
         equipmentId: selectedEquipment?.id as string,
         description: description,
-        authorId: selectedSender?.id,
-        receiverName: loggedUser?.name,
-        authorFunctionalNumber: '12',
+        authorId: selectedReceiver?.id,
+        receiverName: selectedReceiver?.name,
+        authorFunctionalNumber: selectedReceiver?.id,
         senderName: selectedSender?.name,
-        senderFunctionalNumber: '12',
-        date: "2022-12-12",
-        receiverFunctionalNumber: '121',
+        senderFunctionalNumber: selectedSender?.id,
+        date: new Date().toISOString(),
+        receiverFunctionalNumber: selectedReceiver?.name,
         senderPhone: senderPhone,
       };
-      console.log("PAYload:", payload)
 
-      const response = await api.post(`equipment/create-order-service/${selectedEquipment?.id}`);
+      const response = await api.post(`equipment/create-order-service/${selectedEquipment?.id}`, payload);
+      console.log(payload)
+      setRefreshRequest(!refreshRequest);
+      console.log(response.data)
+      onClose();
+      toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
 
-      if (response.status === 200) {
-        toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
-        setRefreshRequest(!refreshRequest);
-        onClose();
-        return;
-      }
-      toast.error('Erro ao tentar cadastrar ordem de serviço', 'Erro');
-    } catch(error) {
+    } catch(error: any) {
       console.error(error)
-      toast.error('Erro ao tentar cadastrar ordem de serviço', 'Erro');
+      toast.error(error.response.data.error);
     }
   });
 
@@ -278,7 +290,7 @@ export default function OrderServiceregisterForm({
           <strong> Ordem de serviço</strong>
         </GridItem>
         <GridItem>
-          <strong>Usuário(Funcioal Temporária):</strong>
+          <strong>Usuário(Funcional Temporária):</strong>
           <Input
             placeholder="username"
             errors={undefined}
