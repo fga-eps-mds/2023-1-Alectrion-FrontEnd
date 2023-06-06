@@ -23,10 +23,9 @@ import { api } from '../../config/lib/axios';
 import { ControlledSelect } from '../form-fields/controlled-select';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
-import { movementEquipment } from '@/pages/movements/MovementControl';
+import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { TermModal } from '@/components/term-modal';
-import { movement } from '@/pages/movements/MovementControl';
 
 enum movementType {
   Borrow,
@@ -91,9 +90,10 @@ interface MovementFormProps {
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
   selectedEquipmentToMovement?: EquipmentData[];
   selectedMovement: movement | undefined;
-  setSelectedMovement: React.Dispatch<React.SetStateAction<movement | undefined>>;
+  setSelectedMovement: React.Dispatch<
+    React.SetStateAction<movement | undefined>
+  >;
   onOpenTerm: () => void;
-
 }
 
 export default function MovementForm({
@@ -114,15 +114,10 @@ export default function MovementForm({
     watch,
   } = useForm<FormValues>();
 
- 
-
   const [equipments, setEquipments] = useState<equipamentData[]>([]);
   const [units, setUnits] = useState<unit[]>([]);
   const [materiais, setMateriais] = useState<string[]>([]);
-  
-
   const date = new Date();
-
   const selectedUnit: SelectOption<string> = watch('destination');
 
   const onCloseCallback = useCallback(() => {
@@ -262,7 +257,7 @@ export default function MovementForm({
         <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6}>
           <ControlledSelect
             control={control}
-            name="destination"  
+            name="destination"
             id="destination"
             options={units.map((unit) => ({
               value: unit?.id,
@@ -380,7 +375,12 @@ export default function MovementForm({
           <Button variant="secondary" onClick={onCloseCallback}>
             Cancelar
           </Button>
-          <Button type="submit" form="movement-register-form" variant="primary" onClick={onOpenTerm}>
+          <Button
+            type="submit"
+            form="movement-register-form"
+            variant="primary"
+            onClick={onOpenTerm}
+          >
             Gerar Movimentação
           </Button>
         </Flex>

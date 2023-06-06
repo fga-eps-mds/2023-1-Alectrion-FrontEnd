@@ -137,7 +137,9 @@ export function MovementsPDF({
 
   const movementDate = new Date(date);
   const movementDay = movementDate.getDate().toString().padStart(2, '0');
-  const movementMonth = (movementDate.getMonth() + 1).toString().padStart(2, '0');
+  const movementMonth = (movementDate.getMonth() + 1)
+    .toString()
+    .padStart(2, '0');
   const movementYear = movementDate.getFullYear().toString().padStart(4, '0');
 
   const formattedMovementDate = `${movementDay}/${movementMonth}/${movementYear}`;

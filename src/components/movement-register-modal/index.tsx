@@ -3,7 +3,6 @@ import { Modal } from '../modal';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { movement } from '@/pages/movements/MovementControl';
 
-
 type MovementRegisterModalProps = {
   isOpen: boolean;
   onClose(): void;
@@ -12,7 +11,9 @@ type MovementRegisterModalProps = {
   selectedEquipmentToMovement?: EquipmentData[];
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
   selectedMovement: movement | undefined;
-  setSelectedMovement: React.Dispatch<React.SetStateAction<movement | undefined>>;
+  setSelectedMovement: React.Dispatch<
+    React.SetStateAction<movement | undefined>
+  >;
   onOpenTerm: () => void;
 };
 

@@ -265,7 +265,11 @@ export function MovementsModal({
                     destination={selectedMoviment.destination.name}
                   />
                 }
-                fileName={`termo_de_${MovimentacaoTipoMap.get(parseInt(String(selectedMoviment?.type)) || 0) as string}`}
+                fileName={`termo_de_${
+                  MovimentacaoTipoMap.get(
+                    parseInt(String(selectedMoviment?.type), 10) || 0
+                  ) as string
+                }`}
               >
                 {({ loading }) => (
                   <Button isLoading={loading} variant="primary">

@@ -96,7 +96,6 @@ export interface movement {
 }
 
 function MovementsTable() {
-
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
   const [selectedMovement, setSelectedMovement] = useState<movement>();
@@ -505,15 +504,13 @@ function MovementsTable() {
         </GridItem>
       </Grid>
       <TermModal
-        isOpen = {isOpenTerm}
-        onClose = {onCloseTerm}
+        isOpen={isOpenTerm}
+        onClose={onCloseTerm}
         selectedMoviment={selectedMovement}
-        refreshRequest = {refreshRequest}
-        setRefreshRequest = {setRefreshRequest}
-        
+        refreshRequest={refreshRequest}
+        setRefreshRequest={setRefreshRequest}
       />
     </>
-    
   );
 }
 export { MovementsTable };
