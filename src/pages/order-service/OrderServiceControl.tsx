@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
+import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
 import { BiSearch } from 'react-icons/bi';
 import {
   Text,
@@ -117,6 +117,7 @@ function OrderServiceTable() {
     watch,
     register,
     formState: { errors },
+    reset,
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
@@ -147,6 +148,12 @@ function OrderServiceTable() {
       .map((field) => `${field[0]}=${field[1]}`)
       .join('&')}`;
     setFilter(query);
+  };
+
+  const cleanFilters = () => {
+    setFilter('');
+    setSearch('');
+    reset();
   };
 
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
@@ -306,6 +313,18 @@ function OrderServiceTable() {
                   />
                 </Flex>
               </form>
+              {filter !== '' ? (
+                <Flex w="100%" alignItems="center" justifyContent="start">
+                  <Button
+                    variant="unstyled"
+                    fontSize="14px"
+                    leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
+                    onClick={cleanFilters}
+                  >
+                    Limpar filtros aplicados
+                  </Button>
+                </Flex>
+              ) : null}
               <Flex flexDirection="column" width="100%">
                 <TableContainer
                   borderRadius="15px"
@@ -370,7 +389,7 @@ function OrderServiceTable() {
 
                           <Td>
                             {new Date(
-                              orderService.updatedAt
+                              orderService.createdAt
                             ).toLocaleDateString('pt-BR')}
                           </Td>
                           <Td>
