@@ -31,7 +31,7 @@ import {
 } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
-import { OSStatusMap } from '@/constants/orderservice';
+import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 
 interface ISelectOption {
   label: string;
