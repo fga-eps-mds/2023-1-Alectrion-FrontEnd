@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
+import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
+import { BiSearch } from 'react-icons/bi';
 import {
   Text,
   Table,
@@ -15,16 +16,21 @@ import {
   Flex,
   Grid,
   GridItem,
-  Select,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { FaTools } from 'react-icons/fa';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
-import { api } from '../../config/lib/axios';
+import { api, apiSchedula } from '../../config/lib/axios';
 import { theme } from '@/styles/theme';
 import { ControlledSelect } from '@/components/form-fields/controlled-select/index';
-import { TIPOS_EQUIPAMENTO } from '@/constants/equipment';
+import {
+  SelectItem,
+  TIPOS_EQUIPAMENTO,
+  Workstation,
+} from '@/constants/equipment';
+import { Datepicker } from '@/components/form-fields/date';
+import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 
 interface ISelectOption {
@@ -63,17 +69,32 @@ export interface OrderServiceData {
   receiverFunctionalNumber: string;
   technicians?: string[];
   status: string;
+  unit: {
+    name: string;
+    localization: string;
+  };
+  brand: {
+    name: string;
+  };
   receiverDate?: Date;
 }
 
 type FilterValues = {
   type?: ISelectOption;
   brand?: string;
-  DateOS?: string;
+  dateOS?: string;
   unit?: ISelectOption;
-  situation?: ISelectOption;
+  status: ISelectOption;
   search: string;
 };
+
+export type StatusOS = 'Em manutenção' | 'Concluída' | 'Garantia';
+
+const STATUS_OS: SelectItem<StatusOS>[] = [
+  { label: 'Em manutenção', value: 'MAINTENANCE' },
+  { label: 'Concluída', value: 'CONCLUDED' },
+  { label: 'Garantia', value: 'WARRANTY' },
+];
 
 function OrderServiceTable() {
   const [orderServices, setOrderServices] = useState<OrderServiceData[]>([]);
@@ -82,6 +103,8 @@ function OrderServiceTable() {
   >([]);
 
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
+  const [workstations, setWorkstations] = useState<ISelectOption[]>();
+  const [brands, setBrands] = useState<ISelectOption[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
@@ -92,24 +115,26 @@ function OrderServiceTable() {
   const {
     control,
     watch,
+    register,
     formState: { errors },
+    reset,
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
 
   const handleFilterChange = () => {
-    const { type, DateOS, situation } = watchFilter;
+    const { type, dateOS, status, unit } = watchFilter;
 
     let formattedDate;
-    if (DateOS !== null && DateOS !== '' && DateOS) {
-      formattedDate = new Date(DateOS).toLocaleDateString('en-us');
+    if (dateOS !== null && dateOS !== '' && dateOS) {
+      formattedDate = new Date(dateOS).toLocaleDateString('en-us');
     }
 
     const dataFormatted = {
       type: type?.value,
-      updatedAt: formattedDate,
-      situation: situation?.value,
-      // unit: unit?.value,
+      date: formattedDate,
+      status: status?.value,
+      unit: unit?.value,
       search,
     };
 
@@ -123,6 +148,27 @@ function OrderServiceTable() {
       .map((field) => `${field[0]}=${field[1]}`)
       .join('&')}`;
     setFilter(query);
+  };
+
+  const cleanFilters = () => {
+    setFilter('');
+    setSearch('');
+    reset();
+  };
+
+  const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
+    return data?.map((item) => {
+      return { label: item.name, value: item.name };
+    });
+  };
+
+  const getWorkstations = async () => {
+    apiSchedula
+      .get<Workstation[]>('workstations')
+      .then((response) => {
+        setWorkstations(formattedWorkstations(response.data));
+      })
+      .catch((error) => {});
   };
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
@@ -139,7 +185,7 @@ function OrderServiceTable() {
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService?take=${limit}&skip=${offset}`
+        `equipment/listOrderService?take=${limit}&skip=${offset}&${filter}`
       );
       setOrderServices(data);
     } catch (error) {
@@ -151,14 +197,20 @@ function OrderServiceTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService?take=${limit}&skip=${offset + limit}`
+        `equipment/listOrderService?take=${limit}&skip=${
+          offset + limit
+        }&${filter}`
       );
       setNextOrderServices(data);
     } catch (error) {
       setNextOrderServices([]);
-      toast.error('Nenhuma Ordem de Serviço encontrada');
     }
   };
+
+  useEffect(() => {
+    getWorkstations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     handleSearch();
@@ -211,7 +263,7 @@ function OrderServiceTable() {
               alignItems="center"
               width="100%"
             >
-              <form id="equipment-filter" style={{ width: '100%' }}>
+              <form id="orderService-filter" style={{ width: '100%' }}>
                 <Flex gap="5px" alignItems="5px" mb="15px">
                   <ControlledSelect
                     control={control}
@@ -224,27 +276,55 @@ function OrderServiceTable() {
                     fontWeight="semibold"
                     size="sm"
                   />
-
-                  <Select
-                    placeholder="Local"
+                  <ControlledSelect
+                    control={control}
+                    name="unit"
+                    id="unit"
+                    options={workstations}
+                    placeholder="Localização"
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
-                  >
-                    <option value="option1">Goiania</option>
-                  </Select>
-                  <Select
+                  />
+                  <Datepicker
+                    border={false}
+                    placeholderText="Data OS"
+                    name="dateOS"
+                    control={control}
+                  />
+                  <ControlledSelect
+                    control={control}
+                    name="status"
+                    id="status"
+                    options={STATUS_OS}
                     placeholder="Status OS"
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
-                  >
-                    <option value="option1">Ativo</option>
-                  </Select>
+                  />
+                  <Input
+                    placeholder="Pesquisa"
+                    minWidth="15vw"
+                    errors={errors.search}
+                    {...register('search')}
+                    rightElement={<BiSearch />}
+                  />
                 </Flex>
               </form>
+              {filter !== '' ? (
+                <Flex w="100%" alignItems="center" justifyContent="start">
+                  <Button
+                    variant="unstyled"
+                    fontSize="14px"
+                    leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
+                    onClick={cleanFilters}
+                  >
+                    Limpar filtros aplicados
+                  </Button>
+                </Flex>
+              ) : null}
               <Flex flexDirection="column" width="100%">
                 <TableContainer
                   borderRadius="15px"
@@ -308,9 +388,9 @@ function OrderServiceTable() {
                           </Td>
 
                           <Td>
-                            {new Date(
-                              orderService.updatedAt
-                            ).toLocaleDateString('pt-BR')}
+                            {new Date(orderService.date).toLocaleDateString(
+                              'pt-BR'
+                            )}
                           </Td>
                           <Td>
                             <IconButton
