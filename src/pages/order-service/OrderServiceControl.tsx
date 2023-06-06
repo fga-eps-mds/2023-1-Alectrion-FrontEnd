@@ -388,9 +388,9 @@ function OrderServiceTable() {
                           </Td>
 
                           <Td>
-                            {new Date(
-                              orderService.createdAt
-                            ).toLocaleDateString('pt-BR')}
+                            {new Date(orderService.date).toLocaleDateString(
+                              'pt-BR'
+                            )}
                           </Td>
                           <Td>
                             <IconButton
