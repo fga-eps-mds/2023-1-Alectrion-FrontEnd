@@ -203,20 +203,20 @@ export function MovementsModal({
                   </Thead>
                   <Tbody fontWeight="normal">
                     {selectedMoviment?.equipments.map(
-                      (equipment: movementEquipment) => (
+                      (equipment?: movementEquipment) => (
                         <Tr
-                          key={equipment.serialNumber}
+                          key={equipment?.serialNumber}
                           background={
-                            materiais.includes(equipment.serialNumber)
+                            materiais.includes(String(equipment?.serialNumber))
                               ? 'rgba(244, 147, 32, 0.2)'
                               : 'white'
                           }
                         >
-                          <Td textAlign="center">{equipment.tippingNumber}</Td>
-                          <Td textAlign="center">{equipment.type}</Td>
-                          <Td textAlign="center">{equipment.brand.name}</Td>
-                          <Td textAlign="center">{equipment.model}</Td>
-                          <Td textAlign="center">{equipment.serialNumber}</Td>
+                          <Td textAlign="center">{equipment?.tippingNumber}</Td>
+                          <Td textAlign="center">{equipment?.type}</Td>
+                          <Td textAlign="center">{equipment?.brand?.name}</Td>
+                          <Td textAlign="center">{equipment?.model}</Td>
+                          <Td textAlign="center">{equipment?.serialNumber}</Td>s
                         </Tr>
                       )
                     )}

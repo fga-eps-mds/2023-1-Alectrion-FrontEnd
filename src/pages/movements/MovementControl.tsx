@@ -35,6 +35,7 @@ import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
+import { TermModal } from '@/components/term-modal';
 
 interface ISelectOption {
   label: string;
@@ -95,6 +96,7 @@ export interface movement {
 }
 
 function MovementsTable() {
+
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
   const [selectedMovement, setSelectedMovement] = useState<movement>();
@@ -119,6 +121,12 @@ function MovementsTable() {
     isOpen: isOpenRegister,
     onClose: onCloseRegister,
     onOpen: onOpenRegister,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenTerm,
+    onClose: onCloseTerm,
+    onOpen: onOpenTerm,
   } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -270,6 +278,9 @@ function MovementsTable() {
         lenghtMovements={movements.length}
         refreshRequest={refreshRequest}
         setRefreshRequest={setRefreshRequest}
+        setSelectedMovement={setSelectedMovement}
+        selectedMovement={selectedMovement}
+        onOpenTerm={onOpenTerm}
       />
       <Grid templateColumns="1fr 5fr" gap={6}>
         <GridItem>
@@ -493,7 +504,16 @@ function MovementsTable() {
           </Flex>
         </GridItem>
       </Grid>
+      <TermModal
+        isOpen = {isOpenTerm}
+        onClose = {onCloseTerm}
+        selectedMoviment={selectedMovement}
+        refreshRequest = {refreshRequest}
+        setRefreshRequest = {setRefreshRequest}
+        
+      />
     </>
+    
   );
 }
 export { MovementsTable };

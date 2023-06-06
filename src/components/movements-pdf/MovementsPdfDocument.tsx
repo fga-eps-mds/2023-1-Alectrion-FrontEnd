@@ -137,7 +137,7 @@ export function MovementsPDF({
 
   const movementDate = new Date(date);
   const movementDay = movementDate.getDate().toString().padStart(2, '0');
-  const movementMonth = movementDate.getDate().toString().padStart(2, '0');
+  const movementMonth = (movementDate.getMonth() + 1).toString().padStart(2, '0');
   const movementYear = movementDate.getFullYear().toString().padStart(4, '0');
 
   const formattedMovementDate = `${movementDay}/${movementMonth}/${movementYear}`;
@@ -177,17 +177,17 @@ export function MovementsPDF({
           <Text style={styles.columnHeader}>Lotação</Text>
           <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Data</Text>
         </View>
-        {equipments.map((equipment, index) => (
-          <View style={styles.tableRow} key={equipment.id}>
+        {equipments?.map((equipment, index) => (
+          <View style={styles.tableRow} key={equipment?.id}>
             <Text style={{ ...styles.rowData, maxWidth: 24 }}>{index + 1}</Text>
             <Text style={{ ...styles.rowData, maxWidth: 56 }}>
-              {equipment.tippingNumber}
+              {equipment?.tippingNumber}
             </Text>
             <Text style={{ ...styles.rowData, maxWidth: 32 }}>
-              {equipment.type}
+              {equipment?.type}
             </Text>
             <Text style={{ ...styles.rowData, maxWidth: 40 }}>
-              {equipment.brand.name}
+              {equipment?.brand?.name}
             </Text>
             <Text style={styles.rowData}>-</Text>
             <Text style={styles.rowData}>{destination}</Text>
@@ -200,7 +200,7 @@ export function MovementsPDF({
         <Text
           style={{ ...styles.caption, alignSelf: 'flex-end', marginTop: 8 }}
         >
-          Qtd. {equipments.length}
+          Qtd. {equipments?.length}
         </Text>
 
         <View style={styles.signature}>

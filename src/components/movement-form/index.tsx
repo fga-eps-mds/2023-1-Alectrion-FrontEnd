@@ -10,6 +10,7 @@ import {
   GridItem,
   Button,
   TableContainer,
+  useDisclosure,
   Tbody,
 } from '@chakra-ui/react';
 
@@ -24,6 +25,14 @@ import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
 import { movementEquipment } from '@/pages/movements/MovementControl';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
+import { TermModal } from '@/components/term-modal';
+import { movement } from '@/pages/movements/MovementControl';
+
+enum movementType {
+  Borrow,
+  Dismiss,
+  Ownership,
+}
 
 interface equipamentData {
   tippingNumber: string;
@@ -81,6 +90,10 @@ interface MovementFormProps {
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
   selectedEquipmentToMovement?: EquipmentData[];
+  selectedMovement: movement | undefined;
+  setSelectedMovement: React.Dispatch<React.SetStateAction<movement | undefined>>;
+  onOpenTerm: () => void;
+
 }
 
 export default function MovementForm({
@@ -89,6 +102,9 @@ export default function MovementForm({
   refreshRequest,
   setRefreshRequest,
   selectedEquipmentToMovement,
+  selectedMovement,
+  setSelectedMovement,
+  onOpenTerm,
 }: MovementFormProps) {
   const {
     control,
@@ -98,9 +114,12 @@ export default function MovementForm({
     watch,
   } = useForm<FormValues>();
 
+ 
+
   const [equipments, setEquipments] = useState<equipamentData[]>([]);
   const [units, setUnits] = useState<unit[]>([]);
   const [materiais, setMateriais] = useState<string[]>([]);
+  
 
   const date = new Date();
 
@@ -142,6 +161,7 @@ export default function MovementForm({
         toast.success('Movimentação cadastrada com sucesso');
         setRefreshRequest(!refreshRequest);
         onClose();
+        setSelectedMovement(response?.data);
         return;
       }
       toast.error('Erro ao tentar cadastrar o movimentação');
@@ -242,11 +262,11 @@ export default function MovementForm({
         <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6}>
           <ControlledSelect
             control={control}
-            name="destination"
+            name="destination"  
             id="destination"
             options={units.map((unit) => ({
-              value: unit.id,
-              label: unit.name,
+              value: unit?.id,
+              label: unit?.name,
             }))}
             placeholder="Selecione uma opção"
             label="Posto de trabalho"
@@ -360,7 +380,7 @@ export default function MovementForm({
           <Button variant="secondary" onClick={onCloseCallback}>
             Cancelar
           </Button>
-          <Button type="submit" form="movement-register-form" variant="primary">
+          <Button type="submit" form="movement-register-form" variant="primary" onClick={onOpenTerm}>
             Gerar Movimentação
           </Button>
         </Flex>
