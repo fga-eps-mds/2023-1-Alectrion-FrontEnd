@@ -81,7 +81,7 @@ type FilterValues = {
   brand?: string;
   DateOS?: string;
   unit?: ISelectOption;
-  situation?: ISelectOption;
+  status: ISelectOption;
   search: string;
 };
 
@@ -93,15 +93,13 @@ const STATUS_OS:SelectItem<StatusOS>[] = [
   { label: 'Garantia', value: 'WARRANTY'},
 ];
 
-
 function OrderServiceTable() {
     const [orderServices, setOrderServices] = useState<OrderServiceData[]>([]);
     const [nextOrderServices, setNextOrderServices] = useState<OrderServiceData[]>([]);
   
-    /*const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
-    useState<OrderServiceData>();*/
     const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
     const [workstations, setWorkstations] = useState<ISelectOption[]>();
+    const [brands, setBrands] = useState<ISelectOption[]>();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [offset, setOffset] = useState(0);
@@ -119,7 +117,7 @@ function OrderServiceTable() {
     const watchFilter = watch();
   
     const handleFilterChange = () => {
-      const { type, DateOS, situation, unit } = watchFilter;
+      const { type, DateOS, status, unit } = watchFilter;
   
       let formattedDate;
       if (
@@ -128,13 +126,12 @@ function OrderServiceTable() {
         DateOS
       ) {
         formattedDate = new Date(DateOS).toLocaleDateString('en-us');
-        console.log(formattedDate);
       }
 
       const dataFormatted = {
         type: type?.value,
-        updatedAt: formattedDate,
-        situation: situation?.value,
+        date: formattedDate,
+        status: status?.value,
         unit: unit?.value,
         search,
       };
@@ -165,7 +162,6 @@ function OrderServiceTable() {
         setWorkstations(formattedWorkstations(response.data));
       })
       .catch((error) => {
-        console.log(error);
       });
     };
 
@@ -355,8 +351,8 @@ function OrderServiceTable() {
                       />
                       <ControlledSelect
                       control={control}
-                      name="situation"
-                      id="situation"
+                      name="status"
+                      id="status"
                       options={STATUS_OS}
                       placeholder="Status OS"
                       cursor="pointer"
