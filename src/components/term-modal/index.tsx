@@ -54,7 +54,7 @@ export function TermModal({
                 destination={selectedMoviment?.destination.name || ''}
               />
             }
-            fileName={`termo_de_${MovimentacaoTipoMap.get(parseInt(String(selectedMoviment?.type)) || 0) as string}_010101`}
+            fileName={`termo_de_${MovimentacaoTipoMap.get(parseInt(String(selectedMoviment?.type)) || 0) as string}`}
           >
             {({ loading }) => (
               <Button isLoading={loading} variant="primary" onClick={() => { setRefreshRequest(!refreshRequest); onClose(); }}>
