@@ -56,3 +56,17 @@ export interface User {
 
   isDeleted?: boolean
 }
+
+export interface LoginResponse {
+  token: string
+
+  expireIn: string
+
+  email: string
+
+  name: string
+
+  role: string
+  
+  job?: string
+}

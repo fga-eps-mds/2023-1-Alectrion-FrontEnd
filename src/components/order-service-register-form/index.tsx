@@ -11,13 +11,13 @@ import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '@/config/lib/axios';
 import { EquipmentData } from '@/pages/order-service/order-service-control';
-import { User } from '../../constants/user';
+import { User, LoginResponse } from '../../constants/user';
 import { Workstation } from '@/constants/equipment';
 
 type FormValues = {
   tippingNumber: string;
   equipmentId: string;
-  userId: string;
+  authorId: string;
   receiverName: string;
   authorFunctionalNumber: string;
   senderName: string;
@@ -48,12 +48,15 @@ export default function OrderServiceregisterForm({
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
 
-  const [selectedFuncionario, setSelectedFuncionario] = useState<User>();
+  const [selectedSender, setSelectedSender] = useState<User>();
 
   const [workstations, setWorkstations] = useState<Workstation[]>([]);
   const [selectedWorkstation, setSelectedWorkstation] = useState<Workstation>();
-
+  
   const take = 5;
+
+  const loggedUser = JSON.parse(localStorage.getItem('@App:user') || '') as unknown as LoginResponse;
+  
 
   const {
     control,
@@ -116,13 +119,15 @@ export default function OrderServiceregisterForm({
     );
     setSelectedEquipment(selectedOption);
   };
+  
   const handleWorkstationChange = (event: SingleValue<ISelectOption>) => {
     const selectedOption = workstations.find(
       (workstation) => workstation.name === event?.value
     );
     setSelectedWorkstation(selectedOption);
   };
-  const fetchUser = async (username: string) => {
+
+  const fetchSender = async (username: string) => {
     const token = localStorage.getItem('@App:token') || '';
     try {
       const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
@@ -131,22 +136,18 @@ export default function OrderServiceregisterForm({
           Authorization: `Bearer ${token}`,
         },
       });
-      setSelectedFuncionario(data[0]);
+      setSelectedSender(data[0]);
     } catch (error) {
-      setSelectedFuncionario(undefined);
+      setSelectedSender(undefined);
       console.error(error);
     }
   };
 
-  const handleUsernameSearch = debounce(async (e) => {
+  const handleSenderSearch = debounce(async (e) => {
     const str = e.target.value;
-    fetchUser(str);
+    fetchSender(str);
     console.log(str);
   }, 500);
-
-  useEffect(() => {
-    console.log(selectedEquipment);
-  }, [selectedEquipment]);
 
   useEffect(() => {
     getWorkstations();
@@ -156,32 +157,26 @@ export default function OrderServiceregisterForm({
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const {
-        equipmentId,
-        userId,
-        receiverName,
-        authorFunctionalNumber,
-        senderName,
-        senderFunctionalNumber,
         description,
-        date,
-        receiverFunctionalNumber,
         senderPhone,
       } = formData;
+      console.log("Formdata:", formData)
 
       const payload = {
-        equipmentId: selectedEquipment?.id || '',
-        userId: '022', //userId.valueOf,
-        receiverName: receiverName.valueOf,
-        authorFunctionalNumber: authorFunctionalNumber.valueOf,
-        senderName: senderName.valueOf,
-        senderFunctionalNumber: senderFunctionalNumber.valueOf,
-        description: description.valueOf,
-        date:  '2023-05-26T20:25:37.424Z', //date.valueOf,
-        receiverFunctionalNumber: receiverFunctionalNumber.valueOf,
-        senderPhone: senderPhone.valueOf,
+        equipmentId: selectedEquipment?.id as string,
+        description: description,
+        authorId: selectedSender?.id,
+        receiverName: loggedUser?.name,
+        authorFunctionalNumber: '12',
+        senderName: selectedSender?.name,
+        senderFunctionalNumber: '12',
+        date: "2022-12-12",
+        receiverFunctionalNumber: '121',
+        senderPhone: senderPhone,
       };
+      console.log("PAYload:", payload)
 
-      const response = await api.post(`equipment/create-order-service/${selectedEquipment?.id}`, payload);
+      const response = await api.post(`equipment/create-order-service/${selectedEquipment?.id}`);
 
       if (response.status === 200) {
         toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
@@ -190,7 +185,8 @@ export default function OrderServiceregisterForm({
         return;
       }
       toast.error('Erro ao tentar cadastrar ordem de serviço', 'Erro');
-    } catch {
+    } catch(error) {
+      console.error(error)
       toast.error('Erro ao tentar cadastrar ordem de serviço', 'Erro');
     }
   });
@@ -210,7 +206,6 @@ export default function OrderServiceregisterForm({
               placeholder="Pesquisa"
               onInputChange={handleSearch}
               onChange={handleChange}
-              control={control}
               options={formattedOptions(
                 equipments,
                 'tippingNumber',
@@ -283,22 +278,48 @@ export default function OrderServiceregisterForm({
           <strong> Ordem de serviço</strong>
         </GridItem>
         <GridItem>
-          <strong>Usuário:</strong>
+          <strong>Usuário(Funcioal Temporária):</strong>
           <Input
-            placeholder="Usuário"
-            control={control}
-            errors={errors.senderName}
-            //onChange={handleUsernameSearch}
+            placeholder="username"
+            errors={undefined}
+            onChange={handleSenderSearch}
           />
         </GridItem>
         <GridItem>
           <strong>Responsável pela entrega:</strong>
           <Input
-            errors={errors.receiverName}
-            control={control}
+            errors={errors.senderName}
             placeholder="Responsável"
             type="text"
-            defaultValue={selectedFuncionario?.name}
+            defaultValue={selectedSender?.name}
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Atribuição:</strong>
+          <Input
+            errors={undefined}
+            placeholder='Atribuição'
+            name='atribuicao'
+            defaultValue={selectedSender?.job}
+          />
+        </GridItem>
+
+        <GridItem>
+          <strong>Posto de trabalho:</strong>
+          <Select
+            placeholder='Posto de trabalho'
+            name='Posto de trabalho'
+            options={formattedOptions(workstations, 'name', 'name')}
+            onChange={handleWorkstationChange}
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Cidade:</strong>
+          <Input
+            placeholder='Cidade'
+            errors={undefined}
+            defaultValue={selectedWorkstation?.city.name || ''}
+            readOnly
           />
         </GridItem>
         <GridItem>
@@ -306,7 +327,6 @@ export default function OrderServiceregisterForm({
           <Input
             placeholder="Telefone"
             type="text"
-            control={control}
             errors={errors.senderPhone}
             {...register('senderPhone', {
               required: 'Campo obrigatório',
@@ -319,40 +339,15 @@ export default function OrderServiceregisterForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Funcional do autor:</strong>
-          <Input
-            control={control}
-            errors={errors.authorFunctionalNumber}
-            placeholder="Funcional autor"
-            type="text"
-          />
-        </GridItem>
-        <GridItem>
-          <strong>Funcional do entregador</strong>
-          <Input
-            errors={errors.senderFunctionalNumber}
-            control={control}
-            placeholder="Funcional entregador"
-            type="text"
-          />
-        </GridItem>
-        <GridItem >
-          <strong>Funcional do recebedor:</strong>
-          <Input
-            errors={errors.receiverFunctionalNumber}
-            control={control}
-            placeholder="Funcional recebedor"
-            type="text"
-          />
         </GridItem>
         <GridItem gridColumn="1 / span 3">
-          <strong>Descrição:</strong>
-          <Input
+          <TextArea
             errors={errors.description}
-            control={control}
-            placeholder="Descrição"
-            type="text"
-            {...register('description')}
+            label="Descrição:"
+            maxChars={255}
+            {...register('description', {
+              maxLength: 255,
+            })}
           />
         </GridItem>
       </Grid>
