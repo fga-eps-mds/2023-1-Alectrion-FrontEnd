@@ -170,18 +170,18 @@ export default function OrderServiceregisterForm({
 
       const payload = {
         equipmentId: selectedEquipment?.id || '',
-        userId: userId.valueOf,
+        userId: '022', //userId.valueOf,
         receiverName: receiverName.valueOf,
         authorFunctionalNumber: authorFunctionalNumber.valueOf,
         senderName: senderName.valueOf,
         senderFunctionalNumber: senderFunctionalNumber.valueOf,
         description: description.valueOf,
-        date: date.valueOf,
+        date:  '2023-05-26T20:25:37.424Z', //date.valueOf,
         receiverFunctionalNumber: receiverFunctionalNumber.valueOf,
         senderPhone: senderPhone.valueOf,
       };
 
-      const response = await api.post('create-order-service', payload);
+      const response = await api.post(`equipment/create-order-service/${selectedEquipment?.id}`, payload);
 
       if (response.status === 200) {
         toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
@@ -210,6 +210,7 @@ export default function OrderServiceregisterForm({
               placeholder="Pesquisa"
               onInputChange={handleSearch}
               onChange={handleChange}
+              control={control}
               options={formattedOptions(
                 equipments,
                 'tippingNumber',
@@ -285,14 +286,16 @@ export default function OrderServiceregisterForm({
           <strong>Usuário:</strong>
           <Input
             placeholder="Usuário"
+            control={control}
             errors={errors.senderName}
-            onChange={handleUsernameSearch}
+            //onChange={handleUsernameSearch}
           />
         </GridItem>
         <GridItem>
           <strong>Responsável pela entrega:</strong>
           <Input
             errors={errors.receiverName}
+            control={control}
             placeholder="Responsável"
             type="text"
             defaultValue={selectedFuncionario?.name}
@@ -303,6 +306,7 @@ export default function OrderServiceregisterForm({
           <Input
             placeholder="Telefone"
             type="text"
+            control={control}
             errors={errors.senderPhone}
             {...register('senderPhone', {
               required: 'Campo obrigatório',
@@ -314,10 +318,38 @@ export default function OrderServiceregisterForm({
             })}
           />
         </GridItem>
+        <GridItem>
+          <strong>Funcional do autor:</strong>
+          <Input
+            control={control}
+            errors={errors.authorFunctionalNumber}
+            placeholder="Funcional autor"
+            type="text"
+          />
+        </GridItem>
+        <GridItem>
+          <strong>Funcional do entregador</strong>
+          <Input
+            errors={errors.senderFunctionalNumber}
+            control={control}
+            placeholder="Funcional entregador"
+            type="text"
+          />
+        </GridItem>
+        <GridItem >
+          <strong>Funcional do recebedor:</strong>
+          <Input
+            errors={errors.receiverFunctionalNumber}
+            control={control}
+            placeholder="Funcional recebedor"
+            type="text"
+          />
+        </GridItem>
         <GridItem gridColumn="1 / span 3">
           <strong>Descrição:</strong>
           <Input
             errors={errors.description}
+            control={control}
             placeholder="Descrição"
             type="text"
             {...register('description')}
