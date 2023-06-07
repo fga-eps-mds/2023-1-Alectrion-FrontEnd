@@ -16,7 +16,7 @@ import {
   Flex,
   Grid,
   GridItem,
-  useDisclosure
+  useDisclosure,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { FaTools } from 'react-icons/fa';
@@ -252,9 +252,7 @@ function OrderServiceTable() {
               <Text color="#00000" fontWeight="medium" fontSize="2xl">
                 Últimas Ordens de Serviço
               </Text>
-              <Button
-                colorScheme={theme.colors.primary} onClick={onOpen}
-              >
+              <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                 Nova Ordem de Serviço
               </Button>
             </Flex>

@@ -18,7 +18,7 @@ export enum Role {
   ADMIN = 'administrador',
   GERENTE = 'gerente',
   BASICO = 'basico',
-  CONSULTA = 'consulta'
+  CONSULTA = 'consulta',
 }
 
 export enum Job {
@@ -34,39 +34,39 @@ export enum Job {
 }
 
 export interface User {
-  id?: string
+  id?: string;
 
-  name: string
+  name: string;
 
-  email: string
+  email: string;
 
-  username: string
+  username: string;
 
-  job: Job
+  job: Job;
 
-  role: Role
+  role: Role;
 
-  password: string
+  password: string;
 
-  createdAt?: Date
+  createdAt?: Date;
 
-  updatedAt?: Date
+  updatedAt?: Date;
 
-  deletedAt?: Date
+  deletedAt?: Date;
 
-  isDeleted?: boolean
+  isDeleted?: boolean;
 }
 
 export interface LoginResponse {
-  token: string
+  token: string;
 
-  expireIn: string
+  expireIn: string;
 
-  email: string
+  email: string;
 
-  name: string
+  name: string;
 
-  role: string
-  
-  job?: string
+  role: string;
+
+  job?: string;
 }

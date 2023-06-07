@@ -52,9 +52,9 @@ export default function OrderServiceregisterForm({
 
   const [workstations, setWorkstations] = useState<Workstation[]>([]);
   const [selectedWorkstation, setSelectedWorkstation] = useState<Workstation>();
-  
+
   const take = 5;
-  
+
   const {
     control,
     register,
@@ -116,7 +116,7 @@ export default function OrderServiceregisterForm({
     );
     setSelectedEquipment(selectedOption);
   };
-  
+
   const handleWorkstationChange = (event: SingleValue<ISelectOption>) => {
     const selectedOption = workstations.find(
       (workstation) => workstation.name === event?.value
@@ -124,7 +124,7 @@ export default function OrderServiceregisterForm({
     setSelectedWorkstation(selectedOption);
   };
 
-  const fetchSender = async (username: string) => {   
+  const fetchSender = async (username: string) => {
     try {
       const token = localStorage.getItem('@App:token') || '';
       const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
@@ -142,7 +142,9 @@ export default function OrderServiceregisterForm({
 
   const fetchReceiver = async () => {
     try {
-      const loggedUser = JSON.parse(localStorage.getItem('@App:user') || '') as unknown as LoginResponse;
+      const loggedUser = JSON.parse(
+        localStorage.getItem('@App:user') || ''
+      ) as unknown as LoginResponse;
       const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
         params: { email: loggedUser.email },
         headers: {
@@ -154,7 +156,7 @@ export default function OrderServiceregisterForm({
       setSelectedReceiver(undefined);
       console.error(error);
     }
-  }
+  };
 
   const handleSenderSearch = debounce(async (e) => {
     const str = e.target.value;
@@ -169,14 +171,11 @@ export default function OrderServiceregisterForm({
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const {
-        description,
-        senderPhone,
-      } = formData;
+      const { description, senderPhone } = formData;
 
       const payload = {
         equipmentId: selectedEquipment?.id,
-        description: description,
+        description,
         authorId: selectedReceiver?.id,
         receiverName: selectedReceiver?.name,
         authorFunctionalNumber: selectedReceiver?.id,
@@ -184,18 +183,22 @@ export default function OrderServiceregisterForm({
         senderFunctionalNumber: selectedSender?.id,
         date: new Date().toISOString(),
         receiverFunctionalNumber: selectedReceiver?.name,
-        senderPhone: senderPhone,
+        senderPhone,
       };
 
-      const response = await api.post(`equipment/create-order-service/${selectedEquipment?.id}`, payload);
+      const response = await api.post(
+        `equipment/create-order-service/${selectedEquipment?.id}`,
+        payload
+      );
       toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
       setRefreshRequest(!refreshRequest);
-      console.log(response.data)
+      console.log(response.data);
       onClose();
-
-    } catch(error: any) {
-      console.error(error) 
-      const message = error.response.data.error ? error.response.data.error : 'Erro ao cadastrar ordem de serviço'
+    } catch (error: any) {
+      console.error(error);
+      const message = error.response.data.error
+        ? error.response.data.error
+        : 'Erro ao cadastrar ordem de serviço';
       toast.error(message);
     }
   });
@@ -307,8 +310,8 @@ export default function OrderServiceregisterForm({
           <strong>Atribuição:</strong>
           <Input
             errors={undefined}
-            placeholder='Atribuição'
-            name='atribuicao'
+            placeholder="Atribuição"
+            name="atribuicao"
             defaultValue={selectedSender?.job}
           />
         </GridItem>
@@ -316,8 +319,8 @@ export default function OrderServiceregisterForm({
         <GridItem>
           <strong>Posto de trabalho:</strong>
           <Select
-            placeholder='Posto de trabalho'
-            name='Posto de trabalho'
+            placeholder="Posto de trabalho"
+            name="Posto de trabalho"
             options={formattedOptions(workstations, 'name', 'name')}
             onChange={handleWorkstationChange}
           />
@@ -325,7 +328,7 @@ export default function OrderServiceregisterForm({
         <GridItem>
           <strong>Cidade:</strong>
           <Input
-            placeholder='Cidade'
+            placeholder="Cidade"
             errors={undefined}
             defaultValue={selectedWorkstation?.city.name || ''}
             readOnly
@@ -347,8 +350,7 @@ export default function OrderServiceregisterForm({
             })}
           />
         </GridItem>
-        <GridItem>
-        </GridItem>
+        <GridItem />
         <GridItem gridColumn="1 / span 3">
           <TextArea
             errors={errors.description}
