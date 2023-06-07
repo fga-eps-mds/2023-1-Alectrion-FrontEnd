@@ -29,7 +29,7 @@ export function TermModal({
     <Modal
       title={`Termo de ${
         MovimentacaoTipoMap.get(
-          parseInt(String(selectedMoviment?.type), 10) || 0
+          parseInt(String(selectedMoviment?.type), 10) ?? 0
         ) as string
       }`}
       isOpen={isOpen}
@@ -47,7 +47,7 @@ export function TermModal({
         termo_de_
         {
           MovimentacaoTipoMap.get(
-            parseInt(String(selectedMoviment?.type), 10) || 0
+            parseInt(String(selectedMoviment?.type), 10) ?? 0
           ) as string
         }
         .pdf
@@ -61,17 +61,17 @@ export function TermModal({
             <MovementsPDF
               title={
                 MovimentacaoTipoMap.get(
-                  parseInt(String(selectedMoviment?.type), 10) || 0
+                  parseInt(String(selectedMoviment?.type), 10) ?? 0
                 ) as string
               }
-              equipments={selectedMoviment?.equipments || []}
-              date={selectedMoviment?.date || ''}
-              destination={selectedMoviment?.destination.name || ''}
+              equipments={selectedMoviment?.equipments ?? []}
+              date={selectedMoviment?.date ?? ''}
+              destination={selectedMoviment?.destination.name ?? ''}
             />
           }
           fileName={`termo_de_${
             MovimentacaoTipoMap.get(
-              parseInt(String(selectedMoviment?.type), 10) || 0
+              parseInt(String(selectedMoviment?.type), 10) ?? 0
             ) as string
           }`}
         >

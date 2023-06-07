@@ -10,7 +10,6 @@ import {
   GridItem,
   Button,
   TableContainer,
-  useDisclosure,
   Tbody,
 } from '@chakra-ui/react';
 
@@ -25,13 +24,6 @@ import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
-import { TermModal } from '@/components/term-modal';
-
-enum movementType {
-  Borrow,
-  Dismiss,
-  Ownership,
-}
 
 interface equipamentData {
   tippingNumber: string;
@@ -108,7 +100,7 @@ export default function MovementForm({
     control,
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
   } = useForm<FormValues>();
 
@@ -154,7 +146,6 @@ export default function MovementForm({
         toast.success('Movimentação cadastrada com sucesso');
         setRefreshRequest(!refreshRequest);
         onClose();
-        onOpenTerm();
         setSelectedMovement(response?.data);
         return;
       }
@@ -375,10 +366,10 @@ export default function MovementForm({
             Cancelar
           </Button>
           <Button
-            isDisabled={!isValid}
             type="submit"
             form="movement-register-form"
             variant="primary"
+            onClick={onOpenTerm}
           >
             Gerar Movimentação
           </Button>
