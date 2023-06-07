@@ -176,7 +176,9 @@ export function MovementsPDF({
           <Text style={{ ...styles.columnHeader, maxWidth: 32 }}>Tipo</Text>
           <Text style={{ ...styles.columnHeader, maxWidth: 40 }}>Marca</Text>
           <Text style={styles.columnHeader}>Descrição</Text>
-          <Text style={styles.columnHeader}>Lotação</Text>
+          <Text style={styles.columnHeader}>
+            {title === 'Baixa' ? 'Última Lotação' : 'Lotação'}
+          </Text>
           <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Data</Text>
         </View>
         {equipments?.map((equipment, index) => (
@@ -205,17 +207,19 @@ export function MovementsPDF({
           Qtd. {equipments?.length}
         </Text>
 
-        <View style={styles.signature}>
-          <Text style={{ ...styles.caption, marginBottom: 4 }}>
-            {'_'.repeat(50)}
-          </Text>
-          <Text style={styles.caption}>
-            ASSINATURA / CARIMBO DO TITULAR DA UNIDADE
-          </Text>
-          <Text style={styles.caption}>
-            26ª DELEGACIA DE POLÍCIA DE GOIÂNIA
-          </Text>
-        </View>
+        {title !== 'Baixa' && (
+          <View style={styles.signature}>
+            <Text style={{ ...styles.caption, marginBottom: 4 }}>
+              {'_'.repeat(50)}
+            </Text>
+            <Text style={styles.caption}>
+              ASSINATURA / CARIMBO DO TITULAR DA UNIDADE
+            </Text>
+            <Text style={styles.caption}>
+              26ª DELEGACIA DE POLÍCIA DE GOIÂNIA
+            </Text>
+          </View>
+        )}
       </Page>
     </Document>
   );
