@@ -32,6 +32,8 @@ import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
+import { TermModal } from '@/components/term-modal';
+import { movement } from '../movements/MovementControl';
 
 interface ISelectOption {
   label: string;
@@ -82,6 +84,7 @@ type FilterValues = {
 function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
+  const [selectedMovement, setSelectedMovement] = useState<movement>();
 
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
@@ -157,9 +160,9 @@ function EquipmentTable() {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const {
-    isOpen: isRegisterOpen,
-    onClose: onRegisterClose,
-    onOpen: onRegisterOpen,
+    isOpen: isOpenTerm,
+    onClose: onCloseTerm,
+    onOpen: onOpenTerm,
   } = useDisclosure();
 
   const {
@@ -543,6 +546,15 @@ function EquipmentTable() {
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
           selectedEquipmentToMovement={selectedEquipmentToMovement}
+          setSelectedMovement={setSelectedMovement}
+          onOpenTerm={onOpenTerm}
+        />
+        <TermModal
+          isOpen={isOpenTerm}
+          onClose={onCloseTerm}
+          selectedMoviment={selectedMovement}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
         />
       </GridItem>
     </Grid>

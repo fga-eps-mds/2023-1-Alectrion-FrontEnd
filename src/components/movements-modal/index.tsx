@@ -12,11 +12,13 @@ import {
   Td,
   TableContainer,
 } from '@chakra-ui/react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { useState } from 'react';
 import { Modal } from '../modal';
 import { Input } from '../form-fields/input';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { MovimentacaoTipoMap } from '@/constants/movements';
+import { MovementsPDF } from '../movements-pdf/MovementsPdfDocument';
 
 type MovementsModalProps = {
   isOpen: boolean;
@@ -201,20 +203,20 @@ export function MovementsModal({
                   </Thead>
                   <Tbody fontWeight="normal">
                     {selectedMoviment?.equipments.map(
-                      (equipment: movementEquipment) => (
+                      (equipment?: movementEquipment) => (
                         <Tr
-                          key={equipment.serialNumber}
+                          key={equipment?.serialNumber}
                           background={
-                            materiais.includes(equipment.serialNumber)
+                            materiais.includes(String(equipment?.serialNumber))
                               ? 'rgba(244, 147, 32, 0.2)'
                               : 'white'
                           }
                         >
-                          <Td textAlign="center">{equipment.tippingNumber}</Td>
-                          <Td textAlign="center">{equipment.type}</Td>
-                          <Td textAlign="center">{equipment.brand.name}</Td>
-                          <Td textAlign="center">{equipment.model}</Td>
-                          <Td textAlign="center">{equipment.serialNumber}</Td>
+                          <Td textAlign="center">{equipment?.tippingNumber}</Td>
+                          <Td textAlign="center">{equipment?.type}</Td>
+                          <Td textAlign="center">{equipment?.brand?.name}</Td>
+                          <Td textAlign="center">{equipment?.model}</Td>
+                          <Td textAlign="center">{equipment?.serialNumber}</Td>
                         </Tr>
                       )
                     )}
@@ -252,9 +254,29 @@ export function MovementsModal({
               <Button variant="secondary" onClick={onCloseCallback}>
                 Cancelar
               </Button>
-              <Button type="submit" variant="primary">
-                Gerar termo
-              </Button>
+              <PDFDownloadLink
+                document={
+                  <MovementsPDF
+                    title={
+                      MovimentacaoTipoMap.get(selectedMoviment?.type) as string
+                    }
+                    equipments={selectedMoviment.equipments}
+                    date={selectedMoviment.date}
+                    destination={selectedMoviment.destination.name}
+                  />
+                }
+                fileName={`termo_de_${
+                  MovimentacaoTipoMap.get(
+                    parseInt(String(selectedMoviment?.type), 10) || 0
+                  ) as string
+                }`}
+              >
+                {({ loading }) => (
+                  <Button isLoading={loading} variant="primary">
+                    Gerar termo
+                  </Button>
+                )}
+              </PDFDownloadLink>
             </Flex>
           </form>
         </Flex>

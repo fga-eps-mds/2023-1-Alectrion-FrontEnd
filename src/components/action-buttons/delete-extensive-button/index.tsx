@@ -24,7 +24,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ActionButtonProps } from '../types';
-import { ActionButton } from '..';
 
 type DeleteButtonProps<Data> = ActionButtonProps<Data>;
 
