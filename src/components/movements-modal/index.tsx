@@ -216,7 +216,7 @@ export function MovementsModal({
                           <Td textAlign="center">{equipment?.type}</Td>
                           <Td textAlign="center">{equipment?.brand?.name}</Td>
                           <Td textAlign="center">{equipment?.model}</Td>
-                          <Td textAlign="center">{equipment?.serialNumber}</Td>s
+                          <Td textAlign="center">{equipment?.serialNumber}</Td>
                         </Tr>
                       )
                     )}
