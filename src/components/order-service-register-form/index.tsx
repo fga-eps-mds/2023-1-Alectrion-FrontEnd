@@ -6,14 +6,12 @@ import { AxiosResponse } from 'axios';
 import { Select, SingleValue } from 'chakra-react-select';
 
 import { Input } from '../form-fields/input';
-import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '@/config/lib/axios';
-import { EquipmentData } from '@/pages/order-service/order-service-control';
 import { User, LoginResponse } from '../../constants/user';
 import { Workstation } from '@/constants/equipment';
-import { lookup } from 'dns';
+import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 
 type FormValues = {
   tippingNumber: string;
@@ -161,7 +159,6 @@ export default function OrderServiceregisterForm({
   const handleSenderSearch = debounce(async (e) => {
     const str = e.target.value;
     fetchSender(str);
-    console.log(str);
   }, 500);
 
   useEffect(() => {
@@ -178,7 +175,7 @@ export default function OrderServiceregisterForm({
       } = formData;
 
       const payload = {
-        equipmentId: selectedEquipment?.id as string,
+        equipmentId: selectedEquipment?.id,
         description: description,
         authorId: selectedReceiver?.id,
         receiverName: selectedReceiver?.name,
@@ -191,15 +188,15 @@ export default function OrderServiceregisterForm({
       };
 
       const response = await api.post(`equipment/create-order-service/${selectedEquipment?.id}`, payload);
-      console.log(payload)
+      toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
       setRefreshRequest(!refreshRequest);
       console.log(response.data)
       onClose();
-      toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
 
     } catch(error: any) {
-      console.error(error)
-      toast.error(error.response.data.error);
+      console.error(error) 
+      const message = error.response.data.error ? error.response.data.error : 'Erro ao cadastrar ordem de serviço'
+      toast.error(message);
     }
   });
 

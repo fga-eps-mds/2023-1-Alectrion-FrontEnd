@@ -16,6 +16,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  useDisclosure
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { FaTools } from 'react-icons/fa';
@@ -32,6 +33,7 @@ import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
+import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
 
 interface ISelectOption {
   label: string;
@@ -111,6 +113,7 @@ function OrderServiceTable() {
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const {
     control,
@@ -168,7 +171,7 @@ function OrderServiceTable() {
       .then((response) => {
         setWorkstations(formattedWorkstations(response.data));
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
@@ -197,8 +200,7 @@ function OrderServiceTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService?take=${limit}&skip=${
-          offset + limit
+        `equipment/listOrderService?take=${limit}&skip=${offset + limit
         }&${filter}`
       );
       setNextOrderServices(data);
@@ -251,7 +253,7 @@ function OrderServiceTable() {
                 Últimas Ordens de Serviço
               </Text>
               <Button
-                colorScheme={theme.colors.primary} // onClick={onOpen}
+                colorScheme={theme.colors.primary} onClick={onOpen}
               >
                 Nova Ordem de Serviço
               </Button>
@@ -444,6 +446,12 @@ function OrderServiceTable() {
             </Flex>
           </Flex>
         </Flex>
+        <OrderServiceRegisterModal
+          onClose={onClose}
+          isOpen={isOpen}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
       </GridItem>
     </Grid>
   );
