@@ -62,6 +62,24 @@ export default function OrderServiceregisterForm({
     formState: { errors },
   } = useForm<FormValues>();
 
+  const setLocalStorage = async () => {
+    const { data }: AxiosResponse<LoginResponse> = await api.post(
+      '/user/login',
+      {
+        username: "admin",
+        password: "admin1234"
+      }
+    )
+    const { token, expireIn, email, name, role } = data
+    localStorage.setItem(
+      '@App:user',
+      JSON.stringify({ token, expireIn, email, name, role })
+    )
+    localStorage.setItem('@App:token', token)
+
+    api.defaults.headers.common.Authorization = 'Bearer ' + token
+  }
+
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     return function (this: any, ...args: Parameters<T>) {
@@ -164,6 +182,7 @@ export default function OrderServiceregisterForm({
   }, 500);
 
   useEffect(() => {
+    setLocalStorage();
     getWorkstations();
     fetchReceiver();
     // eslint-disable-next-line react-hooks/exhaustive-deps
