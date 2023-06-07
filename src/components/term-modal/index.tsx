@@ -1,5 +1,4 @@
-import { Flex, Text, Button, useDisclosure } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { Flex, Text, Button } from '@chakra-ui/react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { MdDescription } from 'react-icons/md';
 import { Modal } from '../modal';
@@ -22,12 +21,6 @@ export function TermModal({
   refreshRequest,
   setRefreshRequest,
 }: TermModalProps) {
-  const {
-    isOpen: displayTextModalOpen,
-    onOpen: handleOpenTextModal,
-    onClose: handleCloseTextModal,
-  } = useDisclosure();
-  console.log(selectedMoviment);
   const onCloseCallback = () => {
     onClose();
   };

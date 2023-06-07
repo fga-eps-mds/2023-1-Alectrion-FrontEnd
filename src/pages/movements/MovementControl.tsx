@@ -278,7 +278,6 @@ function MovementsTable() {
         refreshRequest={refreshRequest}
         setRefreshRequest={setRefreshRequest}
         setSelectedMovement={setSelectedMovement}
-        selectedMovement={selectedMovement}
         onOpenTerm={onOpenTerm}
       />
       <Grid templateColumns="1fr 5fr" gap={6}>

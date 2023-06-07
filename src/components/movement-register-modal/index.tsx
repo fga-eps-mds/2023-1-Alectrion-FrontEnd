@@ -10,7 +10,6 @@ type MovementRegisterModalProps = {
   refreshRequest: boolean;
   selectedEquipmentToMovement?: EquipmentData[];
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedMovement: movement | undefined;
   setSelectedMovement: React.Dispatch<
     React.SetStateAction<movement | undefined>
   >;
@@ -25,7 +24,6 @@ export function MovementRegisterModal({
   setRefreshRequest,
   selectedEquipmentToMovement,
   setSelectedMovement,
-  selectedMovement,
   onOpenTerm,
 }: MovementRegisterModalProps) {
   return (
@@ -42,7 +40,6 @@ export function MovementRegisterModal({
         setRefreshRequest={setRefreshRequest}
         selectedEquipmentToMovement={selectedEquipmentToMovement}
         setSelectedMovement={setSelectedMovement}
-        selectedMovement={selectedMovement}
         onOpenTerm={onOpenTerm}
       />
     </Modal>

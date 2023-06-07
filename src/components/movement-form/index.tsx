@@ -89,7 +89,6 @@ interface MovementFormProps {
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
   selectedEquipmentToMovement?: EquipmentData[];
-  selectedMovement: movement | undefined;
   setSelectedMovement: React.Dispatch<
     React.SetStateAction<movement | undefined>
   >;
@@ -102,7 +101,6 @@ export default function MovementForm({
   refreshRequest,
   setRefreshRequest,
   selectedEquipmentToMovement,
-  selectedMovement,
   setSelectedMovement,
   onOpenTerm,
 }: MovementFormProps) {
@@ -110,7 +108,7 @@ export default function MovementForm({
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     watch,
   } = useForm<FormValues>();
 
@@ -156,6 +154,7 @@ export default function MovementForm({
         toast.success('Movimentação cadastrada com sucesso');
         setRefreshRequest(!refreshRequest);
         onClose();
+        onOpenTerm();
         setSelectedMovement(response?.data);
         return;
       }
@@ -376,10 +375,10 @@ export default function MovementForm({
             Cancelar
           </Button>
           <Button
+            isDisabled={!isValid}
             type="submit"
             form="movement-register-form"
             variant="primary"
-            onClick={onOpenTerm}
           >
             Gerar Movimentação
           </Button>
