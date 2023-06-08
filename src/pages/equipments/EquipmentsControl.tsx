@@ -34,6 +34,7 @@ import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { movement } from '../movements/MovementControl';
+import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 
 interface ISelectOption {
   label: string;
@@ -98,7 +99,6 @@ function EquipmentTable() {
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
-  const [isChecked, setIsChecked] = useState(false);
 
   const {
     control,
@@ -120,11 +120,10 @@ function EquipmentTable() {
       lastModifiedDate
     ) {
       formattedDate = new Date(lastModifiedDate).toLocaleDateString('en-us');
-      console.log(formattedDate);
     }
 
     const dataFormatted = {
-      type: type?.value,
+      type,
       updatedAt: formattedDate,
       situation: situation?.value,
       unit: unit?.value,
@@ -317,7 +316,7 @@ function EquipmentTable() {
             >
               <form id="equipment-filter" style={{ width: '100%' }}>
                 <Flex gap="5px" alignItems="5px" mb="15px">
-                  <ControlledSelect
+                  <NewControlledSelect
                     control={control}
                     name="type"
                     id="type"
@@ -327,6 +326,7 @@ function EquipmentTable() {
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
+                    filterStyle
                   />
                   <Datepicker
                     border={false}
@@ -334,7 +334,7 @@ function EquipmentTable() {
                     name="lastModifiedDate"
                     control={control}
                   />
-                  <ControlledSelect
+                  <NewControlledSelect
                     control={control}
                     name="unit"
                     id="unit"
@@ -344,8 +344,9 @@ function EquipmentTable() {
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
+                    filterStyle
                   />
-                  <ControlledSelect
+                  <NewControlledSelect
                     control={control}
                     name="situation"
                     id="situation"
@@ -355,6 +356,7 @@ function EquipmentTable() {
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
+                    filterStyle
                   />
                   <Input
                     placeholder="Pesquisa"

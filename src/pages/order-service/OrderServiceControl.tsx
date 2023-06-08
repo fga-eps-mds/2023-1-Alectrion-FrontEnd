@@ -23,7 +23,6 @@ import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
 import { theme } from '@/styles/theme';
-import { ControlledSelect } from '@/components/form-fields/controlled-select/index';
 import {
   SelectItem,
   TIPOS_EQUIPAMENTO,
@@ -32,6 +31,7 @@ import {
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
+import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 
 interface ISelectOption {
   label: string;
@@ -131,10 +131,10 @@ function OrderServiceTable() {
     }
 
     const dataFormatted = {
-      type: type?.value,
+      type,
       date: formattedDate,
-      status: status?.value,
-      unit: unit?.value,
+      status,
+      unit,
       search,
     };
 
@@ -265,7 +265,8 @@ function OrderServiceTable() {
             >
               <form id="orderService-filter" style={{ width: '100%' }}>
                 <Flex gap="5px" alignItems="5px" mb="15px">
-                  <ControlledSelect
+                  <NewControlledSelect
+                    filterStyle
                     control={control}
                     name="type"
                     id="type"
@@ -276,7 +277,8 @@ function OrderServiceTable() {
                     fontWeight="semibold"
                     size="sm"
                   />
-                  <ControlledSelect
+                  <NewControlledSelect
+                    filterStyle
                     control={control}
                     name="unit"
                     id="unit"
@@ -293,7 +295,8 @@ function OrderServiceTable() {
                     name="dateOS"
                     control={control}
                   />
-                  <ControlledSelect
+                  <NewControlledSelect
+                    filterStyle
                     control={control}
                     name="status"
                     id="status"
