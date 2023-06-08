@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import OrderServiceEditForm from '../order-service-edit-form';
 import { Modal } from '../modal';
-import { OrderServiceData } from '@/pages/equipments/OrderServiceControl';
+import { OrderServiceData } from '@/pages/order-service/OrderServiceControl';
 
 type OrderServiceEditModalProps = {
   isOpen: boolean;
