@@ -100,6 +100,8 @@ const STATUS_OS: SelectItem<StatusOS>[] = [
 
 function OrderServiceTable() {
   const [orderServices, setOrderServices] = useState<OrderServiceData[]>([]);
+  const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
+    useState<OrderServiceData>();
   const [nextOrderServices, setNextOrderServices] = useState<
     OrderServiceData[]
   >([]);
@@ -208,6 +210,11 @@ function OrderServiceTable() {
     } catch (error) {
       setNextOrderServices([]);
     }
+  };
+
+  const handleEdit = (orderService: OrderServiceData) => {
+    if (orderService) setSelectedOrderServiceToEdit(orderService);
+    onOpenEditOrderService();
   };
 
   useEffect(() => {

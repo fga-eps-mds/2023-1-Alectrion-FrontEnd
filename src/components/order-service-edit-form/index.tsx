@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -7,6 +8,7 @@ import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { Workstation } from '@/constants/equipment';
+import { TippingNumberSearchBar, debounce } from '../search-bar';
 
 type EditOrderServiceFormValues = {
   tippingNumber: string;
@@ -30,29 +32,6 @@ interface EditOrderServiceFormProps {
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function OrderServiceregisterForm({
-  onClose,
-  refreshRequest,
-  setRefreshRequest,
-}: EditOrderServiceFormProps) {
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
-  const [equipments, setEquipments] = useState<EquipmentData[]>([]);
-
-  const [selectedSender, setSelectedSender] = useState<IUser>();
-  const [selectedReceiver, setSelectedReceiver] = useState<IUser>();
-
-  const [workstations, setWorkstations] = useState<Workstation[]>([]);
-  const [selectedWorkstation, setSelectedWorkstation] = useState<Workstation>();
-
-  const take = 5;
-
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>();
-  
 export default function OrderServiceEditForm({
   onClose,
   equip,
@@ -63,18 +42,15 @@ export default function OrderServiceEditForm({
     control,
     register,
     handleSubmit,
-    reset,
+    watch,
+    resetField,
     formState: { errors },
     setValue,
   } = useForm<EditOrderServiceFormValues>({
     defaultValues: equip,
   });
 
-  useEffect(() => {
-    reset({
-      ...equip,
-    });
-  }, [equip, reset]);
+  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
@@ -85,11 +61,12 @@ export default function OrderServiceEditForm({
 
       if (response.status === 200) {
         toast.success('Ordem de serviço editada com sucesso', 'Sucesso');
-        setRefreshRequest(!refreshRequest);
-        onClose();
+        setRefreshRequest(!setRefreshRequest);
+        if (onclose) {
+          onclose();
+        }
         return;
       }
-
       toast.error('Erro ao tentar editar a Ordem de serviço', 'Erro');
     } catch {
       toast.error('Erro ao tentar editar a Ordem de serviço', 'Erro');
@@ -100,26 +77,13 @@ export default function OrderServiceEditForm({
     throw new Error('Function not implemented.');
   }
 
-  function formattedOptions(tippingNumbers: any, arg1: string, arg2: string) {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <GridItem gridColumn="1 / span 3">
           <strong>Ordem de Serviço #???????:</strong>
           <Box flex="1">
-            <Select
-              placeholder="N Tombamento"
-              value={selectedOption}
-              onChange={handleChange}
-              options={formattedOptions(
-                tippingNumbers,
-                'tippingNumber',
-                'tippingNumber'
-              )}
-            />
+            <TippingNumberSearchBar onChange={setSelectedEquipment} />
           </Box>
         </GridItem>
         <GridItem>
