@@ -12,6 +12,7 @@ export const SideBar = memo(() => {
     { name: 'Controle Ordem Serviço', link: '/order-services' },
     { name: 'Movimentações', link: '/movements' },
     { name: 'Relatórios', link: '' },
+    { name: 'Admin', link: '/view' },
   ];
 
   const optionUser = { name: 'Cadastro Usuário', link: '/user-register' };
