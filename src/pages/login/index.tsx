@@ -68,10 +68,8 @@ export function Login() {
           paddingX="20"
         >
           <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
-            Bem-vindo 2
+            Entrar
           </Text>
-          <button onClick={() => Equip()}>Equipar</button>
-            <Equip />
           <Box marginBottom={10}>
             <Text
               pl="5px"
@@ -80,7 +78,7 @@ export function Login() {
               fontWeight="medium"
               fontSize="lg"
             >
-              Login
+              E-mail
             </Text>
             <Input
               size="lg"
@@ -128,6 +126,14 @@ export function Login() {
               isLoading={isLoading}
             >
               ENTRAR
+            </Button>
+          </Center>
+          <Center>
+            <Button
+              variant='link'
+              color='#239875'
+            >
+              Recuperar Senha
             </Button>
           </Center>
         </Box>
