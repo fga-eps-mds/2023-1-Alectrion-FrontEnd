@@ -17,10 +17,21 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Input, Text, Flex, Spacer } from '@chakra-ui/react';
 import { Modal } from '@/components/modal';
 import Equip from '../edit-equipment';
+import { AxiosResponse } from 'axios';
+import { api } from '@/config/lib/axios';
+import { toast } from '@/utils/toast';
 import { useAuth } from '@/contexts/AuthContext';
+
+interface LoginResponse {
+  username: string;
+  password: string;
+}
+
 export function Login() {
   const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [signIn, setSingIn] = useState<LoginResponse[]>([]);
 
   const generalTypes = ['Webcam', 'Escaneador'];
 
@@ -55,6 +66,22 @@ export function Login() {
     await signIn({ username, password });
     setIsLoading(false);
   };
+
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      const { data }: AxiosResponse<LoginResponse> = await api.post(
+        '/user/login',
+        {
+          username: "admin",
+          password: "admin1234"
+        }
+      )
+      setSingIn ( data );
+    } catch (error) {
+      setSingIn ([]);
+      toast.error('usuário não encontrado');
+  }
+  });
 
   return (
     <Flex
