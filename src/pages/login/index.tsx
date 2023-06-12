@@ -15,9 +15,11 @@
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Input, Text } from '@chakra-ui/react';
-import {Modal} from '@/components/modal';
-import  Equip  from '../edit-equipment';
+import { Modal } from '@/components/modal';
+import Equip from '../edit-equipment';
+import { useAuth } from '@/contexts/AuthContext';
 export function Login() {
+  const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const generalTypes = ['Webcam', 'Escaneador'];
@@ -34,20 +36,23 @@ export function Login() {
   }
 
   const [statusModal, setStatusModal] = useState<boolean>(false);
-    const toggleModal = () => {
-       setStatusModal(!statusModal);
-    };
-  
+  const toggleModal = () => {
+    setStatusModal(!statusModal);
+  };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<CredentialUser>();
 
-  const onSubmit: SubmitHandler<CredentialUser> = async () => {
+  const onSubmit: SubmitHandler<CredentialUser> = async ({
+    username,
+    password,
+  }) => {
     setIsLoading(true);
     // TODO: get function from authContext
-    // await signIn({ username, password });
+    await signIn({ username, password });
     setIsLoading(false);
   };
 
@@ -56,8 +61,8 @@ export function Login() {
       aria-label="form"
       bgGradient="linear(288.94deg, #F8B86D 0%, #F49320 90.96%)"
       h="100vh"
-      color="white">
-      
+      color="white"
+    >
       <form onSubmit={handleSubmit(onSubmit)} aria-label="form">
         <Box
           bg="white"
@@ -129,10 +134,7 @@ export function Login() {
             </Button>
           </Center>
           <Center>
-            <Button
-              variant='link'
-              color='#239875'
-            >
+            <Button variant="link" color="#239875">
               Recuperar Senha
             </Button>
           </Center>

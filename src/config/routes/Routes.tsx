@@ -10,41 +10,50 @@
  */
 import { Routes, Route } from 'react-router-dom';
 import { Login } from '@/pages/login';
-
-
 import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
 import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
+import { RequireAuth } from './require-auth';
 
 export function Router() {
   return (
     <Routes>
       {/* ROTAS PRIVADAS */}
-      <Route path="/" element={<EquipmentTable />}>
-        {/* <Route
-          index
-          element={
-            <RequireAuth>
-              <Chamados />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="chamados"
-          element={
-            <RequireAuth>
-              <Chamados />
-            </RequireAuth>
-          }
-        /> */}
-      </Route>
+      <Route
+        path="/"
+        element={
+          <RequireAuth>
+            <EquipmentTable />
+          </RequireAuth>
+        }
+      />
 
       {/* ROTAS PUBLICAS */}
       <Route path="/login" element={<Login />} />
-      <Route path="/equipaments" element={<EquipmentTable />} />
-      <Route path="/movements" element={<MovementsTable />} />
-      <Route path="/equipments" element={<EquipmentTable />} />
-      <Route path="/order-services" element={<OrderServiceTable />} />
+      <Route
+        path="/movements"
+        element={
+          <RequireAuth>
+            <MovementsTable />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/equipments"
+        element={
+          <RequireAuth>
+            <EquipmentTable />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/order-services"
+        element={
+          <RequireAuth>
+            <OrderServiceTable />
+          </RequireAuth>
+        }
+      />
       <Route path="*" element={<p>404</p>} />
     </Routes>
   );

@@ -21,6 +21,13 @@ type SignedUser = {
   // permissions: Array<string>;
 };
 
+export interface GetUserInfoResponse {
+  username: string;
+  email: string;
+  userId: string;
+  profile: 'ADMIN' | 'BASIC' | 'USER';
+}
+
 type AuthResponse = {
   token: string;
 };
