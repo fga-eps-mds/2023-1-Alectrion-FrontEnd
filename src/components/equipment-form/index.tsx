@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useEffect } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
 
@@ -58,7 +58,17 @@ export default function EquipmentForm({
     formState: { errors },
   } = useForm<FormValues>();
 
-  const watchType = watch('type');
+  const watchType = watch('type', '');
+  const watchModel = watch('model', '');
+  const watchPower = watch('power', '');
+  const watchScreenSize = watch('screenSize', '');
+  const watchScreenType = watch('screenType', '');
+  const watchRam_size = watch('ram_size', '');
+  const watchProcessor = watch('processor', '');
+  const watchStorageType = watch('storageType', '');
+  const watchStorageAmount = watch('storageAmount', '');
+
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     resetField('power');
@@ -69,6 +79,33 @@ export default function EquipmentForm({
     resetField('storageType');
     resetField('storageAmount');
   }, [resetField, watchType]);
+
+  useEffect(() => {
+    if (watchType === 'CPU') {
+      setDescription(
+        `${watchModel} ${watchProcessor} ${watchRam_size} ${watchStorageType} ${watchStorageAmount}`
+      );
+    } else if (watchType === 'Monitor') {
+      setDescription(
+        `${watchModel} ${watchScreenType} ${watchScreenSize}`
+      );
+    } else if (
+      watchType === 'Estabilizador' ||
+      watchType === 'Nobreak'
+    ) {
+      setDescription(`${watchModel} ${watchPower}`);
+    }
+  }, [
+    watchType,
+    watchModel,
+    watchPower,
+    watchScreenSize,
+    watchScreenType,
+    watchRam_size,
+    watchProcessor,
+    watchStorageType,
+    watchStorageAmount,
+  ]);
 
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
@@ -305,6 +342,7 @@ export default function EquipmentForm({
             {...register('description', {
               maxLength: 255,
             })}
+            defaultValue={description}
           />
         </GridItem>
       </Grid>
