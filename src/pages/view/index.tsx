@@ -19,7 +19,6 @@
     // import  Equip  from '../edit-equipment';
     
     export function View() {
-
       const [isLoading, setIsLoading] = useState(false);
     
       const generalTypes = ['Webcam', 'Escaneador'];
@@ -83,7 +82,7 @@
                 >
                   Nome
                 </Text>
-                <Input size="lg" fontSize="lg" placeholder="Nome" />
+                <Input size="lg" fontSize="lg" placeholder="Nome" readOnly/>
               </Box>
               <Box flex="1" pl="2">
                 <Text
@@ -95,7 +94,7 @@
                 >
                   Sobrenome
                 </Text>
-                <Input size="lg" fontSize="lg" placeholder="Sobrenome" />
+                <Input size="lg" fontSize="lg" placeholder="Sobrenome" readOnly/>
               </Box>
             </Flex>
             <Box>
@@ -109,7 +108,7 @@
               >
                 E-mail
               </Text>
-              <Input size="lg" fontSize="lg" placeholder="E-mail da pessoa" />
+              <Input size="lg" fontSize="lg" placeholder="E-mail da pessoa" readOnly/>
             </Box>
             <Divider my="4" borderColor="gray.300" />
             <Flex>
@@ -127,6 +126,7 @@
                   size="lg"
                   fontSize="lg"
                   placeholder="Senha atual da pessoa"
+                  readOnly
                 />
               </Box>
               <Box flex="1" pl="2">
@@ -143,6 +143,7 @@
                   size="lg"
                   fontSize="lg"
                   placeholder="Nova senha"
+                  readOnly
                 />
               </Box>
               <Box mb="20px" flex="1" pl="2">
@@ -159,6 +160,7 @@
                   size="lg"
                   fontSize="lg"
                   placeholder="Confirmar senha"
+                  readOnly
                 />
               </Box>
             </Flex>
