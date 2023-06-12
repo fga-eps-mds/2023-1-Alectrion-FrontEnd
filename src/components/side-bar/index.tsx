@@ -12,7 +12,6 @@ export const SideBar = memo(() => {
     { name: 'Controle Ordem Serviço', link: '/order-services' },
     { name: 'Movimentações', link: '/movements' },
     { name: 'Relatórios', link: '' },
-    { name: 'Admin', link: '/view' },
   ];
 
   const optionUser = { name: 'Cadastro Usuário', link: '/user-register' };
@@ -66,6 +65,18 @@ export const SideBar = memo(() => {
         >
           Sair
         </Button>
+      </Box>
+      <Box position="absolute" bottom="20px" left="20px" fontSize="4xs">
+        <Text fontWeight="bold" marginBottom="2">Cadastro Usuário</Text>
+        <Text
+          fontSize="4xs"
+          fontWeight="bold"
+          marginTop="2"
+          _hover={{ cursor: 'pointer', color: 'orange.500' }}
+          onClick={() => navigate('/view')}
+        >
+          {user?.name}
+        </Text>
       </Box>
     </Box>
   );
