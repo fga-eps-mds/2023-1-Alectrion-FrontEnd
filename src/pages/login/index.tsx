@@ -14,7 +14,7 @@
  */
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Box, Button, Center, Input, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Input, Text, Flex, Spacer } from '@chakra-ui/react';
 import { Modal } from '@/components/modal';
 import Equip from '../edit-equipment';
 import { useAuth } from '@/contexts/AuthContext';
@@ -57,12 +57,18 @@ export function Login() {
   };
 
   return (
-    <Center
+    <Flex
       aria-label="form"
-      bgGradient="linear(288.94deg, #F8B86D 0%, #F49320 90.96%)"
-      h="100vh"
+      bgGradient="linear(288.94deg, #F8B86D 0%, #F78F88 90.96%)"
+      h="100%"
       color="white"
+      
     >
+      <Flex w="28%">
+        <Text m='39px' color="white" fontWeight="bold" fontSize="4xl" >
+          Alectrion
+        </Text>
+      </Flex>
       <form onSubmit={handleSubmit(onSubmit)} aria-label="form">
         <Box
           bg="white"
@@ -71,6 +77,7 @@ export function Login() {
           color="black"
           paddingY="20"
           paddingX="20"
+          m="4px"
         >
           <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
             Entrar
@@ -140,6 +147,7 @@ export function Login() {
           </Center>
         </Box>
       </form>
-    </Center>
+      <Spacer />
+    </Flex>
   );
 }
