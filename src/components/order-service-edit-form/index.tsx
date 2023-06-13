@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Box, Button, Flex, Grid, GridItem, Select } from '@chakra-ui/react';
+import { error } from 'console';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
@@ -10,7 +11,6 @@ import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { Workstation } from '@/constants/equipment';
 import { TippingNumberSearchBar, debounce } from '../search-bar';
 import { TextArea } from '../form-fields/text-area';
-import { error } from 'console';
 
 type EditOrderServiceFormValues = {
   equipment: EquipmentData;
@@ -24,7 +24,7 @@ type EditOrderServiceFormValues = {
   receiverRole: string;
   workstation: { value: string; label: string };
   city: string;
-  
+
   date: string;
   description: string;
 };
@@ -54,16 +54,39 @@ export default function OrderServiceEditForm({
     defaultValues: orderService,
   });
 
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>(orderService.equipment);
+  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>(
+    orderService.equipment
+  );
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
+      const {
+        receiverName,
+        senderRole,
+        receiverRole,
+        workstation,
+        city,
+        senderPhone,
+        description,
+        ...rest
+      } = formData;
+      const payload = {
+        receiverName: receiverName.valueOf,
+        senderRole: senderRole.valueOf,
+        receiverRole: receiverRole.valueOf,
+        workstation: workstation.value,
+        city: city.valueOf,
+        senderPhone: senderPhone?.valueOf,
+        description: description.valueOf,
+        ...rest,
+      };
+
       const response = await api.put(
         'order-service/updateOrderService',
-        formData
+        payload
       );
 
-      if (response.status === 200) {
+      if (Response.status === 200) {
         toast.success('Ordem de serviço editada com sucesso', 'Sucesso');
         setRefreshRequest(!setRefreshRequest);
         if (onClose) {
@@ -77,9 +100,9 @@ export default function OrderServiceEditForm({
     }
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log('EQUIPAMENTO CARREGADO', selectedEquipment);
-  }, [selectedEquipment])
+  }, [selectedEquipment]);
 
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
@@ -87,13 +110,19 @@ export default function OrderServiceEditForm({
         <GridItem gridColumn="1 / span 2">
           <strong>Nº de tombamento:</strong>
           <Box flex="1">
-            <TippingNumberSearchBar equip={selectedEquipment} changeEquipment={setSelectedEquipment} />
+            <TippingNumberSearchBar
+              equip={selectedEquipment}
+              changeEquipment={setSelectedEquipment}
+            />
           </Box>
         </GridItem>
         <GridItem>
           <strong>Status:</strong>
           <Box flex="1">
-            <TippingNumberSearchBar equip={selectedEquipment} changeEquipment={setSelectedEquipment} />
+            <TippingNumberSearchBar
+              equip={selectedEquipment}
+              changeEquipment={setSelectedEquipment}
+            />
           </Box>
         </GridItem>
         <GridItem>
@@ -161,9 +190,7 @@ export default function OrderServiceEditForm({
         </GridItem>
         <GridItem>
           <strong>Funcional</strong>
-          <Select
-            {...register('senderFunctionalNumber')}
-          />
+          <Select {...register('senderFunctionalNumber')} />
         </GridItem>
         <GridItem>
           <strong>Responsável pela Entrega</strong>
@@ -182,7 +209,7 @@ export default function OrderServiceEditForm({
             {...register('senderRole')}
           />
         </GridItem>
-        <GridItem  gridColumn="1 / span 2">
+        <GridItem gridColumn="1 / span 2">
           <strong>Responsável pelo recebimento:</strong>
           <Input
             errors={errors.receiverName}
@@ -200,17 +227,11 @@ export default function OrderServiceEditForm({
         </GridItem>
         <GridItem>
           <strong>Posto de trabalho</strong>
-          <Select
-            {...register('workstation')}
-          />
+          <Select {...register('workstation')} />
         </GridItem>
         <GridItem>
           <strong>Cidade</strong>
-          <Input
-            errors={errors.city}
-            type="text"
-            {...register('city')}
-          />
+          <Input errors={errors.city} type="text" {...register('city')} />
         </GridItem>
         <GridItem>
           <strong>Telefone:</strong>
