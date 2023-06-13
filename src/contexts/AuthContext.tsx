@@ -45,25 +45,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async ({ username, password }: SignInCredentials) => {
       try {
         const response = await api.post<AuthResponse>(
-          `${import.meta.env.VITE_PUBLIC_GESTOR_DE_USUARIOS_URL}/auth`,
+          `${import.meta.env.VITE_PUBLIC_GESTOR_DE_USUARIOS_URL}/user/login`,
           {
             username,
             password,
           }
         );
 
-        const { token } = response.data;
-
-        const res = await api.get<GetUserInfoResponse>(
-          `${import.meta.env.VITE_PUBLIC_GESTOR_DE_USUARIOS_URL}/auth`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const { username: name, email, userId: id, profile } = res.data;
+        const { email, expireIn, job, name, role, token } = response.data;
 
         localStorage.setItem('@alectrion:token', token);
         localStorage.setItem(
@@ -71,13 +60,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
           JSON.stringify({
             name,
             email,
-            id,
+            expireIn,
             token,
-            profile,
+            job,
+            role,
           })
         );
 
-        setUser({ name, email, id, token, profile });
+        setUser({ email, expireIn, job, name, role, token });
 
         api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
