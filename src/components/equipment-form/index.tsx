@@ -125,8 +125,7 @@ export default function EquipmentForm({
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { type, estado, storageType, screenType, ...rest } =
-        formData;
+      const { type, estado, storageType, screenType, ...rest } = formData;
 
       const payload = {
         type,
