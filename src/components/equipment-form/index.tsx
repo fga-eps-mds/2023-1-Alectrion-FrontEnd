@@ -55,9 +55,12 @@ export default function EquipmentForm({
     handleSubmit,
     watch,
     resetField,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
+  const [description, setDescription] = useState('');
+  
   const watchType = watch('type', '');
   const watchModel = watch('model', '');
   const watchPower = watch('power', '');
@@ -68,8 +71,6 @@ export default function EquipmentForm({
   const watchStorageType = watch('storageType', '');
   const watchStorageAmount = watch('storageAmount', '');
 
-  const [description, setDescription] = useState('');
-
   useEffect(() => {
     resetField('power');
     resetField('screenSize');
@@ -78,6 +79,7 @@ export default function EquipmentForm({
     resetField('processor');
     resetField('storageType');
     resetField('storageAmount');
+    resetField('description');
   }, [resetField, watchType]);
 
   useEffect(() => {
@@ -95,7 +97,11 @@ export default function EquipmentForm({
     ) {
       setDescription(`${watchModel} ${watchPower}`);
     }
+
+    setValue('description', description);
   }, [
+    setValue,
+    description,
     watchType,
     watchModel,
     watchPower,
@@ -339,10 +345,10 @@ export default function EquipmentForm({
             label="Descrição"
             errors={errors.description}
             maxChars={255}
+            defaultValue={description}
             {...register('description', {
               maxLength: 255,
             })}
-            defaultValue={description}
           />
         </GridItem>
       </Grid>
