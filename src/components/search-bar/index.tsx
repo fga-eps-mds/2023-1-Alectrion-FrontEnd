@@ -9,6 +9,23 @@ interface ISelectOption {
   value: number | string;
 }
 
+type TippingNumberSearchBarProps = {
+  equip: EquipmentData;
+  changeEquipment: (equip: EquipmentData) => void;
+};
+
+const formattedOptions = <T, K extends keyof T>(
+  data: T[],
+  label: K,
+  value: K
+): ISelectOption[] => {
+  return data?.map((item: T) => {
+    const optionLable = String(item[label]);
+    const optionValue: number | string = String(item[value]);
+    return { label: optionLable, value: optionValue };
+  });
+};
+
 export const debounce = <T extends (...args: any[]) => void>(
   fn: T,
   ms = 400
@@ -20,12 +37,9 @@ export const debounce = <T extends (...args: any[]) => void>(
   };
 };
 
-type TippingNumberSearchBarProps = {
-  setSelectedEquipment: (equipment: EquipmentData | undefined) => void;
-};
-
 export function TippingNumberSearchBar({
-  setSelectedEquipment,
+  equip,
+  changeEquipment,
 }: TippingNumberSearchBarProps) {
   const take = 5;
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
@@ -41,18 +55,6 @@ export function TippingNumberSearchBar({
     }
   };
 
-  const formattedOptions = <T, K extends keyof T>(
-    data: T[],
-    label: K,
-    value: K
-  ): ISelectOption[] => {
-    return data?.map((item: T) => {
-      const optionLable = String(item[label]); // Converter para string
-      const optionValue: number | string = String(item[value]); // Converter para string
-      return { label: optionLable, value: optionValue };
-    });
-  };
-
   const handleSearch = debounce(async (str) => {
     if (str !== '') {
       fetchEquipments(str);
@@ -63,12 +65,13 @@ export function TippingNumberSearchBar({
     const selectedOption = equipments.find(
       (equipment) => equipment.tippingNumber === event?.value
     );
-    setSelectedEquipment(selectedOption);
+    changeEquipment(selectedOption as EquipmentData);
   };
 
   return (
     <Select
       placeholder="Pesquisa"
+      value={equip}
       onInputChange={handleSearch}
       onChange={handleChange}
       options={formattedOptions(equipments, 'tippingNumber', 'tippingNumber')}

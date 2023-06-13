@@ -6,7 +6,7 @@ import { OrderServiceData } from '@/pages/order-service/OrderServiceControl';
 type OrderServiceEditModalProps = {
   isOpen: boolean;
   onClose(): void;
-  equip: OrderServiceData | undefined;
+  orderService: OrderServiceData;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -14,35 +14,32 @@ type OrderServiceEditModalProps = {
 function transformFields(data: any) {
   if (!data) return;
   const transformedData = { ...data };
+  transformedData.tippingNumber = data.equipment.tippingNumber;
+  transformedData.serialNumber = data.equipment.serialNumber;
+  transformedData.type = data.equipment.type;
+  transformedData.brandName = data.equipment.brand.name
+  transformedData.model = data.equipment.model
+  transformedData.situacao = data.equipment.situacao;
+  transformedData.model = data.equipment.model;
 
-  transformedData.type = {
-    label: transformedData.type,
-    value: transformedData.type,
+  transformedData.status = {
+    label: transformedData.status,
+    value: transformedData.status,
   };
 
-  transformedData.authorId = {
-    label: transformedData.authorId,
-    value: transformedData.authorId,
-  };
-
-  transformedData.receiverName = {
-    label: transformedData.receiverName,
-    value: transformedData.receiverName,
-  };
-
-  transformedData.authorFunctionalNumber = {
-    label: transformedData.authorFunctionalNumber,
-    value: transformedData.authorFunctionalNumber,
-  };
-
-  transformedData.senderName = {
-    label: transformedData.senderName,
-    value: transformedData.senderName,
+  transformedData.workstation = {
+    label: transformedData.workstation,
+    value: transformedData.workstation,
   };
 
   transformedData.senderFunctionalNumber = {
     label: transformedData.senderFunctionalNumber,
     value: transformedData.senderFunctionalNumber,
+  };
+
+  transformedData.receiverFunctionalNumber = {
+    label: transformedData.receiverFunctionalNumber,
+    value: transformedData.receiverFunctionalNumber,
   };
 
   return transformedData;
@@ -51,16 +48,17 @@ function transformFields(data: any) {
 export function OrderServiceEditModal({
   isOpen,
   onClose,
-  equip,
+  orderService,
   refreshRequest,
   setRefreshRequest,
 }: OrderServiceEditModalProps) {
+  console.log(orderService)
   return (
     <Modal
-      title="Ordem de Serviço #21312131"
+      title={`Ordem de Serviço #${orderService?.id}`}
       isOpen={isOpen}
       onClose={onClose}
-      size="2xl"
+      size="4xl"
     >
       <Flex
         height="100%"
@@ -69,12 +67,12 @@ export function OrderServiceEditModal({
         flexDirection="column"
         gap="16px"
       >
-        <OrderServiceEditForm
+        {<OrderServiceEditForm
           onClose={onClose}
-          equip={transformFields(equip)}
+          orderService={transformFields(orderService)}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
-        />
+        />}
       </Flex>
     </Modal>
   );

@@ -9,32 +9,36 @@ import { api } from '@/config/lib/axios';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { Workstation } from '@/constants/equipment';
 import { TippingNumberSearchBar, debounce } from '../search-bar';
+import { TextArea } from '../form-fields/text-area';
+import { error } from 'console';
 
 type EditOrderServiceFormValues = {
-  tippingNumber: string;
-  equipmentId: string;
-  authorId: string;
-  receiverName: string;
-  authorFunctionalNumber: string;
+  equipment: EquipmentData;
+  senderFunctionalNumber: { value: string; label: string };
   senderName: string;
-  senderFunctionalNumber: string;
-  senderTelefone?: string;
+  senderRole: string;
+  senderPhone?: string;
+
+  receiverFunctionalNumber: { value: string; label: string };
+  receiverName: string;
+  receiverRole: string;
+  workstation: { value: string; label: string };
+  city: string;
+  
   date: string;
-  receiverFunctionalNumber: string;
   description: string;
-  senderPhone: string;
 };
 
 interface EditOrderServiceFormProps {
   onClose: () => void;
-  equip: EditOrderServiceFormValues;
+  orderService: EditOrderServiceFormValues;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function OrderServiceEditForm({
   onClose,
-  equip,
+  orderService,
   refreshRequest,
   setRefreshRequest,
 }: EditOrderServiceFormProps) {
@@ -47,10 +51,10 @@ export default function OrderServiceEditForm({
     formState: { errors },
     setValue,
   } = useForm<EditOrderServiceFormValues>({
-    defaultValues: equip,
+    defaultValues: orderService,
   });
 
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
+  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>(orderService.equipment);
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
@@ -62,8 +66,8 @@ export default function OrderServiceEditForm({
       if (response.status === 200) {
         toast.success('Ordem de serviço editada com sucesso', 'Sucesso');
         setRefreshRequest(!setRefreshRequest);
-        if (onclose) {
-          onclose();
+        if (onClose) {
+          onClose();
         }
         return;
       }
@@ -73,17 +77,23 @@ export default function OrderServiceEditForm({
     }
   });
 
-  function handleChange(event: ChangeEvent<HTMLSelectElement>): void {
-    throw new Error('Function not implemented.');
-  }
+  useEffect(()=>{
+    console.log('EQUIPAMENTO CARREGADO', selectedEquipment);
+  }, [selectedEquipment])
 
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        <GridItem gridColumn="1 / span 3">
-          <strong>Ordem de Serviço #???????:</strong>
+        <GridItem gridColumn="1 / span 2">
+          <strong>Nº de tombamento:</strong>
           <Box flex="1">
-            <TippingNumberSearchBar onChange={setSelectedEquipment} />
+            <TippingNumberSearchBar equip={selectedEquipment} changeEquipment={setSelectedEquipment} />
+          </Box>
+        </GridItem>
+        <GridItem>
+          <strong>Status:</strong>
+          <Box flex="1">
+            <TippingNumberSearchBar equip={selectedEquipment} changeEquipment={setSelectedEquipment} />
           </Box>
         </GridItem>
         <GridItem>
@@ -92,7 +102,7 @@ export default function OrderServiceEditForm({
             errors={undefined}
             type="text"
             placeholder="Tipo"
-            defaultValue={selectedEquipment?.type || ''}
+            defaultValue={selectedEquipment.type || ''}
             readOnly
           />
         </GridItem>
@@ -102,7 +112,7 @@ export default function OrderServiceEditForm({
             errors={undefined}
             type="text"
             placeholder="Nº de série"
-            defaultValue={selectedEquipment?.serialNumber || ''}
+            defaultValue={selectedEquipment.serialNumber}
             readOnly
           />
         </GridItem>
@@ -112,7 +122,7 @@ export default function OrderServiceEditForm({
             errors={undefined}
             type="text"
             placeholder="Marca"
-            defaultValue={selectedEquipment?.brand.name || ''}
+            defaultValue={selectedEquipment.brand.name}
             readOnly
           />
         </GridItem>
@@ -122,7 +132,7 @@ export default function OrderServiceEditForm({
             errors={undefined}
             type="text"
             placeholder="Modelo"
-            defaultValue={selectedEquipment?.model || ''}
+            defaultValue={selectedEquipment.model}
             readOnly
           />
         </GridItem>
@@ -132,7 +142,7 @@ export default function OrderServiceEditForm({
             errors={undefined}
             type="text"
             placeholder="Lotação"
-            defaultValue={selectedEquipment?.unit.localization || ''}
+            defaultValue={selectedEquipment.unit.localization}
             readOnly
           />
         </GridItem>
@@ -142,24 +152,21 @@ export default function OrderServiceEditForm({
             errors={undefined}
             type="text"
             placeholder="Situação"
-            defaultValue={selectedEquipment?.situacao || ''}
+            defaultValue={selectedEquipment.situacao}
             readOnly
           />
         </GridItem>
         <GridItem gridColumn="1 / span 3">
-          <strong>Edição de Ordem de Serviço:</strong>
+          <strong>Ordem de Serviço:</strong>
         </GridItem>
         <GridItem>
-          <strong>Author ID:</strong>
-          <Input
-            errors={errors.authorId}
-            type="text"
-            placeholder="Author ID"
-            {...register('authorId')}
+          <strong>Funcional</strong>
+          <Select
+            {...register('senderFunctionalNumber')}
           />
         </GridItem>
         <GridItem>
-          <strong>Nome do Recebedor:</strong>
+          <strong>Responsável pela Entrega</strong>
           <Input
             errors={errors.receiverName}
             type="text"
@@ -168,39 +175,41 @@ export default function OrderServiceEditForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Número Funcional do Autor:</strong>
+          <strong>Atribuição do Entregador</strong>
           <Input
-            errors={errors.authorFunctionalNumber}
+            errors={errors.senderRole}
             type="text"
-            placeholder="Número Funcional do Autor"
-            {...register('authorFunctionalNumber')}
+            {...register('senderRole')}
+          />
+        </GridItem>
+        <GridItem  gridColumn="1 / span 2">
+          <strong>Responsável pelo recebimento:</strong>
+          <Input
+            errors={errors.receiverName}
+            type="text"
+            {...register('receiverName')}
           />
         </GridItem>
         <GridItem>
-          <strong>Nome do Remetente:</strong>
+          <strong>Atribuição do Recebedor</strong>
           <Input
-            errors={errors.senderName}
+            errors={errors.receiverRole}
             type="text"
-            placeholder="Nome do Remetente"
-            {...register('senderName')}
+            {...register('receiverRole')}
           />
         </GridItem>
         <GridItem>
-          <strong>Número Funcional do Remetente:</strong>
-          <Input
-            errors={errors.senderFunctionalNumber}
-            type="text"
-            placeholder="Número Funcional do Remetente"
-            {...register('senderFunctionalNumber')}
+          <strong>Posto de trabalho</strong>
+          <Select
+            {...register('workstation')}
           />
         </GridItem>
         <GridItem>
-          <strong>Número Funcional do Recebedor:</strong>
+          <strong>Cidade</strong>
           <Input
-            errors={errors.receiverFunctionalNumber}
+            errors={errors.city}
             type="text"
-            placeholder="Número Funcional do Recebedor"
-            {...register('receiverFunctionalNumber')}
+            {...register('city')}
           />
         </GridItem>
         <GridItem>
@@ -213,7 +222,22 @@ export default function OrderServiceEditForm({
           />
         </GridItem>
         <GridItem gridColumn="1 / span 3">
-          <Button type="submit">Editar Ordem de Serviço</Button>
+          <TextArea
+            errors={errors.description}
+            label="Descrição:"
+            maxChars={255}
+            {...register('description', {
+              maxLength: 255,
+            })}
+          />
+        </GridItem>
+        <GridItem>
+          <Button variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+        </GridItem>
+        <GridItem>
+          <Button type="submit">Salvar</Button>
         </GridItem>
       </Grid>
     </form>
