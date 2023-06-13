@@ -22,10 +22,8 @@ type FormValues = {
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: string;
   acquisitionDate: string;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
   screenType?: string;
   processor?: string;
@@ -96,6 +94,8 @@ export default function EquipmentForm({
       watchType === 'Nobreak'
     ) {
       setDescription(`${watchModel} ${watchPower}`);
+    } else {
+      setDescription(`${watchModel}`);
     }
 
     setValue('description', description);
@@ -125,13 +125,12 @@ export default function EquipmentForm({
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { type, estado, initialUseDate, storageType, screenType, ...rest } =
+      const { type, estado, storageType, screenType, ...rest } =
         formData;
 
       const payload = {
         type,
         estado,
-        initialUseDate,
         storageType,
         screenType,
         ...rest,
@@ -216,19 +215,6 @@ export default function EquipmentForm({
         />
 
         <Input
-          label="Nº da Nota Fiscal"
-          errors={errors.invoiceNumber}
-          {...register('invoiceNumber', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
-        />
-
-        <Input
           label="Tipo de aquisição"
           errors={errors.acquisitionName}
           {...register('acquisitionName', {
@@ -244,16 +230,6 @@ export default function EquipmentForm({
           options={ESTADOS_EQUIPAMENTO}
           placeholder="Selecione uma opção"
           label="Estado do equipamento"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-        />
-
-        <NewControlledSelect
-          control={control}
-          name="initialUseDate"
-          id="initialUseDate"
-          options={listOfYears}
-          placeholder="Selecione uma opção"
-          label="Ano da aquisição"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 

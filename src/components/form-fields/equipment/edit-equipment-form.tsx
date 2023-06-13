@@ -133,18 +133,6 @@ export default function EditEquipmentForm(props?: {equip: Equipment}) {
         />
         
         <Controller
-          name="initialUseDate"
-          control={control}
-          render={({ field }) => (
-            <EquipmentTextField
-              defaultValue={props?.equip.initialUseDate}
-              title="Ano de equipamento"
-              {...field}
-            />
-          )}
-        />
-        
-        <Controller
           name = "acquisitionDate"
           control={control}
           render={({ field }) => (
