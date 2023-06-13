@@ -221,15 +221,14 @@
                 </Button>
                 <Button
                     type="submit"
-                    form="user-register-form"
+                    form="movement-register-form"
                     variant="primary"
                     width = "100%"
-                > 
+                >
                     Registrar
                 </Button>
                 </Flex>
             </Box>
-          
           </form>
           <Spacer />
         </Flex>

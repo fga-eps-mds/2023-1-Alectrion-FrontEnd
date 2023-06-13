@@ -14,6 +14,7 @@ import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
 import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
 import { RequireAuth } from './require-auth';
+import { UserRegister } from '@/pages/user-register/UserRegister';
 
 export function Router() {
   return (
@@ -54,6 +55,13 @@ export function Router() {
           </RequireAuth>
         }
       />
+      <Route 
+        path="/user-register" 
+        element={
+          <RequireAuth>
+            <UserRegister />
+          </RequireAuth>} />
+
       <Route path="*" element={<p>404</p>} />
     </Routes>
   );
