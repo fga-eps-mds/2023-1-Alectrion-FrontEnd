@@ -12,6 +12,7 @@ export const SideBar = memo(() => {
     { name: 'Controle Ordem Serviço', link: '/order-services' },
     { name: 'Movimentações', link: '/movements' },
     { name: 'Relatórios', link: '' },
+    
   ];
 
   return (
@@ -44,23 +45,13 @@ export const SideBar = memo(() => {
           {option.name}
         </Text>
       ))}
-      <Box
-        display="flex"
-        flexDirection="column"
-        marginTop="auto"
-        gap="10px"
-        fontSize="4xs"
-      >
-        <Text fontWeight="bold">Cadastro Usuário</Text>
-        <Text fontWeight="bold">{user?.name}</Text>
-        <Button
-          onClick={signOut}
-          variant="link"
-          textColor="white"
-          justifyContent="unset"
-        >
-          Sair
-        </Button>
+      <Box position="absolute" bottom="20px" fontSize="4xs">
+      <Button variant="secondary">
+                Cadastro de usuário 
+              </Button>
+        <Text fontWeight="bold" marginTop="2">
+          Admin
+        </Text>
       </Box>
     </Box>
   );
