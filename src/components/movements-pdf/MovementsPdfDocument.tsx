@@ -175,7 +175,9 @@ export function MovementsPDF({
           <Text style={{ ...styles.columnHeader, minWidth: 80, maxWidth: 100 }}>
             Tombamento
           </Text>
-          <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>Tipo</Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
+            Tipo
+          </Text>
           <Text style={{ ...styles.columnHeader, maxWidth: 40 }}>Marca</Text>
           <Text style={styles.columnHeader}>Descrição</Text>
           <Text style={styles.columnHeader}>
@@ -195,7 +197,7 @@ export function MovementsPDF({
             <Text style={{ ...styles.rowData, maxWidth: 40 }}>
               {equipment?.brand?.name}
             </Text>
-            <Text style={styles.rowData}>-</Text>
+            <Text style={styles.rowData}>{equipment?.description}</Text>
             <Text style={styles.rowData}>{destination}</Text>
             <Text style={{ ...styles.rowData, maxWidth: 56 }}>
               {formattedMovementDate}
