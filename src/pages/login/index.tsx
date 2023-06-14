@@ -64,9 +64,9 @@ export function Login() {
             borderRadius="10px"
             boxShadow="0px 4px 4px rgba(0, 0, 0, 0.25),  0px 4px 4px rgba(0, 0, 0, 0.25),  0px 1px 1px rgba(0, 0, 0, 0.12),  0px 2px 2px rgba(0, 0, 0, 0.12),  0px 8px 8px rgba(0, 0, 0, 0.12);"
             color="black"
-            paddingY="20"
-            paddingX="20"
-            m="4px"
+            paddingY="5%"
+            paddingX="5%"
+            m="0.4%"
             display="flex"
             flexDir="column"
           >
@@ -76,15 +76,10 @@ export function Login() {
             <Text mb={10} textAlign="center" fontSize="4xl">
               Alectrion
             </Text>
-            <Text
-              mb="39px"
-              color="#605555"
-              fontWeight="semibold"
-              fontSize="4xl"
-            >
+            <Text mb="3%" color="#605555" fontWeight="semibold" fontSize="4xl">
               Entrar
             </Text>
-            <Box marginBottom={10}>
+            <Box mb="7%">
               <Text
                 pl="5px"
                 pb="8px"
@@ -92,7 +87,7 @@ export function Login() {
                 fontWeight="medium"
                 fontSize="lg"
               >
-                E-mail
+                Nome de usuário
               </Text>
               <Input
                 size="lg"
@@ -106,7 +101,7 @@ export function Login() {
                 </span>
               )}
             </Box>
-            <Box mb="70px">
+            <Box mb="14%">
               {' '}
               <Text
                 pl="5px"
@@ -133,7 +128,7 @@ export function Login() {
             </Box>
             <Center>
               <Button
-                mb="70px"
+                mb="7%"
                 type="submit"
                 paddingX="24"
                 width="sm"

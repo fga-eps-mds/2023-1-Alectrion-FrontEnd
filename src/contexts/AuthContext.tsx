@@ -39,13 +39,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = useCallback(
     async ({ username, password }: SignInCredentials) => {
       try {
-        const response = await api.post<AuthResponse>(
-          `${import.meta.env.VITE_PUBLIC_GESTOR_DE_USUARIOS_URL}/user/login`,
-          {
-            username,
-            password,
-          }
-        );
+        const response = await api.post('user/login', {
+          username,
+          password,
+        });
 
         const { email, expireIn, job, name, role, token } = response.data;
 
@@ -71,7 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         navigate(from, { replace: true });
       } catch (err) {
         toast.error(
-          'Não foi possível realizar o login! Verifique o email e a senha e tente novamente.'
+          'Não foi possível realizar o login! Verifique o nome de usuário e a senha e tente novamente.'
         );
       }
     },
