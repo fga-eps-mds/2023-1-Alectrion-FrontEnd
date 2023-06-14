@@ -9,12 +9,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
-import {
-  GetUserInfoResponse,
-  SignedUser,
-  SignInCredentials,
-  AuthResponse,
-} from '@/types/auth';
+import { SignedUser, SignInCredentials, AuthResponse } from '@/types/auth';
 
 interface AuthContextData {
   signOut(): void;

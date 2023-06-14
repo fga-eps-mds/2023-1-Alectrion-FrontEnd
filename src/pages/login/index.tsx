@@ -14,20 +14,8 @@
  */
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import {
-  Box,
-  Button,
-  Center,
-  Input,
-  Text,
-  Flex,
-  Spacer,
-} from '@chakra-ui/react';
-import { AxiosResponse } from 'axios';
+import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
 import { Modal } from '@/components/modal';
-import Equip from '../edit-equipment';
-import { api } from '@/config/lib/axios';
-import { toast } from '@/utils/toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlectrionIcon } from './AlectrionIcon';
 
