@@ -10,7 +10,6 @@ import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '@/config/lib/axios';
 import { User, LoginResponse } from '../../constants/user';
-import { Workstation } from '@/constants/equipment';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 
 type FormValues = {
@@ -54,9 +53,6 @@ export default function OrderServiceregisterForm({
 
   const [selectedSender, setSelectedSender] = useState<User>();
   const [selectedReceiver, setSelectedReceiver] = useState<User>();
-
-  const [workstations, setWorkstations] = useState<Workstation[]>([]);
-  const [selectedWorkstation, setSelectedWorkstation] = useState<Workstation>();
 
   const take = 5;
 
@@ -115,17 +111,6 @@ export default function OrderServiceregisterForm({
     });
   };
 
-  const getWorkstations = async () => {
-    apiSchedula
-      .get<Workstation[]>('workstations')
-      .then((response) => {
-        setWorkstations(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const handleSearch = debounce(async (str) => {
     if (str !== '') {
       fetchEquipments(str);
@@ -137,13 +122,6 @@ export default function OrderServiceregisterForm({
       (equipment) => equipment.tippingNumber === event?.value
     );
     setSelectedEquipment(selectedOption);
-  };
-
-  const handleWorkstationChange = (event: SingleValue<ISelectOption>) => {
-    const selectedOption = workstations.find(
-      (workstation) => workstation.name === event?.value
-    );
-    setSelectedWorkstation(selectedOption);
   };
 
   const fetchSender = async (username: string) => {
@@ -187,7 +165,6 @@ export default function OrderServiceregisterForm({
 
   useEffect(() => {
     setLocalStorage();
-    getWorkstations();
     fetchReceiver();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -227,7 +204,7 @@ export default function OrderServiceregisterForm({
   });
 
   return (
-    <form id="equipment-register-form" onSubmit={onSubmit}>
+    <form id="order-service-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <GridItem
           gridColumn="1 / span 3"
@@ -363,7 +340,11 @@ export default function OrderServiceregisterForm({
         <Button variant="secondary" onClick={onClose}>
           Cancelar
         </Button>
-        <Button type="submit" form="equipment-register-form" variant="primary">
+        <Button
+          type="submit"
+          form="order-service-register-form"
+          variant="primary"
+        >
           Confirmar
         </Button>
       </Flex>
