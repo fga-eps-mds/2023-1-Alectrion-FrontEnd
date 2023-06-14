@@ -86,7 +86,9 @@ export default function EquipmentForm({
         `${watchModel} ${watchProcessor} ${watchRam_size} ${watchStorageType} ${watchStorageAmount}`
       );
     } else if (watchType === 'Monitor') {
-      setDescription(`${watchType} ${watchModel} ${watchScreenType} ${watchScreenSize}`);
+      setDescription(
+        `${watchType} ${watchModel} ${watchScreenType} ${watchScreenSize}`
+      );
     } else if (watchType === 'Estabilizador' || watchType === 'Nobreak') {
       setDescription(`${watchType} ${watchModel} ${watchPower}`);
     } else {
