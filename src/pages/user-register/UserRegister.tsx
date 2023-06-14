@@ -40,7 +40,6 @@
 
           const { username,email,name,cpf,role,jobFunction,password,confirmPassword, ...rest } =
             formData;
-          console.log(payload)
           const payload = {
             username: username.toString,
             email: email.toString,
@@ -53,7 +52,6 @@
           };
 
           const response = await api.post('user/create', payload);
-          console.log(formData)
           if (response.status === 200) {
             toast.success('Usuário cadastrado com sucesso', 'Sucesso');
             setRefreshRequest(!refreshRequest);
