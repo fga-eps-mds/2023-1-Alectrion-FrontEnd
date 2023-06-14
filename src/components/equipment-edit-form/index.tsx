@@ -4,7 +4,6 @@ import { AxiosResponse } from 'axios';
 import { useEffect } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
-import { ControlledSelect } from '../form-fields/controlled-select';
 
 import {
   ESTADOS_EQUIPAMENTO,
@@ -16,28 +15,29 @@ import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
+import { NewControlledSelect } from '../form-fields/new-controlled-select';
 
 export type EditEquipFormValues = {
   tippingNumber: string;
   serialNumber: string;
-  type: { value: string; label: string };
+  type: string;
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: { value: number; label: string };
+  initialUseDate: number;
   acquisitionDate: Date;
   screenSize?: string;
   invoiceNumber: string;
   power?: string;
-  screenType?: { value: string; label: string };
+  screenType?: string;
   processor?: string;
-  storageType?: { value: string; label: string };
+  storageType?: string;
   storageAmount?: string;
   brandName: string;
   acquisition: { name: string };
   unitId?: string;
   ram_size?: string;
-  estado: { value: string; label: string };
+  estado: string;
 };
 
 interface EditEquipmentFormProps {
@@ -114,11 +114,11 @@ export default function EquipmentEditForm({
       const dateString = formatDate(acquisitionDate);
 
       const payload = {
-        type: type.value,
-        estado: estado.value,
-        initialUseDate: initialUseDate.value,
-        storageType: storageType?.value,
-        screenType: screenType?.value,
+        type,
+        estado,
+        initialUseDate,
+        storageType,
+        screenType,
         acquisitionDate: dateString,
         ...rest,
       };
@@ -141,13 +141,15 @@ export default function EquipmentEditForm({
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        <ControlledSelect
+        <NewControlledSelect
+          label="Tipo de equipamento"
           control={control}
           name="type"
           id="type"
           options={TIPOS_EQUIPAMENTO}
-          placeholder="Selecione uma opção"
-          label="Tipo de equipamento"
+          placeholder="Tipo"
+          cursor="pointer"
+          defaultValue={equip?.type}
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 
@@ -215,7 +217,7 @@ export default function EquipmentEditForm({
           })}
         />
 
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="estado"
           id="estado"
@@ -223,9 +225,11 @@ export default function EquipmentEditForm({
           placeholder="Selecione uma opção"
           label="Estado do equipamento"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+          cursor="pointer"
+          defaultValue={equip?.estado}
         />
 
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="initialUseDate"
           id="initialUseDate"
@@ -233,6 +237,8 @@ export default function EquipmentEditForm({
           placeholder="Selecione uma opção"
           label="Ano da aquisição"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+          cursor="pointer"
+          defaultValue={equip?.initialUseDate}
         />
 
         <Datepicker
@@ -242,7 +248,7 @@ export default function EquipmentEditForm({
           control={control}
         />
 
-        {watchType.value === 'CPU' && (
+        {watchType === 'CPU' && (
           <>
             <Input
               label="Qtd. Memória RAM (GB)"
@@ -256,7 +262,7 @@ export default function EquipmentEditForm({
               })}
             />
 
-            <ControlledSelect
+            <NewControlledSelect
               control={control}
               name="storageType"
               id="storageType"
@@ -264,6 +270,8 @@ export default function EquipmentEditForm({
               placeholder="Selecione uma opção"
               label="Tipo de armazenamento"
               rules={{ required: 'Campo obrigatório' }}
+              cursor="pointer"
+              defaultValue={equip?.storageType}
             />
 
             <Input
@@ -288,9 +296,9 @@ export default function EquipmentEditForm({
           </>
         )}
 
-        {watchType.value === 'Monitor' && (
+        {watchType === 'Monitor' && (
           <>
-            <ControlledSelect
+            <NewControlledSelect
               control={control}
               name="screenType"
               id="screenType"
@@ -298,6 +306,8 @@ export default function EquipmentEditForm({
               placeholder="Selecione uma opção"
               label="Tipo de monitor"
               rules={{ required: 'Campo obrigatório' }}
+              cursor="pointer"
+              defaultValue={equip?.screenType}
             />
 
             <Input
@@ -310,8 +320,7 @@ export default function EquipmentEditForm({
           </>
         )}
 
-        {(watchType.value === 'Estabilizador' ||
-          watchType.value === 'Nobreak') && (
+        {(watchType === 'Estabilizador' || watchType === 'Nobreak') && (
           <Input
             label="Potência (VA)"
             errors={errors.storageAmount}

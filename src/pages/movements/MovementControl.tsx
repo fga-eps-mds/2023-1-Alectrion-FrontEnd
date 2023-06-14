@@ -31,11 +31,11 @@ import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
 import { MovimentacaoTipoMap, TIPOS_MOVIMENTACAO } from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
-import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
+import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 
 interface ISelectOption {
   label: string;
@@ -204,10 +204,10 @@ function MovementsTable() {
       }
 
       const formattedFormData = {
-        type: type?.value,
-        inChargeName: inChargeName?.value,
-        destinationId: destinationId?.value,
-        equipmentId: equipmentId?.value,
+        type,
+        inChargeName,
+        destinationId,
+        equipmentId,
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
         searchTerm: search,
@@ -320,7 +320,8 @@ function MovementsTable() {
               >
                 <form id="movement-filter" style={{ width: '100%' }}>
                   <Flex width="100%" gap="5px" mb="15px">
-                    <ControlledSelect
+                    <NewControlledSelect
+                      filterStyle
                       control={control}
                       name="type"
                       id="type"
@@ -332,7 +333,8 @@ function MovementsTable() {
                       fontWeight="semibold"
                       size="sm"
                     />
-                    <ControlledSelect
+                    <NewControlledSelect
+                      filterStyle
                       control={control}
                       name="destinationId"
                       id="destinationId"

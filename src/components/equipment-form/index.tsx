@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
-import { ControlledSelect } from '../form-fields/controlled-select';
 
 import {
   ESTADOS_EQUIPAMENTO,
@@ -14,28 +13,29 @@ import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
+import { NewControlledSelect } from '../form-fields/new-controlled-select';
 
 type FormValues = {
   tippingNumber: string;
   serialNumber: string;
-  type: { value: string; label: string };
+  type: string;
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: { value: string; label: string };
+  initialUseDate: string;
   acquisitionDate: string;
   screenSize?: string;
   invoiceNumber: string;
   power?: string;
-  screenType?: { value: string; label: string };
+  screenType?: string;
   processor?: string;
-  storageType?: { value: string; label: string };
+  storageType?: string;
   storageAmount?: string;
   brandName: string;
   acquisitionName: string;
   unitId?: string;
   ram_size?: string;
-  estado: { value: string; label: string };
+  estado: string;
 };
 
 interface EquipmentFormProps {
@@ -58,7 +58,7 @@ export default function EquipmentForm({
     formState: { errors },
   } = useForm<FormValues>();
 
-  const watchType = watch('type', { label: '', value: '' });
+  const watchType = watch('type');
 
   useEffect(() => {
     resetField('power');
@@ -86,11 +86,11 @@ export default function EquipmentForm({
         formData;
 
       const payload = {
-        type: type.value,
-        estado: estado.value,
-        initialUseDate: initialUseDate.value,
-        storageType: storageType?.value,
-        screenType: screenType?.value,
+        type,
+        estado,
+        initialUseDate,
+        storageType,
+        screenType,
         ...rest,
       };
 
@@ -121,7 +121,7 @@ export default function EquipmentForm({
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="type"
           id="type"
@@ -194,7 +194,7 @@ export default function EquipmentForm({
           })}
         />
 
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="estado"
           id="estado"
@@ -204,7 +204,7 @@ export default function EquipmentForm({
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="initialUseDate"
           id="initialUseDate"
@@ -220,7 +220,7 @@ export default function EquipmentForm({
           required
           control={control}
         />
-        {watchType.value === 'CPU' && (
+        {watchType === 'CPU' && (
           <>
             <Input
               label="Qtd. Memória RAM (GB)"
@@ -233,7 +233,7 @@ export default function EquipmentForm({
                 },
               })}
             />
-            <ControlledSelect
+            <NewControlledSelect
               control={control}
               name="storageType"
               id="storageType"
@@ -263,9 +263,9 @@ export default function EquipmentForm({
           </>
         )}
 
-        {watchType.value === 'Monitor' && (
+        {watchType === 'Monitor' && (
           <>
-            <ControlledSelect
+            <NewControlledSelect
               control={control}
               name="screenType"
               id="screenType"
@@ -284,8 +284,7 @@ export default function EquipmentForm({
           </>
         )}
 
-        {(watchType.value === 'Estabilizador' ||
-          watchType.value === 'Nobreak') && (
+        {(watchType === 'Estabilizador' || watchType === 'Nobreak') && (
           <Input
             label="Potência (VA)"
             errors={errors.storageAmount}

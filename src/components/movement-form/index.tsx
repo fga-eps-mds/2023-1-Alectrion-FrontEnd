@@ -19,11 +19,11 @@ import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
 import { TIPOS_LOTACAO } from '@/constants/movements';
 import { api } from '../../config/lib/axios';
-import { ControlledSelect } from '../form-fields/controlled-select';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
+import { NewControlledSelect } from '../form-fields/new-controlled-select';
 
 interface equipamentData {
   tippingNumber: string;
@@ -66,13 +66,13 @@ type FormValues = {
   date: Date;
   userId: string;
   equipments: string[];
-  type: SelectOption<number>;
+  type: number;
   inChargeName: string;
   inChargeRole: string;
   chiefName: string;
   chiefRole: string;
   description?: string;
-  destination: SelectOption<string>;
+  destination: string;
 };
 
 interface MovementFormProps {
@@ -108,7 +108,7 @@ export default function MovementForm({
   const [units, setUnits] = useState<unit[]>([]);
   const [materiais, setMateriais] = useState<string[]>([]);
   const date = new Date();
-  const selectedUnit: SelectOption<string> = watch('destination');
+  const selectedUnit: string = watch('destination');
 
   const onCloseCallback = useCallback(() => {
     setMateriais([]);
@@ -130,14 +130,14 @@ export default function MovementForm({
         userid: '162fba6b-1a56-4960-abf1-43be5b753697',
         date: formData.date,
         userId: formData.userId,
-        type: formData.type?.value,
+        type: formData.type,
         inchargename: formData.inChargeName,
         inchargerole: formData.inChargeRole,
         chiefname: formData.chiefName,
         chiefrole: formData.chiefRole,
         equipments: materiais || [],
         description: formData?.description || null,
-        destination: formData?.destination?.value || '',
+        destination: formData?.destination || '',
       };
 
       const response = await api.post('equipment/createMovement', body);
@@ -245,13 +245,13 @@ export default function MovementForm({
 
       <form id="movement-register-form" onSubmit={onSubmit}>
         <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6}>
-          <ControlledSelect
+          <NewControlledSelect
             control={control}
             name="destination"
             id="destination"
             options={units.map((unit) => ({
-              value: unit?.id,
-              label: unit?.name,
+              value: unit?.id ?? '',
+              label: unit?.name ?? '',
             }))}
             placeholder="Selecione uma opção"
             label="Posto de trabalho"
@@ -260,16 +260,15 @@ export default function MovementForm({
 
           <Input
             label="Cidade"
-            errors={errors.destination?.value}
+            errors={errors.destination}
             isDisabled
             defaultValue={
-              units.find(
-                (iterationUnit) => iterationUnit.id === selectedUnit?.value
-              )?.localization
+              units.find((iterationUnit) => iterationUnit.id === selectedUnit)
+                ?.localization
             }
           />
 
-          <ControlledSelect
+          <NewControlledSelect
             control={control}
             name="type"
             id="type"

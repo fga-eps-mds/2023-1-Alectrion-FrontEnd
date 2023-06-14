@@ -17,30 +17,8 @@ function transformFields(data: any) {
   if (!data) return;
   const transformedData = { ...data };
 
-  transformedData.type = {
-    label: transformedData.type,
-    value: transformedData.type,
-  };
-
-  transformedData.estado = {
-    label: transformedData.estado,
-    value: transformedData.estado,
-  };
-
-  transformedData.storageType = {
-    label: transformedData.storageType,
-    value: transformedData.storageType,
-  };
-
-  transformedData.screenType = {
-    label: transformedData.screenType,
-    value: transformedData.screenType,
-  };
-
-  transformedData.initialUseDate = {
-    label: transformedData.initialUseDate.split('-')[0],
-    value: transformedData.initialUseDate.split('-')[0],
-  };
+  transformedData.initialUseDate =
+    transformedData.initialUseDate.split('-')?.[0];
 
   transformedData.brandName = transformedData.brand.name;
 

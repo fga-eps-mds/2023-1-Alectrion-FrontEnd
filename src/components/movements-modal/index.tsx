@@ -36,19 +36,6 @@ type FormValues = {
   inChargeRole: string;
 };
 
-function mapMovementType(type: number): string {
-  switch (type) {
-    case 1:
-      return 'Borrow';
-    case 2:
-      return 'Dismiss';
-    case 3:
-      return 'Ownership';
-    default:
-      return '';
-  }
-}
-
 export function MovementsModal({
   isOpen,
   onClose,
