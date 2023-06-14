@@ -127,6 +127,11 @@ function OrderServiceTable() {
 
   const watchFilter = watch();
 
+  const handleEdit = (orderService: OrderServiceData) => {
+    if (orderService) setSelectedOrderServiceToEdit(orderService);
+    onOpenEditOrderService();
+  };
+
   const handleFilterChange = () => {
     const { type, dateOS, status, unit } = watchFilter;
 
@@ -210,11 +215,6 @@ function OrderServiceTable() {
     } catch (error) {
       setNextOrderServices([]);
     }
-  };
-
-  const handleEdit = (orderService: OrderServiceData) => {
-    if (orderService) setSelectedOrderServiceToEdit(orderService);
-    onOpenEditOrderService();
   };
 
   useEffect(() => {
