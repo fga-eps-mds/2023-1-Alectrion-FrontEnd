@@ -19,43 +19,44 @@ import { useState, useEffect } from 'react';
 import { User, LoginResponse } from '../../constants/user';
 import { api, apiSchedula } from '@/config/lib/axios';
 import { Modal } from '@/components/modal';
+import { useAuth } from '@/contexts/AuthContext';
 // import  Equip  from '../edit-equipment';
 
 export function View() {
+  const { signOut, user } = useAuth();
+//   const [userData, setUserData] = useState<User | undefined>(undefined);
 
-  const [userData, setUserData] = useState<User | undefined>(undefined);
+  // const loggedUser = JSON.parse(
+  //   localStorage.getItem('@App:user') || ''
+  // ) as unknown as LoginResponse;
 
-  const loggedUser = JSON.parse(
-    localStorage.getItem('@App:user') || ''
-  ) as unknown as LoginResponse;
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<CredentialUser>();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<CredentialUser>();
+  // const getUserData = async () => {
+  //   try {
+  //     const token = localStorage.getItem('@App:token') || '';
+  //     const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
+  //       params: { userName: loggedUser?.name },
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     setUserData(data[0]);
+  //   } catch (error) {
+  //     setUserData(undefined);
+  //     console.error(error);
+  //   }
+  // };
 
-  const getUserData = async () => {
-    try {
-      const token = localStorage.getItem('@App:token') || '';
-      const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
-        params: { userName: loggedUser?.name },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setUserData(data[0]);
-    } catch (error) {
-      setUserData(undefined);
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    console.log(loggedUser)
-    getUserData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   console.log(loggedUser)
+  //   getUserData();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
 
   return (
@@ -65,7 +66,8 @@ export function View() {
       h="100vh"
       color="white"
     >
-      <form onSubmit={handleSubmit(() => { })} aria-label="form">
+      <form  aria-label="form">
+        {/* onSubmit={handleSubmit(() => { })} */}
         <Box
           bg="white"
           borderRadius="10px"
@@ -75,7 +77,7 @@ export function View() {
           paddingX="20"
         >
           <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
-            Usuário
+          {user?.name}
           </Text>
           <Flex>
             <Box flex="1" pr="2">
@@ -88,19 +90,7 @@ export function View() {
               >
                 Nome
               </Text>
-              <Input size="lg" fontSize="lg" placeholder={` ${userData?.username}`} readOnly />
-            </Box>
-            <Box flex="1" pl="2">
-              <Text
-                pl="5px"
-                pb="8px"
-                color="#605555"
-                fontWeight="medium"
-                fontSize="lg"
-              >
-                Sobrenome
-              </Text>
-              <Input size="lg" fontSize="lg" placeholder="Sobrenome" readOnly />
+              <Input size="lg" fontSize="lg" placeholder={` ${user?.name}`} readOnly />
             </Box>
           </Flex>
           <Box>
@@ -114,7 +104,7 @@ export function View() {
             >
               E-mail
             </Text>
-            <Input size="lg" fontSize="lg" placeholder="E-mail da pessoa" readOnly />
+            <Input size="lg" fontSize="lg" placeholder={` ${user?.email}`} readOnly />
           </Box>
           <Divider my="4" borderColor="gray.300" />
           <Flex>
@@ -131,8 +121,8 @@ export function View() {
               <Input
                 size="lg"
                 fontSize="lg"
-                placeholder="Senha atual da pessoa"
-                readOnly
+                placeholder="Digite sua senha atual"
+                
               />
             </Box>
             <Box flex="1" pl="2">
@@ -148,8 +138,7 @@ export function View() {
               <Input
                 size="lg"
                 fontSize="lg"
-                placeholder="Nova senha"
-                readOnly
+                placeholder="Digite sua nova senha"
               />
             </Box>
             <Box mb="20px" flex="1" pl="2">
@@ -165,8 +154,7 @@ export function View() {
               <Input
                 size="lg"
                 fontSize="lg"
-                placeholder="Confirmar senha"
-                readOnly
+                placeholder="Confirme sua nova senha"
               />
             </Box>
           </Flex>
@@ -174,7 +162,6 @@ export function View() {
             <Button
               marginTop="20px"
               mb="120px"
-              type="submit"
               paddingX="24"
               width="20px"
               color="white"
@@ -187,7 +174,6 @@ export function View() {
             <Button
               marginTop="30px"
               mb="120px"
-              type="submit"
               paddingX="24"
               width="20px"
             >
