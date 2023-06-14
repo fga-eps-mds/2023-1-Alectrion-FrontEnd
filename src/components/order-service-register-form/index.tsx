@@ -71,13 +71,13 @@ export default function OrderServiceregisterForm({
       }
     );
     const { token, expireIn, email, name, role } = data;
-    localStorage.setItem(
+    await localStorage.setItem(
       '@App:user',
       JSON.stringify({ token, expireIn, email, name, role })
     );
     localStorage.setItem('@App:token', token);
 
-    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+   api.defaults.headers.common.Authorization = `Bearer ${token}`;
   };
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
@@ -88,6 +88,27 @@ export default function OrderServiceregisterForm({
     };
   };
 
+  const fetchReceiver = async () => {
+    try {
+      const loggedUser = JSON.parse(
+        localStorage.getItem('@App:user') || ''
+      ) as unknown as LoginResponse;
+      const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
+        params: { email: loggedUser.email },
+        headers: {
+          Authorization: `Bearer ${loggedUser.token}`,
+        },
+      });
+      setSelectedReceiver(data[0]);
+    } catch (error) {
+      setSelectedReceiver(undefined);
+      console.error(error);
+    }
+  };
+  const setUserInformations = async () => {
+    await setLocalStorage();
+    await fetchReceiver();
+  }
   const fetchEquipments = async (str: string) => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
@@ -105,8 +126,8 @@ export default function OrderServiceregisterForm({
     value: K
   ): ISelectOption[] => {
     return data?.map((item: T) => {
-      const optionLable = String(item[label]); // Converter para string
-      const optionValue: number | string = String(item[value]); // Converter para string
+      const optionLable = String(item[label]);
+      const optionValue: number | string = String(item[value]);
       return { label: optionLable, value: optionValue };
     });
   };
@@ -140,34 +161,10 @@ export default function OrderServiceregisterForm({
     }
   };
 
-  const fetchReceiver = async () => {
-    try {
-      const loggedUser = JSON.parse(
-        localStorage.getItem('@App:user') || ''
-      ) as unknown as LoginResponse;
-      const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
-        params: { email: loggedUser.email },
-        headers: {
-          Authorization: `Bearer ${loggedUser.token}`,
-        },
-      });
-      setSelectedReceiver(data[0]);
-    } catch (error) {
-      setSelectedReceiver(undefined);
-      console.error(error);
-    }
-  };
-
   const handleSenderSearch = debounce(async (e) => {
     const str = e.target.value;
     fetchSender(str);
   }, 500);
-
-  useEffect(() => {
-    setLocalStorage();
-    fetchReceiver();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
@@ -202,6 +199,10 @@ export default function OrderServiceregisterForm({
       toast.error(message);
     }
   });
+  
+  useEffect(() => {
+    setUserInformations();
+  }, [])
 
   return (
     <form id="order-service-register-form" onSubmit={onSubmit}>
