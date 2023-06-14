@@ -8,7 +8,7 @@ import { Select, SingleValue } from 'chakra-react-select';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
-import { api, apiSchedula } from '@/config/lib/axios';
+import { api } from '@/config/lib/axios';
 import { User, LoginResponse } from '../../constants/user';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 
@@ -292,7 +292,7 @@ export default function OrderServiceregisterForm({
         <GridItem>
           <Input
             label="Nome de usuário"
-            placeholder="username"
+            placeholder="Nome de usuário"
             errors={undefined}
             onChange={handleSenderSearch}
           />
