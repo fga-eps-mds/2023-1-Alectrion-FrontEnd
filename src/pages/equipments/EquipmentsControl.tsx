@@ -125,8 +125,8 @@ function EquipmentTable() {
     const dataFormatted = {
       type,
       updatedAt: formattedDate,
-      situation: situation?.value,
-      unit: unit?.value,
+      situation,
+      unit,
       search,
     };
 
