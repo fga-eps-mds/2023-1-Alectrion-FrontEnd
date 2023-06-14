@@ -14,7 +14,8 @@
  */
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Divider, Flex, Input, Text } from '@chakra-ui/react';
-import { AxiosResponse } from 'axios';
+import { Alert, AlertIcon } from '@chakra-ui/react';
+import axios, { AxiosResponse } from 'axios';
 import { useState, useEffect } from 'react';
 import { User, LoginResponse } from '../../constants/user';
 import { api, apiSchedula } from '@/config/lib/axios';
@@ -24,40 +25,46 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export function View() {
   const { signOut, user } = useAuth();
-//   const [userData, setUserData] = useState<User | undefined>(undefined);
+  const [dados, setDados] = useState({
+    userId: '',
+    senhaAtual: '',
+    novaSenha: '',
+    repetirNovaSenha: '',
+    error: ''
+  });
 
-  // const loggedUser = JSON.parse(
-  //   localStorage.getItem('@App:user') || ''
-  // ) as unknown as LoginResponse;
+  const atualizarSenha = () => {
+    const {senhaAtual, novaSenha, repetirNovaSenha, userId} = dados;
 
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<CredentialUser>();
+    if (novaSenha !== repetirNovaSenha) {
+      // MUDAR ALERT PARA O CHAKRA UI
+      alert('A nova senha e a repetição da nova senha devem ser iguais.');
+      return;
+    }
 
-  // const getUserData = async () => {
-  //   try {
-  //     const token = localStorage.getItem('@App:token') || '';
-  //     const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
-  //       params: { userName: loggedUser?.name },
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     setUserData(data[0]);
-  //   } catch (error) {
-  //     setUserData(undefined);
-  //     console.error(error);
-  //   }
-  // };
+    axios
+    // MUDAR A ROTA PARA FAZER O DEPLOY
+      .put('http://localhost:4000/user/updatePassword', {
+        //NAO TENHO CERTEZA SE O USERID É O TOKEN
+        userId:  user?.token,
+        password: novaSenha
+      })
+      .then(response => {
+        console.log('Senha atualizada com sucesso:', response.data);
+        // RECARREGAR A PAGINA DEPOSI DE ATUALIZAR A SENHA
+      })
+      .catch(error => {
+        console.error('Erro ao atualizar senha:', error);
+      });
+  };
 
-  // useEffect(() => {
-  //   console.log(loggedUser)
-  //   getUserData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDados(prevDados => ({
+      ...prevDados,
+      [name]: value
+    }));
+  };
 
   return (
     <Center
@@ -67,7 +74,6 @@ export function View() {
       color="white"
     >
       <form  aria-label="form">
-        {/* onSubmit={handleSubmit(() => { })} */}
         <Box
           bg="white"
           borderRadius="10px"
@@ -90,7 +96,7 @@ export function View() {
               >
                 Nome
               </Text>
-              <Input size="lg" fontSize="lg" placeholder={` ${user?.name}`} readOnly />
+              <Input size="lg" fontSize="lg" placeholder={` ${user?.name}`} readOnly name='nome'/>
             </Box>
           </Flex>
           <Box>
@@ -122,7 +128,9 @@ export function View() {
                 size="lg"
                 fontSize="lg"
                 placeholder="Digite sua senha atual"
-                
+                name='senhaAtual'
+                onChange={handleChange}
+                value={dados.senhaAtual}
               />
             </Box>
             <Box flex="1" pl="2">
@@ -139,6 +147,9 @@ export function View() {
                 size="lg"
                 fontSize="lg"
                 placeholder="Digite sua nova senha"
+                name='novaSenha'
+                onChange={handleChange}
+                value={dados.novaSenha}
               />
             </Box>
             <Box mb="20px" flex="1" pl="2">
@@ -155,6 +166,9 @@ export function View() {
                 size="lg"
                 fontSize="lg"
                 placeholder="Confirme sua nova senha"
+                name='repetirNovaSenha'
+                onChange={handleChange}
+                value={dados.repetirNovaSenha}
               />
             </Box>
           </Flex>
@@ -170,12 +184,12 @@ export function View() {
             >
               Voltar
             </Button>
-
             <Button
               marginTop="30px"
               mb="120px"
               paddingX="24"
               width="20px"
+              onClick={atualizarSenha}
             >
               Salvar
             </Button>
