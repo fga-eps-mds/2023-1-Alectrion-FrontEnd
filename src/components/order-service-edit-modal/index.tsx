@@ -14,34 +14,6 @@ type OrderServiceEditModalProps = {
 function transformFields(data: any) {
   if (!data) return;
   const transformedData = { ...data };
-  transformedData.tippingNumber = data.equipment.tippingNumber;
-  transformedData.serialNumber = data.equipment.serialNumber;
-  transformedData.type = data.equipment.type;
-  transformedData.brandName = data.equipment.brand.name
-  transformedData.model = data.equipment.model
-  transformedData.situacao = data.equipment.situacao;
-  transformedData.model = data.equipment.model;
-
-  transformedData.status = {
-    label: transformedData.status,
-    value: transformedData.status,
-  };
-
-  transformedData.workstation = {
-    label: transformedData.workstation,
-    value: transformedData.workstation,
-  };
-
-  transformedData.senderFunctionalNumber = {
-    label: transformedData.senderFunctionalNumber,
-    value: transformedData.senderFunctionalNumber,
-  };
-
-  transformedData.receiverFunctionalNumber = {
-    label: transformedData.receiverFunctionalNumber,
-    value: transformedData.receiverFunctionalNumber,
-  };
-
   return transformedData;
 }
 

@@ -2,7 +2,7 @@
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Box, Button, Flex, Grid, GridItem, Select } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem, Select, useSafeLayoutEffect } from '@chakra-ui/react';
 import { error } from 'console';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
@@ -12,19 +12,18 @@ import { TextArea } from '../form-fields/text-area';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
 import { SingleValue } from 'chakra-react-select';
 import { OSSTATUS } from '@/constants/orderservice';
+import { User } from '@/constants/user';
 
 type EditOrderServiceFormValues = {
   equipment: EquipmentData;
-  senderUserName: { value: string; label: string };
+  senderUserName: string;
   senderName: string;
-  senderRole: string;
   senderPhone?: string;
 
-  receiverUserName: { value: string; label: string };
+  receiverUserName: string;
   receiverName: string;
   receiverRole: string;
-  workstation: { value: string; label: string };
-  city: string;
+
   status: string;
   date: string;
   description: string;
@@ -50,6 +49,8 @@ export default function OrderServiceEditForm({
 }: EditOrderServiceFormProps) {
   const take = 5;
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
+  const [receiver, setReceiver] = useState<User>()
+  const [sender, setSender] = useState<User>()
 
   const fetchEquipments = async (str: string) => {
     try {
@@ -80,10 +81,15 @@ export default function OrderServiceEditForm({
     defaultValues: orderService,
   });
 
+  const watchStatus = watch('status')
+
+  
+
+ 
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>(
     orderService.equipment
   );
-
+    console.log(orderService)
   const debounce = <T extends (...args: any[]) => void>(
     fn: T,
     ms = 400
@@ -114,20 +120,14 @@ export default function OrderServiceEditForm({
     try {
       const {
         receiverName,
-        senderRole,
         receiverRole,
-        workstation,
-        city,
         senderPhone,
         description,
         ...rest
       } = formData;
       const payload = {
         receiverName: receiverName.valueOf,
-        senderRole: senderRole.valueOf,
         receiverRole: receiverRole.valueOf,
-        workstation: workstation.value,
-        city: city.valueOf,
         senderPhone: senderPhone?.valueOf,
         description: description.valueOf,
         ...rest,
@@ -153,9 +153,12 @@ export default function OrderServiceEditForm({
   });
 
   useEffect(() => {
-    console.log('EQUIPAMENTO CARREGADO', selectedEquipment);
-  }, [selectedEquipment]);
+    
+  }, [watchStatus]);
 
+  useEffect(() => {
+    
+  }, [])
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
@@ -243,7 +246,11 @@ export default function OrderServiceEditForm({
         </GridItem>
         <GridItem>
           <strong>Username entregador</strong>
-          <Select {...register('senderUserName')} />
+          <Input
+            errors={errors.senderUserName}
+            type="text"
+            {...register('senderUserName')}
+          />
         </GridItem>
         <GridItem>
           <strong>Responsável pela Entrega</strong>
@@ -255,16 +262,12 @@ export default function OrderServiceEditForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Atribuição do Entregador</strong>
+          <strong>Username recebedor</strong>
           <Input
-            errors={errors.senderRole}
+            errors={errors.receiverUserName}
             type="text"
-            {...register('senderRole')}
+            {...register('receiverName')}
           />
-        </GridItem>
-        <GridItem>
-          <strong>Username entregador</strong>
-          <Select {...register('senderUserName')} />
         </GridItem>
         <GridItem gridColumn="1 / span 1">
           <strong>Responsável pelo recebimento:</strong>
@@ -283,8 +286,8 @@ export default function OrderServiceEditForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Telefone:</strong>
           <Input
+            label='Telefone'
             errors={errors.senderPhone}
             type="text"
             placeholder="Telefone"
@@ -301,6 +304,17 @@ export default function OrderServiceEditForm({
             })}
           />
         </GridItem>
+        {watchStatus === 'Concluído' && (<GridItem>
+          <Input
+            label='Técnico Responsável'
+            errors={errors.receiverName}
+            type="text"
+            placeholder="Nome do Recebedor"
+            {...register('receiverName', {
+              required: 'Campo Obrigatório'
+            })}
+          />
+        </GridItem>)}
         </Grid>
         <Flex gap="9rem" mt="2rem" mb="2rem" justify="center">
           <GridItem>
