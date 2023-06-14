@@ -8,26 +8,32 @@ import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
-import { Workstation } from '@/constants/equipment';
-import { TippingNumberSearchBar, debounce } from '../search-bar';
 import { TextArea } from '../form-fields/text-area';
+import { NewControlledSelect } from '../form-fields/new-controlled-select';
+import { SingleValue } from 'chakra-react-select';
+import { OSSTATUS } from '@/constants/orderservice';
 
 type EditOrderServiceFormValues = {
   equipment: EquipmentData;
-  senderFunctionalNumber: { value: string; label: string };
+  senderUserName: { value: string; label: string };
   senderName: string;
   senderRole: string;
   senderPhone?: string;
 
-  receiverFunctionalNumber: { value: string; label: string };
+  receiverUserName: { value: string; label: string };
   receiverName: string;
   receiverRole: string;
   workstation: { value: string; label: string };
   city: string;
-
+  status: string;
   date: string;
   description: string;
 };
+
+interface ISelectOption {
+  label: string;
+  value: number | string;
+}
 
 interface EditOrderServiceFormProps {
   onClose: () => void;
@@ -42,6 +48,26 @@ export default function OrderServiceEditForm({
   refreshRequest,
   setRefreshRequest,
 }: EditOrderServiceFormProps) {
+  const take = 5;
+  const [equipments, setEquipments] = useState<EquipmentData[]>([]);
+
+  const fetchEquipments = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/find?searchTipping=${str}&take=${take}`
+      );
+      setEquipments(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  const handleChange = (event: SingleValue<ISelectOption>) => {
+    const selectedOption = equipments.find(
+      (equipment) => equipment.tippingNumber === event?.value
+    );
+    setSelectedEquipment(selectedOption as EquipmentData);
+  };
   const {
     control,
     register,
@@ -58,6 +84,32 @@ export default function OrderServiceEditForm({
     orderService.equipment
   );
 
+  const debounce = <T extends (...args: any[]) => void>(
+    fn: T,
+    ms = 400
+  ) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return function (this: any, ...args: Parameters<T>) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    };
+  };
+  const formattedOptions = <T, K extends keyof T>(
+    data: T[],
+    label: K,
+    value: K
+  ): ISelectOption[] => {
+    return data?.map((item: T) => {
+      const optionLable = String(item[label]);
+      const optionValue: number | string = String(item[value]);
+      return { label: optionLable, value: optionValue };
+    });
+  };
+  const handleSearch = debounce(async (str) => {
+    if (str !== '') {
+      fetchEquipments(str);
+    }
+  }, 500);
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const {
@@ -86,7 +138,7 @@ export default function OrderServiceEditForm({
         payload
       );
 
-      if (Response.status === 200) {
+      if (response.status === 200) {
         toast.success('Ordem de serviço editada com sucesso', 'Sucesso');
         setRefreshRequest(!setRefreshRequest);
         if (onClose) {
@@ -110,18 +162,20 @@ export default function OrderServiceEditForm({
         <GridItem gridColumn="1 / span 2">
           <strong>Nº de tombamento:</strong>
           <Box flex="1">
-            <TippingNumberSearchBar
-              equip={selectedEquipment}
-              changeEquipment={setSelectedEquipment}
-            />
+          <Input
+            defaultValue={selectedEquipment.tippingNumber}
+            errors={errors.equipment?.tippingNumber}
+            isReadOnly
+          />
           </Box>
         </GridItem>
         <GridItem>
           <strong>Status:</strong>
           <Box flex="1">
-            <TippingNumberSearchBar
-              equip={selectedEquipment}
-              changeEquipment={setSelectedEquipment}
+            <NewControlledSelect
+              name='status'
+              control={control}
+              options={OSSTATUS}
             />
           </Box>
         </GridItem>
@@ -140,7 +194,6 @@ export default function OrderServiceEditForm({
           <Input
             errors={undefined}
             type="text"
-            placeholder="Nº de série"
             defaultValue={selectedEquipment.serialNumber}
             readOnly
           />
@@ -189,8 +242,8 @@ export default function OrderServiceEditForm({
           <strong>Ordem de Serviço:</strong>
         </GridItem>
         <GridItem>
-          <strong>Funcional</strong>
-          <Select {...register('senderFunctionalNumber')} />
+          <strong>Username entregador</strong>
+          <Select {...register('senderUserName')} />
         </GridItem>
         <GridItem>
           <strong>Responsável pela Entrega</strong>
@@ -209,7 +262,11 @@ export default function OrderServiceEditForm({
             {...register('senderRole')}
           />
         </GridItem>
-        <GridItem gridColumn="1 / span 2">
+        <GridItem>
+          <strong>Username entregador</strong>
+          <Select {...register('senderUserName')} />
+        </GridItem>
+        <GridItem gridColumn="1 / span 1">
           <strong>Responsável pelo recebimento:</strong>
           <Input
             errors={errors.receiverName}
@@ -224,14 +281,6 @@ export default function OrderServiceEditForm({
             type="text"
             {...register('receiverRole')}
           />
-        </GridItem>
-        <GridItem>
-          <strong>Posto de trabalho</strong>
-          <Select {...register('workstation')} />
-        </GridItem>
-        <GridItem>
-          <strong>Cidade</strong>
-          <Input errors={errors.city} type="text" {...register('city')} />
         </GridItem>
         <GridItem>
           <strong>Telefone:</strong>
@@ -252,15 +301,19 @@ export default function OrderServiceEditForm({
             })}
           />
         </GridItem>
-        <GridItem>
-          <Button variant="secondary" onClick={onClose}>
-            Cancelar
-          </Button>
-        </GridItem>
-        <GridItem>
-          <Button type="submit">Salvar</Button>
-        </GridItem>
-      </Grid>
+        </Grid>
+        <Flex gap="9rem" mt="2rem" mb="2rem" justify="center">
+          <GridItem>
+            <Button variant="secondary" onClick={onClose}>
+              Cancelar
+            </Button>
+          </GridItem>
+          <GridItem>
+            <Button type="submit" variant="primary">
+              Salvar
+            </Button>
+          </GridItem>
+        </Flex>
     </form>
   );
 }
