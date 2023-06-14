@@ -138,6 +138,7 @@ export default function EquipmentViewForm({
         />
 
         <Input
+          disabled
           label="Tipo de aquisição"
           errors={errors.acquisition?.name}
           {...register('acquisition.name')}

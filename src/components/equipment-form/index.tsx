@@ -58,7 +58,7 @@ export default function EquipmentForm({
   } = useForm<FormValues>();
 
   const [description, setDescription] = useState('');
-  
+
   const watchType = watch('type', '');
   const watchModel = watch('model', '');
   const watchPower = watch('power', '');
@@ -86,16 +86,11 @@ export default function EquipmentForm({
         `${watchModel} ${watchProcessor} ${watchRam_size} ${watchStorageType} ${watchStorageAmount}`
       );
     } else if (watchType === 'Monitor') {
-      setDescription(
-        `${watchModel} ${watchScreenType} ${watchScreenSize}`
-      );
-    } else if (
-      watchType === 'Estabilizador' ||
-      watchType === 'Nobreak'
-    ) {
-      setDescription(`${watchModel} ${watchPower}`);
+      setDescription(`${watchType} ${watchModel} ${watchScreenType} ${watchScreenSize}`);
+    } else if (watchType === 'Estabilizador' || watchType === 'Nobreak') {
+      setDescription(`${watchType} ${watchModel} ${watchPower}`);
     } else {
-      setDescription(`${watchModel}`);
+      setDescription(`${watchType} ${watchModel}`);
     }
 
     setValue('description', description);
@@ -320,10 +315,10 @@ export default function EquipmentForm({
             label="Descrição"
             errors={errors.description}
             maxChars={255}
-            defaultValue={description}
             {...register('description', {
               maxLength: 255,
             })}
+            defaultValue={description}
           />
         </GridItem>
       </Grid>
