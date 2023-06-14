@@ -110,8 +110,6 @@ export default function MovementForm({
   const date = new Date();
   const selectedUnit: string = watch('destination');
 
-  console.log('selectedUnit => ', selectedUnit);
-
   const onCloseCallback = useCallback(() => {
     setMateriais([]);
     onClose();
@@ -182,7 +180,6 @@ export default function MovementForm({
         `equipment/getAllUnits`
       );
       setUnits(data);
-      console.log(data);
     } catch (error) {
       setUnits([]);
       toast.error('Nenhuma movimentação registrada');
@@ -253,8 +250,8 @@ export default function MovementForm({
             name="destination"
             id="destination"
             options={units.map((unit) => ({
-              value: unit?.id !== undefined ? unit?.id : '',
-              label: unit?.name !== undefined ? unit?.name : '',
+              value: unit?.id ?? '',
+              label: unit?.name ?? '',
             }))}
             placeholder="Selecione uma opção"
             label="Posto de trabalho"
