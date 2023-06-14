@@ -237,7 +237,8 @@ export default function MovementForm({
           </Text>
           <Text>
             <>
-              <strong>Total Equipamentos:</strong> {1}
+            <strong>Total Equipamentos:</strong>{' '}
+              {selectedEquipmentToMovement?.length}
             </>
           </Text>
         </Flex>
