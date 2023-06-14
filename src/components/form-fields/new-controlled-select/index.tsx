@@ -10,6 +10,7 @@ import {
   Select,
   SelectProps,
 } from '@chakra-ui/react';
+import { theme } from '@/styles/theme';
 
 type ControlledSelectProps<FormValues extends FieldValues> =
   UseControllerProps<FormValues> &
@@ -62,6 +63,9 @@ export function NewControlledSelect<FormValues extends FieldValues>({
         fontWeight="normal"
         disabled={props.isReadOnly}
         placeholder={props.isReadOnly ? field.value : props.placeholder}
+        _focusVisible={{
+          border: filterStyle ? 'none' : `2px solid ${theme.colors.primary}`,
+        }}
       >
         {options?.map((option) => (
           <option key={option.value} value={option.value}>
