@@ -146,7 +146,7 @@ export function MovementsPDF({
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={styles.page} orientation="landscape">
         <View style={styles.header}>
           <Image src="/PoliciaCivilLogo.jpeg" style={styles.logo} />
           <Text style={styles.caption}>ESTADO DE GOIÁS</Text>
@@ -163,17 +163,19 @@ export function MovementsPDF({
           <Text style={styles.subtitle}>
             Sistema de Controle Interno da DSTI
           </Text>
-          <Text style={styles.locale}>26ª Delegacia de Polícia de Goiânia</Text>
+          <Text style={styles.locale}>
+            {title === 'Baixa' ? '' : '26ª Delegacia de Polícia de Goiânia'}
+          </Text>
         </View>
         <Text style={styles.caption}>
           Data da emissão: {formattedEmissionDate}
         </Text>
         <View style={styles.tableHeader}>
           <Text style={{ ...styles.columnHeader, maxWidth: 24 }}>Item</Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>
+          <Text style={{ ...styles.columnHeader, minWidth: 80, maxWidth: 100 }}>
             Tombamento
           </Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 32 }}>Tipo</Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>Tipo</Text>
           <Text style={{ ...styles.columnHeader, maxWidth: 40 }}>Marca</Text>
           <Text style={styles.columnHeader}>Descrição</Text>
           <Text style={styles.columnHeader}>
@@ -184,10 +186,10 @@ export function MovementsPDF({
         {equipments?.map((equipment, index) => (
           <View style={styles.tableRow} key={equipment?.id}>
             <Text style={{ ...styles.rowData, maxWidth: 24 }}>{index + 1}</Text>
-            <Text style={{ ...styles.rowData, maxWidth: 56 }}>
+            <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
               {equipment?.tippingNumber}
             </Text>
-            <Text style={{ ...styles.rowData, maxWidth: 32 }}>
+            <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
               {equipment?.type}
             </Text>
             <Text style={{ ...styles.rowData, maxWidth: 40 }}>
