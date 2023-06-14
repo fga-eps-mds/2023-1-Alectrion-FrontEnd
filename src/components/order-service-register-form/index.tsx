@@ -26,6 +26,11 @@ type FormValues = {
   receiverFunctionalNumber: string;
   description: string;
   senderPhone: string;
+  serialNumber?: string;
+  type?: string;
+  situacao?: string;
+  model?: string;
+  unitId?: string;
 };
 
 interface ISelectOption {
@@ -56,7 +61,6 @@ export default function OrderServiceregisterForm({
   const take = 5;
 
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -66,19 +70,19 @@ export default function OrderServiceregisterForm({
     const { data }: AxiosResponse<LoginResponse> = await api.post(
       '/user/login',
       {
-        username: "admin",
-        password: "admin1234"
+        username: 'admin',
+        password: 'admin1234',
       }
-    )
-    const { token, expireIn, email, name, role } = data
+    );
+    const { token, expireIn, email, name, role } = data;
     localStorage.setItem(
       '@App:user',
       JSON.stringify({ token, expireIn, email, name, role })
-    )
-    localStorage.setItem('@App:token', token)
+    );
+    localStorage.setItem('@App:token', token);
 
-    api.defaults.headers.common.Authorization = 'Bearer ' + token
-  }
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  };
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
@@ -246,8 +250,8 @@ export default function OrderServiceregisterForm({
           </Box>
         </GridItem>
         <GridItem>
-          <strong>Tipo:</strong>
           <Input
+            label="Tipo"
             errors={undefined}
             type="text"
             placeholder="Tipo"
@@ -256,8 +260,8 @@ export default function OrderServiceregisterForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Nº de série:</strong>
           <Input
+            label="Nº de série:"
             errors={undefined}
             type="text"
             placeholder="Nº de série"
@@ -266,8 +270,8 @@ export default function OrderServiceregisterForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Marca:</strong>
           <Input
+            label="Marca"
             errors={undefined}
             type="text"
             placeholder="Marca"
@@ -276,8 +280,8 @@ export default function OrderServiceregisterForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Modelo:</strong>
           <Input
+            label="Modelo"
             errors={undefined}
             type="text"
             placeholder="Modelo"
@@ -286,8 +290,8 @@ export default function OrderServiceregisterForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Lotação:</strong>
           <Input
+            label="Lotação"
             errors={undefined}
             type="text"
             placeholder="Lotação"
@@ -296,8 +300,8 @@ export default function OrderServiceregisterForm({
           />
         </GridItem>
         <GridItem>
-          <strong>Situação:</strong>
           <Input
+            label="Situação"
             errors={undefined}
             type="text"
             placeholder="Situação"
@@ -309,58 +313,30 @@ export default function OrderServiceregisterForm({
           <strong> Ordem de serviço</strong>
         </GridItem>
         <GridItem>
-          <strong>Usuário(Funcional Temporária):</strong>
           <Input
+            label="Nome de usuário"
             placeholder="username"
             errors={undefined}
             onChange={handleSenderSearch}
           />
         </GridItem>
         <GridItem>
-          <strong>Responsável pela entrega:</strong>
           <Input
+            label="Responsável pela entrega"
             errors={errors.senderName}
             placeholder="Responsável"
             type="text"
             defaultValue={selectedSender?.name}
-          />
-        </GridItem>
-        <GridItem>
-          <strong>Atribuição:</strong>
-          <Input
-            errors={undefined}
-            placeholder="Atribuição"
-            name="atribuicao"
-            defaultValue={selectedSender?.job}
-          />
-        </GridItem>
-
-        <GridItem>
-          <strong>Posto de trabalho:</strong>
-          <Select
-            placeholder="Posto de trabalho"
-            name="Posto de trabalho"
-            options={formattedOptions(workstations, 'name', 'name')}
-            onChange={handleWorkstationChange}
-          />
-        </GridItem>
-        <GridItem>
-          <strong>Cidade:</strong>
-          <Input
-            placeholder="Cidade"
-            errors={undefined}
-            defaultValue={selectedWorkstation?.city.name || ''}
             readOnly
           />
         </GridItem>
         <GridItem>
-          <strong>Telefone:</strong>
           <Input
+            label="Telefone"
             placeholder="Telefone"
             type="text"
             errors={errors.senderPhone}
             {...register('senderPhone', {
-              required: 'Campo obrigatório',
               maxLength: 15,
               pattern: {
                 value: /^[0-9]+$/,
@@ -373,7 +349,7 @@ export default function OrderServiceregisterForm({
         <GridItem gridColumn="1 / span 3">
           <TextArea
             errors={errors.description}
-            label="Descrição:"
+            label="Defeito do Equipamento"
             maxChars={255}
             {...register('description', {
               maxLength: 255,

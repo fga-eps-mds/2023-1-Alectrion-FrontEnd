@@ -171,7 +171,7 @@ function OrderServiceTable() {
       .then((response) => {
         setWorkstations(formattedWorkstations(response.data));
       })
-      .catch((error) => { });
+      .catch((error) => {});
   };
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
@@ -200,7 +200,8 @@ function OrderServiceTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService?take=${limit}&skip=${offset + limit
+        `equipment/listOrderService?take=${limit}&skip=${
+          offset + limit
         }&${filter}`
       );
       setNextOrderServices(data);
