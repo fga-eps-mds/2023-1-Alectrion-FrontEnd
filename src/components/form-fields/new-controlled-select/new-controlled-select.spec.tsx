@@ -1,6 +1,4 @@
-import { render, screen } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { renderHook } from '@testing-library/react-hooks';
+import { render, screen, renderHook } from '@testing-library/react';
 import { useForm } from 'react-hook-form';
 import { NewControlledSelect } from './index';
 
