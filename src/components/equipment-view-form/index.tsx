@@ -82,7 +82,7 @@ export default function EquipmentViewForm({
       const response = await api.delete('equipment/deleteEquipment', {
         params: { id: equipment.id },
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('@App:token')}`,
+          Authorization: `Bearer ${localStorage.getItem('@alectrion:token')}`,
         },
       });
 
