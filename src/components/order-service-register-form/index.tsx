@@ -62,24 +62,6 @@ export default function OrderServiceregisterForm({
     formState: { errors },
   } = useForm<FormValues>();
 
-  const setLocalStorage = async () => {
-    const { data }: AxiosResponse<LoginResponse> = await api.post(
-      '/user/login',
-      {
-        username: 'admin',
-        password: 'admin1234',
-      }
-    );
-    const { token, expireIn, email, name, role } = data;
-    await localStorage.setItem(
-      '@App:user',
-      JSON.stringify({ token, expireIn, email, name, role })
-    );
-    localStorage.setItem('@App:token', token);
-
-   api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  };
-
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     return function (this: any, ...args: Parameters<T>) {
@@ -91,7 +73,7 @@ export default function OrderServiceregisterForm({
   const fetchReceiver = async () => {
     try {
       const loggedUser = JSON.parse(
-        localStorage.getItem('@App:user') || ''
+        localStorage.getItem('@alectrion:user') || ''
       ) as unknown as LoginResponse;
       const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
         params: { email: loggedUser.email },
@@ -105,10 +87,7 @@ export default function OrderServiceregisterForm({
       console.error(error);
     }
   };
-  const setUserInformations = async () => {
-    await setLocalStorage();
-    await fetchReceiver();
-  }
+
   const fetchEquipments = async (str: string) => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
@@ -147,7 +126,7 @@ export default function OrderServiceregisterForm({
 
   const fetchSender = async (username: string) => {
     try {
-      const token = localStorage.getItem('@App:token') || '';
+      const token = localStorage.getItem('@alectrion:token') || '';
       const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
         params: { userName: username },
         headers: {
@@ -199,10 +178,10 @@ export default function OrderServiceregisterForm({
       toast.error(message);
     }
   });
-  
+
   useEffect(() => {
-    setUserInformations();
-  }, [])
+    fetchReceiver();
+  }, []);
 
   return (
     <form id="order-service-register-form" onSubmit={onSubmit}>
