@@ -1,31 +1,35 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Box, Button, Flex, Grid, GridItem, Select, useSafeLayoutEffect } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Select,
+  useSafeLayoutEffect,
+} from '@chakra-ui/react';
 import { error } from 'console';
+import { SingleValue } from 'chakra-react-select';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { TextArea } from '../form-fields/text-area';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
-import { SingleValue } from 'chakra-react-select';
 import { OSSTATUS } from '@/constants/orderservice';
 import { User } from '@/constants/user';
 
 type EditOrderServiceFormValues = {
   equipment: EquipmentData;
-  senderUserName: string;
   senderName: string;
-  senderPhone?: string;
-
-  receiverUserName: string;
-  receiverName: string;
-  receiverRole: string;
+  senderFunctionalNumber: string;
+  processoSEI: string;
 
   status: string;
-  date: string;
   description: string;
 };
 
@@ -49,8 +53,8 @@ export default function OrderServiceEditForm({
 }: EditOrderServiceFormProps) {
   const take = 5;
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
-  const [receiver, setReceiver] = useState<User>()
-  const [sender, setSender] = useState<User>()
+  const [receiver, setReceiver] = useState<User>();
+  const [sender, setSender] = useState<User>();
 
   const fetchEquipments = async (str: string) => {
     try {
@@ -81,19 +85,13 @@ export default function OrderServiceEditForm({
     defaultValues: orderService,
   });
 
-  const watchStatus = watch('status')
+  const watchStatus = watch('status');
 
-  
-
- 
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>(
     orderService.equipment
   );
-    console.log(orderService)
-  const debounce = <T extends (...args: any[]) => void>(
-    fn: T,
-    ms = 400
-  ) => {
+  console.log(orderService);
+  const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     return function (this: any, ...args: Parameters<T>) {
       clearTimeout(timeoutId);
@@ -119,16 +117,16 @@ export default function OrderServiceEditForm({
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const {
-        receiverName,
-        receiverRole,
-        senderPhone,
+        senderName,
+        processoSEI,
+        senderFunctionalNumber,
         description,
         ...rest
       } = formData;
       const payload = {
-        receiverName: receiverName.valueOf,
-        receiverRole: receiverRole.valueOf,
-        senderPhone: senderPhone?.valueOf,
+        senderName: senderFunctionalNumber.valueOf,
+        senderFunctionalNumber: senderFunctionalNumber.valueOf,
+        processoSEI: processoSEI.valueOf,
         description: description.valueOf,
         ...rest,
       };
@@ -152,31 +150,27 @@ export default function OrderServiceEditForm({
     }
   });
 
-  useEffect(() => {
-    
-  }, [watchStatus]);
+  useEffect(() => {}, [watchStatus]);
 
-  useEffect(() => {
-    
-  }, [])
+  useEffect(() => {}, []);
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <GridItem gridColumn="1 / span 2">
           <strong>Nº de tombamento:</strong>
           <Box flex="1">
-          <Input
-            defaultValue={selectedEquipment.tippingNumber}
-            errors={errors.equipment?.tippingNumber}
-            isReadOnly
-          />
+            <Input
+              defaultValue={selectedEquipment.tippingNumber}
+              errors={errors.equipment?.tippingNumber}
+              isReadOnly
+            />
           </Box>
         </GridItem>
         <GridItem>
           <strong>Status:</strong>
           <Box flex="1">
             <NewControlledSelect
-              name='status'
+              name="status"
               control={control}
               options={OSSTATUS}
             />
@@ -245,53 +239,35 @@ export default function OrderServiceEditForm({
           <strong>Ordem de Serviço:</strong>
         </GridItem>
         <GridItem>
-          <strong>Username entregador</strong>
+          <strong>responsavel pela entrega</strong>
           <Input
-            errors={errors.senderUserName}
+            errors={errors.senderName}
             type="text"
-            {...register('senderUserName')}
+            {...register('senderName')}
           />
         </GridItem>
         <GridItem>
-          <strong>Responsável pela Entrega</strong>
+          <strong> FUncional/CPf </strong>
           <Input
-            errors={errors.receiverName}
+            label="funcional"
+            errors={errors.senderFunctionalNumber}
             type="text"
-            placeholder="Nome do Recebedor"
-            {...register('receiverName')}
+            placeholder="Funcional/CPF"
+            {...register('senderFunctionalNumber')}
           />
         </GridItem>
         <GridItem>
-          <strong>Username recebedor</strong>
+          <strong>Processo SEI</strong>
           <Input
-            errors={errors.receiverUserName}
+            label="Processo SEI"
+            errors={errors.processoSEI}
             type="text"
-            {...register('receiverName')}
-          />
-        </GridItem>
-        <GridItem gridColumn="1 / span 1">
-          <strong>Responsável pelo recebimento:</strong>
-          <Input
-            errors={errors.receiverName}
-            type="text"
-            {...register('receiverName')}
-          />
-        </GridItem>
-        <GridItem>
-          <strong>Atribuição do Recebedor</strong>
-          <Input
-            errors={errors.receiverRole}
-            type="text"
-            {...register('receiverRole')}
-          />
-        </GridItem>
-        <GridItem>
-          <Input
-            label='Telefone'
-            errors={errors.senderPhone}
-            type="text"
-            placeholder="Telefone"
-            {...register('senderPhone')}
+            placeholder="Processo SEI"
+            {...register('processoSEI', {
+              required: true,
+              minLength: 15,
+              maxLength: 15,
+            })}
           />
         </GridItem>
         <GridItem gridColumn="1 / span 3">
@@ -304,30 +280,32 @@ export default function OrderServiceEditForm({
             })}
           />
         </GridItem>
-        {watchStatus === 'Concluído' && (<GridItem>
-          <Input
-            label='Técnico Responsável'
-            errors={errors.receiverName}
-            type="text"
-            placeholder="Nome do Recebedor"
-            {...register('receiverName', {
-              required: 'Campo Obrigatório'
-            })}
-          />
-        </GridItem>)}
-        </Grid>
-        <Flex gap="9rem" mt="2rem" mb="2rem" justify="center">
+        {watchStatus === 'Concluído' && (
           <GridItem>
-            <Button variant="secondary" onClick={onClose}>
-              Cancelar
-            </Button>
+            <Input
+              label="Técnico Responsável"
+              errors={errors.senderName}
+              type="text"
+              placeholder="Nome do Recebedor"
+              {...register('senderName', {
+                required: 'Campo Obrigatório',
+              })}
+            />
           </GridItem>
-          <GridItem>
-            <Button type="submit" variant="primary">
-              Salvar
-            </Button>
-          </GridItem>
-        </Flex>
+        )}
+      </Grid>
+      <Flex gap="9rem" mt="2rem" mb="2rem" justify="center">
+        <GridItem>
+          <Button variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+        </GridItem>
+        <GridItem>
+          <Button type="submit" variant="primary">
+            Salvar
+          </Button>
+        </GridItem>
+      </Flex>
     </form>
   );
 }
