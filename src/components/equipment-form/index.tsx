@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useEffect } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
 
@@ -22,10 +22,8 @@ type FormValues = {
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: string;
   acquisitionDate: string;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
   screenType?: string;
   processor?: string;
@@ -55,10 +53,21 @@ export default function EquipmentForm({
     handleSubmit,
     watch,
     resetField,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
-  const watchType = watch('type');
+  const [description, setDescription] = useState('');
+
+  const watchType = watch('type', '');
+  const watchModel = watch('model', '');
+  const watchPower = watch('power', '');
+  const watchScreenSize = watch('screenSize', '');
+  const watchScreenType = watch('screenType', '');
+  const watchRam_size = watch('ram_size', '');
+  const watchProcessor = watch('processor', '');
+  const watchStorageType = watch('storageType', '');
+  const watchStorageAmount = watch('storageAmount', '');
 
   useEffect(() => {
     resetField('power');
@@ -68,7 +77,38 @@ export default function EquipmentForm({
     resetField('processor');
     resetField('storageType');
     resetField('storageAmount');
+    resetField('description');
   }, [resetField, watchType]);
+
+  useEffect(() => {
+    if (watchType === 'CPU') {
+      setDescription(
+        `${watchModel} ${watchProcessor} ${watchRam_size} ${watchStorageType} ${watchStorageAmount}`
+      );
+    } else if (watchType === 'Monitor') {
+      setDescription(
+        `${watchType} ${watchModel} ${watchScreenType} ${watchScreenSize}`
+      );
+    } else if (watchType === 'Estabilizador' || watchType === 'Nobreak') {
+      setDescription(`${watchType} ${watchModel} ${watchPower}`);
+    } else {
+      setDescription(`${watchType} ${watchModel}`);
+    }
+
+    setValue('description', description);
+  }, [
+    setValue,
+    description,
+    watchType,
+    watchModel,
+    watchPower,
+    watchScreenSize,
+    watchScreenType,
+    watchRam_size,
+    watchProcessor,
+    watchStorageType,
+    watchStorageAmount,
+  ]);
 
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
@@ -82,13 +122,11 @@ export default function EquipmentForm({
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { type, estado, initialUseDate, storageType, screenType, ...rest } =
-        formData;
+      const { type, estado, storageType, screenType, ...rest } = formData;
 
       const payload = {
         type,
         estado,
-        initialUseDate,
         storageType,
         screenType,
         ...rest,
@@ -173,19 +211,6 @@ export default function EquipmentForm({
         />
 
         <Input
-          label="Nº da Nota Fiscal"
-          errors={errors.invoiceNumber}
-          {...register('invoiceNumber', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
-        />
-
-        <Input
           label="Tipo de aquisição"
           errors={errors.acquisitionName}
           {...register('acquisitionName', {
@@ -201,16 +226,6 @@ export default function EquipmentForm({
           options={ESTADOS_EQUIPAMENTO}
           placeholder="Selecione uma opção"
           label="Estado do equipamento"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-        />
-
-        <NewControlledSelect
-          control={control}
-          name="initialUseDate"
-          id="initialUseDate"
-          options={listOfYears}
-          placeholder="Selecione uma opção"
-          label="Ano da aquisição"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 
@@ -305,6 +320,7 @@ export default function EquipmentForm({
             {...register('description', {
               maxLength: 255,
             })}
+            defaultValue={description}
           />
         </GridItem>
       </Grid>

@@ -50,9 +50,7 @@ export interface EquipmentData {
   model: string;
   acquisitionDate: Date;
   description?: string;
-  initialUseDate: Date;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
   screenType?: string;
   processor?: string;

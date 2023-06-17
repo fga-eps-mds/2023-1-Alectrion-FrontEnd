@@ -197,7 +197,7 @@ export function MovementsPDF({
             <Text style={{ ...styles.rowData, maxWidth: 40 }}>
               {equipment?.brand?.name}
             </Text>
-            <Text style={styles.rowData}>-</Text>
+            <Text style={styles.rowData}>{equipment?.description}</Text>
             <Text style={styles.rowData}>{destination}</Text>
             <Text style={{ ...styles.rowData, maxWidth: 56 }}>
               {formattedMovementDate}

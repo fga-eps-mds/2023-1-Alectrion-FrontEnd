@@ -15,9 +15,6 @@ function transformFields(data: any) {
   if (!data) return;
   const transformedData = { ...data };
 
-  transformedData.initialUseDate =
-    transformedData.initialUseDate?.split('-')?.[0];
-
   transformedData.brandName = transformedData.brand.name;
 
   transformedData.acquisitionDate = new Date(transformedData.acquisitionDate);

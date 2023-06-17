@@ -20,10 +20,8 @@ export type ViewEquipFormValues = {
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: string;
   acquisitionDate: Date;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
   screenType?: string;
   processor?: string;
@@ -141,14 +139,6 @@ export default function EquipmentViewForm({
 
         <Input
           disabled
-          label="Nº da Nota Fiscal"
-          errors={errors.invoiceNumber}
-          {...register('invoiceNumber')}
-          isReadOnly
-        />
-
-        <Input
-          disabled
           label="Tipo de aquisição"
           errors={errors.acquisition?.name}
           {...register('acquisition.name')}
@@ -163,16 +153,6 @@ export default function EquipmentViewForm({
           label="Estado do equipamento"
           isReadOnly
           defaultValue={equipment.estado}
-        />
-
-        <NewControlledSelect
-          control={control}
-          name="initialUseDate"
-          id="initialUseDate"
-          placeholder="Selecione uma opção"
-          label="Ano da aquisição"
-          isReadOnly
-          defaultValue={equipment.initialUseDate}
         />
 
         <Datepicker

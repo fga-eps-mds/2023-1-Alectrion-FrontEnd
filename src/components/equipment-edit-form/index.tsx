@@ -24,10 +24,8 @@ export type EditEquipFormValues = {
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: number;
   acquisitionDate: Date;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
   screenType?: string;
   processor?: string;
@@ -103,7 +101,6 @@ export default function EquipmentEditForm({
       const {
         type,
         estado,
-        initialUseDate,
         storageType,
         screenType,
         acquisitionDate,
@@ -116,7 +113,6 @@ export default function EquipmentEditForm({
       const payload = {
         type,
         estado,
-        initialUseDate,
         storageType,
         screenType,
         acquisitionDate: dateString,
@@ -196,19 +192,6 @@ export default function EquipmentEditForm({
         />
 
         <Input
-          label="Nº da Nota Fiscal"
-          errors={errors.invoiceNumber}
-          {...register('invoiceNumber', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
-        />
-
-        <Input
           label="Tipo de aquisição"
           errors={errors.acquisition?.name}
           {...register('acquisition.name', {
@@ -227,18 +210,6 @@ export default function EquipmentEditForm({
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
           cursor="pointer"
           defaultValue={equip?.estado}
-        />
-
-        <NewControlledSelect
-          control={control}
-          name="initialUseDate"
-          id="initialUseDate"
-          options={listOfYears}
-          placeholder="Selecione uma opção"
-          label="Ano da aquisição"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-          cursor="pointer"
-          defaultValue={equip?.initialUseDate}
         />
 
         <Datepicker
