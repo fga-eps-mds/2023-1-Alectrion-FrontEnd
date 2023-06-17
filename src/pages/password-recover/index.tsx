@@ -18,7 +18,12 @@ import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
 import { Modal } from '@/components/modal';
 import { api } from '../../config/lib/axios';
 import { AxiosResponse } from 'axios';
+import { toast } from '@/utils/toast';
 
+type Response = {
+    message: string, 
+    user: any
+}
 
 export function PasswordRecover() {
     const [isLoading, setIsLoading] = useState(false);
@@ -34,18 +39,26 @@ export function PasswordRecover() {
     formState: { errors },
     } = useForm<CredentialUserPasswordRecover>();
 
-    const onSubmit: SubmitHandler<CredentialUserPasswordRecover> = async (email) => {
+    const onSubmit = handleSubmit(async (formData) => {
     setIsLoading(true);
-        const payload = {
-            email: email
-        }
-
-        const { data } = await api.get(
-            `user/recover`
+        const payload: CredentialUserPasswordRecover = formData
+        
+        console.log(payload)
+        const  resp = await api.get(
+            `user/recover`,{
+                params: payload
+            } 
         );    
+        if(resp.status == 200) {
+            toast.success(resp.data.message)
+        }
+        else {
+            toast.error(resp.data.message)
+        }
         setIsLoading(false);
         setEmailSent('Enviar e-mail novamente')
-    };
+    
+    });
 
     return (
     <Flex
@@ -54,7 +67,7 @@ export function PasswordRecover() {
         h="100vh"
         color="white"
     >
-        <form onSubmit={handleSubmit(onSubmit)} aria-label="form">
+        <form  aria-label="form" onSubmit={onSubmit}>
         <Box
             height="100%"
             width="100vw"
@@ -73,11 +86,13 @@ export function PasswordRecover() {
             display="flex"
             flexDir="column"
             >
-            <Text mb="3%" color="black" fontWeight="semibold" fontSize="4xl">
+            <Text mb="3%" color="black" fontWeight="medium" fontSize="4xl">
                 Recuperar
+                <Text>
                 Senha
+                </Text>
             </Text>
-            <Box mb="7%">
+            <Box mb="7%" >
                 <Text
                 pl="5px"
                 pb="8px"
@@ -112,7 +127,11 @@ export function PasswordRecover() {
                 </Button>
             </Center>
             <Center>
-                <Button variant="secondary" >
+                <Button 
+                variant="link" 
+                color="#239875" 
+                type = "submit"
+                >
                 Voltar
                 </Button>
             </Center>
