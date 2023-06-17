@@ -31,6 +31,7 @@ export function Router() {
 
       {/* ROTAS PUBLICAS */}
       <Route path="/login" element={<Login />} />
+      <Route path="/pass-recover" element={<PasswordRecover/>}/>
       <Route
         path="/movements"
         element={

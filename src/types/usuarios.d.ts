@@ -50,3 +50,7 @@ interface CredentialUserPayload {
   username: string;
   password: string;
 }
+
+interface CredentialUserPasswordRecover {
+  email: string;
+}
