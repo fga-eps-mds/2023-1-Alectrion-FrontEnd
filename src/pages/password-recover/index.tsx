@@ -20,10 +20,6 @@ import { api } from '../../config/lib/axios';
 import { AxiosResponse } from 'axios';
 import { toast } from '@/utils/toast';
 
-type Response = {
-    message: string, 
-    user: any
-}
 
 export function PasswordRecover() {
     const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +37,8 @@ export function PasswordRecover() {
 
     const onSubmit = handleSubmit(async (formData) => {
     setIsLoading(true);
+    try {
+
         const payload: CredentialUserPasswordRecover = formData
         
         console.log(payload)
@@ -48,16 +46,18 @@ export function PasswordRecover() {
             `user/recover`,{
                 params: payload
             } 
-        );    
+            );    
         if(resp.status == 200) {
             toast.success(resp.data.message)
         }
-        else {
-            toast.error(resp.data.message)
-        }
+        setIsLoading(false);
+
+    } catch (error : any) {
+        console.log(error.request)
+        toast.error(JSON.parse(error.request.response).error)
         setIsLoading(false);
         setEmailSent('Enviar e-mail novamente')
-    
+    }
     });
 
     return (
