@@ -26,8 +26,8 @@ import { User } from '@/constants/user';
 type EditOrderServiceFormValues = {
   equipment: EquipmentData;
   senderName: string;
-  senderFunctionalNumber: string;
-  processoSEI: string;
+  senderDocument: string;
+  seiProcess: string;
 
   status: string;
   description: string;
@@ -118,15 +118,15 @@ export default function OrderServiceEditForm({
     try {
       const {
         senderName,
-        processoSEI,
-        senderFunctionalNumber,
+        seiProcess,
+        senderDocument,
         description,
         ...rest
       } = formData;
       const payload = {
-        senderName: senderFunctionalNumber.valueOf,
-        senderFunctionalNumber: senderFunctionalNumber.valueOf,
-        processoSEI: processoSEI.valueOf,
+        senderName: senderName.valueOf,
+        senderDocument: senderDocument.valueOf,
+        seiProcess: seiProcess.valueOf,
         description: description.valueOf,
         ...rest,
       };
@@ -250,20 +250,20 @@ export default function OrderServiceEditForm({
         <GridItem>
           <strong> Funcional/CPF </strong>
           <Input
-            errors={errors.senderFunctionalNumber}
+            errors={errors.senderDocument}
             type="text"
             placeholder="Funcional/CPF"
-            {...register('senderFunctionalNumber')}
+            {...register('senderDocument')}
             readOnly
           />
         </GridItem>
         <GridItem>
           <strong>Processo SEI</strong>
           <Input
-            errors={errors.processoSEI}
+            errors={errors.seiProcess}
             type="text"
             placeholder="Processo SEI"
-            {...register('processoSEI', {
+            {...register('seiProcess', {
               required: true,
               minLength: 15,
               maxLength: 15,
