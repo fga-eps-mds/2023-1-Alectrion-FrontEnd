@@ -17,6 +17,7 @@ import { RequireAuth } from './require-auth';
 import { UserRegister } from '@/pages/user-register/UserRegister';
 import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 import { View } from '@/pages/view';
+import { ChangePassword } from '@/pages/changePassword';
 
 export function Router() {
   return (
@@ -66,10 +67,10 @@ export function Router() {
           </RequireAuth>} />
 
       <Route
-        path="/view"
+        path="/changePassword"
         element={
           <RequireAuth>
-            <View />
+            <ChangePassword />
           </RequireAuth>
         }
       />

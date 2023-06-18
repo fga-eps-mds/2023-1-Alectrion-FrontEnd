@@ -23,7 +23,7 @@ import { Modal } from '@/components/modal';
 import { useAuth } from '@/contexts/AuthContext';
 // import  Equip  from '../edit-equipment';
 
-export function View() {
+export function ChangePassword() {
   const { signOut, user } = useAuth();
   const [dados, setDados] = useState({
     userId: '',
@@ -83,7 +83,7 @@ export function View() {
           paddingX="20"
         >
           <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
-          {user?.name}
+          Alterar senha
           </Text>
           <Flex>
             <Box flex="1" pr="2">
@@ -94,25 +94,45 @@ export function View() {
                 fontWeight="medium"
                 fontSize="lg"
               >
-                Nome
+                Senha atual
               </Text>
-              <Input size="lg" fontSize="lg" placeholder={` ${user?.name}`} readOnly name='nome'/>
+              <Input size="lg" fontSize="lg" name='senhaAtual' width='50%'/>
             </Box>
           </Flex>
+          <Flex>
           <Box>
-            <Text
-              pl="5px"
-              pb="8px"
-              color="#605555"
-              fontWeight="medium"
-              fontSize="lg"
-              marginTop="8px"
-            >
-              E-mail
-            </Text>
-            <Input size="lg" fontSize="lg" placeholder={` ${user?.email}`} readOnly />
+              <Text
+                pl="5px"
+                pb="8px"
+                color="#605555"
+                fontWeight="medium"
+                fontSize="lg"
+                marginTop="8px"
+              >
+                Nova senha
+              </Text>
+              <Input size="lg" fontSize="lg" name='novaSenha' width='100%'/>
           </Box>
-          <Divider my="4" borderColor="gray.300" />
+          <Box marginLeft="30px">
+              <Text
+                pl="5px"
+                pb="8px"
+                color="#605555"
+                fontWeight="medium"
+                fontSize="lg"
+                marginTop="8px"
+              >
+                Confirmar senha
+              </Text>
+              <Input size="lg" fontSize="lg" name='confirmarSenha' width='100%'/>
+            </Box>
+          </Flex>     
+            <Text mb="5%" color="#605555" fontWeight="semibold" fontSize="0.7em" marginTop="2%">
+          A senha deve conter letra maiúscula,<br />
+          letra minúscula, número e caractere<br />
+          epecial(@, #, $, %, ...)
+          </Text> 
+          {/* <Divider my="4" borderColor="gray.300" />
           <Flex>
             <Box flex="1" pr="2">
               <Text
@@ -171,10 +191,10 @@ export function View() {
                 value={dados.repetirNovaSenha}
               />
             </Box>
-          </Flex>
+          </Flex> */}
           <Flex justify="space-between">
             <Button
-              marginTop="20px"
+              marginTop="30px"
               mb="120px"
               paddingX="24"
               width="20px"
@@ -189,9 +209,11 @@ export function View() {
               mb="120px"
               paddingX="24"
               width="20px"
+              color="white"
+              bg="black"
               onClick={atualizarSenha}
             >
-              Salvar
+              Alterar senha
             </Button>
           </Flex>
         </Box>
