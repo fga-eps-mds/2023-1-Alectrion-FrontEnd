@@ -239,27 +239,27 @@ export default function OrderServiceEditForm({
           <strong>Ordem de Serviço:</strong>
         </GridItem>
         <GridItem>
-          <strong>responsavel pela entrega</strong>
+          <strong>Responsável pela entrega</strong>
           <Input
             errors={errors.senderName}
             type="text"
             {...register('senderName')}
+            readOnly
           />
         </GridItem>
         <GridItem>
-          <strong> FUncional/CPf </strong>
+          <strong> Funcional/CPF </strong>
           <Input
-            label="funcional"
             errors={errors.senderFunctionalNumber}
             type="text"
             placeholder="Funcional/CPF"
             {...register('senderFunctionalNumber')}
+            readOnly
           />
         </GridItem>
         <GridItem>
           <strong>Processo SEI</strong>
           <Input
-            label="Processo SEI"
             errors={errors.processoSEI}
             type="text"
             placeholder="Processo SEI"
