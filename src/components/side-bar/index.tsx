@@ -73,9 +73,9 @@ export const SideBar = memo(() => {
           fontWeight="bold"
           marginTop="2"
           _hover={{ cursor: 'pointer', color: 'orange.500' }}
-          onClick={() => navigate('/changePassword')}
+          onClick={() => navigate('/view-profile')}
         >
-          Mudar senha
+        {user?.name}
         </Text>
       </Box>
     </Box>

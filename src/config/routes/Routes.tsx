@@ -16,8 +16,8 @@ import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
 import { RequireAuth } from './require-auth';
 import { UserRegister } from '@/pages/user-register/UserRegister';
 import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
-import { View } from '@/pages/view';
-import { ChangePassword } from '@/pages/changePassword';
+import { ChangePassword } from '@/pages/change-password';
+import { ViewProfile } from '@/pages/view-profile/ViewProfileControl';
 
 export function Router() {
   return (
@@ -71,6 +71,14 @@ export function Router() {
         element={
           <RequireAuth>
             <ChangePassword />
+          </RequireAuth>
+        }
+      />
+       <Route
+        path="/view-profile"
+        element={
+          <RequireAuth>
+            <ViewProfile />
           </RequireAuth>
         }
       />
