@@ -17,6 +17,7 @@
     import { Box, Button, Center, Input, Text, Flex, Spacer, Grid, GridItem, Radio, RadioGroup, HStack } from '@chakra-ui/react';
     import { api } from '@/config/lib/axios';
     import { toast } from '@/utils/toast';
+    import { LoginResponse } from '../../constants/user';
 
     export function UserRegister() {
      
@@ -38,7 +39,7 @@
       const onSubmit = handleSubmit(async (formData) => {
         try {
 
-          const { username,email,name,cpf,role,jobFunction,password,confirmPassword, ...rest } =
+          const { username,email,name,cpf,role,jobFunction,password, ...rest } =
             formData;
           const payload = {
             username: username.toString,
@@ -50,8 +51,16 @@
             password: password.toString,
             ...rest,
           };
-
-          const response = await api.post('user/create', payload);
+          console.log('payload', payload)
+          const loggedUser = JSON.parse(
+            localStorage.getItem('@alectrion:user') || ''
+          ) as unknown as LoginResponse;
+          const response = await api.post('user/create', {
+            body: payload,
+            headers: {
+              Authorization: `Bearer ${loggedUser.token}`,
+            }});
+          
           if (response.status === 200) {
             toast.success('Usuário cadastrado com sucesso', 'Sucesso');
             setRefreshRequest(!refreshRequest);
