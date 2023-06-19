@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form';
@@ -25,12 +26,14 @@ import { User } from '@/constants/user';
 
 type EditOrderServiceFormValues = {
   equipment: EquipmentData;
-  senderName: string;
-  senderDocument: string;
+  equipmentId: string;
   seiProcess: string;
-
+  id: string;
   status: string;
   description: string;
+  finishDate: string;
+  senderName?: string;
+  senderDocument?: string;
 };
 
 interface ISelectOption {
@@ -117,18 +120,20 @@ export default function OrderServiceEditForm({
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const {
-        senderName,
+        id,
+        equipmentId,
         seiProcess,
-        senderDocument,
         description,
-        ...rest
+        status,
+        finishDate
       } = formData;
       const payload = {
-        senderName: senderName.valueOf,
-        senderDocument: senderDocument.valueOf,
+        equipmentId: selectedEquipment.id,
         seiProcess: seiProcess.valueOf,
         description: description.valueOf,
-        ...rest,
+        status: status.valueOf,
+        finishDate: new Date().toISOString,
+        id: orderService.id
       };
 
       const response = await api.put(
@@ -160,9 +165,9 @@ export default function OrderServiceEditForm({
           <strong>Nº de tombamento:</strong>
           <Box flex="1">
             <Input
+              errors={undefined}
               defaultValue={selectedEquipment.tippingNumber}
-              errors={errors.equipment?.tippingNumber}
-              isReadOnly
+              readOnly
             />
           </Box>
         </GridItem>
