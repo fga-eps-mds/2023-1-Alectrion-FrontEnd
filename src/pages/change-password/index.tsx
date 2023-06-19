@@ -16,6 +16,9 @@ import { Box, Button, Center, Divider, Flex, Input, Text } from '@chakra-ui/reac
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { toast } from '@/utils/toast';
+import axios, { AxiosResponse } from 'axios';
+import { useEffect } from 'react';
+import { api} from '../../config/lib/axios';
 
 export function ChangePassword() {
   const { signOut, user } = useAuth();
@@ -25,10 +28,40 @@ export function ChangePassword() {
   const atualizarSenha = () => {
     if (newPassword !== confirmPassword) {
       toast.error('As senhas informadas não coincidem. Por favor, verifique e tente novamente.');
+    } else if(user?.role=="consulta") {
+      toast.error('Usuário de consulta, alteração de senha não autorizada.');
     } else {
-      // Lógica para atualizar a senha
+        const data = {
+          // userId: user?.userId,
+          userId: "9e9465bf-0775-46d7-a937-2005a4b3f94f",
+          username: user?.name,
+          password: newPassword,
+        };
+        const apiUrl = 'http://localhost:4000/user/updatePassword';
+     
+        fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+          .then(response => {
+            if (response.ok) {
+              // Lógica de sucesso ao atualizar a senha
+              toast.success('Senha atualizada com sucesso!');
+            } else {
+              // Lógica para lidar com erros na requisição
+              toast.error('Ocorreu um erro ao atualizar a senha. Por favor, tente novamente.');
+            }
+          })
+          .catch(error => {
+            // Lógica para lidar com erros na requisição
+            toast.error('Ocorreu um erro ao atualizar a senha. Por favor, tente novamente.');
+            console.error(error);
+          });
+      }
     }
-  };
       return (
         <form aria-label="form">
           <Center
@@ -150,5 +183,4 @@ export function ChangePassword() {
           </Center>
         </form>
       );
-    }
-    
+    } 
