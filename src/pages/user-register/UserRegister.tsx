@@ -37,27 +37,23 @@
     
       const onSubmit = handleSubmit(async (formData) => {
         try {
-          console.log("Ta show")
-          const { username,email,name,position,profile,password,confirmPassword, ...rest } =
+
+          const { username,email,name,cpf,role,jobFunction,password,confirmPassword, ...rest } =
             formData;
-
-            console.log("formData",formData)
-
+          console.log(payload)
           const payload = {
             username: username.toString,
             email: email.toString,
             name: name.toString,
-            position: position.toString,
-            profile: profile?.toString,
+            cpf: cpf.toString,
+            role: role.toString,
+            jobFunction: jobFunction.toString,
             password: password.toString,
-            confirmPassword: confirmPassword.toString,
             ...rest,
           };
 
-          console.log("payload",payload)
-
           const response = await api.post('user/create', payload);
-    
+          console.log(formData)
           if (response.status === 200) {
             toast.success('Usuário cadastrado com sucesso', 'Sucesso');
             setRefreshRequest(!refreshRequest);
@@ -141,6 +137,10 @@
                 <Text>CPF</Text>
                 <Input 
                   placeholder="Apenas números"   pattern="[0-9]*" title="Por favor, digite apenas números"
+                  {...register('cpf', {
+                    required: 'Campo Obrigatório',
+                    maxLength: 11,
+                  })}
                 />
             </Box>
 
@@ -200,16 +200,28 @@
             </Grid>
             <Box>
               <Center mb={2}>
-                Tipo de cadastro
+                Tipo de Usuário
               </Center>
               <Flex justify="center" mb={4}>
                 <RadioGroup defaultValue="user">
                   <HStack spacing={6}>
-                    <Radio value="user" colorScheme='orange'>
-                      Usuário
-                    </Radio>
-                    <Radio value="admin" colorScheme='orange'>
+                    <Radio value="ADMIN" colorScheme='orange' 
+                    {...register('role', {
+                      required: 'Campo Obrigatório',
+                    })}>
                       Admin
+                    </Radio>
+                    <Radio value="BASICO" colorScheme='orange' 
+                    {...register('role', {
+                      required: 'Campo Obrigatório',
+                    })}>
+                      Básico
+                    </Radio>
+                    <Radio value="CONSULTA" colorScheme='orange' 
+                    {...register('role', {
+                      required: 'Campo Obrigatório',
+                    })}>
+                      Consulta
                     </Radio>
                   </HStack>
                 </RadioGroup>
@@ -221,10 +233,10 @@
                 </Button>
                 <Button
                     type="submit"
-                    form="movement-register-form"
+                    form="user-register-form"
                     variant="primary"
                     width = "100%"
-                >
+                > 
                     Registrar
                 </Button>
                 </Flex>
