@@ -19,6 +19,7 @@ import { Modal } from '@/components/modal';
 import { api } from '../../config/lib/axios';
 import { AxiosResponse } from 'axios';
 import { toast } from '@/utils/toast';
+import { useNavigate } from 'react-router-dom';
 
 
 export function PasswordRecover() {
@@ -59,6 +60,13 @@ export function PasswordRecover() {
         setEmailSent('Enviar e-mail novamente')
     }
     });
+
+    const navigate = useNavigate();
+
+    const handleBack = () => {
+        navigate('/login');
+      };
+
 
     return (
     <Flex
@@ -128,6 +136,7 @@ export function PasswordRecover() {
             </Center>
             <Center>
                 <Button 
+                onClick={handleBack}
                 variant="link" 
                 color="#239875" 
                 type = "submit"
