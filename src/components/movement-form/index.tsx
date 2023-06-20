@@ -276,25 +276,6 @@ export default function MovementForm({
             rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
           />
 
-          <GridItem colSpan={2}>
-            <Input
-              label="Responsável"
-              errors={errors.chiefName}
-              {...register('chiefName', {
-                required: 'Campo Obrigatório',
-                maxLength: 50,
-              })}
-            />
-          </GridItem>
-
-          <Input
-            label="Atribuição"
-            errors={errors.chiefRole}
-            {...register('chiefRole', {
-              required: 'Campo Obrigatório',
-              maxLength: 50,
-            })}
-          />
         </Grid>
 
         <Text fontWeight="bold" mt={10}>
