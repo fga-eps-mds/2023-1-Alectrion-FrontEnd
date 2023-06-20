@@ -35,6 +35,7 @@ type EditOrderServiceFormValues = {
   finishDate: string;
   senderName?: string;
   senderDocument?: string;
+  technicianName?: string;
 };
 
 interface ISelectOption {
@@ -126,7 +127,8 @@ export default function OrderServiceEditForm({
         seiProcess,
         description,
         status,
-        finishDate
+        finishDate,
+        technicianName
       } = formData;
       const currentDate = new Date();
       const formattedDate = format(currentDate, 'yyyy-MM-dd');
@@ -136,11 +138,12 @@ export default function OrderServiceEditForm({
         description,
         status,
         finishDate:formattedDate,
-        id: orderService.id
+        id: orderService.id,
+        technicianName
       };
 
       const response = await api.put(
-        'order-service/updateOrderService',
+        'equipment/updateOrderService',
         payload
       );
 
@@ -288,14 +291,14 @@ export default function OrderServiceEditForm({
             })}
           />
         </GridItem>
-        {watchStatus === 'Concluído' && (
+        {watchStatus === 'CONCLUDED' && (
           <GridItem>
             <Input
               label="Técnico Responsável"
-              errors={errors.senderName}
+              errors={errors.technicianName}
               type="text"
-              placeholder="Nome do Recebedor"
-              {...register('senderName', {
+              placeholder="Nome do Técnico"
+              {...register('technicianName', {
                 required: 'Campo Obrigatório',
               })}
             />

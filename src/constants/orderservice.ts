@@ -29,7 +29,7 @@ export const OSStatusStyleMap = new Map<
 export type TipoOS = 'Em manutenção' | 'Concluído' | 'Garantia';
 
 export const OSSTATUS = [
-  { label: 'Em manutenção', value: 'Em manutenção' },
-  { label: 'Concluído', value: 'Concluído' },
-  { label: 'Garantia', value: 'Garantia' },
+  { label: 'Em manutenção', value: 'MAINTENANCE' },
+  { label: 'Concluído', value: 'CONCLUDED' },
+  { label: 'Garantia', value: 'WARRANTY' },
 ];
