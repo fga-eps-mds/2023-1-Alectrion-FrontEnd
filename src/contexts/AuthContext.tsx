@@ -44,7 +44,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           password,
         });
 
-        const { email, expireIn, job, name, role, token } = response.data;
+        const { email, expireIn, job, name, role, token, cpf, id} = response.data;
 
         localStorage.setItem('@alectrion:token', token);
         localStorage.setItem(
@@ -56,10 +56,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
             token,
             job,
             role,
+            cpf,
+            id
           })
         );
 
-        setUser({ email, expireIn, job, name, role, token });
+        setUser({ email, expireIn, job, name, role, token, cpf, id});
 
         api.defaults.headers.common.Authorization = `Bearer ${token}`;
 

@@ -32,34 +32,23 @@ export function ChangePassword() {
       toast.error('Usuário de consulta, alteração de senha não autorizada.');
     } else {
         const data = {
-          // userId: user?.userId,
-          userId: "9e9465bf-0775-46d7-a937-2005a4b3f94f",
+          userId: user?.id,
           username: user?.name,
           password: newPassword,
         };
-        const apiUrl = 'http://localhost:4000/user/updatePassword';
-     
-        fetch(apiUrl, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+        const apiUrl = '/user/updatePassword';
+        api.put(apiUrl, data)
+        .then(response => {
+          if (response.status === 200) {
+            // Lógica de sucesso ao atualizar a senha
+            toast.success('Senha atualizada com sucesso!');
+          }
         })
-          .then(response => {
-            if (response.ok) {
-              // Lógica de sucesso ao atualizar a senha
-              toast.success('Senha atualizada com sucesso!');
-            } else {
-              // Lógica para lidar com erros na requisição
-              toast.error('Ocorreu um erro ao atualizar a senha. Por favor, tente novamente.');
-            }
-          })
-          .catch(error => {
-            // Lógica para lidar com erros na requisição
-            toast.error('Ocorreu um erro ao atualizar a senha. Por favor, tente novamente.');
-            console.error(error);
-          });
+        .catch(error => {
+          // Lógica para lidar com erros na requisição
+          toast.error('Ocorreu um erro ao atualizar a senha. Por favor, tente novamente.');
+          console.error(error);
+        });
       }
     }
       return (

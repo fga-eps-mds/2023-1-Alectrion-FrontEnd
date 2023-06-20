@@ -25,7 +25,6 @@ function ViewProfile() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
-  
   return (
       <form  aria-label="form">
         <Grid templateColumns="1fr 5fr" gap={6}>
@@ -97,7 +96,7 @@ function ViewProfile() {
                         >
                           CPF
                         </Text>
-                        <Input size="lg" fontSize="lg" name='cpf' width='120%' marginLeft="75px" readOnly placeholder={'cpf'}/>
+                        <Input size="lg" fontSize="lg" name='cpf' width='120%' marginLeft="75px" readOnly placeholder={` ${user?.cpf}`}/>
                       </Box>
                     </Flex>
                     <Flex>
@@ -138,9 +137,9 @@ function ViewProfile() {
                           fontSize="lg"
                           marginTop="3%"
                         >
-                          Telefone
+                          Cargo
                         </Text>
-                        <Input size="lg" fontSize="lg" name='telefone' width='120%' readOnly placeholder={'telefone'}/>
+                        <Input size="lg" fontSize="lg" name='telefone' width='120%' readOnly placeholder={` ${user?.job}`}/>
                       </Box>
                     </Flex>
                     <Flex justify="space-between">
