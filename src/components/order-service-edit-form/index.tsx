@@ -23,6 +23,7 @@ import { TextArea } from '../form-fields/text-area';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
 import { OSSTATUS } from '@/constants/orderservice';
 import { User } from '@/constants/user';
+import { format } from 'date-fns';
 
 type EditOrderServiceFormValues = {
   equipment: EquipmentData;
@@ -127,12 +128,14 @@ export default function OrderServiceEditForm({
         status,
         finishDate
       } = formData;
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, 'yyyy-MM-dd');
       const payload = {
         equipmentId: selectedEquipment.id,
-        seiProcess: seiProcess.valueOf,
-        description: description.valueOf,
-        status: status.valueOf,
-        finishDate: new Date().toISOString,
+        seiProcess,
+        description,
+        status,
+        finishDate:formattedDate,
         id: orderService.id
       };
 
