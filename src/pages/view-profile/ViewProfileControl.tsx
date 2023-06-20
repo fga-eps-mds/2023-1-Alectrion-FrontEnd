@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
-
+//comentario
 function ViewProfile() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
