@@ -294,6 +294,19 @@ export default function MovementForm({
             />
           </GridItem>
 
+          <Input
+            label="Atribuição"
+            readOnly
+            defaultValue={
+              user?.job
+            }
+            errors={errors.chiefRole}
+            {...register('chiefRole', {
+              required: 'Campo Obrigatório',
+              maxLength: 50,
+            })}
+          />
+
         </Grid>
 
         <Text fontWeight="bold" mt={10}>
