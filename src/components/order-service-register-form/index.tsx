@@ -185,7 +185,7 @@ export default function OrderServiceregisterForm({
             type="text"
             placeholder="Tipo"
             defaultValue={selectedEquipment?.type || ''}
-            readOnly
+            isDisabled
           />
         </GridItem>
         <GridItem>
@@ -195,7 +195,7 @@ export default function OrderServiceregisterForm({
             type="text"
             placeholder="Nº de série"
             defaultValue={selectedEquipment?.serialNumber || ''}
-            readOnly
+            isDisabled
           />
         </GridItem>
         <GridItem>
@@ -205,7 +205,7 @@ export default function OrderServiceregisterForm({
             type="text"
             placeholder="Marca"
             defaultValue={selectedEquipment?.brand.name || ''}
-            readOnly
+            isDisabled
           />
         </GridItem>
         <GridItem>
@@ -215,7 +215,7 @@ export default function OrderServiceregisterForm({
             type="text"
             placeholder="Modelo"
             defaultValue={selectedEquipment?.model || ''}
-            readOnly
+            isDisabled
           />
         </GridItem>
         <GridItem>
@@ -225,7 +225,7 @@ export default function OrderServiceregisterForm({
             type="text"
             placeholder="Lotação"
             defaultValue={selectedEquipment?.unit.localization || ''}
-            readOnly
+            isDisabled
           />
         </GridItem>
         <GridItem>
@@ -235,7 +235,7 @@ export default function OrderServiceregisterForm({
             type="text"
             placeholder="Situação"
             defaultValue={selectedEquipment?.situacao || ''}
-            readOnly
+            isDisabled
           />
         </GridItem>
         <GridItem gridColumn="1 / span 3">
@@ -254,13 +254,12 @@ export default function OrderServiceregisterForm({
         </GridItem>
         <GridItem>
           <Input
-            label="CPF - Responsável pela entrega"
+            label="CPF ou Nº Funcional"
             errors={errors.cpf}
-            placeholder="CPF"
+            placeholder="CPF ou Nº Funcional"
             type="text"
             {...register('cpf', {
               required: 'Campo obrigatório',
-              maxLength: { value: 11, message: 'CPF deve ter 11 digitos' },
               pattern: {
                 value: /^[0-9]+$/,
                 message: 'Por favor, digite apenas números.',
