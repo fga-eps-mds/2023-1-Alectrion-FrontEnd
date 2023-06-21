@@ -16,6 +16,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { FaTools } from 'react-icons/fa';
@@ -32,6 +33,7 @@ import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
+import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
 
 interface ISelectOption {
   label: string;
@@ -111,6 +113,7 @@ function OrderServiceTable() {
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const {
     control,
@@ -250,9 +253,7 @@ function OrderServiceTable() {
               <Text color="#00000" fontWeight="medium" fontSize="2xl">
                 Últimas Ordens de Serviço
               </Text>
-              <Button
-                colorScheme={theme.colors.primary} // onClick={onOpen}
-              >
+              <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                 Nova Ordem de Serviço
               </Button>
             </Flex>
@@ -444,6 +445,12 @@ function OrderServiceTable() {
             </Flex>
           </Flex>
         </Flex>
+        <OrderServiceRegisterModal
+          onClose={onClose}
+          isOpen={isOpen}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
       </GridItem>
     </Grid>
   );
