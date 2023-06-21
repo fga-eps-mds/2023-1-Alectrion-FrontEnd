@@ -15,11 +15,11 @@
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
+import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { Modal } from '@/components/modal';
 import { api } from '../../config/lib/axios';
-import { AxiosResponse } from 'axios';
 import { toast } from '@/utils/toast';
-import { useNavigate } from 'react-router-dom';
 
 
 export function PasswordRecover() {
@@ -48,7 +48,7 @@ export function PasswordRecover() {
                 params: payload
             } 
             );    
-        if(resp.status == 200) {
+        if(resp.status === 200) {
             toast.success(resp.data.message)
         }
         setIsLoading(false);

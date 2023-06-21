@@ -15,10 +15,10 @@
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { Modal } from '@/components/modal';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlectrionIcon } from './AlectrionIcon';
-import { useNavigate } from 'react-router-dom';
 
 export function Login() {
   const { signIn } = useAuth();
