@@ -104,7 +104,6 @@ export default function MovementForm({
   } = useForm<FormValues>();
 
   const { user } = useAuth();
-  console.log(user);
   const [equipments, setEquipments] = useState<equipamentData[]>([]);
   const [units, setUnits] = useState<unit[]>([]);
   const [materiais, setMateriais] = useState<string[]>([]);
