@@ -17,6 +17,7 @@ import { format } from 'date-fns';
 import { useCallback, useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
+import { set } from 'lodash';
 import { TIPOS_LOTACAO } from '@/constants/movements';
 import { api } from '../../config/lib/axios';
 import { Input } from '../form-fields/input';
@@ -164,9 +165,12 @@ export default function MovementForm({
         setEquipments(data);
       } else {
         setEquipments(selectedEquipmentToMovement!);
+        const materiaisSave: string[] = [];
         selectedEquipmentToMovement?.forEach((equip) => {
           setMateriais((prev) => [...prev, equip.id]);
+          materiaisSave.push(equip.id);
         });
+        setMateriais(Array.from(new Set(materiaisSave)));
       }
     } catch (error) {
       setEquipments([]);
@@ -237,7 +241,7 @@ export default function MovementForm({
           </Text>
           <Text>
             <>
-              <strong>Total Equipamentos:</strong> {1}
+              <strong>Total Equipamentos:</strong> {materiais?.length}
             </>
           </Text>
         </Flex>
