@@ -24,7 +24,7 @@ export function OrderServiceEditModal({
   refreshRequest,
   setRefreshRequest,
 }: OrderServiceEditModalProps) {
-  console.log(orderService)
+  console.log(orderService);
   return (
     <Modal
       title={`Ordem de Serviço #${orderService?.id}`}
@@ -39,12 +39,12 @@ export function OrderServiceEditModal({
         flexDirection="column"
         gap="16px"
       >
-        {<OrderServiceEditForm
+        <OrderServiceEditForm
           onClose={onClose}
           orderService={transformFields(orderService)}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
-        />}
+        />
       </Flex>
     </Modal>
   );

@@ -100,9 +100,7 @@ function OrderServiceTable() {
 
   const watchFilter = watch();
 
-
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
-
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -128,7 +126,6 @@ function OrderServiceTable() {
         >
           <Flex flexDirection="column" width="80%">
             <Flex justifyContent="space-between" width="100%">
-              
               <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                 Cadastrar Ordem de Serviço
               </Button>
@@ -144,6 +141,6 @@ function OrderServiceTable() {
         />
       </GridItem>
     </Grid>
-  )
+  );
 }
 export { OrderServiceTable };
