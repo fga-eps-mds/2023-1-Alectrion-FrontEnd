@@ -44,16 +44,20 @@ export const SideBar = memo(() => {
         </Text>
       ))}
       <Box position="absolute" bottom="20px" fontSize="4xs">
-        <Text
-          key={optionUser.name}
-          fontSize="4xs"
-          fontWeight="bold"
-          marginTop="10"
-          _hover={{ cursor: 'pointer', color: 'orange.500' }}
-          onClick={() => navigate(optionUser.link)}
-        >
-          {optionUser.name}
-        </Text>
+        {user?.role === 'admin' ? (
+          <Text
+            key={optionUser.name}
+            fontSize="4xs"
+            fontWeight="bold"
+            marginTop="10"
+            _hover={{ cursor: 'pointer', color: 'orange.500' }}
+            onClick={() => navigate(optionUser.link)}
+          >
+            {optionUser.name}
+          </Text>
+        ) : (
+          ''
+        )}
         <Text
           fontSize="4xs"
           fontWeight="bold"
