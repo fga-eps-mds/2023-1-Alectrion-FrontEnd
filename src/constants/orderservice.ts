@@ -16,7 +16,7 @@ export const OSStatusStyleMap = new Map<
   ],
   [
     'CONCLUDED',
-    { color: colors.green[100], fontWeight: 'bold', fontSize: '16px' },
+    { color: colors.green[700], fontWeight: 'bold', fontSize: '16px' },
   ],
   ['WARRANTY', { color: colors.red, fontWeight: 'bold', fontSize: '16px' }],
 ]);

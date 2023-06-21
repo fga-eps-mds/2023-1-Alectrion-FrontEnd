@@ -55,15 +55,15 @@ export interface Equipment {
 
 export interface OrderServiceData {
   id: string;
-  date: Date;
+  date: string;
   description?: string;
   authorId: string;
   receiverName: string;
   sender?: string;
   equipmentSnapshot: any;
   senderFunctionalNumber: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   equipment: Equipment;
   history: History;
   receiverFunctionalNumber: string;
@@ -201,6 +201,7 @@ function OrderServiceTable() {
           offset + limit
         }&${filter}`
       );
+      console.log(data);
       setNextOrderServices(data);
     } catch (error) {
       setNextOrderServices([]);
@@ -391,9 +392,9 @@ function OrderServiceTable() {
                           </Td>
 
                           <Td>
-                            {new Date(orderService.date).toLocaleDateString(
-                              'pt-BR'
-                            )}
+                            {new Date(
+                              orderService.createdAt
+                            ).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
                           </Td>
                           <Td>
                             <IconButton
