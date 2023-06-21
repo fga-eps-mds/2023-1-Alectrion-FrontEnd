@@ -40,7 +40,7 @@ interface OrderServiceFormProps {
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function OrderServiceregisterForm({
+export function OrderServiceRegisterForm({
   onClose,
   refreshRequest,
   setRefreshRequest,
