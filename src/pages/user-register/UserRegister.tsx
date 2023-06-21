@@ -39,22 +39,22 @@
         handleSubmit,
         formState: { errors },
       } = useForm<RegisterUserPayload>();
-    
       const onSubmit = handleSubmit(async (formData) => {
         try {
-
           const { username,email,name,cpf,role,jobFunction,password, ...rest } =
             formData;
+
           const payload = {
-            username: username.toString,
-            email: email.toString,
-            name: name.toString,
-            cpf: cpf.toString,
-            role: role.toString,
-            jobFunction: jobFunction.toString,
-            password: password.toString,
+            username: formData.username,
+            email: formData.email,
+            name: formData.name,
+            cpf: formData.cpf,
+            role: formData.role,
+            jobFunction: formData.jobFunction,
+            password: formData.password,
             ...rest,
           };
+
           const loggedUser = JSON.parse(
             localStorage.getItem('@alectrion:user') || ''
           ) as unknown as LoginResponse;
@@ -64,8 +64,9 @@
             }});
           
           if (response.status === 200) {
-            toast.success('Usuário cadastrado com sucesso', 'Sucesso');
             setRefreshRequest(!refreshRequest);
+            window.history.back()
+            toast.success('Usuário cadastrado com sucesso', 'Sucesso');
             return;
           }
           toast.error('Erro ao tentar cadastrar o usuario', 'Erro');
@@ -262,7 +263,6 @@
                 </Button>
                 </Flex>
             </Box>
-          
           </form>
           <Spacer />
         </Flex>
