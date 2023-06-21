@@ -39,12 +39,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = useCallback(
     async ({ username, password }: SignInCredentials) => {
       try {
-        const response = await api.post('user/login', {
+        const response = await api.post<AuthResponse>(`/user/login`, {
           username,
           password,
         });
 
-        const { email, expireIn, job, name, role, token, cpf, id} = response.data;
+        const { email, expireIn, job, name, role, token, cpf, id } =
+          response.data;
 
         localStorage.setItem('@alectrion:token', token);
         localStorage.setItem(
@@ -57,11 +58,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
             job,
             role,
             cpf,
-            id
+            id,
           })
         );
 
-        setUser({ email, expireIn, job, name, role, token, cpf, id});
+        setUser({ email, expireIn, job, name, role, token, cpf, id });
 
         api.defaults.headers.common.Authorization = `Bearer ${token}`;
 

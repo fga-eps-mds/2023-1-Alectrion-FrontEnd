@@ -13,28 +13,29 @@
     Quaisquer erros ou bugs nesta implementação são de nossa responsabilidade.
  */
 import { Box, Button, Center, Divider, Flex, Input, Text } from '@chakra-ui/react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useState } from 'react';
-import { toast } from '@/utils/toast';
+import { useState , useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
-import { useEffect } from 'react';
+import { toast } from '@/utils/toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { api} from '../../config/lib/axios';
 
 export function ChangePassword() {
   const { signOut, user } = useAuth();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [actualPassword, setActualPassword] = useState('');
     
   const atualizarSenha = () => {
     if (newPassword !== confirmPassword) {
       toast.error('As senhas informadas não coincidem. Por favor, verifique e tente novamente.');
-    } else if(user?.role=="consulta") {
+    } else if(user?.role==="consulta") {
       toast.error('Usuário de consulta, alteração de senha não autorizada.');
     } else {
         const data = {
           userId: user?.id,
           username: user?.name,
           password: newPassword,
+          actualPassword,
         };
         const apiUrl = '/user/updatePassword';
         api.put(apiUrl, data)
@@ -86,7 +87,10 @@ export function ChangePassword() {
                   >
                     Senha atual
                   </Text>
-                  <Input size="lg" fontSize="lg" name="actualPassword" width="50%" />
+                  <Input size="lg" fontSize="lg" name="actualPassword" width="50%" type="password" 
+                    value={actualPassword}
+                    onChange={(e) => setActualPassword(e.target.value)}
+                  />
                 </Box>
               </Flex>
               <Flex>
@@ -106,6 +110,7 @@ export function ChangePassword() {
                     fontSize="lg"
                     name="newPassword"
                     width="100%"
+                    type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                   />
@@ -126,6 +131,7 @@ export function ChangePassword() {
                     fontSize="lg"
                     name="confirmPassword"
                     width="100%"
+                    type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
