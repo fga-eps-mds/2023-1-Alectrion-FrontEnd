@@ -6,7 +6,7 @@ import { OrderServiceData } from '@/pages/order-service/OrderServiceControl';
 type OrderServiceEditModalProps = {
   isOpen: boolean;
   onClose(): void;
-  orderService: OrderServiceData;
+  orderService: OrderServiceData | undefined;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -24,7 +24,6 @@ export function OrderServiceEditModal({
   refreshRequest,
   setRefreshRequest,
 }: OrderServiceEditModalProps) {
-  console.log(orderService);
   return (
     <Modal
       title={`Ordem de Serviço #${orderService?.id}`}
