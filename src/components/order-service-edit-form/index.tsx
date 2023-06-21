@@ -294,8 +294,14 @@ export default function OrderServiceEditForm({
             placeholder="Processo SEI"
             isDisabled={orderService.status === 'CONCLUDED'}
             {...register('seiProcess', {
-              minLength: 15,
-              maxLength: 15,
+              minLength: {
+                value: 15,
+                message: 'O Processo SEI deve ter no mínimo 15 dígitos',
+              },
+              maxLength: {
+                value: 15,
+                message: 'O Processo SEI deve ter no máximo 15 dígitos',
+              }
             })}
           />
         </GridItem>
