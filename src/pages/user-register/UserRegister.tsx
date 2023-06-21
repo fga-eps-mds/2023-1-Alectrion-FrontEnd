@@ -17,20 +17,24 @@
     import { Box, Button, Center, Input, Text, Flex, Spacer, Grid, GridItem, Radio, RadioGroup, HStack } from '@chakra-ui/react';
     import { api } from '@/config/lib/axios';
     import { toast } from '@/utils/toast';
-    import { LoginResponse } from '../../constants/user';
+    import { LoginResponse,TIPOS_JOB} from '../../constants/user';
+    import { AlectrionIcon } from '../login/AlectrionIcon';
+    import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 
     export function UserRegister() {
-     
       const [selectedUserRegister, setSelectedUserRegister] = useState<RegisterUserPayload>();
  
       const [refreshRequest,setRefreshRequest] = useState<boolean>(false);
     
       const [statusModal, setStatusModal] = useState<boolean>(false);
+
       const toggleModal = () => {
         setStatusModal(!statusModal);
       };
-      
+     
       const {
+        watch,
+        control,
         register,
         handleSubmit,
         formState: { errors },
@@ -55,8 +59,7 @@
           const loggedUser = JSON.parse(
             localStorage.getItem('@alectrion:user') || ''
           ) as unknown as LoginResponse;
-          const response = await api.post('user/create', {
-            body: payload,
+          const response = await api.post('user/create', payload, {
             headers: {
               Authorization: `Bearer ${loggedUser.token}`,
             }});
@@ -68,10 +71,10 @@
           }
           toast.error('Erro ao tentar cadastrar o usuario', 'Erro');
         } catch (error: any) {
-            toast.error('Erro ao tentar cadastrar o usuário', 'Erro');
-        }
+          toast.error(error.response.data.error, 'Erro');
+         }
       });
-    
+
       return (        
             <Flex
             aria-label="form"
@@ -79,12 +82,9 @@
             h="100vh"
             color="white"
             align="center"
+            justify="center"
           >
-            <Flex w="28%" justify="center">
-              <Text m="39px" color="white" fontWeight="bold" fontSize="4xl">
-                Alectrion
-              </Text>
-            </Flex>
+            <Flex w="32%" justify="center" alignSelf="center"/>
           
             <form id = "user-register-form" onSubmit={onSubmit} aria-label="form">
               <Box
@@ -92,58 +92,63 @@
                 borderRadius="10px"
                 boxShadow="0px 4px 4px rgba(0, 0, 0, 0.25),  0px 4px 4px rgba(0, 0, 0, 0.25),  0px 1px 1px rgba(0, 0, 0, 0.12),  0px 2px 2px rgba(0, 0, 0, 0.12),  0px 8px 8px rgba(0, 0, 0, 0.12);"
                 color="black"
-                paddingY="20px"
-                paddingX="20px"
-                m="4px"
+                paddingY="7%"
+                paddingX="7%"
+                m="4%"
                 width="130%"
               >
-              <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
+              <Flex justify="center" mt={6} alignSelf="center"> 
+                <AlectrionIcon height={10} width={10} />
+              </Flex>
+              <Text mb={10} textAlign="center" fontSize="4xl" alignSelf="center">
+                Alectrion
+              </Text>
+              <Text mb="4%" color="#605555" fontWeight="semibold" fontSize="4xl" alignSelf="center">
                 Cadastro
-
               </Text>
               
-              <Grid templateColumns="repeat(2, 2fr)" width="100%" gap={6} mt={6}>
-            <Box flexDirection="column">
-                <Text>Nome</Text>
-                <Input 
-                  placeholder="Nome" 
-                  defaultValue={selectedUserRegister?.name}
-                  {...register('name', {
-                    required: 'Campo Obrigatório',
-                    maxLength: 50,
-                  })}
-                />
-                {errors.name && (
-                <span>
-                  <Text color="red.400">Este campo é obrigatório</Text>
-                </span>
-              )}
-            </Box>
+              <Grid templateColumns="repeat(2, 2fr)" width="100%" gap={6} mt={6} alignSelf="center">
+              <Box flexDirection="column" alignSelf="center">
+                  <Text>Nome</Text>
+                  <Input 
+                    placeholder="Nome" 
+                    defaultValue={selectedUserRegister?.name}
+                    {...register('name', {
+                      required: 'Campo Obrigatório',
+                      maxLength: 50,
+                    })}
+                  />
+                  {errors.name && (
+                  <span>
+                    <Text color="red.400">Este campo é obrigatório</Text>
+                  </span>
+                )}
+              </Box>
 
-            <Box flexDirection="column">
-                <Text>UserName</Text>
-                <Input 
-                  placeholder="UserName"
-                  defaultValue={selectedUserRegister?.username}
-                  {...register('username', {
-                    required: 'Campo Obrigatório',
-                    maxLength: 50,
-                  })}
-                />
-                {errors.username && (
-                <span>
-                  <Text color="red.400">Este campo é obrigatório</Text>
-                </span>
-              )}
-                
-            </Box>
-            </Grid>
+              <Box flexDirection="column">
+                  <Text>UserName</Text>
+                  <Input 
+                    placeholder="UserName"
+                    defaultValue={selectedUserRegister?.username}
+                    {...register('username', {
+                      required: 'Campo Obrigatório',
+                      maxLength: 50,
+                    })}
+                  />
+                  {errors.username && (
+                  <span>
+                    <Text color="red.400">Este campo é obrigatório</Text>
+                  </span>
+                )}
+                  
+              </Box>
+              </Grid>
 
             <Grid templateColumns="repeat(2, 2fr)" width="100%" gap={6} mt={6}>
             <Box flexDirection="column">
                 <Text>CPF</Text>
                 <Input 
-                  placeholder="Apenas números"   pattern="[0-9]*" title="Por favor, digite apenas números"
+                  placeholder="Apenas números"  pattern="[0-9]*" title="Por favor, digite apenas números"
                   {...register('cpf', {
                     required: 'Campo Obrigatório',
                     maxLength: 11,
@@ -170,15 +175,17 @@
             </Box>
             </Grid>
 
-            <Grid templateColumns="repeat(2, 2fr)" width="100%" gap={6} mt={6} mb={6}>
-            <Box flexDirection="column">
+            <Grid templateColumns="repeat(2, 2fr)" width="100%" gap={6} mt={6} mb={6} alignSelf="center">
+            <Box flexDirection="column" alignSelf="center" >
                 <Text>Senha</Text>
                 <Input 
+                  type="password"
                   placeholder="Senha" 
                   defaultValue={selectedUserRegister?.password}
                   {...register('password', {
                     required: 'Campo Obrigatório',
                     maxLength: 50,
+                   
                   })}
                 />
                 {errors.password && (
@@ -189,14 +196,12 @@
                 
             </Box>
 
-            <Box flexDirection="column">
+            <Box flexDirection="column" alignSelf="center" >
                 <Text>Confirmar senha</Text>
-                <Input placeholder="Confirmar senha" 
-                defaultValue={selectedUserRegister?.confirmPassword}
-                {...register('confirmPassword', {
-                  required: 'Campo Obrigatório',
-                  maxLength: 50,
-                })}
+                <Input 
+                  type="password"
+                  placeholder="Confirmar senha"
+                   
               />
                   {errors.confirmPassword && (
                   <span>
@@ -204,6 +209,15 @@
                   </span>
                 )}
             </Box>
+                <NewControlledSelect
+                  control={control}
+                  name="jobFunction"
+                  id="jobFunction"
+                  options={TIPOS_JOB}
+                  placeholder="Selecione uma opção"
+                  label="Tipo de Cargo"
+                  rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+                />
             </Grid>
             <Box>
               <Center mb={2}>
@@ -235,9 +249,10 @@
               </Flex>
             </Box>
               <Flex gap="4rem" mt="2rem" mb="2rem" justify="center">
-                <Button variant="secondary" width="100%">
+                <Button variant="secondary" width="100%"  onClick={() => window.history.back()}>
                     Cancelar
                 </Button>
+
                 <Button
                     type="submit"
                     form="user-register-form"
