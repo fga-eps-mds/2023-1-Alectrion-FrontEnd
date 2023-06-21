@@ -15,6 +15,7 @@
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { Modal } from '@/components/modal';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlectrionIcon } from './AlectrionIcon';
@@ -42,6 +43,12 @@ export function Login() {
     // TODO: get function from authContext
     await signIn({ username, password });
     setIsLoading(false);
+  };
+
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate('/pass-recover');
   };
 
   return (
@@ -138,7 +145,10 @@ export function Login() {
               </Button>
             </Center>
             <Center>
-              <Button variant="link" color="#239875">
+              <Button 
+              onClick={handleBack}
+              variant="link"
+              color="#239875">
                 Recuperar Senha
               </Button>
             </Center>
