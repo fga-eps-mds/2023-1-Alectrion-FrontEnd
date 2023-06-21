@@ -58,15 +58,15 @@ export interface Equipment {
 
 export interface OrderServiceData {
   id: string;
-  date: Date;
+  date: string;
   description?: string;
   authorId: string;
   receiverName: string;
   sender?: string;
   equipmentSnapshot: any;
   senderFunctionalNumber: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   equipment: Equipment;
   history: History;
   receiverFunctionalNumber: string;
@@ -407,9 +407,9 @@ function OrderServiceTable() {
                           </Td>
 
                           <Td>
-                            {new Date(orderService.date).toLocaleDateString(
-                              'pt-BR'
-                            )}
+                            {new Date(
+                              orderService.createdAt
+                            ).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
                           </Td>
                           <Td>
                             <button onClick={onOpenEditOrderService}>
