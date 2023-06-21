@@ -1,14 +1,10 @@
 import React, { memo } from 'react';
 import { Box, Button, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const SideBar = memo(() => {
-  // Mocked
-  // TODO: create an AuthContext and get it using useAuth
-
-  // Mocked
-  // TODO: get function from authContext
-
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
   const options = [
@@ -61,6 +57,14 @@ export const SideBar = memo(() => {
         <Text fontWeight="bold" marginTop="2">
           Admin
         </Text>
+        <Button
+          onClick={signOut}
+          variant="link"
+          textColor="white"
+          justifyContent="unset"
+        >
+          Sair
+        </Button>
       </Box>
     </Box>
   );
