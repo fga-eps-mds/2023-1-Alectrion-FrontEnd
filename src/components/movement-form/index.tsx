@@ -24,6 +24,7 @@ import { toast } from '@/utils/toast';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface equipamentData {
   tippingNumber: string;
@@ -102,6 +103,7 @@ export default function MovementForm({
     watch,
   } = useForm<FormValues>();
 
+  const { user } = useAuth();
   const [equipments, setEquipments] = useState<equipamentData[]>([]);
   const [units, setUnits] = useState<unit[]>([]);
   const [materiais, setMateriais] = useState<string[]>([]);
@@ -279,7 +281,10 @@ export default function MovementForm({
           <GridItem colSpan={2}>
             <Input
               label="Responsável"
+              readOnly
+              defaultValue={user?.name}
               errors={errors.chiefName}
+              disabled
               {...register('chiefName', {
                 required: 'Campo Obrigatório',
                 maxLength: 50,
@@ -289,7 +294,10 @@ export default function MovementForm({
 
           <Input
             label="Atribuição"
+            readOnly
+            defaultValue={user?.job}
             errors={errors.chiefRole}
+            disabled
             {...register('chiefRole', {
               required: 'Campo Obrigatório',
               maxLength: 50,
