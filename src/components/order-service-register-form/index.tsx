@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { useForm } from 'react-hook-form';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { Button, Flex, Grid, GridItem, Box } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { Select, SingleValue } from 'chakra-react-select';
@@ -17,12 +17,9 @@ type FormValues = {
   equipmentId: string;
   authorId: string;
   receiverName: string;
-  authorFunctionalNumber: string;
+  cpf: string;
+  seiProcess: string;
   senderName: string;
-  senderFunctionalNumber: string;
-  senderTelefone?: string;
-  date: string;
-  receiverFunctionalNumber: string;
   description: string;
   senderPhone: string;
   serialNumber?: string;
@@ -51,7 +48,6 @@ export default function OrderServiceregisterForm({
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
 
-  const [selectedSender, setSelectedSender] = useState<User>();
   const [selectedReceiver, setSelectedReceiver] = useState<User>();
 
   const take = 5;
@@ -124,51 +120,27 @@ export default function OrderServiceregisterForm({
     setSelectedEquipment(selectedOption);
   };
 
-  const fetchSender = async (username: string) => {
-    try {
-      const token = localStorage.getItem('@alectrion:token') || '';
-      const { data }: AxiosResponse<User[]> = await api.get(`user/get`, {
-        params: { userName: username },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setSelectedSender(data[0]);
-    } catch (error) {
-      setSelectedSender(undefined);
-      console.error(error);
-    }
-  };
-
-  const handleSenderSearch = debounce(async (e) => {
-    const str = e.target.value;
-    fetchSender(str);
-  }, 500);
-
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { description, senderPhone } = formData;
-
+      const { description, senderPhone, seiProcess, cpf, senderName } =
+        formData;
       const payload = {
         equipmentId: selectedEquipment?.id,
         description,
         authorId: selectedReceiver?.id,
+        senderDocument: cpf,
+        seiProcess,
         receiverName: selectedReceiver?.name,
-        authorFunctionalNumber: selectedReceiver?.id,
-        senderName: selectedSender?.name,
-        senderFunctionalNumber: selectedSender?.id,
-        date: new Date().toISOString(),
-        receiverFunctionalNumber: selectedReceiver?.name,
+        senderName,
         senderPhone,
       };
 
       const response = await api.post(
-        `equipment/create-order-service/${selectedEquipment?.id}`,
+        `equipment/create-order-service/`,
         payload
       );
       toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
       setRefreshRequest(!refreshRequest);
-      console.log(response.data);
       onClose();
     } catch (error: any) {
       console.error(error);
@@ -271,26 +243,35 @@ export default function OrderServiceregisterForm({
         </GridItem>
         <GridItem>
           <Input
-            label="Nome de usuário"
-            placeholder="Nome de usuário"
-            errors={undefined}
-            onChange={handleSenderSearch}
-          />
-        </GridItem>
-        <GridItem>
-          <Input
             label="Responsável pela entrega"
             errors={errors.senderName}
             placeholder="Responsável"
             type="text"
-            defaultValue={selectedSender?.name}
-            readOnly
+            {...register('senderName', {
+              required: 'Campo obrigatório',
+            })}
+          />
+        </GridItem>
+        <GridItem>
+          <Input
+            label="CPF - Responsável pela entrega"
+            errors={errors.cpf}
+            placeholder="CPF"
+            type="text"
+            {...register('cpf', {
+              required: 'Campo obrigatório',
+              maxLength: { value: 11, message: 'CPF deve ter 11 digitos' },
+              pattern: {
+                value: /^[0-9]+$/,
+                message: 'Por favor, digite apenas números.',
+              },
+            })}
           />
         </GridItem>
         <GridItem>
           <Input
             label="Telefone"
-            placeholder="Telefone"
+            placeholder="Telefone (opcional)"
             type="text"
             errors={errors.senderPhone}
             {...register('senderPhone', {
@@ -302,6 +283,17 @@ export default function OrderServiceregisterForm({
             })}
           />
         </GridItem>
+        <GridItem>
+          <Input
+            label="Processo SEI"
+            errors={errors.seiProcess}
+            placeholder="Processo SEI (opcional)"
+            type="text"
+            {...register('seiProcess', {
+              maxLength: 15,
+            })}
+          />
+        </GridItem>
         <GridItem />
         <GridItem gridColumn="1 / span 3">
           <TextArea
@@ -309,6 +301,7 @@ export default function OrderServiceregisterForm({
             label="Defeito do Equipamento"
             maxChars={255}
             {...register('description', {
+              required: 'Campo obrigatório',
               maxLength: 255,
             })}
           />
