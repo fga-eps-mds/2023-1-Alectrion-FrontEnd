@@ -39,6 +39,17 @@ interface ISelectOption {
   label: string;
   value: number | string;
 }
+export const mockData = {
+  equipment: 'EquipmentData',
+  equipmentId: 'c2a7ac1f-b8d1-4a69-88a7-60f6fc8d1ec8',
+  seiProcess: '123456789789562',
+  id: '',
+  status: 'concluido',
+  description: 'nada',
+  finishDate: '2022-06-18',
+  senderName: 'maria',
+  senderDocument: '12345678912',
+};
 
 export interface Equipment {
   tippingNumber: string;
