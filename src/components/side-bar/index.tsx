@@ -14,6 +14,7 @@ export const SideBar = memo(() => {
     { name: 'Relatórios', link: '' },
   ];
 
+  const optionUser = { name: 'Cadastro Usuário', link: '/user-register' };
   return (
     <Box
       position="fixed"
@@ -26,9 +27,6 @@ export const SideBar = memo(() => {
       color="#fff"
       padding="20px"
       height="100%"
-      display="flex"
-      flexDirection="column"
-      gap="40px"
     >
       <Text fontSize="2.8vw" fontWeight="bold">
         Alectrion
@@ -38,21 +36,27 @@ export const SideBar = memo(() => {
           key={option.name}
           fontSize="4xs"
           fontWeight="bold"
+          marginTop="10"
           _hover={{ cursor: 'pointer', color: 'orange.500' }}
           onClick={() => navigate(option.link)}
         >
           {option.name}
         </Text>
       ))}
-      <Box
-        display="flex"
-        flexDirection="column"
-        marginTop="auto"
-        gap="10px"
-        fontSize="4xs"
-      >
-        <Text fontWeight="bold">Cadastro Usuário</Text>
-        <Text fontWeight="bold">{user?.name}</Text>
+      <Box position="absolute" bottom="20px" fontSize="4xs">
+        <Text
+          key={optionUser.name}
+          fontSize="4xs"
+          fontWeight="bold"
+          marginTop="10"
+          _hover={{ cursor: 'pointer', color: 'orange.500' }}
+          onClick={() => navigate(optionUser.link)}
+        >
+          {optionUser.name}
+        </Text>
+        <Text fontWeight="bold" marginTop="2">
+          Admin
+        </Text>
         <Button
           onClick={signOut}
           variant="link"
