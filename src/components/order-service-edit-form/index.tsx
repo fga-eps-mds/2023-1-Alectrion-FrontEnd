@@ -10,10 +10,7 @@ import {
   Flex,
   Grid,
   GridItem,
-  Select,
-  useSafeLayoutEffect,
 } from '@chakra-ui/react';
-import { error } from 'console';
 import { SingleValue } from 'chakra-react-select';
 import { format } from 'date-fns';
 import { Input } from '../form-fields/input';
@@ -33,6 +30,8 @@ type EditOrderServiceFormValues = {
   status: string;
   description: string;
   finishDate: string;
+  withdrawalName?: string;
+  withdrawalDocument?: string;
   senderName?: string;
   senderDocument?: string;
   technicianName?: string;
@@ -58,8 +57,7 @@ export default function OrderServiceEditForm({
 }: EditOrderServiceFormProps) {
   const take = 5;
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
-  const [receiver, setReceiver] = useState<User>();
-  const [sender, setSender] = useState<User>();
+  const [buttonText, setButtonText] = useState('Salvar');
 
   const fetchEquipments = async (str: string) => {
     try {
@@ -92,6 +90,13 @@ export default function OrderServiceEditForm({
 
   const watchStatus = watch('status');
 
+  useEffect(() => {
+    resetField('withdrawalName');
+    resetField('withdrawalDocument');
+    resetField('technicianName');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetField, watchStatus]);
+
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>(
     orderService.equipment
   );
@@ -122,12 +127,11 @@ export default function OrderServiceEditForm({
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const {
-        id,
-        equipmentId,
         seiProcess,
         description,
         status,
-        finishDate,
+        withdrawalName,
+        withdrawalDocument,
         technicianName
       } = formData;
       const currentDate = new Date();
@@ -136,8 +140,10 @@ export default function OrderServiceEditForm({
         equipmentId: selectedEquipment.id,
         seiProcess,
         description,
+        withdrawalName,
+        withdrawalDocument,
         status,
-        finishDate:formattedDate,
+        finishDate: formattedDate,
         id: orderService.id,
         technicianName
       };
@@ -149,7 +155,7 @@ export default function OrderServiceEditForm({
 
       if (response.status === 200) {
         toast.success('Ordem de serviço editada com sucesso', 'Sucesso');
-        setRefreshRequest(!setRefreshRequest);
+        setRefreshRequest(!refreshRequest);
         if (onClose) {
           onClose();
         }
@@ -161,26 +167,31 @@ export default function OrderServiceEditForm({
     }
   });
 
-  useEffect(() => {}, [watchStatus]);
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    watchStatus === 'CONCLUDED' ? setButtonText('Finalizar') : setButtonText('Salvar');
+  }, [watchStatus]);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   return (
-    <form id="equipment-register-form" onSubmit={onSubmit}>
+    <form id="order-service-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <GridItem gridColumn="1 / span 2">
-          <strong>Nº de tombamento:</strong>
           <Box flex="1">
             <Input
+              label="Nº de tombamento"
               errors={undefined}
               defaultValue={selectedEquipment.tippingNumber}
+              isDisabled
               readOnly
             />
           </Box>
         </GridItem>
         <GridItem>
-          <strong>Status:</strong>
           <Box flex="1">
             <NewControlledSelect
+              isDisabled={orderService.status === 'CONCLUDED'}
+              label='Status'
               name="status"
               control={control}
               options={OSSTATUS}
@@ -188,61 +199,67 @@ export default function OrderServiceEditForm({
           </Box>
         </GridItem>
         <GridItem>
-          <strong>Tipo:</strong>
           <Input
+            label="Tipo"
             errors={undefined}
             type="text"
             placeholder="Tipo"
             defaultValue={selectedEquipment.type || ''}
+            isDisabled
             readOnly
           />
         </GridItem>
         <GridItem>
-          <strong>Nº de série:</strong>
           <Input
+            label="Nº de série"
             errors={undefined}
             type="text"
             defaultValue={selectedEquipment.serialNumber}
+            isDisabled
             readOnly
           />
         </GridItem>
         <GridItem>
-          <strong>Marca:</strong>
           <Input
+            label="Marca"
             errors={undefined}
             type="text"
             placeholder="Marca"
             defaultValue={selectedEquipment.brand.name}
+            isDisabled
             readOnly
           />
         </GridItem>
         <GridItem>
-          <strong>Modelo:</strong>
           <Input
+            label="Modelo"
             errors={undefined}
             type="text"
             placeholder="Modelo"
             defaultValue={selectedEquipment.model}
+            isDisabled
             readOnly
           />
         </GridItem>
         <GridItem>
-          <strong>Lotação:</strong>
           <Input
+            label="Lotação"
             errors={undefined}
             type="text"
             placeholder="Lotação"
             defaultValue={selectedEquipment.unit.localization}
+            isDisabled
             readOnly
           />
         </GridItem>
         <GridItem>
-          <strong>Situação:</strong>
           <Input
+            label="Situação"
             errors={undefined}
             type="text"
             placeholder="Situação"
             defaultValue={selectedEquipment.situacao}
+            isDisabled
             readOnly
           />
         </GridItem>
@@ -250,32 +267,33 @@ export default function OrderServiceEditForm({
           <strong>Ordem de Serviço:</strong>
         </GridItem>
         <GridItem>
-          <strong>Responsável pela entrega</strong>
           <Input
+            label="Responsável pela entrega"
             errors={errors.senderName}
             type="text"
             {...register('senderName')}
+            isDisabled
             readOnly
           />
         </GridItem>
         <GridItem>
-          <strong> Funcional/CPF </strong>
           <Input
+            label="CPF ou Nº Funcional"
             errors={errors.senderDocument}
             type="text"
-            placeholder="Funcional/CPF"
+            placeholder="CPF ou Nº Funcional"
             {...register('senderDocument')}
-            readOnly
+            isDisabled={orderService.status === 'CONCLUDED'}
           />
         </GridItem>
         <GridItem>
-          <strong>Processo SEI</strong>
           <Input
+            label="Processo SEI"
             errors={errors.seiProcess}
             type="text"
             placeholder="Processo SEI"
+            isDisabled={orderService.status === 'CONCLUDED'}
             {...register('seiProcess', {
-              required: true,
               minLength: 15,
               maxLength: 15,
             })}
@@ -284,25 +302,56 @@ export default function OrderServiceEditForm({
         <GridItem gridColumn="1 / span 3">
           <TextArea
             errors={errors.description}
-            label="Descrição:"
+            label="Defeito do Equipamento:"
             maxChars={255}
+            disabled={orderService.status === 'CONCLUDED'}
             {...register('description', {
               maxLength: 255,
             })}
           />
         </GridItem>
         {watchStatus === 'CONCLUDED' && (
-          <GridItem>
-            <Input
-              label="Técnico Responsável"
-              errors={errors.technicianName}
-              type="text"
-              placeholder="Nome do Técnico"
-              {...register('technicianName', {
-                required: 'Campo Obrigatório',
-              })}
-            />
-          </GridItem>
+          <>
+            <GridItem>
+              <Input
+                label="Responsável pela retirada"
+                placeholder='Nome do Responsável'
+                errors={errors.withdrawalName}
+                isDisabled={orderService.status === 'CONCLUDED'}
+                type="text"
+                {...register('withdrawalName', {
+                  required: 'Campo Obrigatório',
+
+                })}
+              />
+            </GridItem>
+            <GridItem>
+              <Input
+                label="CPF ou Nº Funcional"
+                errors={errors.withdrawalDocument}
+                type="text"
+                placeholder="CPF ou Nº Funcional"
+                isDisabled={orderService.status === 'CONCLUDED'}
+                {...register('withdrawalDocument', {
+                  required: 'Campo Obrigatório',
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: 'Por favor, digite apenas números.',
+                  },
+                })}
+              />
+            </GridItem>
+            <GridItem>
+              <Input
+                label="Técnico Responsável"
+                errors={errors.technicianName}
+                type="text"
+                isDisabled={orderService.status === 'CONCLUDED'}
+                placeholder="Nome do Técnico"
+                {...register('technicianName', {
+                  required: 'Campo Obrigatório',
+                })} />
+            </GridItem></>
         )}
       </Grid>
       <Flex gap="9rem" mt="2rem" mb="2rem" justify="center">
@@ -312,11 +361,12 @@ export default function OrderServiceEditForm({
           </Button>
         </GridItem>
         <GridItem>
-          <Button type="submit" variant="primary">
-            Salvar
+          <Button type="submit" variant="primary" form='order-service-register-form'
+          >
+            {buttonText}
           </Button>
         </GridItem>
       </Flex>
-    </form>
+    </form >
   );
 }
