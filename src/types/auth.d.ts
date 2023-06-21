@@ -19,6 +19,8 @@ type SignedUser = {
   expireIn: string;
   job: string;
   role: string;
+  cpf: string;
+  id?: string;
 };
 
 export interface GetUserInfoResponse {
@@ -35,4 +37,6 @@ type AuthResponse = {
   expireIn: string;
   job: string;
   role: string;
+  cpf: string;
+  id?: string;
 };
