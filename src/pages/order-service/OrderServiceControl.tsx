@@ -201,7 +201,6 @@ function OrderServiceTable() {
           offset + limit
         }&${filter}`
       );
-      console.log(data);
       setNextOrderServices(data);
     } catch (error) {
       setNextOrderServices([]);
