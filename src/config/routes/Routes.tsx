@@ -15,6 +15,7 @@ import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
 import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
 import { RequireAuth } from './require-auth';
 import { UserRegister } from '@/pages/user-register/UserRegister';
+import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 
 export function Router() {
   return (
