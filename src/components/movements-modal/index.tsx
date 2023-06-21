@@ -10,14 +10,15 @@ import {
   Tbody,
   Tr,
   Td,
-  Checkbox,
   TableContainer,
 } from '@chakra-ui/react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { useState } from 'react';
 import { Modal } from '../modal';
 import { Input } from '../form-fields/input';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { MovimentacaoTipoMap } from '@/constants/movements';
+import { MovementsPDF } from '../movements-pdf/MovementsPdfDocument';
 
 type MovementsModalProps = {
   isOpen: boolean;
@@ -49,14 +50,6 @@ export function MovementsModal({
   const onCloseCallback = () => {
     setMateriais([]);
     onClose();
-  };
-
-  const toggleMaterial = (serialNumber: string) => () => {
-    if (materiais.includes(serialNumber)) {
-      setMateriais(materiais.filter((material) => material !== serialNumber));
-    } else {
-      setMateriais([...materiais, serialNumber]);
-    }
   };
 
   return (
@@ -95,7 +88,7 @@ export function MovementsModal({
                 label="Posto de trabalho"
                 errors={errors.name}
                 isDisabled
-                defaultValue={selectedMoviment?.destination.name}
+                defaultValue={selectedMoviment?.destination?.name}
                 {...register('name', {
                   required: 'Campo Obrigatório',
                   maxLength: 50,
@@ -106,7 +99,7 @@ export function MovementsModal({
                 label="Cidade"
                 errors={errors.localization}
                 isDisabled
-                defaultValue={selectedMoviment?.destination.localization}
+                defaultValue={selectedMoviment?.destination?.localization}
                 {...register('localization', {
                   required: 'Campo Obrigatório',
                   maxLength: 50,
@@ -150,7 +143,7 @@ export function MovementsModal({
             </Grid>
 
             <Text fontWeight="bold" mt={10}>
-              Especificação do material
+              Especificação do equipamento
             </Text>
             <Flex flexDirection="column" width="100%">
               <TableContainer
@@ -179,39 +172,38 @@ export function MovementsModal({
                   <Thead bg="#F49320" fontWeight="semibold" h="14">
                     <Tr>
                       <Td textAlign="center" color="white">
+                        N° Tombamento
+                      </Td>
+                      <Td textAlign="center" color="white">
                         Equipamento
                       </Td>
                       <Td textAlign="center" color="white">
-                        Tombamento
+                        Marca
+                      </Td>
+                      <Td textAlign="center" color="white">
+                        Modelo
                       </Td>
                       <Td textAlign="center" color="white">
                         N° Série
                       </Td>
-                      <Td color="white" />
                     </Tr>
                   </Thead>
                   <Tbody fontWeight="normal">
                     {selectedMoviment?.equipments.map(
-                      (equipment: movementEquipment) => (
+                      (equipment?: movementEquipment) => (
                         <Tr
-                          key={equipment.serialNumber}
+                          key={equipment?.serialNumber}
                           background={
-                            materiais.includes(equipment.serialNumber)
+                            materiais.includes(String(equipment?.serialNumber))
                               ? 'rgba(244, 147, 32, 0.2)'
                               : 'white'
                           }
                         >
-                          <Td textAlign="center">
-                            {equipment.type} {equipment.brand.name}
-                          </Td>
-                          <Td textAlign="center">{equipment.tippingNumber}</Td>
-                          <Td textAlign="center">{equipment.serialNumber}</Td>
-                          <Td textAlign="center">
-                            <Checkbox
-                              onChange={toggleMaterial(equipment.serialNumber)}
-                              isChecked={equipment.selected}
-                            />
-                          </Td>
+                          <Td textAlign="center">{equipment?.tippingNumber}</Td>
+                          <Td textAlign="center">{equipment?.type}</Td>
+                          <Td textAlign="center">{equipment?.brand?.name}</Td>
+                          <Td textAlign="center">{equipment?.model}</Td>
+                          <Td textAlign="center">{equipment?.serialNumber}</Td>
                         </Tr>
                       )
                     )}
@@ -249,9 +241,29 @@ export function MovementsModal({
               <Button variant="secondary" onClick={onCloseCallback}>
                 Cancelar
               </Button>
-              <Button type="submit" variant="primary">
-                Gerar termo
-              </Button>
+              <PDFDownloadLink
+                document={
+                  <MovementsPDF
+                    title={
+                      MovimentacaoTipoMap.get(selectedMoviment?.type) as string
+                    }
+                    equipments={selectedMoviment.equipments}
+                    date={selectedMoviment.date}
+                    destination={selectedMoviment.destination.name}
+                  />
+                }
+                fileName={`termo_de_${
+                  MovimentacaoTipoMap.get(
+                    parseInt(String(selectedMoviment?.type), 10) || 0
+                  ) as string
+                }`}
+              >
+                {({ loading }) => (
+                  <Button isLoading={loading} variant="primary">
+                    Gerar termo
+                  </Button>
+                )}
+              </PDFDownloadLink>
             </Flex>
           </form>
         </Flex>

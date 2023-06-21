@@ -40,10 +40,8 @@ export type Equipment = {
   brandName: string
   acquisitionName: string
   description?: string
-  initialUseDate: string
   acquisitionDate: string
   screenSize?: string
-  invoiceNumber: string
   power?: string
   screenType?: string
   processor?: string
@@ -64,10 +62,8 @@ export default function EditEquipmentModal() {
     estado: "Novo",
     model: "teste123",
     description: "teste123",
-    initialUseDate: "teste123",
     acquisitionDate: "2022-02-23",
     screenSize: "teste123",
-    invoiceNumber: "teste123",
     power: "teste123",
     screenType: "LED",
     processor: "teste123",

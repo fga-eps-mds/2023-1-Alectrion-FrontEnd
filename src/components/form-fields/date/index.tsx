@@ -39,7 +39,9 @@ type Props<FormValues extends FieldValues> = Omit<
   'onChange'
 > &
   UseControllerProps<FormValues> & {
-    label: string;
+    label?: string;
+    placeHolder?: string;
+    border?: boolean;
   };
 
 export function Datepicker<FormValues extends FieldValues>({
@@ -47,6 +49,8 @@ export function Datepicker<FormValues extends FieldValues>({
   name,
   id,
   label,
+  placeHolder,
+  border = true,
   rules,
   ...props
 }: Props<FormValues>) {
@@ -61,9 +65,9 @@ export function Datepicker<FormValues extends FieldValues>({
 
   return (
     <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none">
-      <FormLabel cursor="pointer">{label}</FormLabel>
+      {label && <FormLabel cursor="pointer">{label}</FormLabel>}
 
-      <InputGroup display="block" zIndex={+1}>
+      <InputGroup display="block" zIndex={+2}>
         <Box>
           <ReactDatePicker
             selected={value as Date}
@@ -74,11 +78,24 @@ export function Datepicker<FormValues extends FieldValues>({
             value={value as string}
             locale="pt"
             dateFormat="dd/MM/yyyy"
-            minDate={new Date()}
+            customInput={
+              border ? (
+                <Input borderColor="#212121" fontSize="sm" />
+              ) : (
+                <Input
+                  fontSize="sm"
+                  border="0px"
+                  boxShadow="none"
+                  placeholder={placeHolder}
+                  sx={{ '::placeholder': { color: '#212121' } }}
+                  _focus={{ border: 'none', boxShadow: 'none' }}
+                />
+              )
+            }
+            // minDate={new Date()}
             // showTimeInput
             // timeInputLabel="Hora"
             fixedHeight
-            customInput={<Input borderColor="#212121" />}
             {...props}
           />
         </Box>

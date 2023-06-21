@@ -1,19 +1,15 @@
 import React, { memo } from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const SideBar = memo(() => {
-  // Mocked
-  // TODO: create an AuthContext and get it using useAuth
-
-  // Mocked
-  // TODO: get function from authContext
-
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
   const options = [
     { name: 'Controle de Equipamento', link: '/equipments' },
-    { name: 'Controle Ordem Serviço', link: '' },
+    { name: 'Controle Ordem Serviço', link: '/order-services' },
     { name: 'Movimentações', link: '/movements' },
     { name: 'Relatórios', link: '' },
   ];
@@ -30,6 +26,9 @@ export const SideBar = memo(() => {
       color="#fff"
       padding="20px"
       height="100%"
+      display="flex"
+      flexDirection="column"
+      gap="40px"
     >
       <Text fontSize="2.8vw" fontWeight="bold">
         Alectrion
@@ -39,18 +38,29 @@ export const SideBar = memo(() => {
           key={option.name}
           fontSize="4xs"
           fontWeight="bold"
-          marginTop="10"
           _hover={{ cursor: 'pointer', color: 'orange.500' }}
           onClick={() => navigate(option.link)}
         >
           {option.name}
         </Text>
       ))}
-      <Box position="absolute" bottom="20px" fontSize="4xs">
+      <Box
+        display="flex"
+        flexDirection="column"
+        marginTop="auto"
+        gap="10px"
+        fontSize="4xs"
+      >
         <Text fontWeight="bold">Cadastro Usuário</Text>
-        <Text fontWeight="bold" marginTop="2">
-          Admin
-        </Text>
+        <Text fontWeight="bold">{user?.name}</Text>
+        <Button
+          onClick={signOut}
+          variant="link"
+          textColor="white"
+          justifyContent="unset"
+        >
+          Sair
+        </Button>
       </Box>
     </Box>
   );

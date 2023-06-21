@@ -1,7 +1,8 @@
 import { render, act, fireEvent } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { vi } from 'vitest';
+import { SpyInstance, vi } from 'vitest';
+import * as ReactPdf from '@react-pdf/renderer';
 import { api } from '../../config/lib/axios';
 import { MovementsTable } from './MovementControl';
 
@@ -66,6 +67,7 @@ const MOVEMENTS_RESPONSE_MOCK = {
 };
 
 vi.mock('../../config/lib/axios');
+vi.mock('@react-pdf/renderer', () => ({ PDFDownloadLink: vi.fn() }));
 
 const renderComponent = () =>
   render(
@@ -95,6 +97,11 @@ describe('Movements', () => {
 
   it('should select movement and open modal with correct data', async () => {
     const mockedGet = vi.spyOn(api, 'get');
+    const mockedPdfDownloadLink = vi.spyOn(
+      ReactPdf,
+      'PDFDownloadLink'
+    ) as SpyInstance;
+    mockedPdfDownloadLink.mockReturnValue(null);
     mockedGet.mockReturnValue(Promise.resolve(MOVEMENTS_RESPONSE_MOCK));
     const { findByLabelText, findByRole } = renderComponent();
 

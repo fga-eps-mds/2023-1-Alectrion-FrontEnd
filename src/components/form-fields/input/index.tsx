@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react';
 
 export interface InputProps extends ChakraInputProps {
-  label: string | JSX.Element;
+  label?: string | JSX.Element;
   errors: FieldError | undefined;
   rightElement?: ReactElement<InputElementProps>;
   leftElement?: ReactElement<InputElementProps>;
@@ -44,7 +44,7 @@ export const Input = forwardRef<InputProps, 'input'>((props, ref) => {
 
   return (
     <FormControl isInvalid={Boolean(errors)}>
-      <FormLabel>{label}</FormLabel>
+      {label && <FormLabel>{label}</FormLabel>}
       <InputGroup>
         {leftAddon ?? null}
         {leftElement ?? null}

@@ -15,6 +15,7 @@ import { theme } from '@/styles/theme';
 
 import '@/styles/react-datepicker.scss';
 import { Router } from '@/config/routes/Routes';
+import { AuthProvider } from './contexts/AuthContext';
 
 const { ToastContainer } = createStandaloneToast();
 
@@ -24,11 +25,13 @@ export function App() {
   return (
     <BrowserRouter>
       <ChakraProvider resetCSS theme={theme}>
-        <QueryClientProvider client={queryClient}>
-          <Router />
-          <ToastContainer />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <Router />
+            <ToastContainer />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
+        </AuthProvider>
       </ChakraProvider>
     </BrowserRouter>
   );
