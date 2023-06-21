@@ -44,7 +44,7 @@ export const SideBar = memo(() => {
         </Text>
       ))}
       <Box position="absolute" bottom="20px" fontSize="4xs">
-        {user?.role === 'admin' ? (
+        {user?.role === 'administrador' ? (
           <Text
             key={optionUser.name}
             fontSize="4xs"
