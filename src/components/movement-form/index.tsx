@@ -284,6 +284,7 @@ export default function MovementForm({
               readOnly
               defaultValue={user?.name}
               errors={errors.chiefName}
+              disabled
               {...register('chiefName', {
                 required: 'Campo Obrigatório',
                 maxLength: 50,
@@ -296,6 +297,7 @@ export default function MovementForm({
             readOnly
             defaultValue={user?.job}
             errors={errors.chiefRole}
+            disabled
             {...register('chiefRole', {
               required: 'Campo Obrigatório',
               maxLength: 50,
