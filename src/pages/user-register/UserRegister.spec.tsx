@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { UserRegister } from './UserRegister';
 
 describe('UserRegister', () => {
-test('renders the UserRegister component with filled values', () => {
+  test('renders the UserRegister component with filled values', () => {
     // Cria os elementos necessários
     const usernameInput = document.createElement('input');
     const nameInput = document.createElement('input');
@@ -42,7 +42,9 @@ test('renders the UserRegister component with filled values', () => {
     fireEvent.change(cpfInput, { target: { value: '12345678901' } });
     fireEvent.change(emailInput, { target: { value: 'reiDelas@gmail.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, {
+      target: { value: 'password123' },
+    });
     // fireEvent.change(jobFunctionSelect, { target: { value: 'delegado' } });
     fireEvent.click(adminRadio);
 
@@ -71,5 +73,5 @@ test('renders the UserRegister component with filled values', () => {
     document.body.removeChild(jobFunctionSelect);
     document.body.removeChild(adminRadio);
     document.body.removeChild(registrarButton);
-});
+  });
 });

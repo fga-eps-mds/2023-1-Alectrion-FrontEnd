@@ -55,7 +55,6 @@
             password: password.toString,
             ...rest,
           };
-          console.log('payload', payload)
           const loggedUser = JSON.parse(
             localStorage.getItem('@alectrion:user') || ''
           ) as unknown as LoginResponse;
