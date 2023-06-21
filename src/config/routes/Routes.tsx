@@ -67,7 +67,7 @@ export function Router() {
           </RequireAuth>} />
 
       <Route
-        path="/changePassword"
+        path="/change-password"
         element={
           <RequireAuth>
             <ChangePassword />

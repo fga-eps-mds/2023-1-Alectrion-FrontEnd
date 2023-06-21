@@ -37,7 +37,7 @@ export function ChangePassword() {
           password: newPassword,
           actualPassword,
         };
-        const apiUrl = '/user/updatePassword';
+        const apiUrl = 'user/updatePassword';
         api.put(apiUrl, data)
         .then(response => {
           if (response.status === 200) {
