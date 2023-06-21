@@ -33,6 +33,7 @@ import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
+import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
 
 interface ISelectOption {
@@ -113,7 +114,16 @@ function OrderServiceTable() {
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+
+  const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
+    useState<OrderServiceData>();
+
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: isOpenEditOrderService,
+    onClose: onCloseEditOrderService,
+    onOpen: onOpenEditOrderService,
+  } = useDisclosure();
 
   const {
     control,
@@ -124,6 +134,11 @@ function OrderServiceTable() {
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
+
+  const handleEdit = (orderService: OrderServiceData) => {
+    if (orderService) setSelectedOrderServiceToEdit(orderService);
+    onOpenEditOrderService();
+  };
 
   const handleFilterChange = () => {
     const { type, dateOS, status, unit } = watchFilter;
@@ -397,11 +412,17 @@ function OrderServiceTable() {
                             )}
                           </Td>
                           <Td>
-                            <IconButton
-                              aria-label="Mudar status da ordem de serviço"
-                              variant="ghost"
-                              icon={<FaTools />}
-                            />
+                            <button onClick={onOpenEditOrderService}>
+                              <IconButton
+                                aria-label="Mudar status da ordem de serviço"
+                                variant="ghost"
+                                icon={<FaTools />}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleEdit(orderService);
+                                }}
+                              />
+                            </button>
                           </Td>
                         </Tr>
                       ))}
@@ -445,6 +466,13 @@ function OrderServiceTable() {
             </Flex>
           </Flex>
         </Flex>
+        <OrderServiceEditModal
+          onClose={onCloseEditOrderService}
+          isOpen={isOpenEditOrderService}
+          orderService={selectedOrderServiceToEdit}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
         <OrderServiceRegisterModal
           onClose={onClose}
           isOpen={isOpen}

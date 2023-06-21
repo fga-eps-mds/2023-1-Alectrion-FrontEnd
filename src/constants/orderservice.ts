@@ -1,5 +1,10 @@
 import { colors } from '@/styles/Colors';
 
+export type SelectItem<T> = {
+  label: T;
+  value: string;
+};
+
 export const OSStatusMap = new Map<string, string>([
   ['MAINTENANCE', 'Em manutenção'],
   ['CONCLUDED', 'Concluído'],
@@ -20,3 +25,11 @@ export const OSStatusStyleMap = new Map<
   ],
   ['WARRANTY', { color: colors.red, fontWeight: 'bold', fontSize: '16px' }],
 ]);
+
+export type TipoOS = 'Em manutenção' | 'Concluído' | 'Garantia';
+
+export const OSSTATUS = [
+  { label: 'Em manutenção', value: 'MAINTENANCE' },
+  { label: 'Concluído', value: 'CONCLUDED' },
+  { label: 'Garantia', value: 'WARRANTY' },
+];

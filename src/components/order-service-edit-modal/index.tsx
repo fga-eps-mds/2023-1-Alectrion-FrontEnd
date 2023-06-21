@@ -1,23 +1,32 @@
 import { Flex } from '@chakra-ui/react';
+import OrderServiceEditForm from '../order-service-edit-form';
 import { Modal } from '../modal';
-import { OrderServiceRegisterForm } from '../order-service-register-form';
+import { OrderServiceData } from '@/pages/order-service/OrderServiceControl';
 
-type OrderServiceRegisterModalProps = {
+type OrderServiceEditModalProps = {
   isOpen: boolean;
   onClose(): void;
+  orderService: OrderServiceData | undefined;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function OrderServiceRegisterModal({
+function transformFields(data: any) {
+  if (!data) return;
+  const transformedData = { ...data };
+  return transformedData;
+}
+
+export function OrderServiceEditModal({
   isOpen,
   onClose,
+  orderService,
   refreshRequest,
   setRefreshRequest,
-}: OrderServiceRegisterModalProps) {
+}: OrderServiceEditModalProps) {
   return (
     <Modal
-      title="Cadastro de Ordem Servico"
+      title={`Ordem de Serviço #${orderService?.id}`}
       isOpen={isOpen}
       onClose={onClose}
       size="4xl"
@@ -29,8 +38,9 @@ export function OrderServiceRegisterModal({
         flexDirection="column"
         gap="16px"
       >
-        <OrderServiceRegisterForm
+        <OrderServiceEditForm
           onClose={onClose}
+          orderService={transformFields(orderService)}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
         />
