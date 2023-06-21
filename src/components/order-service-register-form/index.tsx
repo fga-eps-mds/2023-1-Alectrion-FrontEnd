@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { useForm } from 'react-hook-form';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Flex, Grid, GridItem, Box } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { Select, SingleValue } from 'chakra-react-select';
@@ -17,7 +17,7 @@ type FormValues = {
   equipmentId: string;
   authorId: string;
   receiverName: string;
-  cpf: string;
+  senderDocument: string;
   seiProcess: string;
   senderName: string;
   description: string;
@@ -122,13 +122,18 @@ export default function OrderServiceregisterForm({
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { description, senderPhone, seiProcess, cpf, senderName } =
-        formData;
+      const {
+        description,
+        senderPhone,
+        seiProcess,
+        senderDocument,
+        senderName,
+      } = formData;
       const payload = {
         equipmentId: selectedEquipment?.id,
         description,
         authorId: selectedReceiver?.id,
-        senderDocument: cpf,
+        senderDocument,
         seiProcess,
         receiverName: selectedReceiver?.name,
         senderName,
@@ -255,10 +260,10 @@ export default function OrderServiceregisterForm({
         <GridItem>
           <Input
             label="CPF ou Nº Funcional"
-            errors={errors.cpf}
+            errors={errors.senderDocument}
             placeholder="CPF ou Nº Funcional"
             type="text"
-            {...register('cpf', {
+            {...register('senderDocument', {
               required: 'Campo obrigatório',
               pattern: {
                 value: /^[0-9]+$/,
@@ -289,7 +294,14 @@ export default function OrderServiceregisterForm({
             placeholder="Processo SEI (opcional)"
             type="text"
             {...register('seiProcess', {
-              maxLength: 15,
+              minLength: {
+                value: 15,
+                message: 'O Processo SEI deve ter no mínimo 15 dígitos',
+              },
+              maxLength: {
+                value: 15,
+                message: 'O Processo SEI deve ter no máximo 15 dígitos',
+              },
             })}
           />
         </GridItem>
