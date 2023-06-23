@@ -15,11 +15,10 @@
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
-import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Modal } from '@/components/modal';
 import { api } from '../../config/lib/axios';
 import { toast } from '@/utils/toast';
+import { AlectrionIcon } from '../../components/icons/AlectrionIcon';
 
 
 export function PasswordRecover() {
@@ -94,11 +93,11 @@ export function PasswordRecover() {
             display="flex"
             flexDir="column"
             >
+            <Box alignSelf="center" paddingY='5%'>
+                <AlectrionIcon height={20} width={20}/>
+            </Box>
             <Text mb="3%" color="black" fontWeight="medium" fontSize="4xl">
-                Recuperar
-                <Text>
-                Senha
-                </Text>
+                Recuperar Senha
             </Text>
             <Box mb="7%" >
                 <Text

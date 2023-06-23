@@ -18,7 +18,7 @@
     import { api } from '@/config/lib/axios';
     import { toast } from '@/utils/toast';
     import { LoginResponse,TIPOS_JOB} from '../../constants/user';
-    import { AlectrionIcon } from '../login/AlectrionIcon';
+    import { AlectrionIcon } from '../../components/icons/AlectrionIcon';
     import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 
     export function UserRegister() {

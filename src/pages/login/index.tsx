@@ -18,7 +18,7 @@ import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '@/components/modal';
 import { useAuth } from '@/contexts/AuthContext';
-import { AlectrionIcon } from './AlectrionIcon';
+import { AlectrionIcon } from '../../components/icons/AlectrionIcon';
 
 export function Login() {
   const { signIn } = useAuth();
