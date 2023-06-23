@@ -8,7 +8,7 @@
     Quaisquer erros ou bugs nesta implementação são de nossa responsabilidade.
  */
 type SignInCredentials = {
-  username: string;
+  identifier: string;
   password: string;
 };
 
