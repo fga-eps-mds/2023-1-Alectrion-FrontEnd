@@ -37,10 +37,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isAuthenticated = !!user?.token;
 
   const signIn = useCallback(
-    async ({ username, password }: SignInCredentials) => {
+    async ({ identifier, password }: SignInCredentials) => {
       try {
         const response = await api.post<AuthResponse>(`/user/login`, {
-          username,
+          identifier,
           password,
         });
 

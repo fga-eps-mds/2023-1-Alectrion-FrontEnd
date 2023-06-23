@@ -42,7 +42,7 @@ interface RegisterUserPayload {
 }
 
 interface CredentialUser {
-  username: string;
+  identifier: string;
   password: string;
 }
 

@@ -13,7 +13,7 @@
     Quaisquer erros ou bugs nesta implementação são de nossa responsabilidade.
  */
     import { useState } from 'react';
-    import { SubmitHandler, useForm } from 'react-hook-form';
+    import { useForm } from 'react-hook-form';
     import { Box, Button, Center, Input, Text, Flex, Spacer, Grid, GridItem, Radio, RadioGroup, HStack } from '@chakra-ui/react';
     import { api } from '@/config/lib/axios';
     import { toast } from '@/utils/toast';
@@ -160,6 +160,7 @@
                 <Text>E-mail Funcional</Text>
                 <Input 
                   placeholder="E-mail Funcional" 
+                  type='email'
                   defaultValue={selectedUserRegister?.email}
                   {...register('email', {
                     required: 'Campo Obrigatório',
