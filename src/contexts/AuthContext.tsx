@@ -68,8 +68,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
         const from = location.state?.from?.pathname || '/';
-
-        navigate(from, { replace: true });
+        
+        if (temporaryPassword) {
+          navigate('/change-password')
+        }else {
+          navigate(from, { replace: true });
+        }
       } catch (err) {
         toast.error(
           'Não foi possível realizar o login! Verifique o nome de usuário e a senha e tente novamente.'

@@ -33,7 +33,7 @@ export function ChangePassword() {
     } else {
         const data = {
           userId: user?.id,
-          username: user?.email,
+          email: user?.email,
           password: newPassword,
           actualPassword,
         };
