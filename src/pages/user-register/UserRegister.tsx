@@ -39,9 +39,12 @@
         handleSubmit,
         formState: { errors },
       } = useForm<RegisterUserPayload>();
+
+      const watchRole = watch('role');
+
       const onSubmit = handleSubmit(async (formData) => {
         try {
-          const { username,email,name,cpf,role,jobFunction,password, ...rest } =
+          const { username,email,name,cpf,role,jobFunction, ...rest } =
             formData;
 
           const payload = {
@@ -51,18 +54,17 @@
             cpf: formData.cpf,
             role: formData.role,
             jobFunction: formData.jobFunction,
-            password: formData.password,
             ...rest,
           };
-
           const loggedUser = JSON.parse(
             localStorage.getItem('@alectrion:user') || ''
           ) as unknown as LoginResponse;
+
           const response = await api.post('user/create', payload, {
             headers: {
               Authorization: `Bearer ${loggedUser.token}`,
             }});
-          
+
           if (response.status === 200) {
             setRefreshRequest(!refreshRequest);
             window.history.back()
@@ -177,39 +179,43 @@
             </Grid>
 
             <Grid templateColumns="repeat(2, 2fr)" width="100%" gap={6} mt={6} mb={6} alignSelf="center">
-            <Box flexDirection="column" alignSelf="center" >
-                <Text>Senha</Text>
-                <Input 
-                  type="password"
-                  placeholder="Senha" 
-                  defaultValue={selectedUserRegister?.password}
-                  {...register('password', {
-                    required: 'Campo Obrigatório',
-                    maxLength: 50,
-                   
-                  })}
-                />
-                {errors.password && (
-                <span>
-                  <Text color="red.400">Este campo é obrigatório</Text>
-                </span>
-              )}
-                
-            </Box>
-
-            <Box flexDirection="column" alignSelf="center" >
-                <Text>Confirmar senha</Text>
-                <Input 
-                  type="password"
-                  placeholder="Confirmar senha"
-                   
-              />
-                  {errors.confirmPassword && (
-                  <span>
+            {watchRole === 'CONSULTA' && (
+            <>
+              <Box flexDirection="column" alignSelf="center" >
+                  <Text>Senha</Text>
+                  <Input 
+                    type="password"
+                    placeholder="Senha" 
+                    defaultValue={selectedUserRegister?.password}
+                    {...register('password', {
+                      maxLength: 50,
+                    })}
+                    />
+                  {errors.password && watchRole === 'CONSULTA' &&(
+                    <span>
                     <Text color="red.400">Este campo é obrigatório</Text>
                   </span>
                 )}
-            </Box>
+                  
+              </Box>
+
+              <Box flexDirection="column" alignSelf="center" >
+                  <Text>Confirmar senha</Text>
+                  <Input 
+                    type="password"
+                    placeholder="Confirmar senha"
+                    {...register('confirmPassword', {
+                      maxLength: 50,
+                    })}
+                    />
+                    {errors.confirmPassword && watchRole === 'CONSULTA' && (
+                    <span>
+                      <Text color="red.400">Este campo é obrigatório</Text>
+                    </span>
+                  )}
+              </Box>
+              </>
+            )}
                 <NewControlledSelect
                   control={control}
                   name="jobFunction"
@@ -233,7 +239,7 @@
                     })}>
                       Admin
                     </Radio>
-                    <Radio value="BASICO" colorScheme='orange' 
+                    <Radio value="BASICO" colorScheme='orange'
                     {...register('role', {
                       required: 'Campo Obrigatório',
                     })}>

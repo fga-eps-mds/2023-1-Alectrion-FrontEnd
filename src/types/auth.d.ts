@@ -39,4 +39,5 @@ type AuthResponse = {
   role: string;
   cpf: string;
   id?: string;
+  temporaryPassword: boolean;
 };
