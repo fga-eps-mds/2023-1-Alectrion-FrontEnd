@@ -44,7 +44,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           password,
         });
 
-        const { email, expireIn, job, name, role, token, cpf, id } =
+        const { email, expireIn, job, name, role, token, cpf, id, temporaryPassword } =
           response.data;
 
         localStorage.setItem('@alectrion:token', token);
@@ -59,6 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             role,
             cpf,
             id,
+            temporaryPassword,
           })
         );
 
