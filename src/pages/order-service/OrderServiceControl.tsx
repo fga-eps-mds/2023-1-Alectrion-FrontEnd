@@ -19,7 +19,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { FaTools } from 'react-icons/fa';
+import { FaFileAlt, FaTools } from 'react-icons/fa';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -35,6 +35,7 @@ import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
+import { OrderServiceTermModal } from '@/components/order-service-term-modal';
 
 interface ISelectOption {
   label: string;
@@ -42,6 +43,7 @@ interface ISelectOption {
 }
 
 export interface Equipment {
+  description: string;
   tippingNumber: string;
   serialNumber: string;
   brand: {
@@ -61,16 +63,20 @@ export interface OrderServiceData {
   date: string;
   description?: string;
   authorId: string;
-  receiverName: string;
+  withdrawalName: string;
   sender?: string;
   equipmentSnapshot: any;
   senderFunctionalNumber: string;
   createdAt: string;
   updatedAt: string;
   equipment: Equipment;
+  seiProcess: string;
+  senderName: string;
+  senderDocument: string;
   history: History;
-  receiverFunctionalNumber: string;
-  technicians?: string[];
+  withdrawalDocument: string;
+  technicianId: string;
+  technicianName: string;
   status: string;
   unit: {
     name: string;
@@ -79,7 +85,7 @@ export interface OrderServiceData {
   brand: {
     name: string;
   };
-  receiverDate?: Date;
+  finishDate: string;
 }
 
 type FilterValues = {
@@ -117,12 +123,19 @@ function OrderServiceTable() {
 
   const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
     useState<OrderServiceData>();
+  const [selectedOrderServiceToPrint, setSelectedOrderServiceToPrint] =
+    useState<OrderServiceData>();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
     isOpen: isOpenEditOrderService,
     onClose: onCloseEditOrderService,
     onOpen: onOpenEditOrderService,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenPrintOrderService,
+    onClose: onClosePrintOrderService,
+    onOpen: onOpenPrintOrderService,
   } = useDisclosure();
 
   const {
@@ -136,8 +149,19 @@ function OrderServiceTable() {
   const watchFilter = watch();
 
   const handleEdit = (orderService: OrderServiceData) => {
-    if (orderService) setSelectedOrderServiceToEdit(orderService);
+    if (orderService) {
+      setSelectedOrderServiceToEdit(orderService);
+    }
+
     onOpenEditOrderService();
+  };
+
+  const handlePrint = (orderService: OrderServiceData) => {
+    if (orderService) {
+      setSelectedOrderServiceToPrint(orderService);
+    }
+
+    onOpenPrintOrderService();
   };
 
   const handleFilterChange = () => {
@@ -381,6 +405,7 @@ function OrderServiceTable() {
                         <Td>Status da OS</Td>
                         <Td>Data da OS</Td>
                         <Td />
+                        <Td />
                       </Tr>
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
@@ -423,6 +448,17 @@ function OrderServiceTable() {
                                 }}
                               />
                             </button>
+                          </Td>
+                          <Td>
+                            <IconButton
+                              aria-label="Gerar termo de ordem de serviço"
+                              variant="ghost"
+                              icon={<FaFileAlt />}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handlePrint(orderService);
+                              }}
+                            />
                           </Td>
                         </Tr>
                       ))}
@@ -476,6 +512,13 @@ function OrderServiceTable() {
         <OrderServiceRegisterModal
           onClose={onClose}
           isOpen={isOpen}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
+        <OrderServiceTermModal
+          isOpen={isOpenPrintOrderService}
+          onClose={onClosePrintOrderService}
+          selectedOrderService={selectedOrderServiceToPrint as OrderServiceData}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
         />
