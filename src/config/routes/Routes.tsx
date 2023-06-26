@@ -18,7 +18,7 @@ import { UserRegister } from '@/pages/user-register/UserRegister';
 import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 import { ChangePassword } from '@/pages/change-password';
 import { ViewProfile } from '@/pages/view-profile/ViewProfileControl';
-import { ReportsTable } from '@/pages/equipment-report/EquipmentReport' 
+import { ReportsTable } from '@/pages/reports/Reports' 
 
 export function Router() {
   return (
