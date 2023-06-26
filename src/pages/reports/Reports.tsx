@@ -19,8 +19,9 @@ import {
   GridItem,
   Checkbox,
 } from '@chakra-ui/react';
-import { TIPOS_RELATORIO } from '@/constants/reports';
 import { AxiosResponse } from 'axios';
+import { AiFillFilePdf } from 'react-icons/ai';
+import { TIPOS_RELATORIO } from '@/constants/reports';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -29,7 +30,6 @@ import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
-import { AiFillFilePdf } from 'react-icons/ai'
 import { ReportRegisterModal } from '@/components/report-register-modal';
 import { ReportViewModal } from '@/components/report-view-modal';
 
@@ -52,7 +52,7 @@ type FilterValues = {
 function ReportsTable() {
   const [reports, setReports] = useState<any[]>([]);
   const [nextReports, setNextReports] = useState<any[]>([]);
-  const [selectedReport, setSelectedReport] = useState<any | undefined>()
+  const [selectedReport, setSelectedReport] = useState<any | undefined>();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
 
@@ -125,9 +125,9 @@ function ReportsTable() {
   };
 
   const handleView = (report: any) => {
-    if(report) setSelectedReport(report);
+    if (report) setSelectedReport(report);
     onViewOpen();
-  }
+  };
 
   const getWorkstations = async () => {
     apiSchedula
@@ -222,7 +222,7 @@ function ReportsTable() {
               </Button>
             </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
-            
+
             <Flex
               flexDirection="column"
               justifyContent="flex-end"
@@ -231,38 +231,38 @@ function ReportsTable() {
             >
               <form id="equipment-filter" style={{ width: '100%' }}>
                 <Flex gap="5px" alignItems="5px" mb="15px">
-                    <NewControlledSelect
-                        control={control}
-                        name="type"
-                        id="type"
-                        options={TIPOS_RELATORIO}
-                        placeholder="Tipo"
-                        cursor="pointer"
-                        variant="unstyled"
-                        fontWeight="semibold"
-                        size="sm"
-                        filterStyle
-                    />
-                        <Datepicker
-                            name="lowerDate"    
-                            control={control}
-                            border={false}
-                            placeholderText="Data inicial"
-                            />
-                        <Datepicker
-                            name="higherDate"
-                            control={control}
-                            border={false}
-                            placeholderText="Data final"
-                        />
-                    <Input
-                        alignSelf = "right"
-                        placeholder="Pesquisa"
-                        minWidth="10vw"
-                        errors={errors.search}
-                        {...register('search')}
-                        rightElement={<BiSearch />}
-                    />
+                  <NewControlledSelect
+                    control={control}
+                    name="type"
+                    id="type"
+                    options={TIPOS_RELATORIO}
+                    placeholder="Tipo"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                    filterStyle
+                  />
+                  <Datepicker
+                    name="lowerDate"
+                    control={control}
+                    border={false}
+                    placeholderText="Data inicial"
+                  />
+                  <Datepicker
+                    name="higherDate"
+                    control={control}
+                    border={false}
+                    placeholderText="Data final"
+                  />
+                  <Input
+                    alignSelf="right"
+                    placeholder="Pesquisa"
+                    minWidth="10vw"
+                    errors={errors.search}
+                    {...register('search')}
+                    rightElement={<BiSearch />}
+                  />
                 </Flex>
               </form>
               {filter !== '' ? (
@@ -313,7 +313,7 @@ function ReportsTable() {
                         <Td>Tipo - ID</Td>
                         <Td>Gerado por</Td>
                         <Td>Data</Td>
-                        <Td></Td>
+                        <Td />
                       </Tr>
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
@@ -327,17 +327,19 @@ function ReportsTable() {
                           cursor="pointer"
                         >
                           <Td fontWeight="medium">
-                             {/* {report.type} */}
-                             EXEMPLO
+                            {/* {report.type} */}
+                            EXEMPLO
                             <Td p={0} fontWeight="semibold">
                               {/* {report.id} */}
                               exemplo
                             </Td>
                           </Td>
-                          <Td>{/* {report.generatedBy} - {report.role} */}Pupak</Td>
-                          <Td>{/*{ {report.date} }*/}21/11/2023</Td>
                           <Td>
-                              <AiFillFilePdf size="1.7rem"/>
+                            {/* {report.generatedBy} - {report.role} */}Pupak
+                          </Td>
+                          <Td>{/* { {report.date} } */}21/11/2023</Td>
+                          <Td>
+                            <AiFillFilePdf size="1.7rem" />
                           </Td>
                         </Tr>
                       ))}
@@ -393,7 +395,6 @@ function ReportsTable() {
         />
       </GridItem>
     </Grid>
-    
   );
 }
 export { ReportsTable };
