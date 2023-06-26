@@ -38,12 +38,14 @@ interface OrderServiceFormProps {
   onClose: () => void;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
+  onOpenTerm(): void;
 }
 
 export function OrderServiceRegisterForm({
   onClose,
   refreshRequest,
   setRefreshRequest,
+  onOpenTerm,
 }: OrderServiceFormProps) {
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
@@ -147,6 +149,7 @@ export function OrderServiceRegisterForm({
       toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
       setRefreshRequest(!refreshRequest);
       onClose();
+      onOpenTerm();
     } catch (error: any) {
       console.error(error);
       const message = error.response.data.error

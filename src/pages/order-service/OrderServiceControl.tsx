@@ -514,6 +514,7 @@ function OrderServiceTable() {
           isOpen={isOpen}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
+          onOpenTerm={onOpenPrintOrderService}
         />
         <OrderServiceTermModal
           isOpen={isOpenPrintOrderService}
