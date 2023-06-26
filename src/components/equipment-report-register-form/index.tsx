@@ -1,12 +1,12 @@
 import { useForm } from 'react-hook-form';
-import {  useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 
 import {
   TIPOS_ARMAZENAMENTO,
   TIPOS_EQUIPAMENTO,
   TIPOS_MONITOR,
-  STATUS
+  STATUS,
 } from '@/constants/equipment';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
@@ -26,7 +26,7 @@ type FormValues = {
   storageType?: string;
   processor?: string;
   ram_size?: string;
-  
+
   screenType?: string;
   screenSize?: string;
 
@@ -52,7 +52,7 @@ export default function EquipmentReportRegisterForm({
     resetField,
     formState: { errors },
   } = useForm<FormValues>();
-  
+
   const watchType = watch('equipType');
 
   useEffect(() => {
@@ -78,8 +78,7 @@ export default function EquipmentReportRegisterForm({
     try {
       const { equipType, ...rest } = formData;
 
-      const payload = { ...rest,
-      };
+      const payload = { ...rest };
 
       const response = await api.post('equipment/', payload);
 
@@ -90,12 +89,12 @@ export default function EquipmentReportRegisterForm({
         return;
       }
       toast.error('Erro gerar relatório', 'Erro');
-    } catch (error: any) {      
-        error.response.data.error
-        ? toast.error(error.response.data.error, 'Erro')
-        : toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
-      }
-    });
+    } catch (error: any) {
+      if (error.response.data.error)
+        toast.error(error.response.data.error, 'Erro');
+      else toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+    }
+  });
 
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
