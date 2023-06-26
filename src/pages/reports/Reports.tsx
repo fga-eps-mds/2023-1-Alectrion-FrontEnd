@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
-import { BiEditAlt, BiSearch } from 'react-icons/bi';
+import { BiSearch } from 'react-icons/bi';
 import {
   Text,
   Table,
@@ -19,56 +19,23 @@ import {
   GridItem,
   Checkbox,
 } from '@chakra-ui/react';
-import {TIPOS_RELATORIO} from '@/constants/reports';
+import { TIPOS_RELATORIO } from '@/constants/reports';
 import { AxiosResponse } from 'axios';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
-import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
-import { EquipmentViewModal } from '@/components/equipment-view-modal';
 import { theme } from '@/styles/theme';
-import { EquipmentEditModal } from '@/components/equipment-edit-modal';
-import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
-import { MovementRegisterModal } from '@/components/movement-register-modal';
-import { TermModal } from '@/components/term-modal';
-import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
+import { AiFillFilePdf } from 'react-icons/ai'
+import { ReportRegisterModal } from '@/components/report-register-modal';
+import { ReportViewModal } from '@/components/report-view-modal';
 
 interface ISelectOption {
   label: string;
   value: number | string;
-}
-
-export interface EquipmentData {
-  tippingNumber: string;
-  serialNumber: string;
-  type: string;
-  situacao: string;
-  estado: string;
-  model: string;
-  acquisitionDate: Date;
-  description?: string;
-  screenSize?: string;
-  power?: string;
-  screenType?: string;
-  processor?: string;
-  storageType?: string;
-  storageAmount?: string;
-  ram_size?: string;
-  createdAt?: string;
-  updatedAt: string;
-  id: string;
-  brand: {
-    name: string;
-  };
-  acquisition: { name: string };
-  unit: {
-    name: string;
-    localization: string;
-  };
 }
 
 type FilterValues = {
@@ -78,18 +45,14 @@ type FilterValues = {
   unit?: ISelectOption;
   situation?: ISelectOption;
   search: string;
+  lowerDate: Date;
+  higherDate: Date;
 };
 
-// função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function ReportsTable() {
-  const [equipments, setEquipments] = useState<EquipmentData[]>([]);
-  const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
-  const [selectedMovement, setSelectedMovement] = useState<movement>();
-
-  const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
-    useState<EquipmentData>();
-  const [selectedEquipmentToMovement, setSelectedEquipmentToMovement] =
-    useState<EquipmentData[]>([]);
+  const [reports, setReports] = useState<any[]>([]);
+  const [nextReports, setNextReports] = useState<any[]>([]);
+  const [selectedReport, setSelectedReport] = useState<any | undefined>()
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
 
@@ -147,39 +110,24 @@ function ReportsTable() {
     reset();
   };
 
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
-
-  const {
-    isOpen: isOpenEditEquipment,
-    onClose: onCloseEditEquipment,
-    onOpen: onOpenEditEquipment,
-  } = useDisclosure();
-
-  const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const {
-    isOpen: isOpenTerm,
-    onClose: onCloseTerm,
-    onOpen: onOpenTerm,
-  } = useDisclosure();
-
-  const {
-    isOpen: isOpenRegister,
-    onClose: onCloseRegister,
-    onOpen: onOpenRegister,
-  } = useDisclosure();
-
   const {
     isOpen: isViewOpen,
     onClose: onViewClose,
     onOpen: onViewOpen,
   } = useDisclosure();
 
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
     return data?.map((item: Workstation) => {
       return { label: item.name, value: item.name };
     });
   };
+
+  const handleView = (report: any) => {
+    if(report) setSelectedReport(report);
+    onViewOpen();
+  }
 
   const getWorkstations = async () => {
     apiSchedula
@@ -205,25 +153,25 @@ function ReportsTable() {
 
   const fetchItems = async () => {
     try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+      const { data }: AxiosResponse<any[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset}&${filter}`
       );
-      setEquipments(data);
+      setReports(data);
     } catch (error) {
-      setEquipments([]);
-      toast.error('Nenhum Equipamento encontrado');
+      setReports([]);
+      toast.error('Nenhum relaório encontrado');
     }
   };
 
   const fetchNextItems = async () => {
     try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+      const { data }: AxiosResponse<any[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset + limit}&${filter}`
       );
-      setNextEquipments(data);
+      setNextReports(data);
     } catch (error) {
-      setNextEquipments([]);
-      toast.error('Nenhum Equipamento encontrado');
+      setNextReports([]);
+      toast.error('Nenhum relaório encontrado');
     }
   };
   useEffect(() => {
@@ -242,39 +190,6 @@ function ReportsTable() {
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, refreshRequest, filter]);
-
-  const handleEdit = (equipment: EquipmentData) => {
-    if (equipment) setSelectedEquipmentToEdit(equipment);
-    onOpenEditEquipment();
-  };
-
-  const handleView = (equipment: EquipmentData) => {
-    if (equipment) setSelectedEquipment(equipment);
-    onViewOpen();
-  };
-
-//   const handleMovement = () => {
-//     if (
-//       selectedEquipmentToMovement === undefined ||
-//       selectedEquipmentToMovement.length === 0
-//     ) {
-//       toast.error('Selecione ao menos um equipamento para movimentar');
-//     } else {
-//       onOpenRegister();
-//     }
-//   };
-  const handleCheckboxClick = (equipment: EquipmentData) => {
-    if (selectedEquipmentToMovement.includes(equipment)) {
-      setSelectedEquipmentToMovement(
-        selectedEquipmentToMovement.filter((equip) => equip.id !== equipment.id)
-      );
-    } else {
-      setSelectedEquipmentToMovement([
-        ...selectedEquipmentToMovement,
-        equipment,
-      ]);
-    }
-  };
 
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
@@ -402,70 +317,33 @@ function ReportsTable() {
                       </Tr>
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
-                      {equipments.map((equipment) => (
+                      {reports.map((report) => (
                         <Tr
                           onClick={(event) => {
-                            handleView(equipment);
+                            handleView(report);
                             event.stopPropagation();
                           }}
-                          key={equipment.id}
+                          key={report.id}
                           cursor="pointer"
                         >
                           <Td fontWeight="medium">
-                            {equipment.situacao} - {equipment.unit.name}
+                             {/* {report.type} */}
+                             EXEMPLO
                             <Td p={0} fontWeight="semibold">
-                              {equipment.type} {equipment.brand.name}
+                              {/* {report.id} */}
+                              exemplo
                             </Td>
                           </Td>
-                          <Td>{equipment.tippingNumber}</Td>
-                          <Td>{equipment.serialNumber}</Td>
+                          <Td>{/* {report.generatedBy} - {report.role} */}Pupak</Td>
+                          <Td>{/*{ {report.date} }*/}21/11/2023</Td>
                           <Td>
-                            {new Date(equipment.updatedAt).toLocaleDateString(
-                              'pt-BR'
-                            )}
-                          </Td>
-                          <Td
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleEdit(equipment);
-                            }}
-                            width="5%"
-                          >
-                            <button>
-                              <BiEditAlt size={23} />
-                            </button>
-                          </Td>
-                          <Td
-                            width="5%"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                            }}
-                          >
-                            <Checkbox
-                              onChange={() => {
-                                handleCheckboxClick(equipment);
-                              }}
-                            />
+                              <AiFillFilePdf size="1.7rem"/>
                           </Td>
                         </Tr>
                       ))}
                     </Tbody>
                   </Table>
                 </TableContainer>
-                {/* <Box
-                  bgColor={theme.colors.primary}
-                  cursor="pointer"
-                  fontSize="sm"
-                  fontWeight="semibold"
-                  width="100%"
-                  textAlign="center"
-                  color={theme.colors.white}
-                  padding="1rem 0 1rem 0"
-                  borderRadius=" 0  0 15px 15px"
-                  onClick={handleMovement}
-                >
-                  Movimentar 
-                </Box>*/}
                 <Flex justifyContent="center" mt="15px">
                   {currentPage > 1 && (
                     <Button
@@ -482,7 +360,7 @@ function ReportsTable() {
                       Anterior
                     </Button>
                   )}
-                  {nextEquipments.length > 0 && (
+                  {nextReports.length > 0 && (
                     <Button
                       variant="link"
                       color="#00000"
@@ -502,8 +380,20 @@ function ReportsTable() {
             </Flex>
           </Flex>
         </Flex>
+        <ReportRegisterModal
+          onClose={onClose}
+          isOpen={isOpen}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
+        <ReportViewModal
+          onClose={onViewClose}
+          selectedReport={selectedReport}
+          isOpen={isViewOpen}
+        />
       </GridItem>
     </Grid>
+    
   );
 }
 export { ReportsTable };
