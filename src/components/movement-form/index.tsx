@@ -373,11 +373,7 @@ export default function MovementForm({
           <Button variant="secondary" onClick={onCloseCallback}>
             Cancelar
           </Button>
-          <Button
-            type="submit"
-            form="movement-register-form"
-            variant="primary"
-          >
+          <Button type="submit" form="movement-register-form" variant="primary">
             Gerar Movimentação
           </Button>
         </Flex>
