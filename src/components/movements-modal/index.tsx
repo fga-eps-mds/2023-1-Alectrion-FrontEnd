@@ -124,7 +124,6 @@ export function MovementsModal({
                   isDisabled
                   defaultValue={selectedMoviment?.chiefName}
                   {...register('chiefName', {
-                    required: 'Campo Obrigatório',
                     maxLength: 50,
                   })}
                 />
@@ -136,7 +135,6 @@ export function MovementsModal({
                 isDisabled
                 defaultValue={selectedMoviment?.chiefRole}
                 {...register('chiefRole', {
-                  required: 'Campo Obrigatório',
                   maxLength: 50,
                 })}
               />
