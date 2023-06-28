@@ -134,8 +134,8 @@ export default function MovementForm({
         type: formData.type,
         inchargename: formData.inChargeName,
         inchargerole: formData.inChargeRole,
-        chiefname: formData.chiefName,
-        chiefrole: formData.chiefRole,
+        chiefname: user?.name,
+        chiefrole: user?.job,
         equipments: materiais || [],
         description: formData?.description || null,
         destination: formData?.destination || '',
@@ -148,6 +148,7 @@ export default function MovementForm({
         setRefreshRequest(!refreshRequest);
         onClose();
         setSelectedMovement(response?.data);
+        onOpenTerm();
         return;
       }
       toast.error('Erro ao tentar cadastrar o movimentação');
@@ -285,12 +286,11 @@ export default function MovementForm({
           <GridItem colSpan={2}>
             <Input
               label="Responsável"
+              isDisabled
               readOnly
               defaultValue={user?.name}
               errors={errors.chiefName}
-              disabled
               {...register('chiefName', {
-                required: 'Campo Obrigatório',
                 maxLength: 50,
               })}
             />
@@ -298,12 +298,11 @@ export default function MovementForm({
 
           <Input
             label="Atribuição"
+            isDisabled
             readOnly
             defaultValue={user?.job}
             errors={errors.chiefRole}
-            disabled
             {...register('chiefRole', {
-              required: 'Campo Obrigatório',
               maxLength: 50,
             })}
           />
@@ -374,12 +373,7 @@ export default function MovementForm({
           <Button variant="secondary" onClick={onCloseCallback}>
             Cancelar
           </Button>
-          <Button
-            type="submit"
-            form="movement-register-form"
-            variant="primary"
-            onClick={onOpenTerm}
-          >
+          <Button type="submit" form="movement-register-form" variant="primary">
             Gerar Movimentação
           </Button>
         </Flex>
