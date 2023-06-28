@@ -35,6 +35,7 @@ import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
+import { ReportRegisterModal } from '@/components/report-register-modal';
 
 interface ISelectOption {
   label: string;
@@ -155,6 +156,12 @@ function EquipmentTable() {
   } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const {
+    isOpen: isOpenEqui,
+    onClose: onCloseEqui,
+    onOpen: onOpenEqui,
+  } = useDisclosure();
 
   const {
     isOpen: isOpenTerm,
@@ -301,9 +308,14 @@ function EquipmentTable() {
               <Text color="#00000" fontWeight="medium" fontSize="2xl">
                 Últimos Equipamentos Modificados
               </Text>
-              <Button colorScheme={theme.colors.primary} onClick={onOpen}>
-                Cadastrar Equipamento
-              </Button>
+              <Flex flexDirection="column">
+                <Button colorScheme={theme.colors.primary} onClick={onOpen}>
+                  Cadastrar Equipamento
+                </Button>
+                <Button colorScheme={theme.colors.primary} mt={2} onClick={onOpenEqui}>
+                  Gerar Relatório
+                </Button>
+              </Flex>
             </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
             <Flex
@@ -519,6 +531,13 @@ function EquipmentTable() {
             </Flex>
           </Flex>
         </Flex>
+        <ReportRegisterModal
+          isOpen={isOpenEqui}
+          onClose={onOpenEqui}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+          onOpenEqui={onOpenEqui}
+        />
         <EquipmentRegisterModal
           onClose={onClose}
           isOpen={isOpen}
