@@ -29,7 +29,12 @@ import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
-import { MovimentacaoTipoMap, TIPOS_MOVIMENTACAO } from '@/constants/movements';
+import {
+  MONTH_OPTIONS,
+  MovimentacaoTipoMap,
+  SEMESTER_OPTIONS,
+  TIPOS_MOVIMENTACAO,
+} from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
@@ -50,6 +55,8 @@ type FormValues = {
   lowerDate: string;
   higherDate: string;
   searchTerm: string;
+  month: ISelectOption;
+  semester: ISelectOption;
 };
 export interface movementEquipment {
   tippingNumber: string;
@@ -191,6 +198,8 @@ function MovementsTable() {
         equipmentId,
         lowerDate,
         higherDate,
+        month,
+        semester,
       } = watchedData;
       let formattedLowerDate;
 
@@ -212,6 +221,8 @@ function MovementsTable() {
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
         searchTerm: search,
+        month,
+        semester,
       };
 
       const filteredFormData = [
@@ -303,11 +314,30 @@ function MovementsTable() {
                 Movimentações
               </Text>
               <Box>
-                <Flex justifyContent="space-between" width="100%">
+                <Flex justifyContent="flex-end" width="100%">
+                  <Button
+                    colorScheme="#F49320"
+                    onClick={onOpenRegister}
+                    size="md"
+                    width="200px"
+                  >
+                    Gerar Relatório
+                  </Button>
+                </Flex>
+                <Flex
+                  justifyContent="space-between"
+                  width="100%"
+                  marginTop="10px"
+                >
                   <Text color="#00000" fontWeight="medium" fontSize="2xl">
                     Últimas Movimentações
                   </Text>
-                  <Button colorScheme="#F49320" onClick={onOpenRegister}>
+                  <Button
+                    colorScheme="#F49320"
+                    onClick={onOpenRegister}
+                    size="md"
+                    width="200px"
+                  >
                     Cadastrar Movimentação
                   </Button>
                 </Flex>
@@ -356,6 +386,28 @@ function MovementsTable() {
                       control={control}
                       border={false}
                       placeholderText="Data final"
+                    />
+                    <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="month"
+                      id="month"
+                      options={MONTH_OPTIONS}
+                      placeholder="Mês"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                    <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="semester"
+                      id="semester"
+                      options={SEMESTER_OPTIONS}
+                      placeholder="Semestre"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
                     />
                     <Input
                       minWidth="15vw"
