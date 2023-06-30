@@ -18,6 +18,7 @@ import { UserRegister } from '@/pages/user-register/UserRegister';
 import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 import { ChangePassword } from '@/pages/change-password';
 import { ViewProfile } from '@/pages/view-profile/ViewProfileControl';
+import { UsersTable } from '@/pages/users/UsersControl';
 
 export function Router() {
   return (
@@ -35,6 +36,7 @@ export function Router() {
       {/* ROTAS PUBLICAS */}
       <Route path="/login" element={<Login />} />
       <Route path="/pass-recover" element={<PasswordRecover/>}/>
+      <Route path="/users" element={<UsersTable/>}/>
       <Route
         path="/movements"
         element={
