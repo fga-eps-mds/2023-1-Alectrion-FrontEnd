@@ -35,7 +35,9 @@ import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
-import { ReportRegisterModal } from '@/components/report-register-modal';
+import { PDF } from '@/components/equipment-reports/pdf'
+import { CSV } from '@/components/equipment-reports/csv';
+import { Excel } from '@/components/equipment-reports/xls';
 
 interface ISelectOption {
   label: string;
@@ -156,12 +158,6 @@ function EquipmentTable() {
   } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const {
-    isOpen: isOpenEqui,
-    onClose: onCloseEqui,
-    onOpen: onOpenEqui,
-  } = useDisclosure();
 
   const {
     isOpen: isOpenTerm,
@@ -312,9 +308,11 @@ function EquipmentTable() {
                 <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                   Cadastrar Equipamento
                 </Button>
-                <Button colorScheme={theme.colors.primary} mt={2} onClick={onOpenEqui}>
-                  Gerar Relatório
-                </Button>
+                <Flex gap={5} justifyContent="center" width="100%" alignItems="center" padding={4}>
+                    <CSV equipments={equipments}/>
+                    <Excel/>
+                    <PDF equipments={equipments} />
+                </Flex>
               </Flex>
             </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
@@ -531,13 +529,6 @@ function EquipmentTable() {
             </Flex>
           </Flex>
         </Flex>
-        <ReportRegisterModal
-          isOpen={isOpenEqui}
-          onClose={onOpenEqui}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-          onOpenEqui={onOpenEqui}
-        />
         <EquipmentRegisterModal
           onClose={onClose}
           isOpen={isOpen}
