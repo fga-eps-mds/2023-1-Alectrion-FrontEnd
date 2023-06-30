@@ -16,6 +16,7 @@
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
+    //"project": "2023-1-Alectrion-FrontEnd/tsconfig.json"
     "project": "./tsconfig.json"
   },
   "plugins": ["react", "@typescript-eslint", "prettier"],

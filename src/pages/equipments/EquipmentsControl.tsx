@@ -167,12 +167,6 @@ function EquipmentTable() {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const {
-    isOpen: isOpenEqui,
-    onClose: onCloseEqui,
-    onOpen: onOpenEqui,
-  } = useDisclosure();
-
-  const {
     isOpen: isOpenTerm,
     onClose: onCloseTerm,
     onOpen: onOpenTerm,
@@ -344,9 +338,11 @@ function EquipmentTable() {
                 <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                   Cadastrar Equipamento
                 </Button>
-                <Button colorScheme={theme.colors.primary} mt={2} onClick={onOpenEqui}>
-                  Gerar Relatório
-                </Button>
+                <Flex gap={5} justifyContent="center" width="100%" alignItems="center" padding={4}>
+                    <CSV equipments={equipments}/>
+                    <Excel/>
+                    <PDF equipments={equipments} />
+                </Flex>
               </Flex>
             </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
@@ -566,13 +562,6 @@ function EquipmentTable() {
             </Flex>
           </Flex>
         </Flex>
-        <ReportRegisterModal
-          isOpen={isOpenEqui}
-          onClose={onOpenEqui}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-          onOpenEqui={onOpenEqui}
-        />
         <EquipmentRegisterModal
           onClose={onClose}
           isOpen={isOpen}
