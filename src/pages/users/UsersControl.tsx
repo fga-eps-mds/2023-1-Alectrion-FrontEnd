@@ -24,65 +24,32 @@ import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
 import { theme } from '@/styles/theme';
-import {
-  SelectItem,
-  TIPOS_EQUIPAMENTO,
-  Workstation,
-} from '@/constants/equipment';
+import { SelectItem } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { MdDelete} from 'react-icons/md';
+import { Job, Role } from '@/constants/user';
 
 interface ISelectOption {
   label: string;
   value: number | string;
 }
 
-export interface Equipment {
-  description: string;
-  tippingNumber: string;
-  serialNumber: string;
-  brand: {
-    name: string;
-  };
-  type: string;
-  id: string;
-  model: string;
-  unit: {
-    name: string;
-    localization: string;
-  };
-}
-
-export interface OrderServiceData {
-  id: string;
-  date: string;
-  description?: string;
-  authorId: string;
-  withdrawalName: string;
-  sender?: string;
-  equipmentSnapshot: any;
-  senderFunctionalNumber: string;
-  createdAt: string;
-  updatedAt: string;
-  equipment: Equipment;
-  seiProcess: string;
-  senderName: string;
-  senderDocument: string;
-  history: History;
-  withdrawalDocument: string;
-  technicianId: string;
-  technicianName: string;
-  status: string;
-  unit: {
-    name: string;
-    localization: string;
-  };
-  brand: {
-    name: string;
-  };
-  finishDate: string;
+export interface UserData {
+  id?: string
+  name: string
+  email: string
+  username: string
+  cpf: string
+  job: Job
+  role: Role
+  password: string
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date
+  temporaryPassword: boolean
+  isDeleted?: boolean
 }
 
 type FilterValues = {
@@ -96,25 +63,18 @@ type FilterValues = {
 
 
 function UsersTable() {
-  const [orderServices, setOrderServices] = useState<OrderServiceData[]>([]);
-  const [nextOrderServices, setNextOrderServices] = useState<
-    OrderServiceData[]
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [nextUsers, setNextUsers] = useState<
+    UserData[]
   >([]);
 
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-  const [workstations, setWorkstations] = useState<ISelectOption[]>();
-  const [brands, setBrands] = useState<ISelectOption[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
-
-  const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
-    useState<OrderServiceData>();
-  const [selectedOrderServiceToPrint, setSelectedOrderServiceToPrint] =
-    useState<OrderServiceData>();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
@@ -137,22 +97,15 @@ function UsersTable() {
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
-
-  const handleEdit = (orderService: OrderServiceData) => {
+/*
+  const handleEdit = (user: OrderServiceData) => {
     if (orderService) {
       setSelectedOrderServiceToEdit(orderService);
     }
 
     onOpenEditOrderService();
   };
-
-  const handlePrint = (orderService: OrderServiceData) => {
-    if (orderService) {
-      setSelectedOrderServiceToPrint(orderService);
-    }
-
-    onOpenPrintOrderService();
-  };
+*/
 
   const handleFilterChange = () => {
     const { type, dateOS, status, unit } = watchFilter;
@@ -188,21 +141,6 @@ function UsersTable() {
     reset();
   };
 
-  const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
-    return data?.map((item) => {
-      return { label: item.name, value: item.name };
-    });
-  };
-
-  const getWorkstations = async () => {
-    apiSchedula
-      .get<Workstation[]>('workstations')
-      .then((response) => {
-        setWorkstations(formattedWorkstations(response.data));
-      })
-      .catch((error) => {});
-  };
-
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     return function (this: any, ...args: Parameters<T>) {
@@ -216,33 +154,28 @@ function UsersTable() {
 
   const fetchItems = async () => {
     try {
-      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService?take=${limit}&skip=${offset}&${filter}`
+      const { data }: AxiosResponse<UserData[]> = await api.get(
+        `user/get?take=${limit}&skip=${offset}&${filter}`
       );
-      setOrderServices(data);
+      setNextUsers(data);
     } catch (error) {
-      setOrderServices([]);
-      toast.error('Nenhuma Ordem de Serviço encontrada');
+      setUsers([]);
+      toast.error('Nenhum Usuário Encontrado');
     }
   };
 
   const fetchNextItems = async () => {
     try {
-      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService?take=${limit}&skip=${
+      const { data }: AxiosResponse<UserData[]> = await api.get(
+        `user/get?take=${limit}&skip=${
           offset + limit
         }&${filter}`
       );
-      setNextOrderServices(data);
+      setNextUsers(data);
     } catch (error) {
-      setNextOrderServices([]);
+      setNextUsers([]);
     }
   };
-
-  useEffect(() => {
-    getWorkstations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     handleSearch();
@@ -350,63 +283,42 @@ function UsersTable() {
                       zIndex={+1}
                     >
                       <Tr width="100%" color={theme.colors.white}>
-                        <Td>Equipamento</Td>
-                        <Td>Status da OS</Td>
-                        <Td>Data da OS</Td>
+                        <Td>Usuário</Td>
+                        <Td>Cargo</Td>
+                        <Td>Tipo de Acesso</Td>
                         <Td />
                         <Td />
                       </Tr>
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
-                      {orderServices.map((orderService) => (
-                        <Tr key={orderService.id}>
-                          <Td fontWeight="medium">
-                            Tombamento - {orderService.equipment.tippingNumber}
-                            <Td p={0} fontWeight="semibold">
-                              {orderService.equipment.type}{' '}
-                              {orderService.equipment.brand.name}{' '}
-                              {orderService.equipment.serialNumber}
-                            </Td>
+                      {users.map((users) => (
+                        <Tr key={users.id}>
+                          <Td p={0} fontWeight="semibold">
+                            {users.name}{' '}
                           </Td>
-                          <Td fontWeight="medium">
-                            {orderService.equipment.unit.name} -{' '}
-                            {orderService.equipment.unit.localization}
-                            <Td
-                              p={0}
-                              fontWeight="semibold"
-                              style={OSStatusStyleMap.get(orderService.status)}
-                            >
-                              {OSStatusMap.get(orderService.status)}
-                            </Td>
-                          </Td>
-
-                          <Td>
-                            {new Date(
-                              orderService.createdAt
-                            ).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+                          <Td
+                            p={0}
+                            fontWeight="semibold"
+                          >
+                            {users.job} -{' '}
                           </Td>
                           <Td>
-                            <button onClick={onOpenEditOrderService}>
+                            {users.role}
+                          </Td>
+                          <Td>
+                            <button >
                               <IconButton
-                                aria-label="Mudar status da ordem de serviço"
+                                aria-label="Editar Usuário"
                                 variant="ghost"
                                 icon={<FaTools />}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleEdit(orderService);
-                                }}
                               />
                             </button>
                           </Td>
                           <Td>
                             <IconButton
-                              aria-label="Gerar termo de ordem de serviço"
+                              aria-label="Excluir Usuário"
                               variant="ghost"
                               icon={<MdDelete />}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                handlePrint(orderService);
-                              }}
                             />
                           </Td>
                         </Tr>
@@ -431,7 +343,7 @@ function UsersTable() {
                       Anterior
                     </Button>
                   )}
-                  {nextOrderServices.length > 0 && (
+                  {nextUsers.length > 0 && (
                     <Button
                       variant="link"
                       color="#00000"
