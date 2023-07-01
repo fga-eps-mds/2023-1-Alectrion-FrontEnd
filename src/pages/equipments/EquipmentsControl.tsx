@@ -87,7 +87,7 @@ function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
   const [selectedMovement, setSelectedMovement] = useState<movement>();
-
+  const [equipmentsToExport, setEquipmentsToExport] = useState<EquipmentData[]>([]); 
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
   const [selectedEquipmentToMovement, setSelectedEquipmentToMovement] =
@@ -110,7 +110,18 @@ function EquipmentTable() {
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
-
+  
+  function getCurrentDate(): string[] {
+    const date = new Date();
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+  
+    return [day, month, year]
+  }
+  
+  const currentDate = getCurrentDate();
+  
   const handleFilterChange = () => {
     const { type, lastModifiedDate, situation, unit } = watchFilter;
 
@@ -204,6 +215,18 @@ function EquipmentTable() {
   const handleSearch = debounce(() => {
     setSearch(watchFilter.search);
   }, 400);
+
+  const handleExport = async () => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/find?${filter}`
+      );
+      setEquipmentsToExport(data);
+    } catch (error) {
+      setEquipmentsToExport([]);
+      toast.error('Nenhum Equipamento encontrado');
+    }
+  }
 
   const fetchItems = async () => {
     try {
@@ -309,9 +332,9 @@ function EquipmentTable() {
                   Cadastrar Equipamento
                 </Button>
                 <Flex gap={5} justifyContent="center" width="100%" alignItems="center" padding={4}>
-                    <CSV equipments={equipments}/>
-                    <Excel/>
-                    <PDF equipments={equipments} />
+                    <CSV date={currentDate} equipments={equipmentsToExport} onClick={handleExport}/>
+                    <Excel date={currentDate} equipments={equipmentsToExport} onClick={handleExport}/>
+                    <PDF date={currentDate} equipments={equipmentsToExport} onClick={handleExport}/>
                 </Flex>
               </Flex>
             </Flex>

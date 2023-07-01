@@ -5,12 +5,11 @@ import { MdPictureAsPdf } from "react-icons/md";
 import { EquipmentData } from "@/pages/equipments/EquipmentsControl";
 
 interface PDFprops {
+	date: string[]
 	equipments: EquipmentData[]
 }
 
-export function PDF ({equipments}: PDFprops) {
-	const date = new Date().getDate().toString()
-	console.log(date)
+export function PDF ({date, equipments}: PDFprops) {
 	return (
 		<PDFDownloadLink
 		document={
@@ -19,14 +18,13 @@ export function PDF ({equipments}: PDFprops) {
 				'Relatório de equipamentos'
 			}
 			equipments={equipments}
-			date={date}
+			date={`${date[0]}_${date[1]}_${date[2]}`}
 			/>
 		}
-		fileName={`relatorio_equipamentos_${date}`}
+		fileName={`relatorio_equipamentos_${date[0]}_${date[1]}_${date[2]}`}
 		>
-	{({ loading }) => (
 		<MdPictureAsPdf size="2.2rem" cursor="pointer"/>
-	)}
+
 	</PDFDownloadLink>
 	)
 }

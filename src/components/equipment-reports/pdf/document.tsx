@@ -157,7 +157,7 @@ import {
             <Text style={styles.caption}>
               DIVISÃO DE SUPORTE TÉCNICO EM INFORMÁTICA
             </Text>
-            <Text style={styles.title}>Termo de {title}</Text>
+            <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>
               Sistema de Controle Interno da DSTI
             </Text>
