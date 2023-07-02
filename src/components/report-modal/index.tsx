@@ -94,6 +94,7 @@ export function ReportModal({
             type="xls"
             target="_blank"
             filename={`relatorio_equipamentos_${formattedDate}`}
+            separator=';'
           >
             <Button>Imprimir</Button>
           </CSVLink>
