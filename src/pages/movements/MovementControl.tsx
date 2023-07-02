@@ -2,6 +2,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Button,
   Divider,
   Flex,
@@ -29,18 +34,16 @@ import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
-import {
-  MONTH_OPTIONS,
-  MovimentacaoTipoMap,
-  SEMESTER_OPTIONS,
-  TIPOS_MOVIMENTACAO,
-} from '@/constants/movements';
+import { MovimentacaoTipoMap, TIPOS_MOVIMENTACAO } from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
+import { PDF } from '@/components/movements-reports/pdf';
+import { Excel } from '@/components/movements-reports/xls';
+// import { CSV } from '@/components/movements-reports/csv';
 
 interface ISelectOption {
   label: string;
@@ -55,9 +58,8 @@ type FormValues = {
   lowerDate: string;
   higherDate: string;
   searchTerm: string;
-  month: ISelectOption;
-  semester: ISelectOption;
 };
+
 export interface movementEquipment {
   tippingNumber: string;
 
@@ -121,6 +123,7 @@ function MovementsTable() {
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
   const watchedData = watch();
+
   const [filter, setFilter] = useState<string>('');
 
   const [destinations, setDestinations] = useState<ISelectOption[]>([]);
@@ -198,9 +201,8 @@ function MovementsTable() {
         equipmentId,
         lowerDate,
         higherDate,
-        month,
-        semester,
       } = watchedData;
+
       let formattedLowerDate;
 
       if (lowerDate !== null && lowerDate !== '' && lowerDate) {
@@ -221,8 +223,6 @@ function MovementsTable() {
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
         searchTerm: search,
-        month,
-        semester,
       };
 
       const filteredFormData = [
@@ -314,32 +314,26 @@ function MovementsTable() {
                 Movimentações
               </Text>
               <Box>
-                <Flex justifyContent="flex-end" width="100%">
-                  <Button
-                    colorScheme="#F49320"
-                    onClick={onOpenRegister}
-                    size="md"
-                    width="200px"
-                  >
-                    Gerar Relatório
-                  </Button>
-                </Flex>
-                <Flex
-                  justifyContent="space-between"
-                  width="100%"
-                  marginTop="10px"
-                >
+                <Flex justifyContent="space-between" width="100%">
                   <Text color="#00000" fontWeight="medium" fontSize="2xl">
                     Últimas Movimentações
                   </Text>
-                  <Button
-                    colorScheme="#F49320"
-                    onClick={onOpenRegister}
-                    size="md"
-                    width="200px"
-                  >
-                    Cadastrar Movimentação
-                  </Button>
+                  <Flex flexDirection="column">
+                    <Button colorScheme="#F49320" onClick={onOpenRegister}>
+                      Cadastrar Movimentação
+                    </Button>
+                    <Flex
+                      gap={5}
+                      justifyContent="center"
+                      width="100%"
+                      alignItems="center"
+                      padding={4}
+                    >
+                      {/* <CSV /> */}
+                      <Excel />
+                      <PDF movements={[]} />
+                    </Flex>
+                  </Flex>
                 </Flex>
               </Box>
               <Divider borderColor="#00000" margin="15px 0 15px 0" />
@@ -350,86 +344,99 @@ function MovementsTable() {
                 width="100%"
               >
                 <form id="movement-filter" style={{ width: '100%' }}>
-                  <Flex width="100%" gap="5px" mb="15px">
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="type"
-                      id="type"
-                      options={TIPOS_MOVIMENTACAO}
-                      placeholder="Tipos"
-                      cursor="pointer"
-                      variant="unstyled"
-                      _placeholder={{ opacity: 0.4, color: 'inherit' }}
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="destinationId"
-                      id="destinationId"
-                      options={destinations}
-                      placeholder="Destino"
-                      variant="unstyled"
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                    <Datepicker
-                      name="lowerDate"
-                      control={control}
-                      border={false}
-                      placeholderText="Data inicial"
-                    />
-                    <Datepicker
-                      name="higherDate"
-                      control={control}
-                      border={false}
-                      placeholderText="Data final"
-                    />
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="month"
-                      id="month"
-                      options={MONTH_OPTIONS}
-                      placeholder="Mês"
-                      variant="unstyled"
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="semester"
-                      id="semester"
-                      options={SEMESTER_OPTIONS}
-                      placeholder="Semestre"
-                      variant="unstyled"
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                    <Input
-                      minWidth="15vw"
-                      errors={errors.searchTerm}
-                      {...register('searchTerm')}
-                      rightElement={<BiSearch />}
-                      placeholder="Pesquisa"
-                    />
+                  <Flex
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Accordion allowMultiple>
+                      <AccordionItem>
+                        <h2>
+                          <AccordionButton>
+                            <Box flex="1" textAlign="left">
+                              Filtros
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel>
+                          <Grid
+                            templateColumns="repeat(auto-fit, minmax(0, 1fr))"
+                            gap="5px"
+                          >
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="type"
+                              id="type"
+                              options={TIPOS_MOVIMENTACAO}
+                              placeholder="Tipos"
+                              cursor="pointer"
+                              variant="unstyled"
+                              _placeholder={{ opacity: 0.4, color: 'inherit' }}
+                              fontWeight="semibold"
+                              size="sm"
+                              minWidth="1200px"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="destinationId"
+                              id="destinationId"
+                              options={destinations}
+                              placeholder="Destino"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                              minWidth="1200px"
+                            />
+                            <Datepicker
+                              name="lowerDate"
+                              control={control}
+                              border={false}
+                              placeholderText="Data inicial"
+                            />
+                            <Datepicker
+                              name="higherDate"
+                              control={control}
+                              border={false}
+                              placeholderText="Data final"
+                            />
+                          </Grid>
+                          {/* <Grid
+                            templateColumns="repeat(2, minmax(0, 1fr))"
+                            gap="5px"
+                          >
+                            
+                          </Grid> */}
+                          {filter !== '' ? (
+                            <Flex alignItems="center" justifyContent="start">
+                              <Button
+                                variant="unstyled"
+                                fontSize="14px"
+                                leftIcon={
+                                  <CloseIcon mr="0.5rem" boxSize="0.6rem" />
+                                }
+                                onClick={cleanFilters}
+                              >
+                                Limpar filtros aplicados
+                              </Button>
+                            </Flex>
+                          ) : null}
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
+                    <Box marginLeft="10px" marginRight="10px">
+                      <Input
+                        errors={errors.searchTerm}
+                        {...register('searchTerm')}
+                        rightElement={<BiSearch />}
+                        placeholder="Pesquisa"
+                        minWidth="15vw"
+                      />
+                    </Box>
                   </Flex>
                 </form>
-                {filter !== '' ? (
-                  <Flex w="100%" alignItems="center" justifyContent="start">
-                    <Button
-                      variant="unstyled"
-                      fontSize="14px"
-                      leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
-                      onClick={cleanFilters}
-                    >
-                      Limpar filtros aplicados
-                    </Button>
-                  </Flex>
-                ) : null}
                 <Flex flexDirection="column" width="100%">
                   <TableContainer
                     borderRadius="15px"
