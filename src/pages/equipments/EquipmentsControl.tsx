@@ -30,6 +30,7 @@ import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
+import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
 
 interface ISelectOption {
   label: string;
@@ -145,9 +146,9 @@ function EquipmentTable() {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const {
-    isOpen: isRegisterOpen,
-    onClose: onRegisterClose,
-    onOpen: onRegisterOpen,
+    isOpen: isUploadOpen,
+    onClose: onUploadClose,
+    onOpen: onUploadOpen,
   } = useDisclosure();
 
   const {
@@ -456,6 +457,7 @@ function EquipmentTable() {
           isOpen={isOpen}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
+          onUploadOpen={onUploadOpen}
         />
         <EquipmentEditModal
           onClose={onCloseEditEquipment}
@@ -471,6 +473,12 @@ function EquipmentTable() {
           selectedEquipment={selectedEquipment}
           isOpen={isViewOpen}
           handleEdit={handleEdit}
+        />
+        <EquipmentsUploadModal
+          onClose={onUploadClose}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+          isOpen={isUploadOpen}
         />
       </GridItem>
     </Grid>
