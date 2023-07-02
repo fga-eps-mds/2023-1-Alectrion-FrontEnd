@@ -20,6 +20,9 @@ import {
   Checkbox,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
+import { MdPictureAsPdf } from 'react-icons/md';
+import { BsFiletypeXlsx } from 'react-icons/bs';
+import { GrDocumentCsv } from 'react-icons/gr';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -36,7 +39,8 @@ import { TermModal } from '@/components/term-modal';
 import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
-import { ReportRegisterModal } from '@/components/report-register-modal';
+import { ReportModal } from '@/components/report-modal';
+import { getEquipments } from '@/utils/getEquipments';
 
 interface ISelectOption {
   label: string;
@@ -94,7 +98,6 @@ function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
   const [selectedMovement, setSelectedMovement] = useState<movement>();
-  const [equipmentsToExport, setEquipmentsToExport] = useState<EquipmentData[]>([]); 
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
   const [selectedEquipmentToMovement, setSelectedEquipmentToMovement] =
@@ -107,6 +110,8 @@ function EquipmentTable() {
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [equipsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
 
   const {
     control,
@@ -117,18 +122,7 @@ function EquipmentTable() {
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
-  
-  function getCurrentDate(): string[] {
-    const date = new Date();
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-  
-    return [day, month, year]
-  }
-  
-  const currentDate = getCurrentDate();
-  
+
   const handleFilterChange = () => {
     const { type, lastModifiedDate, situation, unit } = watchFilter;
 
@@ -196,6 +190,13 @@ function EquipmentTable() {
   } = useDisclosure();
 
   const {
+    isOpen: isReportOpen,
+  
+    onClose: onReportClose,
+    onOpen: onReportOpen,
+  } = useDisclosure();
+
+  const {
     isOpen: isViewOpen,
     onClose: onViewClose,
     onOpen: onViewOpen,
@@ -228,18 +229,6 @@ function EquipmentTable() {
   const handleSearch = debounce(() => {
     setSearch(watchFilter.search);
   }, 400);
-
-  const handleExport = async () => {
-    try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?${filter}`
-      );
-      setEquipmentsToExport(data);
-    } catch (error) {
-      setEquipmentsToExport([]);
-      toast.error('Nenhum Equipamento encontrado');
-    }
-  }
 
   const fetchItems = async () => {
     try {
@@ -331,6 +320,12 @@ function EquipmentTable() {
     fetchTypes('');
   }, []);
 
+  const handleReportExport = async (selectedType: string) => {
+    setType(selectedType);
+    setEquipsToExport(await getEquipments(filter));
+    onReportOpen();
+  };
+
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>
@@ -361,10 +356,34 @@ function EquipmentTable() {
                 <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                   Cadastrar Equipamento
                 </Button>
-                <Flex gap={5} justifyContent="center" width="100%" alignItems="center" padding={4}>
-                    <CSV date={currentDate} equipments={equipmentsToExport} onClick={handleExport}/>
-                    <Excel date={currentDate} equipments={equipmentsToExport} onClick={handleExport}/>
-                    <PDF date={currentDate} equipments={equipmentsToExport} onClick={handleExport}/>
+                <Flex
+                  gap={5}
+                  justifyContent="center"
+                  width="100%"
+                  alignItems="center"
+                  padding={4}
+                >
+                  <GrDocumentCsv
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('csv');
+                    }}
+                  />
+                  <BsFiletypeXlsx
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('xls');
+                    }}
+                  />
+                  <MdPictureAsPdf
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('pdf');
+                    }}
+                  />
                 </Flex>
               </Flex>
             </Flex>
@@ -628,6 +647,12 @@ function EquipmentTable() {
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
           isOpen={isUploadOpen}
+        />
+        <ReportModal
+          isOpen={isReportOpen}
+          onClose={onReportClose}
+          type={type}
+          equipments={equipsToExport}
         />
       </GridItem>
     </Grid>
