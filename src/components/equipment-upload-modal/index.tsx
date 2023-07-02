@@ -1,9 +1,9 @@
 import { Button, Flex, Icon, Text } from '@chakra-ui/react';
-import { Modal } from '../modal';
-import React, { useState } from "react";
-import * as XLSX from "xlsx";
-// import {AiFillFileAdd} from '@chakra-ui/icons';
 import { AiFillFileAdd } from 'react-icons/ai';
+import { MdAttachFile } from 'react-icons/md';
+import React, { useRef, useState } from 'react';
+import * as XLSX from 'xlsx';
+import { Modal } from '../modal';
 
 type EquipmentsUploadModalProps = {
   isOpen: boolean;
@@ -12,42 +12,51 @@ type EquipmentsUploadModalProps = {
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const EquipmentsUploadModal = ({
+export function EquipmentsUploadModal({
   isOpen,
   onClose,
   refreshRequest,
   setRefreshRequest,
-}: EquipmentsUploadModalProps) => {
+}: EquipmentsUploadModalProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isHovering, setIsHovering] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
     setFile(selectedFile);
   };
 
-  const handleUpload = () => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+  const onDropFile = (e: React.DragEvent<HTMLInputElement>) => {
+    e.preventDefault();
 
-        const formattedData = formatData(jsonData as any [][]);
-        // Agora você pode utilizar os dados (formattedData) para cadastrar no banco de dados, exibir em uma tabela, etc.
-        console.log(formattedData);
-      };
-      reader.readAsArrayBuffer(file);
+    const file = e.dataTransfer.files?.[0];
+
+    if (fileInputRef.current) {
+      fileInputRef.current.files = e.dataTransfer.files;
     }
+
+    setFile(file);
+    setIsHovering(false);
+  };
+
+  const onDragOver = (e: React.DragEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    setIsHovering(false);
+  };
+
+  const onDragStart = (e: React.DragEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    setIsHovering(true);
   };
 
   const formatData = (jsonData: any[][]) => {
     const formattedData: any[] = [];
 
     // Percorre cada linha da planilha
-    for (let i = 1; i < jsonData.length; i++) {
+    for (let i = 1; i < jsonData.length; i += 1) {
       const row = jsonData[i];
       const formattedRow: any = {};
 
@@ -76,6 +85,7 @@ export const EquipmentsUploadModal = ({
         !dataAquisicao
       ) {
         // Pular linha se algum dos campos obrigatórios estiver faltando
+        // eslint-disable-next-line no-continue
         continue;
       }
 
@@ -91,7 +101,7 @@ export const EquipmentsUploadModal = ({
       formattedRow.dataAquisicao = dataAquisicao;
 
       // Campos adicionais para tipos específicos de equipamento
-      if (tipoEquipamento === "CPU") {
+      if (tipoEquipamento === 'CPU') {
         const qtdMemoriaRAM = row[10];
         const tipoArmazenamento = row[11];
         const qntArmazenamento = row[12];
@@ -101,17 +111,17 @@ export const EquipmentsUploadModal = ({
         formattedRow.tipoArmazenamento = tipoArmazenamento;
         formattedRow.qntArmazenamento = qntArmazenamento;
         formattedRow.processador = processador;
-      } else if (tipoEquipamento === "Estabilizador") {
+      } else if (tipoEquipamento === 'Estabilizador') {
         const potencia = row[10];
 
         formattedRow.potencia = potencia;
-      } else if (tipoEquipamento === "Monitor") {
+      } else if (tipoEquipamento === 'Monitor') {
         const tipoMonitor = row[10];
         const tamanhoMonitor = row[11];
 
         formattedRow.tipoMonitor = tipoMonitor;
         formattedRow.tamanhoMonitor = tamanhoMonitor;
-      } else if (tipoEquipamento === "Nobreak") {
+      } else if (tipoEquipamento === 'Nobreak') {
         const potencia = row[10];
 
         formattedRow.potencia = potencia;
@@ -127,7 +137,23 @@ export const EquipmentsUploadModal = ({
     }
 
     return formattedData;
-    };
+  };
+
+  const handleUpload = () => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        const formattedData = formatData(jsonData as any[][]);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
 
   return (
     <Modal
@@ -151,21 +177,49 @@ export const EquipmentsUploadModal = ({
           height={374}
           borderStyle="dashed"
           borderWidth={2}
-          borderColor="black"
-          onDrop={(e) => e.preventDefault()}
-          onDragOver={(e) => e.preventDefault()}
-          onDragLeave={(e) => e.preventDefault()}
+          borderColor={isHovering ? 'blue' : 'black'}
+          backgroundColor={isHovering ? 'blue.100' : 'unset'}
+          onDrop={onDropFile}
+          onDragOver={onDragStart}
+          onDragLeave={onDragOver}
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          gap={4}
         >
-        <Icon as={AiFillFileAdd} boxSize={6} marginRight={2} />
-        <Text textAlign="center" alignSelf = "center" lineHeight="374px" fontWeight="bold" fontSize="20px">
-            Arraste um arquivo XLS
-          </Text>
+          {file ? (
+            <>
+              <Icon as={MdAttachFile} boxSize={16} marginRight={2} />
+              <Text
+                textAlign="center"
+                alignSelf="center"
+                fontWeight="bold"
+                fontSize="20px"
+              >
+                {file.name}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Icon as={AiFillFileAdd} boxSize={16} marginRight={2} />
+              <Text
+                textAlign="center"
+                alignSelf="center"
+                fontWeight="bold"
+                fontSize="20px"
+              >
+                Arraste um arquivo XLS
+              </Text>
+            </>
+          )}
         </Flex>
-        <Flex>
-          <Text flex="1">Adicione um arquivo do seu computador</Text>
-          <Flex flex="2" justifyContent="center" alignItems="center">
-            <input type="file" onChange={handleFileChange} />
-          </Flex>
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+        >
+          <Text>Adicione um arquivo do seu computador</Text>
+          <input type="file" onChange={handleFileChange} ref={fileInputRef} />
         </Flex>
         <Flex gap="60px" paddingY="64px">
           <Button variant="secondary">Cancelar</Button>
@@ -174,5 +228,4 @@ export const EquipmentsUploadModal = ({
       </Flex>
     </Modal>
   );
-  
-};
+}
