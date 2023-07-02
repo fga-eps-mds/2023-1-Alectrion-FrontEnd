@@ -560,6 +560,7 @@ function EquipmentTable() {
           selectedMoviment={selectedMovement}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
+        />
         <EquipmentsUploadModal
           onClose={onUploadClose}
           refreshRequest={refreshRequest}
