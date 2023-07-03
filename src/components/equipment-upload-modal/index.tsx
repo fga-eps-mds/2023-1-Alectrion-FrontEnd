@@ -162,6 +162,7 @@ export function EquipmentsUploadModal({
             .post('equipment/createEquipment', item)
             .then((response) => {
               if (response.status === 200) {
+                toast.success('Equipamentos cadastrados com sucesso', 'Sucesso');
                 setRefreshRequest(!refreshRequest);
                 onClose();
                 erro = 0;
@@ -169,17 +170,33 @@ export function EquipmentsUploadModal({
               erro = 1;
             })
             .catch((error) => {
+              if (
+                error.response.data.error ===
+                'Tippingnumber nao pode ser igual ao de um equipamento ja cadastrado.'
+              ) {
+                toast.error(
+                  'Já existe um equipamento cadastrado com este número de tombamento. Cadastre um equipamento com número de tombamento diferente.',
+                  'Erro'
+                );
+              }
+              if (
+                error.response.data.error ===
+                'Tipo de equipamento não encontrado.'
+              ) {
+                toast.error(
+                  'Tipo do equipamento não encontrado por favor verifique se foi digitado corretamente',
+                  'Erro'
+                );
+              }
               erro = 1;
               console.error(error);
             });
         });
         if (erro === 1) {
           toast.error(
-            'Sua importação não foi bem sucedida! Verifique se os campos estão preenchidos corretamente.'
+            'Sua importação não foi bem sucedida! Verifique se os campos estão preenchidos corretamente.', 'Erro'
           );
-        } else {
-          toast.success('Equipamentos cadastrados com sucesso', 'Sucesso');
-        }
+        } 
       };
       reader.readAsArrayBuffer(file);
     }
