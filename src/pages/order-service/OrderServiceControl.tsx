@@ -38,7 +38,7 @@ import { OrderServiceRegisterModal } from '@/components/order-service-register-m
 import { MdPictureAsPdf } from 'react-icons/md';
 import { BsFiletypeXlsx } from 'react-icons/bs';
 import { ReportModal } from '@/components/report-modal/Index';
-// import { getEquipments } from '@/utils/getEquipments';
+import { getEquipments } from '@/utils/getEquipments';
 import { EquipmentData } from '../equipments/EquipmentsControl';
 
 interface ISelectOption {

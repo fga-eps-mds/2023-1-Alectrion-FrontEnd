@@ -3,7 +3,7 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { MdDescription } from 'react-icons/md';
 import { useCallback } from 'react';
 // import { CSVLink } from 'react-csv';
-// import { utils, writeFile } from 'xlsx';
+import { utils, writeFile } from 'xlsx';
 import { Modal } from '../modal';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { formatDate } from '@/utils/format-date';
@@ -106,7 +106,4 @@ export function ReportModal({
   );
 }
 
-function writeFile(wb: any, arg1: string) {
-  throw new Error('Function not implemented.');
-}
 

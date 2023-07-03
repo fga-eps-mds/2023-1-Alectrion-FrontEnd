@@ -52,7 +52,8 @@
     "react-render-if-visible": "^2.1.1",
     "react-router-dom": "^6.6.1",
     "react-toastify": "^9.1.2",
-    "sass": "^1.57.1"
+    "sass": "^1.57.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
