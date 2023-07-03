@@ -3,9 +3,10 @@ import { AiFillFileAdd } from 'react-icons/ai';
 import { MdAttachFile } from 'react-icons/md';
 import React, { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
+import { parse, format } from 'date-fns';
 import { api } from '@/config/lib/axios';
 import { Modal } from '../modal';
-import { parse, format } from 'date-fns';
+import { toast } from '@/utils/toast';
 
 type EquipmentsUploadModalProps = {
   isOpen: boolean;
@@ -89,7 +90,7 @@ export function EquipmentsUploadModal({
 
       formattedRow.type = tipoEquipamento;
       formattedRow.brandName = marca;
-      formattedRow.model = modelo;
+      formattedRow.model = modelo.toString();
       formattedRow.tippingNumber = numeroTombamento.toString();
       formattedRow.serialNumber = numeroSerie;
       formattedRow.acquisitionName = tipoAquisicao;
@@ -102,6 +103,7 @@ export function EquipmentsUploadModal({
       const data2 = format(data, 'dd/MM/yyyy');
       formattedRow.acquisitionDate = parse(data2, 'dd/MM/yyyy', new Date());
 
+      console.log(tipoEquipamento);
       // Campos adicionais para tipos específicos de equipamento
       if (tipoEquipamento === 'CPU') {
         const qtdMemoriaRAM = row[8];
@@ -114,25 +116,25 @@ export function EquipmentsUploadModal({
         formattedRow.storageAmount = qntArmazenamento.toString();
         formattedRow.processor = processador;
       } else if (tipoEquipamento === 'Estabilizador') {
-        const potencia = row[8];
+        const potencia = row[12];
 
         formattedRow.power = potencia;
       } else if (tipoEquipamento === 'Monitor') {
-        const tipoMonitor = row[8];
-        const tamanhoMonitor = row[9];
+        const tipoMonitor = row[13];
+        const tamanhoMonitor = row[14];
 
         formattedRow.screenType = tipoMonitor;
         formattedRow.screenSize = tamanhoMonitor;
       } else if (tipoEquipamento === 'Nobreak') {
-        const potencia = row[8];
+        const potencia = row[12];
 
         formattedRow.power = potencia;
       }
 
       // Campo opcional
-      const descricao = row[12];
+      const descricao = row[15];
       if (descricao) {
-        formattedRow.descricao = descricao;
+        formattedRow.description = descricao;
       }
 
       formattedData.push(formattedRow);
@@ -150,6 +152,7 @@ export function EquipmentsUploadModal({
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        let erro = 0;
 
         const formattedData = formatData(jsonData as any[][]);
 
@@ -158,14 +161,25 @@ export function EquipmentsUploadModal({
           api
             .post('equipment/createEquipment', item)
             .then((response) => {
-              // Lógica de tratamento da resposta da requisição
-              console.log(response.data);
+              if (response.status === 200) {
+                setRefreshRequest(!refreshRequest);
+                onClose();
+                erro = 0;
+              }
+              erro = 1;
             })
             .catch((error) => {
-              // Lógica de tratamento de erro
+              erro = 1;
               console.error(error);
             });
         });
+        if (erro === 1) {
+          toast.error(
+            'Sua importação não foi bem sucedida! Verifique se os campos estão preenchidos corretamente.'
+          );
+        } else {
+          toast.success('Equipamentos cadastrados com sucesso', 'Sucesso');
+        }
       };
       reader.readAsArrayBuffer(file);
     }
@@ -238,7 +252,7 @@ export function EquipmentsUploadModal({
           <input type="file" onChange={handleFileChange} ref={fileInputRef} />
         </Flex>
         <Flex gap="60px" paddingY="64px">
-          <Button variant="secondary">Cancelar</Button>
+          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
           <Button onClick={handleUpload}>Registrar</Button>
         </Flex>
       </Flex>
