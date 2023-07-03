@@ -36,7 +36,6 @@ export function Router() {
       {/* ROTAS PUBLICAS */}
       <Route path="/login" element={<Login />} />
       <Route path="/pass-recover" element={<PasswordRecover/>}/>
-      <Route path="/users" element={<UsersTable/>}/>
       <Route
         path="/movements"
         element={
@@ -50,6 +49,14 @@ export function Router() {
         element={
           <RequireAuth>
             <EquipmentTable />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/users"
+        element={
+          <RequireAuth>
+            <UsersTable />
           </RequireAuth>
         }
       />

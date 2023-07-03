@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
 import { BiSearch } from 'react-icons/bi';
+import { LoginResponse } from '@/constants/user';
 import {
   Text,
   Table,
@@ -64,9 +65,7 @@ type FilterValues = {
 
 function UsersTable() {
   const [users, setUsers] = useState<UserData[]>([]);
-  const [nextUsers, setNextUsers] = useState<
-    UserData[]
-  >([]);
+  const [nextUsers, setNextUsers] = useState<UserData[]>([]);
 
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
 
@@ -152,12 +151,21 @@ function UsersTable() {
     setSearch(watchFilter.search);
   }, 400);
 
+  const loggedUser = JSON.parse(
+    localStorage.getItem('@alectrion:user') || ''
+  ) as unknown as LoginResponse;
+
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<UserData[]> = await api.get(
-        `user/get?take=${limit}&skip=${offset}&${filter}`
+        `user/get?allUsers=true`, 
+        {
+          headers: {
+            Authorization: `Bearer ${loggedUser.token}`,
+          },
+        }
       );
-      setNextUsers(data);
+      setUsers(data);
     } catch (error) {
       setUsers([]);
       toast.error('Nenhum Usuário Encontrado');
@@ -167,9 +175,12 @@ function UsersTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<UserData[]> = await api.get(
-        `user/get?take=${limit}&skip=${
-          offset + limit
-        }&${filter}`
+        `user/get?allUsers=true`, 
+        {
+          headers: {
+            Authorization: `Bearer ${loggedUser.token}`,
+          },
+        }
       );
       setNextUsers(data);
     } catch (error) {
@@ -291,19 +302,18 @@ function UsersTable() {
                       </Tr>
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
-                      {users.map((users) => (
-                        <Tr key={users.id}>
-                          <Td p={0} fontWeight="semibold">
-                            {users.name}{' '}
+                      {users.map((user) => (
+                        <Tr key={user.id}>
+                          <Td fontWeight="semibold">
+                            {user.name}
                           </Td>
                           <Td
-                            p={0}
                             fontWeight="semibold"
                           >
-                            {users.job} -{' '}
+                            {user.job}
                           </Td>
                           <Td>
-                            {users.role}
+                            {user.role}
                           </Td>
                           <Td>
                             <button >
