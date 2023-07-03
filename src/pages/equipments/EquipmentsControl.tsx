@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowRightIcon, ArrowLeftIcon } from '@chakra-ui/icons';
+import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
 import { BiEditAlt, BiSearch } from 'react-icons/bi';
 import {
   Text,
@@ -17,6 +17,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  Checkbox,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { toast } from '@/utils/toast';
@@ -30,6 +31,10 @@ import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
+import { MovementRegisterModal } from '@/components/movement-register-modal';
+import { TermModal } from '@/components/term-modal';
+import { movement } from '../movements/MovementControl';
+import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
 
 interface ISelectOption {
@@ -46,9 +51,7 @@ export interface EquipmentData {
   model: string;
   acquisitionDate: Date;
   description?: string;
-  initialUseDate: Date;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
   screenType?: string;
   processor?: string;
@@ -81,9 +84,12 @@ type FilterValues = {
 function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
+  const [selectedMovement, setSelectedMovement] = useState<movement>();
 
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
+  const [selectedEquipmentToMovement, setSelectedEquipmentToMovement] =
+    useState<EquipmentData[]>([]);
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
 
@@ -98,6 +104,7 @@ function EquipmentTable() {
     watch,
     register,
     formState: { errors },
+    reset,
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
@@ -112,14 +119,13 @@ function EquipmentTable() {
       lastModifiedDate
     ) {
       formattedDate = new Date(lastModifiedDate).toLocaleDateString('en-us');
-      console.log(formattedDate);
     }
 
     const dataFormatted = {
-      type: type?.value,
+      type,
       updatedAt: formattedDate,
-      situation: situation?.value,
-      unit: unit?.value,
+      situation,
+      unit,
       search,
     };
 
@@ -135,6 +141,12 @@ function EquipmentTable() {
     setFilter(query);
   };
 
+  const cleanFilters = () => {
+    setFilter('');
+    setSearch('');
+    reset();
+  };
+
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
 
   const {
@@ -146,6 +158,15 @@ function EquipmentTable() {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const {
+    isOpen: isOpenTerm,
+    onClose: onCloseTerm,
+    onOpen: onOpenTerm,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenRegister,
+    onClose: onCloseRegister,
+    onOpen: onOpenRegister,
     isOpen: isUploadOpen,
     onClose: onUploadClose,
     onOpen: onUploadOpen,
@@ -235,6 +256,29 @@ function EquipmentTable() {
     onViewOpen();
   };
 
+  const handleMovement = () => {
+    if (
+      selectedEquipmentToMovement === undefined ||
+      selectedEquipmentToMovement.length === 0
+    ) {
+      toast.error('Selecione ao menos um equipamento para movimentar');
+    } else {
+      onOpenRegister();
+    }
+  };
+  const handleCheckboxClick = (equipment: EquipmentData) => {
+    if (selectedEquipmentToMovement.includes(equipment)) {
+      setSelectedEquipmentToMovement(
+        selectedEquipmentToMovement.filter((equip) => equip.id !== equipment.id)
+      );
+    } else {
+      setSelectedEquipmentToMovement([
+        ...selectedEquipmentToMovement,
+        equipment,
+      ]);
+    }
+  };
+
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>
@@ -274,7 +318,7 @@ function EquipmentTable() {
             >
               <form id="equipment-filter" style={{ width: '100%' }}>
                 <Flex gap="5px" alignItems="5px" mb="15px">
-                  <ControlledSelect
+                  <NewControlledSelect
                     control={control}
                     name="type"
                     id="type"
@@ -284,6 +328,7 @@ function EquipmentTable() {
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
+                    filterStyle
                   />
                   <Datepicker
                     border={false}
@@ -291,7 +336,7 @@ function EquipmentTable() {
                     name="lastModifiedDate"
                     control={control}
                   />
-                  <ControlledSelect
+                  <NewControlledSelect
                     control={control}
                     name="unit"
                     id="unit"
@@ -301,8 +346,9 @@ function EquipmentTable() {
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
+                    filterStyle
                   />
-                  <ControlledSelect
+                  <NewControlledSelect
                     control={control}
                     name="situation"
                     id="situation"
@@ -312,6 +358,7 @@ function EquipmentTable() {
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
+                    filterStyle
                   />
                   <Input
                     placeholder="Pesquisa"
@@ -322,6 +369,18 @@ function EquipmentTable() {
                   />
                 </Flex>
               </form>
+              {filter !== '' ? (
+                <Flex w="100%" alignItems="center" justifyContent="start">
+                  <Button
+                    variant="unstyled"
+                    fontSize="14px"
+                    leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
+                    onClick={cleanFilters}
+                  >
+                    Limpar filtros aplicados
+                  </Button>
+                </Flex>
+              ) : null}
               <Flex flexDirection="column" width="100%">
                 <TableContainer
                   borderRadius="15px 15px 0 0 "
@@ -360,17 +419,15 @@ function EquipmentTable() {
                         <Td>N Série</Td>
                         <Td>Última Modificação</Td>
                         <Td />
+                        <Td />
                       </Tr>
                     </Thead>
-                    <Tbody
-                      fontWeight="semibold"
-                      maxHeight="200px"
-                      height="200px"
-                    >
+                    <Tbody fontWeight="semibold" maxHeight="200px">
                       {equipments.map((equipment) => (
                         <Tr
-                          onClick={() => {
+                          onClick={(event) => {
                             handleView(equipment);
+                            event.stopPropagation();
                           }}
                           key={equipment.id}
                           cursor="pointer"
@@ -393,10 +450,23 @@ function EquipmentTable() {
                               event.stopPropagation();
                               handleEdit(equipment);
                             }}
+                            width="5%"
                           >
                             <button>
                               <BiEditAlt size={23} />
                             </button>
+                          </Td>
+                          <Td
+                            width="5%"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                            }}
+                          >
+                            <Checkbox
+                              onChange={() => {
+                                handleCheckboxClick(equipment);
+                              }}
+                            />
                           </Td>
                         </Tr>
                       ))}
@@ -413,6 +483,7 @@ function EquipmentTable() {
                   color={theme.colors.white}
                   padding="1rem 0 1rem 0"
                   borderRadius=" 0  0 15px 15px"
+                  onClick={handleMovement}
                 >
                   Movimentar
                 </Box>
@@ -473,6 +544,22 @@ function EquipmentTable() {
           selectedEquipment={selectedEquipment}
           isOpen={isViewOpen}
           handleEdit={handleEdit}
+        />
+        <MovementRegisterModal
+          isOpen={isOpenRegister}
+          onClose={onCloseRegister}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+          selectedEquipmentToMovement={selectedEquipmentToMovement}
+          setSelectedMovement={setSelectedMovement}
+          onOpenTerm={onOpenTerm}
+        />
+        <TermModal
+          isOpen={isOpenTerm}
+          onClose={onCloseTerm}
+          selectedMoviment={selectedMovement}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
         />
         <EquipmentsUploadModal
           onClose={onUploadClose}

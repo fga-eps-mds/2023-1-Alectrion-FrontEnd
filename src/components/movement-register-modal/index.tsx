@@ -1,12 +1,19 @@
 import MovementForm from '@/components/movement-form';
 import { Modal } from '../modal';
+import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
+import { movement } from '@/pages/movements/MovementControl';
 
 type MovementRegisterModalProps = {
   isOpen: boolean;
   onClose(): void;
-  lenghtMovements: number;
+  lenghtMovements?: number;
   refreshRequest: boolean;
+  selectedEquipmentToMovement?: EquipmentData[];
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedMovement: React.Dispatch<
+    React.SetStateAction<movement | undefined>
+  >;
+  onOpenTerm: () => void;
 };
 
 export function MovementRegisterModal({
@@ -15,6 +22,9 @@ export function MovementRegisterModal({
   lenghtMovements,
   refreshRequest,
   setRefreshRequest,
+  selectedEquipmentToMovement,
+  setSelectedMovement,
+  onOpenTerm,
 }: MovementRegisterModalProps) {
   return (
     <Modal
@@ -28,6 +38,9 @@ export function MovementRegisterModal({
         lenghtMovements={lenghtMovements}
         refreshRequest={refreshRequest}
         setRefreshRequest={setRefreshRequest}
+        selectedEquipmentToMovement={selectedEquipmentToMovement}
+        setSelectedMovement={setSelectedMovement}
+        onOpenTerm={onOpenTerm}
       />
     </Modal>
   );

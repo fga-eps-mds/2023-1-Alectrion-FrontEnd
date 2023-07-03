@@ -17,33 +17,43 @@ import { format } from 'date-fns';
 import { useCallback, useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
+import { set } from 'lodash';
 import { TIPOS_LOTACAO } from '@/constants/movements';
 import { api } from '../../config/lib/axios';
-import { ControlledSelect } from '../form-fields/controlled-select';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
-
-enum movementType {
-  Borrow,
-  Dismiss,
-  Ownership,
-}
+import { movement, movementEquipment } from '@/pages/movements/MovementControl';
+import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
+import { NewControlledSelect } from '../form-fields/new-controlled-select';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface equipamentData {
   tippingNumber: string;
-
   serialNumber: string;
-
+  type: string;
+  situacao: string;
+  estado: string;
+  model: string;
+  acquisitionDate: Date;
+  description?: string;
+  screenSize?: string;
+  power?: string;
+  screenType?: string;
+  processor?: string;
+  storageType?: string;
+  storageAmount?: string;
+  ram_size?: string;
+  createdAt?: string;
+  updatedAt: string;
   id: string;
-}
-
-interface movementEquipment {
-  tippingNumber: string;
-
-  serialNumber: string;
-
-  id: string;
-  selected?: boolean;
+  brand: {
+    name: string;
+  };
+  acquisition: { name: string };
+  unit: {
+    name: string;
+    localization: string;
+  };
 }
 
 interface unit {
@@ -56,20 +66,25 @@ type FormValues = {
   date: Date;
   userId: string;
   equipments: string[];
-  type: SelectOption<number>;
+  type: number;
   inChargeName: string;
   inChargeRole: string;
   chiefName: string;
   chiefRole: string;
   description?: string;
-  destination: SelectOption<string>;
+  destination: string;
 };
 
 interface MovementFormProps {
   onClose: () => void;
-  lenghtMovements: number;
+  lenghtMovements?: number;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedEquipmentToMovement?: EquipmentData[];
+  setSelectedMovement: React.Dispatch<
+    React.SetStateAction<movement | undefined>
+  >;
+  onOpenTerm: () => void;
 }
 
 export default function MovementForm({
@@ -77,6 +92,9 @@ export default function MovementForm({
   lenghtMovements,
   refreshRequest,
   setRefreshRequest,
+  selectedEquipmentToMovement,
+  setSelectedMovement,
+  onOpenTerm,
 }: MovementFormProps) {
   const {
     control,
@@ -86,13 +104,12 @@ export default function MovementForm({
     watch,
   } = useForm<FormValues>();
 
+  const { user } = useAuth();
   const [equipments, setEquipments] = useState<equipamentData[]>([]);
   const [units, setUnits] = useState<unit[]>([]);
   const [materiais, setMateriais] = useState<string[]>([]);
-
   const date = new Date();
-
-  const selectedUnit: SelectOption<string> = watch('destination');
+  const selectedUnit: string = watch('destination');
 
   const onCloseCallback = useCallback(() => {
     setMateriais([]);
@@ -114,14 +131,14 @@ export default function MovementForm({
         userid: '162fba6b-1a56-4960-abf1-43be5b753697',
         date: formData.date,
         userId: formData.userId,
-        type: formData.type?.value,
+        type: formData.type,
         inchargename: formData.inChargeName,
         inchargerole: formData.inChargeRole,
-        chiefname: formData.chiefName,
-        chiefrole: formData.chiefRole,
+        chiefname: user?.name,
+        chiefrole: user?.job,
         equipments: materiais || [],
         description: formData?.description || null,
-        destination: formData?.destination?.value || '',
+        destination: formData?.destination || '',
       };
 
       const response = await api.post('equipment/createMovement', body);
@@ -130,6 +147,8 @@ export default function MovementForm({
         toast.success('Movimentação cadastrada com sucesso');
         setRefreshRequest(!refreshRequest);
         onClose();
+        setSelectedMovement(response?.data);
+        onOpenTerm();
         return;
       }
       toast.error('Erro ao tentar cadastrar o movimentação');
@@ -140,10 +159,20 @@ export default function MovementForm({
 
   const getEquipments = async () => {
     try {
-      const { data }: AxiosResponse<equipamentData[]> = await api.get(
-        `equipment/find`
-      );
-      setEquipments(data);
+      if (selectedEquipmentToMovement === undefined) {
+        const { data }: AxiosResponse<equipamentData[]> = await api.get(
+          `equipment/find`
+        );
+        setEquipments(data);
+      } else {
+        setEquipments(selectedEquipmentToMovement!);
+        const materiaisSave: string[] = [];
+        selectedEquipmentToMovement?.forEach((equip) => {
+          setMateriais((prev) => [...prev, equip.id]);
+          materiaisSave.push(equip.id);
+        });
+        setMateriais(Array.from(new Set(materiaisSave)));
+      }
     } catch (error) {
       setEquipments([]);
       toast.error('Nenhuma movimentação registrada');
@@ -162,9 +191,37 @@ export default function MovementForm({
     }
   };
 
+  const isChecked = (id: string) => {
+    if (materiais.includes(id)) return true;
+    return false;
+  };
+  const listEquipments = () => {
+    return equipments?.map((equipment: movementEquipment) => (
+      <Tr
+        key={equipment.id}
+        background={
+          materiais.includes(equipment.id) ? 'rgba(244, 147, 32, 0.2)' : 'white'
+        }
+      >
+        <Td>{equipment.type}</Td>
+        <Td>{equipment.brand.name}</Td>
+        <Td>{equipment.model}</Td>
+        <Td>{equipment.tippingNumber}</Td>
+        <Td>{equipment.serialNumber}</Td>
+        <Td>
+          <Checkbox
+            onChange={toggleMaterial(equipment.id)}
+            isChecked={isChecked(equipment.id)}
+          />
+        </Td>
+      </Tr>
+    ));
+  };
+
   useEffect(() => {
     getEquipments();
     getUnits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -185,7 +242,7 @@ export default function MovementForm({
           </Text>
           <Text>
             <>
-              <strong>Total Equipamentos:</strong> {1}
+              <strong>Total Equipamentos:</strong> {materiais?.length}
             </>
           </Text>
         </Flex>
@@ -193,13 +250,13 @@ export default function MovementForm({
 
       <form id="movement-register-form" onSubmit={onSubmit}>
         <Grid templateColumns="repeat(3, 3fr)" width="100%" gap={6}>
-          <ControlledSelect
+          <NewControlledSelect
             control={control}
             name="destination"
             id="destination"
             options={units.map((unit) => ({
-              value: unit.id,
-              label: unit.name,
+              value: unit?.id ?? '',
+              label: unit?.name ?? '',
             }))}
             placeholder="Selecione uma opção"
             label="Posto de trabalho"
@@ -208,16 +265,15 @@ export default function MovementForm({
 
           <Input
             label="Cidade"
-            errors={errors.destination?.value}
+            errors={errors.destination}
             isDisabled
             defaultValue={
-              units.find(
-                (iterationUnit) => iterationUnit.id === selectedUnit?.value
-              )?.localization
+              units.find((iterationUnit) => iterationUnit.id === selectedUnit)
+                ?.localization
             }
           />
 
-          <ControlledSelect
+          <NewControlledSelect
             control={control}
             name="type"
             id="type"
@@ -230,9 +286,11 @@ export default function MovementForm({
           <GridItem colSpan={2}>
             <Input
               label="Responsável"
+              isDisabled
+              readOnly
+              defaultValue={user?.name}
               errors={errors.chiefName}
               {...register('chiefName', {
-                required: 'Campo Obrigatório',
                 maxLength: 50,
               })}
             />
@@ -240,16 +298,18 @@ export default function MovementForm({
 
           <Input
             label="Atribuição"
+            isDisabled
+            readOnly
+            defaultValue={user?.job}
             errors={errors.chiefRole}
             {...register('chiefRole', {
-              required: 'Campo Obrigatório',
               maxLength: 50,
             })}
           />
         </Grid>
 
         <Text fontWeight="bold" mt={10}>
-          Especificação do material
+          Especificação do equipamento
         </Text>
 
         <TableContainer
@@ -275,34 +335,15 @@ export default function MovementForm({
           <Table colorScheme="orange" size="sm">
             <Thead bg="#F49320" fontWeight="semibold" h="14">
               <Tr>
+                <Td color="white">N° Tombamento</Td>
                 <Td color="white">Equipamento</Td>
-                <Td color="white">Tombamento</Td>
+                <Td color="white">Marca</Td>
+                <Td color="white">Modelo</Td>
                 <Td color="white">N° Série</Td>
                 <Td color="white" />
               </Tr>
             </Thead>
-            <Tbody fontWeight="semibold">
-              {equipments.map((equipment: movementEquipment) => (
-                <Tr
-                  key={equipment.id}
-                  background={
-                    materiais.includes(equipment.id)
-                      ? 'rgba(244, 147, 32, 0.2)'
-                      : 'white'
-                  }
-                >
-                  <Td>{equipment.id}</Td>
-                  <Td>{equipment.tippingNumber}</Td>
-                  <Td>{equipment.serialNumber}</Td>
-                  <Td>
-                    <Checkbox
-                      onChange={toggleMaterial(equipment.id)}
-                      isChecked={equipment.selected}
-                    />
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
+            <Tbody fontWeight="semibold">{listEquipments()}</Tbody>
           </Table>
         </TableContainer>
 

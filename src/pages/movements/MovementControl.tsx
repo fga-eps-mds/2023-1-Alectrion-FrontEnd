@@ -19,7 +19,7 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
+import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
 import { MdDeleteForever } from 'react-icons/md';
 import { BiSearch } from 'react-icons/bi';
@@ -31,10 +31,11 @@ import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
 import { MovimentacaoTipoMap, TIPOS_MOVIMENTACAO } from '@/constants/movements';
 import { MovementsModal } from '@/components/movements-modal';
-import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
+import { TermModal } from '@/components/term-modal';
+import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 
 interface ISelectOption {
   label: string;
@@ -63,6 +64,8 @@ export interface movementEquipment {
 
   id: string;
   selected?: boolean;
+  model: string;
+  description?: string;
 }
 export interface movement {
   updatedAt: string | number | Date;
@@ -107,6 +110,7 @@ function MovementsTable() {
     control,
     register,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
   const watchedData = watch();
@@ -117,6 +121,12 @@ function MovementsTable() {
     isOpen: isOpenRegister,
     onClose: onCloseRegister,
     onOpen: onOpenRegister,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenTerm,
+    onClose: onCloseTerm,
+    onOpen: onOpenTerm,
   } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -195,10 +205,10 @@ function MovementsTable() {
       }
 
       const formattedFormData = {
-        type: type?.value,
-        inChargeName: inChargeName?.value,
-        destinationId: destinationId?.value,
-        equipmentId: equipmentId?.value,
+        type,
+        inChargeName,
+        destinationId,
+        equipmentId,
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
         searchTerm: search,
@@ -217,6 +227,11 @@ function MovementsTable() {
     } catch {
       console.log('erro');
     }
+  };
+  const cleanFilters = () => {
+    setFilter('');
+    setSearch('');
+    reset();
   };
 
   useEffect(() => {
@@ -263,6 +278,8 @@ function MovementsTable() {
         lenghtMovements={movements.length}
         refreshRequest={refreshRequest}
         setRefreshRequest={setRefreshRequest}
+        setSelectedMovement={setSelectedMovement}
+        onOpenTerm={onOpenTerm}
       />
       <Grid templateColumns="1fr 5fr" gap={6}>
         <GridItem>
@@ -286,12 +303,10 @@ function MovementsTable() {
                 Movimentações
               </Text>
               <Box>
-                <Flex justifyContent="left" width="100%">
+                <Flex justifyContent="space-between" width="100%">
                   <Text color="#00000" fontWeight="medium" fontSize="2xl">
                     Últimas Movimentações
                   </Text>
-                </Flex>
-                <Flex justifyContent="right">
                   <Button colorScheme="#F49320" onClick={onOpenRegister}>
                     Cadastrar Movimentação
                   </Button>
@@ -306,7 +321,8 @@ function MovementsTable() {
               >
                 <form id="movement-filter" style={{ width: '100%' }}>
                   <Flex width="100%" gap="5px" mb="15px">
-                    <ControlledSelect
+                    <NewControlledSelect
+                      filterStyle
                       control={control}
                       name="type"
                       id="type"
@@ -318,12 +334,13 @@ function MovementsTable() {
                       fontWeight="semibold"
                       size="sm"
                     />
-                    <ControlledSelect
+                    <NewControlledSelect
+                      filterStyle
                       control={control}
                       name="destinationId"
                       id="destinationId"
                       options={destinations}
-                      placeholder="Selecione"
+                      placeholder="Destino"
                       variant="unstyled"
                       fontWeight="semibold"
                       size="sm"
@@ -349,6 +366,18 @@ function MovementsTable() {
                     />
                   </Flex>
                 </form>
+                {filter !== '' ? (
+                  <Flex w="100%" alignItems="center" justifyContent="start">
+                    <Button
+                      variant="unstyled"
+                      fontSize="14px"
+                      leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
+                      onClick={cleanFilters}
+                    >
+                      Limpar filtros aplicados
+                    </Button>
+                  </Flex>
+                ) : null}
                 <Flex flexDirection="column" width="100%">
                   <TableContainer
                     borderRadius="15px"
@@ -390,21 +419,19 @@ function MovementsTable() {
                           <Td> </Td>
                         </Tr>
                       </Thead>
-                      <Tbody
-                        fontWeight="semibold"
-                        maxHeight="200px"
-                        height="200px"
-                      >
+                      <Tbody fontWeight="semibold" maxHeight="200px">
                         {movements.map((movement) => (
-                          <Tr key={movement.id} cursor="pointer">
+                          <Tr
+                            onClick={openAndSelect(movement)}
+                            key={movement.id}
+                            cursor="pointer"
+                          >
                             <Td fontWeight="medium">
                               {MovimentacaoTipoMap.get(movement.type)}
                             </Td>
                             <Td fontWeight="medium">
-                              <Box onClick={openAndSelect(movement)}>
-                                {movement.destination?.name} -{' '}
-                                {movement.destination?.localization}
-                              </Box>
+                              {movement.destination?.name} -{' '}
+                              {movement.destination?.localization}
                             </Td>
                             <Td>
                               {new Date(movement.date).toLocaleDateString(
@@ -428,7 +455,8 @@ function MovementsTable() {
                                 aria-label="Deletar movimentação"
                                 variant="ghost"
                                 icon={<MdDeleteForever />}
-                                onClick={() => {
+                                onClick={(event) => {
+                                  event.stopPropagation();
                                   handleDelete(movement.id);
                                   setRefreshRequest(!refreshRequest);
                                 }}
@@ -477,6 +505,13 @@ function MovementsTable() {
           </Flex>
         </GridItem>
       </Grid>
+      <TermModal
+        isOpen={isOpenTerm}
+        onClose={onCloseTerm}
+        selectedMoviment={selectedMovement}
+        refreshRequest={refreshRequest}
+        setRefreshRequest={setRefreshRequest}
+      />
     </>
   );
 }

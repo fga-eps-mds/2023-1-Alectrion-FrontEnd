@@ -2,38 +2,36 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import MovementHistory from '../movement-history';
-import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
-import { ControlledSelect } from '../form-fields/controlled-select';
 import { Datepicker } from '../form-fields/date';
 import { toast } from '@/utils/toast';
 import { api } from '../../config/lib/axios';
 import { EquipmentData } from '../../pages/equipments/EquipmentsControl';
 
 import { DeleteExtensiveButton } from '../action-buttons/delete-extensive-button';
+import { NewControlledSelect } from '../form-fields/new-controlled-select';
+import { Input } from '../form-fields/input';
 
 export type ViewEquipFormValues = {
   id: any;
   tippingNumber: string;
   serialNumber: string;
-  type: { value: string; label: string };
+  type: string;
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: { value: string; label: string };
   acquisitionDate: Date;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
-  screenType?: { value: string; label: string };
+  screenType?: string;
   processor?: string;
-  storageType?: { value: string; label: string };
+  storageType?: string;
   storageAmount?: string;
-  brand: { name: string };
+  brandName: string;
   acquisition: { name: string };
   unitId?: string;
   ram_size?: string;
-  estado: { value: string; label: string };
+  estado: string;
 };
 
 interface ViewEquipmentFormProps {
@@ -82,7 +80,7 @@ export default function EquipmentViewForm({
       const response = await api.delete('equipment/deleteEquipment', {
         params: { id: equipment.id },
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('@App:token')}`,
+          Authorization: `Bearer ${localStorage.getItem('@alectrion:token')}`,
         },
       });
 
@@ -97,198 +95,141 @@ export default function EquipmentViewForm({
   return (
     <form id="equipment-register-form">
       <Grid templateColumns="repeat(5, 5fr)" gap={6} alignItems="end">
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="type"
           id="type"
           placeholder="Selecione uma opção"
           label="Tipo de equipamento"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
           isReadOnly
+          defaultValue={equipment.type}
         />
 
         <Input
+          disabled
           label="Marca"
-          errors={errors.brand?.name}
-          {...register('brand.name', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
+          errors={errors.brandName}
+          {...register('brandName')}
           isReadOnly
         />
 
         <Input
+          disabled
           label="Modelo"
           errors={errors.model}
-          {...register('model', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
+          {...register('model')}
           isReadOnly
         />
 
         <Input
+          disabled
           label="Nº Tombamento"
           errors={errors.tippingNumber}
-          {...register('tippingNumber', {
-            required: 'Campo Obrigatório',
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
+          {...register('tippingNumber')}
           isReadOnly
         />
 
         <Input
+          disabled
           label="Nº Serie"
           errors={errors.serialNumber}
-          {...register('serialNumber', {
-            required: 'Campo Obrigatório',
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
+          {...register('serialNumber')}
           isReadOnly
         />
 
         <Input
-          label="Nº da Nota Fiscal"
-          errors={errors.invoiceNumber}
-          {...register('invoiceNumber', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
-          isReadOnly
-        />
-
-        <Input
+          disabled
           label="Tipo de aquisição"
           errors={errors.acquisition?.name}
-          {...register('acquisition.name', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
+          {...register('acquisition.name')}
           isReadOnly
         />
 
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="estado"
           id="estado"
           placeholder="Selecione uma opção"
           label="Estado do equipamento"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
           isReadOnly
-        />
-
-        <ControlledSelect
-          control={control}
-          name="initialUseDate"
-          id="initialUseDate"
-          placeholder="Selecione uma opção"
-          label="Ano da aquisição"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-          isReadOnly
+          defaultValue={equipment.estado}
         />
 
         <Datepicker
           label="Data de aquisição"
           name="acquisitionDate"
-          required
           control={control}
           readOnly
+          disabled
         />
 
-        {equipment.type.value === 'CPU' && (
+        {equipment.type === 'CPU' && (
           <>
             <Input
+              disabled
               label="Qtd. Memória RAM (GB)"
               errors={errors.ram_size}
-              {...register('ram_size', {
-                required: 'Campo Obrigatório',
-                pattern: {
-                  value: /^[0-9]+$/,
-                  message: 'Por favor, digite apenas números.',
-                },
-              })}
+              {...register('ram_size')}
               isReadOnly
             />
 
-            <ControlledSelect
+            <NewControlledSelect
               control={control}
               name="storageType"
               id="storageType"
               placeholder="Selecione uma opção"
               label="Tipo de armazenamento"
-              rules={{ required: 'Campo obrigatório' }}
               isReadOnly
+              defaultValue={equipment.storageType}
             />
 
             <Input
+              disabled
               label="Qtd. Armazenamento (GB)"
               errors={errors.storageAmount}
-              {...register('storageAmount', {
-                required: 'Campo Obrigatório',
-                pattern: {
-                  value: /^[0-9]+$/,
-                  message: 'Por favor, digite apenas números.',
-                },
-              })}
+              {...register('storageAmount')}
               isReadOnly
             />
 
             <Input
+              disabled
               label="Processador"
               errors={errors.processor}
-              {...register('processor', {
-                required: 'Campo Obrigatório',
-              })}
+              {...register('processor')}
               isReadOnly
             />
           </>
         )}
 
-        {equipment.type.value === 'Monitor' && (
+        {equipment.type === 'Monitor' && (
           <>
-            <ControlledSelect
+            <NewControlledSelect
               control={control}
               name="screenType"
               id="screenType"
               placeholder="Selecione uma opção"
               label="Tipo de monitor"
-              rules={{ required: 'Campo obrigatório' }}
               isReadOnly
+              defaultValue={equipment.screenType}
             />
 
             <Input
+              disabled
               label="Tamanho do Monitor"
               errors={errors.storageAmount}
-              {...register('screenSize', {
-                required: 'Campo Obrigatório',
-              })}
+              {...register('screenSize')}
               isReadOnly
             />
           </>
         )}
 
-        {(equipment.type.value === 'Estabilizador' ||
-          equipment.type.value === 'Nobreak') && (
+        {(equipment.type === 'Estabilizador' ||
+          equipment.type === 'Nobreak') && (
           <Input
+            disabled
             label="Potência (VA)"
             errors={errors.storageAmount}
-            {...register('power', {
-              required: 'Campo Obrigatório',
-              pattern: {
-                value: /^[0-9]+$/,
-                message: 'Por favor, digite apenas números.',
-              },
-            })}
+            {...register('power')}
             isReadOnly
           />
         )}
@@ -298,10 +239,9 @@ export default function EquipmentViewForm({
             label="Descrição"
             errors={errors.description}
             maxChars={255}
-            {...register('description', {
-              maxLength: 255,
-            })}
+            {...register('description')}
             readOnly
+            disabled
           />
         </GridItem>
       </Grid>

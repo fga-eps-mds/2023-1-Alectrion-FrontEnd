@@ -34,8 +34,9 @@ interface RegisterUserPayload {
   username: string;
   email: string;
   name: string;
-  position: string;
-  profile: Access;
+  cpf: string;
+  role: string;
+  jobFunction: string;
   password: string;
   confirmPassword: string;
 }
@@ -48,4 +49,8 @@ interface CredentialUser {
 interface CredentialUserPayload {
   username: string;
   password: string;
+}
+
+interface CredentialUserPasswordRecover {
+  email: string;
 }

@@ -13,14 +13,30 @@ type SignInCredentials = {
 };
 
 type SignedUser = {
-  id: string;
-  name: string;
   token: string;
+  name: string;
   email: string;
-  profile: 'ADMIN' | 'BASIC' | 'USER';
-  // permissions: Array<string>;
+  expireIn: string;
+  job: string;
+  role: string;
+  cpf: string;
+  id?: string;
 };
+
+export interface GetUserInfoResponse {
+  username: string;
+  email: string;
+  userId: string;
+  profile: 'ADMIN' | 'BASIC' | 'USER';
+}
 
 type AuthResponse = {
   token: string;
+  name: string;
+  email: string;
+  expireIn: string;
+  job: string;
+  role: string;
+  cpf: string;
+  id?: string;
 };

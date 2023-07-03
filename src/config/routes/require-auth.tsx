@@ -9,11 +9,10 @@
  */
 import { ReactElement } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-// import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function RequireAuth({ children }: { children: ReactElement }) {
-  // TODO: create an AuthContext and get it using useAuth
-  const isAuthenticated = true;
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
 
   if (!isAuthenticated) {

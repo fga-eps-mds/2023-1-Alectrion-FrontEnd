@@ -47,7 +47,7 @@ function MovementHistory({ equipmentId }: MovementHistoryProps) {
       setMovements(data);
     } catch (error) {
       setMovements([]);
-      toast.error('Nenhuma moviementacao encontrada');
+      toast.error('Erro ao buscar movimentações');
     }
   };
 

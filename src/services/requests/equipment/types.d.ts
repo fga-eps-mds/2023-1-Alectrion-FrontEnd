@@ -5,10 +5,8 @@ export interface CreateEquipmentPayload {
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: string;
   acquisitionDate: string;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
   screenType?: string;
   processor?: string;
@@ -28,10 +26,8 @@ export interface UpdateEquipmentPayload {
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: string;
   acquisitionDate: string;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
   screenType?: string;
   processor?: string;
@@ -51,9 +47,7 @@ export interface CreateEquipmentResponse {
   estado: string;
   model: string;
   description: string;
-  initialUseDate: string;
   acquisitionDate: string;
-  invoiceNumber: string;
   type: string;
   processor?: string;
   storageAmount?: string;
@@ -89,9 +83,7 @@ export interface UpdateEquipmentResponse {
   estado: string;
   model: string;
   description: string;
-  initialUseDate: string;
   acquisitionDate: string;
-  invoiceNumber: string;
   type: string;
   processor?: string;
   storageAmount?: string;

@@ -3,7 +3,10 @@ import { AiFillFileAdd } from 'react-icons/ai';
 import { MdAttachFile } from 'react-icons/md';
 import React, { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
+import { parse, format } from 'date-fns';
+import { api } from '@/config/lib/axios';
 import { Modal } from '../modal';
+import { toast } from '@/utils/toast';
 
 type EquipmentsUploadModalProps = {
   isOpen: boolean;
@@ -66,11 +69,9 @@ export function EquipmentsUploadModal({
       const modelo = row[2];
       const numeroTombamento = row[3];
       const numeroSerie = row[4];
-      const numeroNotaFiscal = row[5];
-      const tipoAquisicao = row[6];
-      const estadoEquipamento = row[7];
-      const anoAquisicao = row[8];
-      const dataAquisicao = row[9];
+      const tipoAquisicao = row[5];
+      const estadoEquipamento = row[6];
+      const dataAquisicao = row[7];
 
       if (
         !tipoEquipamento ||
@@ -78,10 +79,8 @@ export function EquipmentsUploadModal({
         !modelo ||
         !numeroTombamento ||
         !numeroSerie ||
-        !numeroNotaFiscal ||
         !tipoAquisicao ||
         !estadoEquipamento ||
-        !anoAquisicao ||
         !dataAquisicao
       ) {
         // Pular linha se algum dos campos obrigatórios estiver faltando
@@ -89,48 +88,53 @@ export function EquipmentsUploadModal({
         continue;
       }
 
-      formattedRow.tipoEquipamento = tipoEquipamento;
-      formattedRow.marca = marca;
-      formattedRow.modelo = modelo;
-      formattedRow.numeroTombamento = numeroTombamento;
-      formattedRow.numeroSerie = numeroSerie;
-      formattedRow.numeroNotaFiscal = numeroNotaFiscal;
-      formattedRow.tipoAquisicao = tipoAquisicao;
-      formattedRow.estadoEquipamento = estadoEquipamento;
-      formattedRow.anoAquisicao = anoAquisicao;
-      formattedRow.dataAquisicao = dataAquisicao;
+      formattedRow.type = tipoEquipamento;
+      formattedRow.brandName = marca;
+      formattedRow.model = modelo.toString();
+      formattedRow.tippingNumber = numeroTombamento.toString();
+      formattedRow.serialNumber = numeroSerie;
+      formattedRow.acquisitionName = tipoAquisicao;
+      formattedRow.estado =
+        estadoEquipamento.charAt(0).toUpperCase() + estadoEquipamento.slice(1);
+      // formattedRow.acquisitionDate = dataAquisicao;
 
+      // Converte a string de data em um objeto Date
+      const data = new Date(1900, 0, dataAquisicao - 1);
+      const data2 = format(data, 'dd/MM/yyyy');
+      formattedRow.acquisitionDate = parse(data2, 'dd/MM/yyyy', new Date());
+
+      console.log(tipoEquipamento);
       // Campos adicionais para tipos específicos de equipamento
       if (tipoEquipamento === 'CPU') {
-        const qtdMemoriaRAM = row[10];
-        const tipoArmazenamento = row[11];
-        const qntArmazenamento = row[12];
-        const processador = row[13];
+        const qtdMemoriaRAM = row[8];
+        const tipoArmazenamento = row[9];
+        const qntArmazenamento = row[10];
+        const processador = row[11];
 
-        formattedRow.qtdMemoriaRAM = qtdMemoriaRAM;
-        formattedRow.tipoArmazenamento = tipoArmazenamento;
-        formattedRow.qntArmazenamento = qntArmazenamento;
-        formattedRow.processador = processador;
+        formattedRow.ram_size = qtdMemoriaRAM.toString();
+        formattedRow.storageType = tipoArmazenamento;
+        formattedRow.storageAmount = qntArmazenamento.toString();
+        formattedRow.processor = processador;
       } else if (tipoEquipamento === 'Estabilizador') {
-        const potencia = row[10];
+        const potencia = row[12];
 
-        formattedRow.potencia = potencia;
+        formattedRow.power = potencia;
       } else if (tipoEquipamento === 'Monitor') {
-        const tipoMonitor = row[10];
-        const tamanhoMonitor = row[11];
+        const tipoMonitor = row[13];
+        const tamanhoMonitor = row[14];
 
-        formattedRow.tipoMonitor = tipoMonitor;
-        formattedRow.tamanhoMonitor = tamanhoMonitor;
+        formattedRow.screenType = tipoMonitor;
+        formattedRow.screenSize = tamanhoMonitor;
       } else if (tipoEquipamento === 'Nobreak') {
-        const potencia = row[10];
+        const potencia = row[12];
 
-        formattedRow.potencia = potencia;
+        formattedRow.power = potencia;
       }
 
       // Campo opcional
-      const descricao = row[14];
+      const descricao = row[15];
       if (descricao) {
-        formattedRow.descricao = descricao;
+        formattedRow.description = descricao;
       }
 
       formattedData.push(formattedRow);
@@ -148,8 +152,55 @@ export function EquipmentsUploadModal({
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        let erro = 0;
 
         const formattedData = formatData(jsonData as any[][]);
+
+        formattedData.forEach((item) => {
+          console.log(item);
+          api
+            .post('equipment/createEquipment', item)
+            .then((response) => {
+              if (response.status === 200) {
+                toast.success(
+                  'Equipamentos cadastrados com sucesso',
+                  'Sucesso'
+                );
+                setRefreshRequest(!refreshRequest);
+                onClose();
+                erro = 0;
+              }
+              erro = 1;
+            })
+            .catch((error) => {
+              if (
+                error.response.data.error ===
+                'Tippingnumber nao pode ser igual ao de um equipamento ja cadastrado.'
+              ) {
+                toast.error(
+                  'Já existe um equipamento cadastrado com este número de tombamento. Cadastre um equipamento com número de tombamento diferente.',
+                  'Erro'
+                );
+              }
+              if (
+                error.response.data.error ===
+                'Tipo de equipamento não encontrado.'
+              ) {
+                toast.error(
+                  'Tipo do equipamento não encontrado por favor verifique se foi digitado corretamente',
+                  'Erro'
+                );
+              }
+              erro = 1;
+              console.error(error);
+            });
+        });
+        if (erro === 1) {
+          toast.error(
+            'Sua importação não foi bem sucedida! Verifique se os campos estão preenchidos corretamente.',
+            'Erro'
+          );
+        }
       };
       reader.readAsArrayBuffer(file);
     }
@@ -222,7 +273,9 @@ export function EquipmentsUploadModal({
           <input type="file" onChange={handleFileChange} ref={fileInputRef} />
         </Flex>
         <Flex gap="60px" paddingY="64px">
-          <Button variant="secondary">Cancelar</Button>
+          <Button variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
           <Button onClick={handleUpload}>Registrar</Button>
         </Flex>
       </Flex>

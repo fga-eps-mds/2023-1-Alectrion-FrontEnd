@@ -1,23 +1,20 @@
 import React, { memo } from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const SideBar = memo(() => {
-  // Mocked
-  // TODO: create an AuthContext and get it using useAuth
-
-  // Mocked
-  // TODO: get function from authContext
-
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
   const options = [
     { name: 'Controle de Equipamento', link: '/equipments' },
-    { name: 'Controle Ordem Serviço', link: '' },
+    { name: 'Controle Ordem Serviço', link: '/order-services' },
     { name: 'Movimentações', link: '/movements' },
     { name: 'Relatórios', link: '' },
   ];
 
+  const optionUser = { name: 'Cadastro Usuário', link: '/user-register' };
   return (
     <Box
       position="fixed"
@@ -47,10 +44,37 @@ export const SideBar = memo(() => {
         </Text>
       ))}
       <Box position="absolute" bottom="20px" fontSize="4xs">
-        <Text fontWeight="bold">Cadastro Usuário</Text>
-        <Text fontWeight="bold" marginTop="2">
-          Admin
+        {user?.role === 'administrador' ? (
+          <Text
+            key={optionUser.name}
+            fontSize="4xs"
+            fontWeight="bold"
+            marginTop="10"
+            _hover={{ cursor: 'pointer', color: 'orange.500' }}
+            onClick={() => navigate(optionUser.link)}
+          >
+            {optionUser.name}
+          </Text>
+        ) : (
+          ''
+        )}
+        <Text
+          fontSize="4xs"
+          fontWeight="bold"
+          marginTop="2"
+          _hover={{ cursor: 'pointer', color: 'orange.500' }}
+          onClick={() => navigate('/view-profile')}
+        >
+          {user?.name}
         </Text>
+        <Button
+          onClick={signOut}
+          variant="link"
+          textColor="white"
+          justifyContent="unset"
+        >
+          Sair
+        </Button>
       </Box>
     </Box>
   );

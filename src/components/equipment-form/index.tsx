@@ -1,8 +1,7 @@
 import { useForm } from 'react-hook-form';
-import { useEffect } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
-import { ControlledSelect } from '../form-fields/controlled-select';
 
 import {
   ESTADOS_EQUIPAMENTO,
@@ -14,28 +13,27 @@ import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
+import { NewControlledSelect } from '../form-fields/new-controlled-select';
 
 type FormValues = {
   tippingNumber: string;
   serialNumber: string;
-  type: { value: string; label: string };
+  type: string;
   situacao: string;
   model: string;
   description?: string;
-  initialUseDate: { value: string; label: string };
   acquisitionDate: string;
   screenSize?: string;
-  invoiceNumber: string;
   power?: string;
-  screenType?: { value: string; label: string };
+  screenType?: string;
   processor?: string;
-  storageType?: { value: string; label: string };
+  storageType?: string;
   storageAmount?: string;
   brandName: string;
   acquisitionName: string;
   unitId?: string;
   ram_size?: string;
-  estado: { value: string; label: string };
+  estado: string;
 };
 
 interface EquipmentFormProps {
@@ -55,10 +53,21 @@ export default function EquipmentForm({
     handleSubmit,
     watch,
     resetField,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
-  const watchType = watch('type', { label: '', value: '' });
+  const [description, setDescription] = useState('');
+
+  const watchType = watch('type', '');
+  const watchModel = watch('model', '');
+  const watchPower = watch('power', '');
+  const watchScreenSize = watch('screenSize', '');
+  const watchScreenType = watch('screenType', '');
+  const watchRam_size = watch('ram_size', '');
+  const watchProcessor = watch('processor', '');
+  const watchStorageType = watch('storageType', '');
+  const watchStorageAmount = watch('storageAmount', '');
 
   useEffect(() => {
     resetField('power');
@@ -68,7 +77,38 @@ export default function EquipmentForm({
     resetField('processor');
     resetField('storageType');
     resetField('storageAmount');
+    resetField('description');
   }, [resetField, watchType]);
+
+  useEffect(() => {
+    if (watchType === 'CPU') {
+      setDescription(
+        `${watchModel} ${watchProcessor} ${watchRam_size} ${watchStorageType} ${watchStorageAmount}`
+      );
+    } else if (watchType === 'Monitor') {
+      setDescription(
+        `${watchType} ${watchModel} ${watchScreenType} ${watchScreenSize}`
+      );
+    } else if (watchType === 'Estabilizador' || watchType === 'Nobreak') {
+      setDescription(`${watchType} ${watchModel} ${watchPower}`);
+    } else {
+      setDescription(`${watchType} ${watchModel}`);
+    }
+
+    setValue('description', description);
+  }, [
+    setValue,
+    description,
+    watchType,
+    watchModel,
+    watchPower,
+    watchScreenSize,
+    watchScreenType,
+    watchRam_size,
+    watchProcessor,
+    watchStorageType,
+    watchStorageAmount,
+  ]);
 
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
@@ -82,15 +122,13 @@ export default function EquipmentForm({
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { type, estado, initialUseDate, storageType, screenType, ...rest } =
-        formData;
+      const { type, estado, storageType, screenType, ...rest } = formData;
 
       const payload = {
-        type: type.value,
-        estado: estado.value,
-        initialUseDate: initialUseDate.value,
-        storageType: storageType?.value,
-        screenType: screenType?.value,
+        type,
+        estado,
+        storageType,
+        screenType,
         ...rest,
       };
 
@@ -103,15 +141,25 @@ export default function EquipmentForm({
         return;
       }
       toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
-    } catch {
-      toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+    } catch (error: any) {
+      if (
+        error.response.data.error ===
+        'Tippingnumber nao pode ser igual ao de um equipamento ja cadastrado.'
+      ) {
+        toast.error(
+          'Já existe um equipamento cadastrado com este número de tombamento. Cadastre um equipamento com número de tombamento diferente.',
+          'Erro'
+        );
+      } else {
+        toast.error('Erro ao tentar cadastrar o equipamento', 'Erro');
+      }
     }
   });
 
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="type"
           id="type"
@@ -156,21 +204,8 @@ export default function EquipmentForm({
           {...register('serialNumber', {
             required: 'Campo Obrigatório',
             pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
-        />
-
-        <Input
-          label="Nº da Nota Fiscal"
-          errors={errors.invoiceNumber}
-          {...register('invoiceNumber', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
+              value: /^[0-9a-zA-Z]+$/,
+              message: 'Por favor, digite apenas letras e números.',
             },
           })}
         />
@@ -184,7 +219,7 @@ export default function EquipmentForm({
           })}
         />
 
-        <ControlledSelect
+        <NewControlledSelect
           control={control}
           name="estado"
           id="estado"
@@ -194,23 +229,13 @@ export default function EquipmentForm({
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 
-        <ControlledSelect
-          control={control}
-          name="initialUseDate"
-          id="initialUseDate"
-          options={listOfYears}
-          placeholder="Selecione uma opção"
-          label="Ano da aquisição"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-        />
-
         <Datepicker
           label="Data de aquisição"
           name="acquisitionDate"
           required
           control={control}
         />
-        {watchType.value === 'CPU' && (
+        {watchType === 'CPU' && (
           <>
             <Input
               label="Qtd. Memória RAM (GB)"
@@ -223,7 +248,7 @@ export default function EquipmentForm({
                 },
               })}
             />
-            <ControlledSelect
+            <NewControlledSelect
               control={control}
               name="storageType"
               id="storageType"
@@ -253,9 +278,9 @@ export default function EquipmentForm({
           </>
         )}
 
-        {watchType.value === 'Monitor' && (
+        {watchType === 'Monitor' && (
           <>
-            <ControlledSelect
+            <NewControlledSelect
               control={control}
               name="screenType"
               id="screenType"
@@ -274,8 +299,7 @@ export default function EquipmentForm({
           </>
         )}
 
-        {(watchType.value === 'Estabilizador' ||
-          watchType.value === 'Nobreak') && (
+        {(watchType === 'Estabilizador' || watchType === 'Nobreak') && (
           <Input
             label="Potência (VA)"
             errors={errors.storageAmount}
@@ -296,6 +320,7 @@ export default function EquipmentForm({
             {...register('description', {
               maxLength: 255,
             })}
+            defaultValue={description}
           />
         </GridItem>
       </Grid>

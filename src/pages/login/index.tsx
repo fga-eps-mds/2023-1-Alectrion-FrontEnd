@@ -14,124 +14,147 @@
  */
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Box, Button, Center, Input, Text } from '@chakra-ui/react';
-import {Modal} from '@/components/modal';
-import  Equip  from '../edit-equipment';
+import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { Modal } from '@/components/modal';
+import { useAuth } from '@/contexts/AuthContext';
+import { AlectrionIcon } from './AlectrionIcon';
+
 export function Login() {
+  const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const generalTypes = ['Webcam', 'Escaneador'];
-
-  const equipmentDataType = 'Webcam';
-
-  switch (equipmentDataType) {
-    case generalTypes.find((item) => item === 'Tipo 1'):
-      break;
-    case generalTypes.find((item) => item === equipmentDataType):
-      break;
-    default:
-      break;
-  }
-
   const [statusModal, setStatusModal] = useState<boolean>(false);
-    const toggleModal = () => {
-       setStatusModal(!statusModal);
-    };
-  
+  const toggleModal = () => {
+    setStatusModal(!statusModal);
+  };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<CredentialUser>();
 
-  const onSubmit: SubmitHandler<CredentialUser> = async () => {
+  const onSubmit: SubmitHandler<CredentialUser> = async ({
+    username,
+    password,
+  }) => {
     setIsLoading(true);
     // TODO: get function from authContext
-    // await signIn({ username, password });
+    await signIn({ username, password });
     setIsLoading(false);
   };
 
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate('/pass-recover');
+  };
+
   return (
-    <Center
+    <Flex
       aria-label="form"
-      bgGradient="linear(288.94deg, #F8B86D 0%, #F49320 90.96%)"
+      bgGradient="linear(288.94deg, #F8B86D 0%, #F78F88 90.96%)"
       h="100vh"
-      color="white">
-      
+      color="white"
+    >
       <form onSubmit={handleSubmit(onSubmit)} aria-label="form">
         <Box
-          bg="white"
-          borderRadius="10px"
-          boxShadow="0px 4px 4px rgba(0, 0, 0, 0.25),  0px 4px 4px rgba(0, 0, 0, 0.25),  0px 1px 1px rgba(0, 0, 0, 0.12),  0px 2px 2px rgba(0, 0, 0, 0.12),  0px 8px 8px rgba(0, 0, 0, 0.12);"
-          color="black"
-          paddingY="20"
-          paddingX="20"
+          height="100%"
+          width="100vw"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
         >
-          <Text mb="39px" color="#605555" fontWeight="semibold" fontSize="4xl">
-            Bem-vindo 2
-          </Text>
-          <button onClick={() => Equip()}>Equipar</button>
-            <Equip />
-          <Box marginBottom={10}>
-            <Text
-              pl="5px"
-              pb="8px"
-              color="#605555"
-              fontWeight="medium"
-              fontSize="lg"
-            >
-              Login
+          <Box
+            bg="white"
+            borderRadius="10px"
+            boxShadow="0px 4px 4px rgba(0, 0, 0, 0.25),  0px 4px 4px rgba(0, 0, 0, 0.25),  0px 1px 1px rgba(0, 0, 0, 0.12),  0px 2px 2px rgba(0, 0, 0, 0.12),  0px 8px 8px rgba(0, 0, 0, 0.12);"
+            color="black"
+            paddingY="5%"
+            paddingX="5%"
+            m="0.4%"
+            display="flex"
+            flexDir="column"
+          >
+            <Box alignSelf="center">
+              <AlectrionIcon height={10} width={10} />
+            </Box>
+            <Text mb={10} textAlign="center" fontSize="4xl">
+              Alectrion
             </Text>
-            <Input
-              size="lg"
-              fontSize="lg"
-              {...register('username', { required: true })}
-              placeholder="Nome de usuário"
-            />
-            {errors.username && (
-              <span>
-                <Text color="red.400">Este campo é obrigatório</Text>
-              </span>
-            )}
-          </Box>
-          <Box mb="70px">
-            {' '}
-            <Text
-              pl="5px"
-              pb="8px"
-              color="#605555"
-              fontWeight="medium"
-              fontSize="lg"
-            >
+            <Text mb="3%" color="#605555" fontWeight="semibold" fontSize="4xl">
+              Entrar
+            </Text>
+            <Box mb="7%">
+              <Text
+                pl="5px"
+                pb="8px"
+                color="#605555"
+                fontWeight="medium"
+                fontSize="lg"
+              >
+                Nome de usuário
+              </Text>
+              <Input
+                size="lg"
+                fontSize="lg"
+                {...register('username', { required: true })}
+                placeholder="Nome de usuário"
+              />
+              {errors.username && (
+                <span>
+                  <Text color="red.400">Este campo é obrigatório</Text>
+                </span>
+              )}
+            </Box>
+            <Box mb="14%">
               {' '}
-              Senha{' '}
-            </Text>
-            <Input
-              size="lg"
-              fontSize="lg"
-              {...register('password', { required: true })}
-              type="password"
-              placeholder="Digite sua senha"
-            />
-            {errors.password && (
-              <span>
-                <Text color="red.400">Este campo é obrigatório</Text>
-              </span>
-            )}
+              <Text
+                pl="5px"
+                pb="8px"
+                color="#605555"
+                fontWeight="medium"
+                fontSize="lg"
+              >
+                {' '}
+                Senha{' '}
+              </Text>
+              <Input
+                size="lg"
+                fontSize="lg"
+                {...register('password', { required: true })}
+                type="password"
+                placeholder="Digite sua senha"
+              />
+              {errors.password && (
+                <span>
+                  <Text color="red.400">Este campo é obrigatório</Text>
+                </span>
+              )}
+            </Box>
+            <Center>
+              <Button
+                mb="7%"
+                type="submit"
+                paddingX="24"
+                width="sm"
+                isLoading={isLoading}
+              >
+                ENTRAR
+              </Button>
+            </Center>
+            <Center>
+              <Button 
+              onClick={handleBack}
+              variant="link"
+              color="#239875">
+                Recuperar Senha
+              </Button>
+            </Center>
           </Box>
-          <Center>
-            <Button
-              mb="70px"
-              type="submit"
-              paddingX="24"
-              width="sm"
-              isLoading={isLoading}
-            >
-              ENTRAR
-            </Button>
-          </Center>
         </Box>
       </form>
-    </Center>
+    </Flex>
   );
 }
