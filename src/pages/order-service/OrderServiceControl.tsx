@@ -35,6 +35,8 @@ import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
+import { MdPictureAsPdf } from 'react-icons/md';
+import { BsFiletypeXlsx } from 'react-icons/bs';
 
 interface ISelectOption {
   label: string;
@@ -242,6 +244,12 @@ function OrderServiceTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, refreshRequest, filter]);
 
+  const handleReportExport = async (selectedType: string) => {
+    setType(selectedType);
+    setEquipsToExport(await getEquipments(filter));
+    onReportOpen();
+  };
+  
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>
@@ -272,6 +280,35 @@ function OrderServiceTable() {
                 Nova Ordem de Serviço
               </Button>
             </Flex>
+              <Flex
+                  gap={5}
+                  justifyContent="flex-end"
+                  width="100%"
+                  alignItems="center"
+                  padding={4}
+                >
+                  {/* <GrDocumentCsv */}
+                    {/* size="2.2rem" */}
+                    {/* cursor="pointer" */}
+                    {/* onClick={() => { */}
+                      {/* handleReportExport('csv'); */}
+                    {/* }} */}
+                  {/* /> */}
+                  <BsFiletypeXlsx
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('xls');
+                    }}
+                  />
+                  <MdPictureAsPdf
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('pdf');
+                    }}
+                  />
+                </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
             <Flex
               flexDirection="column"
@@ -484,3 +521,19 @@ function OrderServiceTable() {
   );
 }
 export { OrderServiceTable };
+  function setEquipsToExport(arg0: any) {
+    throw new Error('Function not implemented.');
+  }
+
+function getEquipments(filter: string): any {
+  throw new Error('Function not implemented.');
+}
+
+function onReportOpen() {
+  throw new Error('Function not implemented.');
+}
+
+function setType(selectedType: string) {
+  throw new Error('Function not implemented.');
+}
+
