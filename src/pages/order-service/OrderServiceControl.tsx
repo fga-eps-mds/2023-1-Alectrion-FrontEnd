@@ -37,6 +37,7 @@ import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
 import { MdPictureAsPdf } from 'react-icons/md';
 import { BsFiletypeXlsx } from 'react-icons/bs';
+import { ReportModal } from '@/components/report-modal/Index';
 
 interface ISelectOption {
   label: string;
@@ -126,6 +127,7 @@ function OrderServiceTable() {
     onClose: onCloseEditOrderService,
     onOpen: onOpenEditOrderService,
   } = useDisclosure();
+  const [orderServiceToExport, setOrderServiceToExport] = useState<OrderServiceData[]>([]);
 
   const {
     control,
@@ -515,6 +517,12 @@ function OrderServiceTable() {
           isOpen={isOpen}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
+        />
+        <ReportModal
+          isOpen={isReportOpen}
+          onClose={onReportClose}
+          type={type}
+          equipments={orderServiceToExport}
         />
       </GridItem>
     </Grid>
