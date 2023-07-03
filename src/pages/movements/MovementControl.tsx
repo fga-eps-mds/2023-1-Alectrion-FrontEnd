@@ -42,7 +42,7 @@ import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { PDF } from '@/components/movements-reports/pdf';
-import { Excel } from '@/components/movements-reports/xls';
+// import { Excel } from '@/components/movements-reports/xls';
 // import { CSV } from '@/components/movements-reports/csv';
 
 interface ISelectOption {
@@ -330,7 +330,7 @@ function MovementsTable() {
                       padding={4}
                     >
                       {/* <CSV /> */}
-                      <Excel />
+                      {/* <Excel /> */}
                       <PDF movements={[]} />
                     </Flex>
                   </Flex>
