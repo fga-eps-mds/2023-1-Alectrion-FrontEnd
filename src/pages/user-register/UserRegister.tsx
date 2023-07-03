@@ -27,6 +27,7 @@
       const [refreshRequest,setRefreshRequest] = useState<boolean>(false);
     
       const [statusModal, setStatusModal] = useState<boolean>(false);
+      const [isLoading, setIsLoading] = useState(false);
 
       const toggleModal = () => {
         setStatusModal(!statusModal);
@@ -43,6 +44,7 @@
       const watchRole = watch('role');
 
       const onSubmit = handleSubmit(async (formData) => {
+        setIsLoading(true);
         try {
           const { username,email,name,cpf,role,jobFunction, ...rest } =
             formData;
@@ -64,7 +66,7 @@
             headers: {
               Authorization: `Bearer ${loggedUser.token}`,
             }});
-
+          setIsLoading(false);
           if (response.status === 200) {
             setRefreshRequest(!refreshRequest);
             window.history.back()
@@ -265,6 +267,7 @@
                     form="user-register-form"
                     variant="primary"
                     width = "100%"
+                    isLoading={isLoading}
                 > 
                     Registrar
                 </Button>
