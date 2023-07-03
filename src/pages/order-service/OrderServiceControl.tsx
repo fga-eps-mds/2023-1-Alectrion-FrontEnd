@@ -38,6 +38,8 @@ import { OrderServiceRegisterModal } from '@/components/order-service-register-m
 import { MdPictureAsPdf } from 'react-icons/md';
 import { BsFiletypeXlsx } from 'react-icons/bs';
 import { ReportModal } from '@/components/report-modal/Index';
+// import { getEquipments } from '@/utils/getEquipments';
+import { EquipmentData } from '../equipments/EquipmentsControl';
 
 interface ISelectOption {
   label: string;
@@ -117,6 +119,8 @@ function OrderServiceTable() {
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [equipmentsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
 
   const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
     useState<OrderServiceData>();
@@ -127,7 +131,6 @@ function OrderServiceTable() {
     onClose: onCloseEditOrderService,
     onOpen: onOpenEditOrderService,
   } = useDisclosure();
-  const [orderServiceToExport, setOrderServiceToExport] = useState<OrderServiceData[]>([]);
 
   const {
     control,
@@ -228,6 +231,12 @@ function OrderServiceTable() {
       setNextOrderServices([]);
     }
   };
+
+  const {
+    isOpen: isReportOpen,
+    onClose: onReportClose,
+    onOpen: onReportOpen,
+  } = useDisclosure();
 
   useEffect(() => {
     getWorkstations();
@@ -522,26 +531,10 @@ function OrderServiceTable() {
           isOpen={isReportOpen}
           onClose={onReportClose}
           type={type}
-          equipments={orderServiceToExport}
+          equipments={equipmentsToExport}
         />
       </GridItem>
     </Grid>
   );
 }
 export { OrderServiceTable };
-  function setEquipsToExport(arg0: any) {
-    throw new Error('Function not implemented.');
-  }
-
-function getEquipments(filter: string): any {
-  throw new Error('Function not implemented.');
-}
-
-function onReportOpen() {
-  throw new Error('Function not implemented.');
-}
-
-function setType(selectedType: string) {
-  throw new Error('Function not implemented.');
-}
-

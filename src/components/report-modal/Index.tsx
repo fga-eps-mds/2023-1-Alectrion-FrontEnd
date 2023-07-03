@@ -87,7 +87,7 @@ export function ReportModal({
             <Button>Imprimir</Button>
           </PDFDownloadLink>
         )}
-        {type === 'csv' && (
+        {type === 'csv'
           // <CSVLink
           //   data={equipments}
           //   headers={headers}
@@ -98,7 +98,7 @@ export function ReportModal({
           // >
           //   <Button>Imprimir</Button>
           // </CSVLink>
-        )}
+        }
 
         {type === 'xls' && <Button onClick={exportFile}>Imprimir</Button>}
       </Flex>
