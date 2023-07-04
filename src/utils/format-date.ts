@@ -62,3 +62,8 @@ export function parseSelectedDatetime(value: string) {
     }`
   );
 }
+
+export function formatDateTime(str: string) {
+  const date = new Date(str);
+  return date.toLocaleString('pt-BR');
+}

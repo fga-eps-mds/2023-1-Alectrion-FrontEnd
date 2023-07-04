@@ -1,7 +1,9 @@
 import { Type } from 'react-toastify/dist/utils';
+import { AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
 import { api } from '@/config/lib/axios';
-
 import { CreateEquipmentPayload, UpdateEquipmentPayload } from './types';
+import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 
 export const createEquipment = async (
   equipmentPayload: CreateEquipmentPayload
@@ -33,5 +35,18 @@ export const updateEquipment = async (
     return { type: 'success', value: response?.data };
   } catch (error: Error | any) {
     return { type: 'error', error };
+  }
+};
+
+export const getEquipments = async (filter: string) => {
+  console.log(filter);
+  try {
+    const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+      `equipment/find?${filter}`
+    );
+    return data;
+  } catch (error) {
+    toast.error('Nenhum Equipamento encontrado');
+    return [];
   }
 };

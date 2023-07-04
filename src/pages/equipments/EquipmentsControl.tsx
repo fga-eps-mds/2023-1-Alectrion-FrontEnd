@@ -39,7 +39,7 @@ import { TermModal } from '@/components/term-modal';
 import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { ReportModal } from '@/components/report-modal';
-import { getEquipments } from '@/utils/getEquipments';
+import { getEquipments } from '@/services/requests/equipment';
 
 interface ISelectOption {
   label: string;
