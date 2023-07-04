@@ -17,7 +17,7 @@ describe('PasswordRecover', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText(/Recuperar Senha/i)).toBeInTheDocument();
+    expect(screen.getByText(/Enviar e-mail/i)).toBeInTheDocument();
 
     expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
 

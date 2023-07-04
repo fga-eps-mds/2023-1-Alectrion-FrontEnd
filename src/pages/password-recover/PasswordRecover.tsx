@@ -23,7 +23,7 @@ import { AlectrionIcon } from '../../components/icons/AlectrionIcon';
 
 export function PasswordRecover() {
     const [isLoading, setIsLoading] = useState(false);
-    const [emailSent, setEmailSent] = useState('Recuperar senha');
+    const [emailSent, setEmailSent] = useState('Enviar e-mail');
     const [statusModal, setStatusModal] = useState<boolean>(false);
     const toggleModal = () => {
     setStatusModal(!statusModal);
