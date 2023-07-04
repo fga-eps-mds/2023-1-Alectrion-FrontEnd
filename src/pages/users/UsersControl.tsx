@@ -35,19 +35,19 @@ import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { UserEditModal } from '@/components/user-edit-modal';
 
 export interface UserData {
-  id?: string;
-  name: string;
-  email: string;
-  username: string;
-  cpf: string;
-  job: Job;
-  role: Role;
-  password: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
-  temporaryPassword: boolean;
-  isDeleted?: boolean;
+  id: string
+  name: string
+  email: string
+  username: string
+  cpf: string
+  job: Job
+  role: Role
+  password: string
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date
+  temporaryPassword: boolean
+  isDeleted?: boolean
 }
 
 function UsersTable() {

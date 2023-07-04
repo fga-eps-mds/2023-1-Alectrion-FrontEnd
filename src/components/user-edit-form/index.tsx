@@ -53,22 +53,6 @@ export default function UserEditForm({
     defaultValues: userSelected,
   });
 
-//   const watchType = watch('type');
-
-//   useEffect(() => {
-//     resetField('power');
-//     resetField('screenSize');
-//     resetField('screenType');
-//     resetField('ram_size');
-//     resetField('processor');
-//     resetField('storageType');
-//     resetField('storageAmount');
-//   }, [resetField, watchType, setValue, userSelected]);
-
-//   useEffect(() => {
-//     resetField('type');
-//   }, []);
-
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
     const startYear: number = endYear - 30;
@@ -141,18 +125,6 @@ export default function UserEditForm({
   return (
     <form id="user-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
-        {/* <NewControlledSelect
-          label="Tipo de equipamento"
-          control={control}
-          name="type"
-          id="type"
-          options={TIPOS_EQUIPAMENTO}
-          placeholder="Tipo"
-          cursor="pointer"
-          defaultValue={equip?.type}
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-        /> */}
-
         <Input
           label="Username"
           errors={errors.username}
