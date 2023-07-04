@@ -11,6 +11,13 @@ type UserEditModalProps = {
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+function transformFields(data: any) {
+    if (!data) return;
+    const transformedData = { ...data };
+
+    return transformedData;
+  }
+
 export function UserEditModal({
   isOpen,
   onClose,
@@ -34,7 +41,7 @@ export function UserEditModal({
       >
         <UserEditForm
           onClose={onClose}
-          userSelected={userSelected}
+          userSelected={transformFields(userSelected)}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
         />
