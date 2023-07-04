@@ -96,8 +96,6 @@ export default function OrderServiceEditForm({
   );
 
   const osStatusHandler = () => {
-
-    console.log(orderService.status);
     if (orderService.status === 'MAINTENANCE') {
       return OSSTATUS.filter(
         (item) => item.value !== 'FINISHED'
@@ -161,9 +159,7 @@ export default function OrderServiceEditForm({
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    watchStatus === 'CONCLUDED'
-      ? setButtonText('Finalizar')
-      : setButtonText('Salvar');
+    watchStatus === 'FINISHED' ? setButtonText('Finalizar') : setButtonText('Salvar');
   }, [watchStatus]);
 
   useEffect(() => {}, []);
@@ -277,7 +273,7 @@ export default function OrderServiceEditForm({
             type="text"
             placeholder="CPF ou Nº Funcional"
             {...register('senderDocument')}
-            isDisabled={orderService.status === 'CONCLUDED'}
+            isDisabled={orderService.status === 'CONCLUDED' || orderService.status === 'FINISHED'}
           />
         </GridItem>
         <GridItem>
@@ -286,7 +282,7 @@ export default function OrderServiceEditForm({
             errors={errors.seiProcess}
             type="text"
             placeholder="Processo SEI"
-            isDisabled={orderService.status === 'CONCLUDED'}
+            isDisabled={orderService.status === 'CONCLUDED' || orderService.status === 'FINISHED'}
             {...register('seiProcess', {
               minLength: {
                 value: 15,
@@ -304,7 +300,7 @@ export default function OrderServiceEditForm({
             errors={errors.description}
             label="Defeito do Equipamento:"
             maxChars={255}
-            disabled={orderService.status === 'CONCLUDED'}
+            disabled={orderService.status === 'CONCLUDED' || orderService.status === 'FINISHED'}
             {...register('description', {
               maxLength: 255,
             })}
@@ -316,8 +312,8 @@ export default function OrderServiceEditForm({
               label="Técnico Responsável"
               errors={errors.technicianName}
               type="text"
-              isDisabled={orderService.status === 'CONCLUDED'}
-              defaultValue={watchStatus === 'FINISHED' ? orderService.technicianName : 'Técnico Responsável'}
+              isDisabled={orderService.status === 'CONCLUDED' || orderService.status === 'FINISHED'}
+              defaultValue={watchStatus === 'FINISHED' ? orderService.technicianName : undefined}
               placeholder="Nome do Técnico"
               {...register('technicianName', {
                 required: 'Campo Obrigatório',
