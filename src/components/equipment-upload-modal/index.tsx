@@ -108,7 +108,10 @@ export function EquipmentsUploadModal({
         formattedRow.storageType = tipoArmazenamento;
         formattedRow.storageAmount = qntArmazenamento.toString();
         formattedRow.processor = processador;
-      } else if (tipoEquipamento === 'Estabilizador' || tipoEquipamento === 'Nobreak') {
+      } else if (
+        tipoEquipamento === 'Estabilizador' ||
+        tipoEquipamento === 'Nobreak'
+      ) {
         const potencia = row[12];
 
         formattedRow.power = potencia;
@@ -118,7 +121,7 @@ export function EquipmentsUploadModal({
 
         formattedRow.screenType = tipoMonitor;
         formattedRow.screenSize = tamanhoMonitor;
-      } 
+      }
       // Campo opcional
       const descricao = row[15];
       if (descricao) {
@@ -156,8 +159,7 @@ export function EquipmentsUploadModal({
                 setRefreshRequest(!refreshRequest);
                 onClose();
                 erro = 0;
-              }
-              else{
+              } else {
                 toast.error(
                   'Sua importação não foi bem sucedida! Verifique se os campos estão preenchidos corretamente.',
                   'Erro'
