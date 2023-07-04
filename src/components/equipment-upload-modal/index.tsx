@@ -58,12 +58,10 @@ export function EquipmentsUploadModal({
   const formatData = (jsonData: any[][]) => {
     const formattedData: any[] = [];
 
-    // Percorre cada linha da planilha
     for (let i = 1; i < jsonData.length; i += 1) {
       const row = jsonData[i];
       const formattedRow: any = {};
 
-      // Validação dos campos obrigatórios
       const tipoEquipamento = row[0];
       const marca = row[1];
       const modelo = row[2];
@@ -83,7 +81,6 @@ export function EquipmentsUploadModal({
         !estadoEquipamento ||
         !dataAquisicao
       ) {
-        // Pular linha se algum dos campos obrigatórios estiver faltando
         // eslint-disable-next-line no-continue
         continue;
       }
@@ -96,15 +93,11 @@ export function EquipmentsUploadModal({
       formattedRow.acquisitionName = tipoAquisicao;
       formattedRow.estado =
         estadoEquipamento.charAt(0).toUpperCase() + estadoEquipamento.slice(1);
-      // formattedRow.acquisitionDate = dataAquisicao;
 
-      // Converte a string de data em um objeto Date
       const data = new Date(1900, 0, dataAquisicao - 1);
       const data2 = format(data, 'dd/MM/yyyy');
       formattedRow.acquisitionDate = parse(data2, 'dd/MM/yyyy', new Date());
 
-      console.log(tipoEquipamento);
-      // Campos adicionais para tipos específicos de equipamento
       if (tipoEquipamento === 'CPU') {
         const qtdMemoriaRAM = row[8];
         const tipoArmazenamento = row[9];
@@ -157,7 +150,6 @@ export function EquipmentsUploadModal({
         const formattedData = formatData(jsonData as any[][]);
 
         formattedData.forEach((item) => {
-          console.log(item);
           api
             .post('equipment/createEquipment', item)
             .then((response) => {
