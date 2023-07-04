@@ -153,7 +153,7 @@ function OrderServiceTable() {
   };
 
   const handleFilterChange = () => {
-    const { type, dateOS, status, unit } = watchFilter;
+    const { type, dateOS, status, unit, brand } = watchFilter;
 
     let formattedDate;
     if (dateOS !== null && dateOS !== '' && dateOS) {
@@ -166,6 +166,7 @@ function OrderServiceTable() {
       status,
       unit,
       search,
+      brand,
     };
 
     const filteredDataFormatted = [
@@ -266,6 +267,11 @@ function OrderServiceTable() {
 
   useEffect(() => {
     getWorkstations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getBrands();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
