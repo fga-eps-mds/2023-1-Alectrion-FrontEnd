@@ -111,6 +111,26 @@ function UsersTable() {
     onOpenEditUser();
   };
 
+  const handleDelete = async (userId: string) => {
+    try {
+      const { data }: AxiosResponse<boolean> = await api.delete(
+        `user/delete`,
+        {
+          params: {
+            userId,
+          },
+          headers: {
+            Authorization: `Bearer ${loggedUser.token}`,
+          },
+
+        }
+      );
+      toast.success('Usuário deletado com sucesso');
+    } catch (error) {
+      toast.error('Não foi possível deletar o usuário');
+    }
+  };
+
   useEffect(() => {
     fetchItems();
     fetchNextItems();
@@ -233,6 +253,11 @@ function UsersTable() {
                               variant="ghost"
                               icon={<MdDelete />}
                               width="5%"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleDelete(user.id);
+                                setRefreshRequest(!refreshRequest);
+                              }}
                             />
                           </Td>
                         </Tr>
