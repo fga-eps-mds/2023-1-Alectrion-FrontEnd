@@ -14,7 +14,10 @@ export const SideBar = memo(() => {
     { name: 'Relatórios', link: '' },
   ];
 
-  const optionUser = { name: 'Cadastro Usuário', link: '/user-register' };
+  const optionUser = [
+    { name: 'Controle de Cadastro', link: '/equipments-fields' },
+    { name: 'Cadastro Usuário', link: '/user-register' },
+  ];
   return (
     <Box
       position="fixed"
@@ -45,16 +48,18 @@ export const SideBar = memo(() => {
       ))}
       <Box position="absolute" bottom="20px" fontSize="4xs">
         {user?.role === 'administrador' ? (
-          <Text
-            key={optionUser.name}
-            fontSize="4xs"
-            fontWeight="bold"
-            marginTop="10"
-            _hover={{ cursor: 'pointer', color: 'orange.500' }}
-            onClick={() => navigate(optionUser.link)}
-          >
-            {optionUser.name}
-          </Text>
+          optionUser.map((option) => (
+            <Text
+              key={option.name}
+              fontSize="4xs"
+              fontWeight="bold"
+              marginTop="10"
+              _hover={{ cursor: 'pointer', color: 'orange.500' }}
+              onClick={() => navigate(option.link)}
+            >
+              {option.name}
+            </Text>
+          ))
         ) : (
           ''
         )}
