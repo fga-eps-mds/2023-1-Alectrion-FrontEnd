@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
@@ -61,6 +62,10 @@ export interface Equipment {
   };
 }
 
+export interface Brand{
+  name: string;
+  id: string;
+}
 export interface OrderServiceData {
   id: string;
   date: string;
@@ -180,6 +185,27 @@ function OrderServiceTable() {
     setSearch('');
     reset();
   };
+
+  const formattedBrands = (data: Brand[]): ISelectOption[] => {
+    return data?.map((item) => {
+      return { label: item.name, value: item.name };
+    });
+  };
+
+  
+
+  const getBrands = async () => {
+    try {
+      const { data }: AxiosResponse<Brand[]> = await api.get(
+        `equipment/getAllBrands`
+      );
+      setBrands(formattedBrands(data));
+    } catch (error) {
+      setBrands([]);
+    }
+  };
+
+
 
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
     return data?.map((item) => {
@@ -344,10 +370,34 @@ function OrderServiceTable() {
                   <NewControlledSelect
                     filterStyle
                     control={control}
+                    name="brand"
+                    id="brand"
+                    options={brands}
+                    placeholder="Marca"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
+                    name="model"
+                    id="model"
+                    options={workstations}
+                    placeholder="Modelos"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
                     name="unit"
                     id="unit"
                     options={workstations}
-                    placeholder="Localização"
+                    placeholder="Local"
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
