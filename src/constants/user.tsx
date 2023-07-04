@@ -24,23 +24,35 @@ export type TipoJob =
   | 'superintendente';
 
 export type TipoRole = 'ADMIN' | 'BASICO' | 'CONSULTA';
+  // export type TipoRole =
+  // | 'administrador'
+  // | 'gerente'
+  // | 'basico'
+  // | 'consulta';
 
 export const TIPOS_JOB: SelectItem<TipoJob>[] = [
-  { label: 'delegado', value: '0' },
-  { label: 'agente de policia', value: '1' },
-  { label: 'escrivao de policia', value: '2' },
-  { label: 'coordenador', value: '3' },
-  { label: 'chefe de secao', value: '4' },
-  { label: 'generico', value: '5' },
-  { label: 'comissionado', value: '6' },
-  { label: 'estagiario', value: '7' },
-  { label: 'superintendente', value: '8' },
+  { label: 'delegado', value: 'delegado' },
+  { label: 'agente de policia', value: 'agente de policia' },
+  { label: 'escrivao de policia', value: 'escrivao de policia' },
+  { label: 'coordenador', value: 'coordenador' },
+  { label: 'chefe de secao', value: 'chefe de secao' },
+  { label: 'generico', value: 'generico' },
+  { label: 'comissionado', value: 'comissionado' },
+  { label: 'estagiario', value: 'estagiario' },
+  { label: 'superintendente', value: 'superintendente' },
 ];
 
+// export const TIPOS_ROLE: SelectItem<TipoRole>[] = [
+//   { label: 'administrador', value: 'administrador' },
+//   { label: 'gerente', value: 'gerente' },
+//   { label: 'basico', value: 'basico' },
+//   { label: 'consulta', value: 'consulta' },
+// ];
+
 export const TIPOS_ROLE: SelectItem<TipoRole>[] = [
-  { label: 'ADMIN', value: '0' },
-  { label: 'BASICO', value: '1' },
-  { label: 'CONSULTA', value: '2' },
+  { label: 'ADMIN', value: 'ADMIN' },
+  { label: 'BASICO', value: 'BASICO' },
+  { label: 'CONSULTA', value: 'CONSULTA' },
 ];
 
 export enum USER_ACCESS {
