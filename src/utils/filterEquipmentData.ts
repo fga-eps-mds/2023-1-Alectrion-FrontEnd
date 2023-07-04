@@ -40,7 +40,7 @@ export function filterData(equipments: EquipmentData[]) {
       'Tipo de Tela': screenType,
       'Tamanho da Tela': screenSize,
       Potência: power,
-      'Criado em': formatDateTime(createdAt as string),
+      'Adicionado em': formatDateTime(createdAt as string),
       'Atualizado em': formatDateTime(updatedAt as string),
       Aquisição: acquisition.name,
       'Data da aquisição': acquisitionDate,
