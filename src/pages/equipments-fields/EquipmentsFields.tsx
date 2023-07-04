@@ -20,12 +20,20 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
+import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
+import { useForm } from 'react-hook-form';
 
 function EquipmentsFields() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
-  console.log(user);
+  const {
+    watch,
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterUserPayload>();
 
   return (
     <form aria-label="form">
@@ -83,29 +91,9 @@ function EquipmentsFields() {
                       color="#605555"
                       fontWeight="medium"
                       fontSize="lg"
-                    >
-                      Nome
-                    </Text>
-                    <Input
-                      size="lg"
-                      fontSize="lg"
-                      name="name"
-                      width="100%"
-                      marginRight="75px"
-                      placeholder={` ${user?.name}`}
-                    />
-                  </Box>
-
-                  <Box>
-                    <Text
-                      pl="2%"
-                      pb="1%"
-                      color="#605555"
-                      fontWeight="medium"
-                      fontSize="lg"
                       marginTop="3%"
                     >
-                      Email
+                      Marca para Editar
                     </Text>
                     <Input
                       size="lg"
@@ -115,7 +103,36 @@ function EquipmentsFields() {
                       marginRight="75px"
                       placeholder={` ${user?.email}`}
                     />
+
+                    <Text
+                      pl="2%"
+                      pb="1%"
+                      color="#605555"
+                      fontWeight="medium"
+                      fontSize="lg"
+                      marginTop="3%"
+                    >
+                      Novo Nome
+                    </Text>
+                    <Input
+                      size="lg"
+                      fontSize="lg"
+                      name="email"
+                      width="100%"
+                      marginRight="75px"
+                      placeholder={` ${user?.email}`}
+                    />
+
+                    <Button
+                      marginTop="5%"
+                      width="100%"
+                      colorScheme={theme.colors.primary}
+                      onClick={() => { }}
+                    >
+                      Editar
+                    </Button>
                   </Box>
+
                   <Box>
                     <Text
                       pl="5px"
@@ -125,16 +142,54 @@ function EquipmentsFields() {
                       fontSize="lg"
                       marginTop="3%"
                     >
-                      Cargo
+                      Marca para Excluir
                     </Text>
                     <Input
                       size="lg"
                       fontSize="lg"
                       name="telefone"
                       width="100%"
-                      placeholder={` ${user?.job}`}
+                      placeholder="Nome Marca"
                     />
+                    <Button
+                      marginTop="5%"
+                      width="100%"
+                      colorScheme={theme.colors.primary}
+                      onClick={() => { }}
+                    >
+                      Excluir
+                    </Button>
                   </Box>
+
+                  <Box>
+                    <Text
+                      pl="5px"
+                      pb="8px"
+                      color="#605555"
+                      fontWeight="medium"
+                      fontSize="lg"
+                      marginTop="3%"
+                    >
+                      Cadastrar Marca
+                    </Text>
+                    <Input
+                      size="lg"
+                      fontSize="lg"
+                      name="telefone"
+                      width="100%"
+                      placeholder="Nome da Marca"
+                    />
+
+                    <Button
+                      marginTop="5%"
+                      width="100%"
+                      colorScheme={theme.colors.primary}
+                      onClick={() => { }}
+                    >
+                      Cadastrar
+                    </Button>
+                  </Box>
+
                 </Box>
               </div>
             </Flex>
