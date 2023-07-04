@@ -23,6 +23,7 @@ import { FaFileAlt, FaTools } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import { LoginResponse, Job, Role } from '@/constants/user';
 import { UserRegisterModal } from '@/components/user-register-modal';
+import { BiEditAlt } from 'react-icons/bi';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -31,6 +32,7 @@ import { SelectItem } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
+import { UserEditModal } from '@/components/user-edit-modal';
 
 export interface UserData {
   id?: string;
@@ -57,17 +59,15 @@ function UsersTable() {
   const limit = 10;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const [selectedUserToEdit, setSelectedUserToEdit] = useState<UserData>();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
 
-  /*
-  const handleEdit = (user: OrderServiceData) => {
-    if (orderService) {
-      setSelectedOrderServiceToEdit(orderService);
-    }
-
-    onOpenEditOrderService();
-  };
-*/
+  const {
+    isOpen: isOpenEditUser,
+    onClose: onCloseEditUser,
+    onOpen: onOpenEditUser,
+  } = useDisclosure();
 
   const loggedUser = JSON.parse(
     localStorage.getItem('@alectrion:user') || ''
@@ -104,6 +104,11 @@ function UsersTable() {
     } catch (error) {
       setNextUsers([]);
     }
+  };
+
+  const handleEdit = (user: UserData) => {
+    if (user) setSelectedUserToEdit(user);
+    onOpenEditUser();
   };
 
   useEffect(() => {
@@ -194,16 +199,30 @@ function UsersTable() {
                     <Tbody fontWeight="semibold" maxHeight="200px">
                       {users.map((user) => (
                         <Tr key={user.id}>
-                          <Td fontWeight="semibold">{user.name}</Td>
-                          <Td fontWeight="semibold">{user.job}</Td>
-                          <Td fontWeight="semibold">{user.role}</Td>
-                          <Td>{user.cpf}</Td>
+                          <Td fontWeight="semibold">
+                            {user.name}
+                          </Td>
+                          <Td fontWeight="semibold">
+                            {user.job}
+                          </Td>
+                          <Td
+                            fontWeight="semibold"
+                          >
+                            {user.role}
+                          </Td>
                           <Td>
-                            <button>
+                            {user.cpf}
+                          </Td>
+                          <Td
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleEdit(user);
+                          }}>
+                            <button >
                               <IconButton
                                 aria-label="Editar Usuário"
                                 variant="ghost"
-                                icon={<FaTools />}
+                                icon={<BiEditAlt />}
                                 width="5%"
                               />
                             </button>
@@ -258,6 +277,13 @@ function UsersTable() {
             </Flex>
           </Flex>
         </Flex>
+        <UserEditModal
+          onClose={onCloseEditUser}
+          isOpen={isOpenEditUser}
+          userSelected={selectedUserToEdit}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+        />
       </GridItem>
       <UserRegisterModal
         onClose={onClose}
