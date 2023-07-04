@@ -8,11 +8,11 @@ import {
   Font,
 } from '@react-pdf/renderer';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
+import { formatDate } from '@/utils/format-date';
 
 interface EquipmentsPDFprops {
   equipments: EquipmentData[];
   title: string;
-  date: string;
 }
 
 Font.register({
@@ -31,7 +31,7 @@ Font.register({
   ],
 });
 
-export function EquipmentsPDF({ title, equipments, date }: EquipmentsPDFprops) {
+export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
   const styles = StyleSheet.create({
     page: {
       flexDirection: 'column',
@@ -103,40 +103,36 @@ export function EquipmentsPDF({ title, equipments, date }: EquipmentsPDFprops) {
     },
   });
 
-  const currentEmissionDate = new Date();
-  const emissionDay = currentEmissionDate.getDate().toString().padStart(2, '0');
-  const emissionMonth = currentEmissionDate
-    .getMonth()
-    .toString()
-    .padStart(2, '0');
-  const emissionYear = currentEmissionDate
-    .getFullYear()
-    .toString()
-    .padStart(4, '0');
+  const formattedEmissionDate = (): string => {
+    const currentEmissionDate = new Date();
+    const emissionDay = currentEmissionDate
+      .getDate()
+      .toString()
+      .padStart(2, '0');
+    const emissionMonth = currentEmissionDate
+      .getMonth()
+      .toString()
+      .padStart(2, '0');
+    const emissionYear = currentEmissionDate
+      .getFullYear()
+      .toString()
+      .padStart(4, '0');
 
-  const emissionHours = currentEmissionDate
-    .getHours()
-    .toString()
-    .padStart(2, '0');
-  const emissionMinutes = currentEmissionDate
-    .getMinutes()
-    .toString()
-    .padStart(2, '0');
-  const emissionSeconds = currentEmissionDate
-    .getSeconds()
-    .toString()
-    .padStart(2, '0');
+    const emissionHours = currentEmissionDate
+      .getHours()
+      .toString()
+      .padStart(2, '0');
+    const emissionMinutes = currentEmissionDate
+      .getMinutes()
+      .toString()
+      .padStart(2, '0');
+    const emissionSeconds = currentEmissionDate
+      .getSeconds()
+      .toString()
+      .padStart(2, '0');
 
-  const formattedEmissionDate = `${emissionDay}/${emissionMonth}/${emissionYear} - ${emissionHours}:${emissionMinutes}:${emissionSeconds}`;
-
-  const movementDate = new Date(date);
-  const movementDay = movementDate.getDate().toString().padStart(2, '0');
-  const movementMonth = (movementDate.getMonth() + 1)
-    .toString()
-    .padStart(2, '0');
-  const movementYear = movementDate.getFullYear().toString().padStart(4, '0');
-
-  const formattedMovementDate = `${movementDay}/${movementMonth}/${movementYear}`;
+    return `${emissionDay}/${emissionMonth}/${emissionYear} - ${emissionHours}:${emissionMinutes}:${emissionSeconds}`;
+  };
 
   return (
     <Document>
@@ -162,22 +158,33 @@ export function EquipmentsPDF({ title, equipments, date }: EquipmentsPDFprops) {
           </Text>
         </View>
         <Text style={styles.caption}>
-          Data da emissão: {formattedEmissionDate}
+          Data da emissão: {formattedEmissionDate()}
         </Text>
         <View style={styles.tableHeader}>
           <Text style={{ ...styles.columnHeader, maxWidth: 24 }}>Item</Text>
           <Text style={{ ...styles.columnHeader, minWidth: 80, maxWidth: 100 }}>
             Tombamento
           </Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 80, maxWidth: 100 }}>
+            Nº de série
+          </Text>
           <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
             Tipo
           </Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 40 }}>Marca</Text>
-          <Text style={styles.columnHeader}>Descrição</Text>
-          <Text style={styles.columnHeader}>
-            {title === 'Baixa' ? 'Última Lotação' : 'Lotação'}
+          <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
+            SItuação
           </Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Data</Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 38, maxWidth: 55 }}>
+            Marca
+          </Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 38, maxWidth: 55 }}>
+            Modelo
+          </Text>
+          <Text style={styles.columnHeader}>Descrição</Text>
+          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>
+            Adquirido em
+          </Text>
+          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Unidade</Text>
         </View>
         {equipments?.map((equipment, index) => (
           <View style={styles.tableRow} key={equipment?.id}>
@@ -185,15 +192,27 @@ export function EquipmentsPDF({ title, equipments, date }: EquipmentsPDFprops) {
             <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
               {equipment?.tippingNumber}
             </Text>
+            <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
+              {equipment?.serialNumber}
+            </Text>
             <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
               {equipment?.type}
             </Text>
-            <Text style={{ ...styles.rowData, maxWidth: 40 }}>
+            <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
+              {equipment?.situacao}
+            </Text>
+            <Text style={{ ...styles.rowData, minWidth: 38, maxWidth: 55 }}>
               {equipment?.brand?.name}
+            </Text>
+            <Text style={{ ...styles.rowData, minWidth: 38, maxWidth: 55 }}>
+              {equipment?.model}
             </Text>
             <Text style={styles.rowData}>{equipment?.description}</Text>
             <Text style={{ ...styles.rowData, maxWidth: 56 }}>
-              {formattedMovementDate}
+              {formatDate(equipment?.acquisitionDate)}
+            </Text>
+            <Text style={{ ...styles.rowData, maxWidth: 60 }}>
+              {equipment?.unit.name}
             </Text>
           </View>
         ))}
@@ -203,20 +222,6 @@ export function EquipmentsPDF({ title, equipments, date }: EquipmentsPDFprops) {
         >
           Qtd. {equipments?.length}
         </Text>
-
-        {title !== 'Baixa' && (
-          <View style={styles.signature}>
-            <Text style={{ ...styles.caption, marginBottom: 4 }}>
-              {'_'.repeat(50)}
-            </Text>
-            <Text style={styles.caption}>
-              ASSINATURA / CARIMBO DO TITULAR DA UNIDADE
-            </Text>
-            <Text style={styles.caption}>
-              26ª DELEGACIA DE POLÍCIA DE GOIÂNIA
-            </Text>
-          </View>
-        )}
       </Page>
     </Document>
   );

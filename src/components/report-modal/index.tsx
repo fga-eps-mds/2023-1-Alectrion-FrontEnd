@@ -63,7 +63,6 @@ export function ReportModal({
               <EquipmentsPDF
                 title="Relatório de equipamentos"
                 equipments={equipments}
-                date=""
               />
             }
             fileName={`relatorio_equipamentos_${formattedDate}`}
