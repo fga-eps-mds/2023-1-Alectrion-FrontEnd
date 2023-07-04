@@ -17,7 +17,7 @@ const METRIC_LIST = [
 ];
 const SONAR_URL = `https://sonarcloud.io/api/measures/component_tree?component=${SONAR_ID}&metricKeys=${METRIC_LIST.join(
   ','
-)}&ps=500`;
+)}`;
 
 module.exports = {
   SONAR_URL,
