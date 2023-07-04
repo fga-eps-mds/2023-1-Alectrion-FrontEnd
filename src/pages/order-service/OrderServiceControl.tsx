@@ -99,6 +99,7 @@ type FilterValues = {
   unit?: ISelectOption;
   status: ISelectOption;
   search: string;
+  model?: ISelectOption;
 };
 
 export type StatusOS = 'Em manutenção' | 'Concluída' | 'Garantia';
@@ -118,6 +119,7 @@ function OrderServiceTable() {
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
   const [brands, setBrands] = useState<ISelectOption[]>();
+  const[models, setModels] = useState<ISelectOption[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
@@ -153,7 +155,7 @@ function OrderServiceTable() {
   };
 
   const handleFilterChange = () => {
-    const { type, dateOS, status, unit, brand } = watchFilter;
+    const { type, dateOS, status, unit, brand, model, } = watchFilter;
 
     let formattedDate;
     if (dateOS !== null && dateOS !== '' && dateOS) {
@@ -167,6 +169,7 @@ function OrderServiceTable() {
       unit,
       search,
       brand,
+      model,
     };
 
     const filteredDataFormatted = [
@@ -187,22 +190,57 @@ function OrderServiceTable() {
     reset();
   };
 
-  const formattedBrands = (data: Brand[]): ISelectOption[] => {
-    return data?.map((item) => {
-      return { label: item.name, value: item.name };
+  const formattedBrands = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueBrands = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueBrands.add(item.brand.name);
     });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueBrands).map(brands => ({
+      label: brands,
+      value: brands
+    }));
+  
+    return uniqueOptions;
   };
 
   
 
   const getBrands = async () => {
     try {
-      const { data }: AxiosResponse<Brand[]> = await api.get(
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
         `equipment/getAllBrands`
       );
       setBrands(formattedBrands(data));
     } catch (error) {
       setBrands([]);
+    }
+  };
+
+  const formattedModels = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueModels = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueModels.add(item.equipment.model);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueModels).map(model => ({
+      label: model,
+      value: model
+    }));
+  
+    return uniqueOptions;
+  };
+
+   const getModels = async () => {
+    try {
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+        `equipment/listOrderService`
+      );
+      setModels(formattedModels(data));
+    } catch (error) {
+      setModels([]);
     }
   };
 
@@ -264,6 +302,11 @@ function OrderServiceTable() {
     onClose: onReportClose,
     onOpen: onReportOpen,
   } = useDisclosure();
+
+  useEffect(() => {
+    getModels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     getWorkstations();
@@ -390,7 +433,7 @@ function OrderServiceTable() {
                     control={control}
                     name="model"
                     id="model"
-                    options={workstations}
+                    options={models}
                     placeholder="Modelos"
                     cursor="pointer"
                     variant="unstyled"
