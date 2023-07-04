@@ -8,24 +8,25 @@ import { Datepicker } from '../form-fields/date';
 import {
   TIPOS_JOB,
   TIPOS_ROLE,
+  Job,
+  Role,
+  LoginResponse,
 } from '@/constants/user';
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
-import { Job, Role } from '@/constants/user';
-import { LoginResponse } from '@/constants/user';
 
 export type EditUserFormValues = {
-  id: string,
-  name: string
-  email: string
-  username: string
-  cpf: string
-  job: Job
-  role: Role
-  password: string
+  id: string;
+  name: string;
+  email: string;
+  username: string;
+  cpf: string;
+  job: Job;
+  role: Role;
+  password: string;
 };
 
 interface EditUserFormProps {
@@ -72,19 +73,10 @@ export default function UserEditForm({
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const {
-        name,
-        username,
-        cpf,
-        email,
-        job,
-        role,
-        password,
-        ...rest
-      } = formData;
+      const { name, username, cpf, email, job, role, password, ...rest } =
+        formData;
 
       const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    //   const dateString = formatDate(acquisitionDate);
 
       const payload = {
         userId: formData.id,
@@ -102,8 +94,7 @@ export default function UserEditForm({
         localStorage.getItem('@alectrion:user') || ''
       ) as unknown as LoginResponse;
 
-      const response = await api.put('user/update', payload, 
-      {
+      const response = await api.put('user/update', payload, {
         headers: {
           Authorization: `Bearer ${loggedUser.token}`,
         },
@@ -188,7 +179,6 @@ export default function UserEditForm({
           cursor="pointer"
           defaultValue={userSelected.role}
         />
-
 
         {/* <Input
           label="Password"
