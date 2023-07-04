@@ -167,6 +167,9 @@ function EquipmentTable() {
     isOpen: isOpenRegister,
     onClose: onCloseRegister,
     onOpen: onOpenRegister,
+  } = useDisclosure();
+
+  const {
     isOpen: isUploadOpen,
     onClose: onUploadClose,
     onOpen: onUploadOpen,
