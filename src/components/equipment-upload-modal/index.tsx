@@ -26,7 +26,7 @@ export function EquipmentsUploadModal({
   const [isHovering, setIsHovering] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0] || null;
+    const selectedFile = e.target.files?.[0] ?? null;
     setFile(selectedFile);
   };
 
@@ -108,7 +108,7 @@ export function EquipmentsUploadModal({
         formattedRow.storageType = tipoArmazenamento;
         formattedRow.storageAmount = qntArmazenamento.toString();
         formattedRow.processor = processador;
-      } else if (tipoEquipamento === 'Estabilizador') {
+      } else if (tipoEquipamento === 'Estabilizador' || tipoEquipamento === 'Nobreak') {
         const potencia = row[12];
 
         formattedRow.power = potencia;
@@ -118,12 +118,7 @@ export function EquipmentsUploadModal({
 
         formattedRow.screenType = tipoMonitor;
         formattedRow.screenSize = tamanhoMonitor;
-      } else if (tipoEquipamento === 'Nobreak') {
-        const potencia = row[12];
-
-        formattedRow.power = potencia;
-      }
-
+      } 
       // Campo opcional
       const descricao = row[15];
       if (descricao) {
@@ -162,7 +157,12 @@ export function EquipmentsUploadModal({
                 onClose();
                 erro = 0;
               }
-              erro = 1;
+              else{
+                toast.error(
+                  'Sua importação não foi bem sucedida! Verifique se os campos estão preenchidos corretamente.',
+                  'Erro'
+                );
+              }
             })
             .catch((error) => {
               if (
@@ -187,12 +187,6 @@ export function EquipmentsUploadModal({
               console.error(error);
             });
         });
-        if (erro === 1) {
-          toast.error(
-            'Sua importação não foi bem sucedida! Verifique se os campos estão preenchidos corretamente.',
-            'Erro'
-          );
-        }
       };
       reader.readAsArrayBuffer(file);
     }
