@@ -14,7 +14,7 @@ export const SideBar = memo(() => {
     { name: 'Relatórios', link: '' },
   ];
 
-  const optionUser = { name: 'Cadastro Usuário', link: '/user-register' };
+  const optionUser = { name: 'Controle de Usuários', link: '/users' };
   return (
     <Box
       position="fixed"

@@ -32,11 +32,6 @@ import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { MdDelete} from 'react-icons/md';
 import { Job, Role } from '@/constants/user';
 
-interface ISelectOption {
-  label: string;
-  value: number | string;
-}
-
 export interface UserData {
   id?: string
   name: string
@@ -53,49 +48,14 @@ export interface UserData {
   isDeleted?: boolean
 }
 
-type FilterValues = {
-  type?: ISelectOption;
-  brand?: string;
-  dateOS?: string;
-  unit?: ISelectOption;
-  status: ISelectOption;
-  search: string;
-};
-
-
 function UsersTable() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [nextUsers, setNextUsers] = useState<UserData[]>([]);
 
-  const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
-  const [filter, setFilter] = useState<string>('');
-  const [search, setSearch] = useState<string>('');
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
-  const {
-    isOpen: isOpenEditOrderService,
-    onClose: onCloseEditOrderService,
-    onOpen: onOpenEditOrderService,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenPrintOrderService,
-    onClose: onClosePrintOrderService,
-    onOpen: onOpenPrintOrderService,
-  } = useDisclosure();
-
-  const {
-    control,
-    watch,
-    register,
-    formState: { errors },
-    reset,
-  } = useForm<FilterValues>({ mode: 'onChange' });
-
-  const watchFilter = watch();
 /*
   const handleEdit = (user: OrderServiceData) => {
     if (orderService) {
@@ -105,51 +65,6 @@ function UsersTable() {
     onOpenEditOrderService();
   };
 */
-
-  const handleFilterChange = () => {
-    const { type, dateOS, status, unit } = watchFilter;
-
-    let formattedDate;
-    if (dateOS !== null && dateOS !== '' && dateOS) {
-      formattedDate = new Date(dateOS).toLocaleDateString('en-us');
-    }
-
-    const dataFormatted = {
-      type,
-      date: formattedDate,
-      status,
-      unit,
-      search,
-    };
-
-    const filteredDataFormatted = [
-      ...Object.entries(dataFormatted).filter(
-        (field) => field[1] !== undefined && field[1] !== ''
-      ),
-    ];
-
-    const query = `${filteredDataFormatted
-      .map((field) => `${field[0]}=${field[1]}`)
-      .join('&')}`;
-    setFilter(query);
-  };
-
-  const cleanFilters = () => {
-    setFilter('');
-    setSearch('');
-    reset();
-  };
-
-  const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return function (this: any, ...args: Parameters<T>) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn.apply(this, args), ms);
-    };
-  };
-  const handleSearch = debounce(() => {
-    setSearch(watchFilter.search);
-  }, 400);
 
   const loggedUser = JSON.parse(
     localStorage.getItem('@alectrion:user') || ''
@@ -189,16 +104,10 @@ function UsersTable() {
   };
 
   useEffect(() => {
-    handleSearch();
-    handleFilterChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchFilter]);
-
-  useEffect(() => {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, refreshRequest, filter]);
+  }, []);
 
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
@@ -220,47 +129,25 @@ function UsersTable() {
               fontWeight="semibold"
               fontSize="4xl"
             >
-              Usuários
+              Controle de Acesso
             </Text>
             <Flex justifyContent="space-between" width="100%">
               <Text color="#00000" fontWeight="medium" fontSize="2xl">
-                Todos os Usuários Cadastrados
+                Usuários Cadastrados
               </Text>
-              <Button colorScheme={theme.colors.primary} onClick={onOpen}>
+              <Button colorScheme={theme.colors.primary} /*onClick={onOpen}*/>
                 Cadastrar Usuário
               </Button>
             </Flex>
-            <Divider borderColor="#00000" margin="15px 0 15px 0" />
+            <Divider borderColor="#00000" margin="15px 0 15px 0" p={2}/>
+            <Flex p={3}>
+            </Flex>
             <Flex
               flexDirection="column"
               justifyContent="center"
               alignItems="center"
               width="100%"
             >
-              <form id="orderService-filter" style={{ width: '100%' }}>
-                <Flex gap="5px" alignItems="5px" mb="15px" >
-                  
-                  <Input
-                    placeholder="Pesquisa"
-                    minWidth="15vw"
-                    errors={errors.search}
-                    {...register('search')}
-                    rightElement={<BiSearch />}
-                  />
-                </Flex>
-              </form>
-              {filter !== '' ? (
-                <Flex w="100%" alignItems="center" justifyContent="start">
-                  <Button
-                    variant="unstyled"
-                    fontSize="14px"
-                    leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
-                    onClick={cleanFilters}
-                  >
-                    Limpar filtros aplicados
-                  </Button>
-                </Flex>
-              ) : null}
               <Flex flexDirection="column" width="100%">
                 <TableContainer
                   borderRadius="15px"
@@ -296,7 +183,8 @@ function UsersTable() {
                       <Tr width="100%" color={theme.colors.white}>
                         <Td>Usuário</Td>
                         <Td>Cargo</Td>
-                        <Td>Tipo de Acesso</Td>
+                        <Td>Perfil</Td>
+                        <Td>CPF</Td>
                         <Td />
                         <Td />
                       </Tr>
@@ -307,13 +195,16 @@ function UsersTable() {
                           <Td fontWeight="semibold">
                             {user.name}
                           </Td>
+                          <Td fontWeight="semibold">
+                            {user.job}
+                          </Td>
                           <Td
                             fontWeight="semibold"
                           >
-                            {user.job}
+                            {user.role}
                           </Td>
                           <Td>
-                            {user.role}
+                            {user.cpf}
                           </Td>
                           <Td>
                             <button >
@@ -321,6 +212,7 @@ function UsersTable() {
                                 aria-label="Editar Usuário"
                                 variant="ghost"
                                 icon={<FaTools />}
+                                width="5%"
                               />
                             </button>
                           </Td>
@@ -329,6 +221,7 @@ function UsersTable() {
                               aria-label="Excluir Usuário"
                               variant="ghost"
                               icon={<MdDelete />}
+                              width="5%"
                             />
                           </Td>
                         </Tr>
