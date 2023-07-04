@@ -58,6 +58,8 @@ type FormValues = {
   lowerDate: string;
   higherDate: string;
   searchTerm: string;
+  month: string;
+  year: string;
 };
 
 export interface movementEquipment {
@@ -104,6 +106,30 @@ export interface movement {
 
   equipments: movementEquipment[];
 }
+
+const generateSemesterOptions = (): ISelectOption[] => {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; // Janeiro é o mês 0, por isso adicionamos 1
+
+  const options: ISelectOption[] = [];
+
+  for (let year = currentYear; year >= currentYear - 20; year - 1) {
+    for (let semester = 1; semester <= 2; semester + 1) {
+      const label = `Semestre ${semester} - ${year}`;
+
+      if (
+        (year === currentYear && semester <= Math.ceil(currentMonth / 6)) ||
+        year < currentYear
+      ) {
+        const value = `${year}-${semester}`;
+        options.push({ label, value });
+      }
+    }
+  }
+
+  return options;
+};
 
 function MovementsTable() {
   const [movements, setMovements] = useState<movement[]>([]);
@@ -201,6 +227,8 @@ function MovementsTable() {
         equipmentId,
         lowerDate,
         higherDate,
+        month,
+        year,
       } = watchedData;
 
       let formattedLowerDate;
@@ -215,6 +243,16 @@ function MovementsTable() {
         formattedHigherDate = new Date(higherDate).toLocaleDateString('en-us');
       }
 
+      let formattedMonth; // variável para armazenar o valor do mês formatado
+
+      if (month) {
+        const [selectedMonth, selectedYear] = month.split('/');
+        formattedMonth = new Date(
+          Number(selectedYear),
+          Number(selectedMonth) - 1 // subtrai 1 porque os meses são indexados a partir de 0
+        );
+      }
+
       const formattedFormData = {
         type,
         inChargeName,
@@ -223,6 +261,7 @@ function MovementsTable() {
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
         searchTerm: search,
+        month: formattedMonth,
       };
 
       const filteredFormData = [
@@ -359,7 +398,7 @@ function MovementsTable() {
                             <AccordionIcon />
                           </AccordionButton>
                         </h2>
-                        <AccordionPanel>
+                        <AccordionPanel zIndex={4}>
                           <Grid
                             templateColumns="repeat(auto-fit, minmax(0, 1fr))"
                             gap="5px"
@@ -403,12 +442,25 @@ function MovementsTable() {
                               placeholderText="Data final"
                             />
                           </Grid>
-                          {/* <Grid
+                          <Grid
                             templateColumns="repeat(2, minmax(0, 1fr))"
                             gap="5px"
                           >
-                            
-                          </Grid> */}
+                            <Datepicker
+                              name="month"
+                              control={control}
+                              border={false}
+                              placeholderText="Mês"
+                              showMonthYearPicker
+                            />
+                            <Datepicker
+                              name="year"
+                              control={control}
+                              border={false}
+                              placeholderText="Ano"
+                              showYearPicker
+                            />
+                          </Grid>
                           {filter !== '' ? (
                             <Flex alignItems="center" justifyContent="start">
                               <Button

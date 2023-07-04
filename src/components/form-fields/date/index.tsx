@@ -42,6 +42,9 @@ type Props<FormValues extends FieldValues> = Omit<
     label?: string;
     placeHolder?: string;
     border?: boolean;
+    startDate?: Date;
+    endDate?: Date;
+    monthPicker?: boolean;
   };
 
 export function Datepicker<FormValues extends FieldValues>({
@@ -52,6 +55,9 @@ export function Datepicker<FormValues extends FieldValues>({
   placeHolder,
   border = true,
   rules,
+  startDate,
+  endDate,
+  monthPicker = false,
   ...props
 }: Props<FormValues>) {
   const {
@@ -63,12 +69,27 @@ export function Datepicker<FormValues extends FieldValues>({
     rules,
   });
 
+  const currentDate = new Date();
+  const firstDayOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  );
+  const lastDayOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0
+  );
+
+  const lowerDate = monthPicker ? firstDayOfMonth : startDate;
+  const higherDate = monthPicker ? lastDayOfMonth : endDate;
+
   return (
     <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none">
       {label && <FormLabel cursor="pointer">{label}</FormLabel>}
 
-      <InputGroup display="block" zIndex={+2}>
-        <Box>
+      <InputGroup display="block">
+        <Box zIndex={2}>
           <ReactDatePicker
             selected={value as Date}
             name={name}
@@ -78,6 +99,9 @@ export function Datepicker<FormValues extends FieldValues>({
             value={value as string}
             locale="pt"
             dateFormat="dd/MM/yyyy"
+            minDate={lowerDate}
+            maxDate={higherDate}
+            showMonthYearPicker={monthPicker}
             customInput={
               border ? (
                 <Input borderColor="#212121" fontSize="sm" />
