@@ -9,6 +9,13 @@ import { Select, SingleValue } from 'chakra-react-select';
 import { useState } from 'react';
 import { api } from '@/config/lib/axios';
 import { AxiosResponse } from 'axios';
+import { useForm } from 'react-hook-form';
+import { toast } from '@/utils/toast';
+
+type FormValues = {
+  oldBrand: string;
+  newBrand: string;
+};
 
 interface ISelectOption {
   label: string;
@@ -45,6 +52,7 @@ export default function EditBrandsForm() {
   };
 
   const formattedOptions = <T, K extends keyof T>(
+    // TODO: FAZER FUNCIONAR RS
     data: T[],
     label: K,
     value: K
@@ -70,6 +78,88 @@ export default function EditBrandsForm() {
     setSelectedBrand(selectedOption);
   };
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const onSubmitEdit = handleSubmit(async (formData) => {
+    try {
+      const {
+        oldBrand,
+        newBrand
+      } = formData;
+      const payload = {
+        oldBrand: selectedBrand?.brand,
+        newBrand
+      };
+      // TODO: ALTERAR ROTA
+      const response = await api.post(
+        `rota para o back`,
+        payload
+      );
+      toast.success('Marca alterada com sucesso!', 'Sucesso');
+    } catch (error: any) {
+      console.error(error);
+      const message = error.response.data.error
+        ? error.response.data.error
+        : 'Erro ao alterar a Marca!';
+      toast.error(message);
+    }
+
+  });
+
+  const onSubmitDelete= handleSubmit(async (formData) => {
+    try {
+      const {
+        oldBrand,
+        newBrand
+      } = formData;
+      const payload = {
+        oldBrand: selectedBrand?.brand,
+        newBrand
+      };
+      // TODO: ALTERAR ROTA
+      const response = await api.post(
+        `rota para o back`,
+        payload
+      );
+      toast.success('Marca deletada com sucesso!', 'Sucesso');
+    } catch (error: any) {
+      console.error(error);
+      const message = error.response.data.error
+        ? error.response.data.error
+        : 'Erro ao deletar a Marca!';
+      toast.error(message);
+    }
+
+  });
+
+  const onSubmitAdd = handleSubmit(async (formData) => {
+    try {
+      const {
+        newBrand
+      } = formData;
+      const payload = {
+        newBrand
+      };
+      // TODO: ALTERAR ROTA
+      const response = await api.post(
+        `rota para o back`,
+        payload
+      );
+      toast.success('Marca criada com sucesso!', 'Sucesso');
+    } catch (error: any) {
+      console.error(error);
+      const message = error.response.data.error
+        ? error.response.data.error
+        : 'Erro ao criar a Marca!';
+      toast.error(message);
+    }
+
+  });
+
   return (
     <div>
       <Text
@@ -91,7 +181,7 @@ export default function EditBrandsForm() {
         paddingX="3%"
         width="450px"
       >
-        <form id="brand-edit-form">
+        <form id="brand-edit-form" onSubmit={onSubmitEdit}>
           <Text
             pl="2%"
             pb="1%"
@@ -143,7 +233,7 @@ export default function EditBrandsForm() {
           </Button>
         </form>
 
-        <form id="brand-delete-form">
+        <form id="brand-delete-form" onSubmit={onSubmitDelete}>
           <Text
             pl="5px"
             pb="8px"
@@ -175,7 +265,7 @@ export default function EditBrandsForm() {
           </Button>
         </form>
 
-        <form id="brand-add-form">
+        <form id="brand-add-form" onSubmit={onSubmitAdd}>
           <Text
             pl="5px"
             pb="8px"
