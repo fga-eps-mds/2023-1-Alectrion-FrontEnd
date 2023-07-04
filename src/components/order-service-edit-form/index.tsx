@@ -94,29 +94,31 @@ export default function OrderServiceEditForm({
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>(
     orderService.equipment
   );
-  const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return function (this: any, ...args: Parameters<T>) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn.apply(this, args), ms);
-    };
-  };
-  const formattedOptions = <T, K extends keyof T>(
-    data: T[],
-    label: K,
-    value: K
-  ): ISelectOption[] => {
-    return data?.map((item: T) => {
-      const optionLable = String(item[label]);
-      const optionValue: number | string = String(item[value]);
-      return { label: optionLable, value: optionValue };
-    });
-  };
-  const handleSearch = debounce(async (str) => {
-    if (str !== '') {
-      fetchEquipments(str);
+
+  const osStatusHandler = () => {
+
+    console.log(orderService.status);
+    if (orderService.status === 'MAINTENANCE') {
+      return OSSTATUS.filter(
+        (item) => item.value !== 'FINISHED'
+      );
     }
-  }, 500);
+
+    if (orderService.status === 'CONCLUDED') {
+      return OSSTATUS.filter(
+        (item) => item.value !== 'MAINTENANCE' && item.value !== 'WARRANTY'
+      );
+    }
+
+    if (orderService.status === 'WARRANTY') {
+      return OSSTATUS.filter(
+        (item) => item.value !== 'MAINTENANCE'
+      );
+    }
+
+    return OSSTATUS;
+  }
+
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const {
@@ -182,11 +184,11 @@ export default function OrderServiceEditForm({
         <GridItem>
           <Box flex="1">
             <NewControlledSelect
-              isDisabled={orderService.status === 'CONCLUDED'}
-              label="Status"
+              isDisabled={orderService.status === 'FINISHED'}
+              label='Status'
               name="status"
               control={control}
-              options={OSSTATUS}
+              options={osStatusHandler()}
             />
           </Box>
         </GridItem>
@@ -308,50 +310,48 @@ export default function OrderServiceEditForm({
             })}
           />
         </GridItem>
-        {watchStatus === 'CONCLUDED' && (
-          <>
-            <GridItem>
-              <Input
-                label="Responsável pela retirada"
-                placeholder="Nome do Responsável"
-                errors={errors.withdrawalName}
-                isDisabled={orderService.status === 'CONCLUDED'}
-                type="text"
-                {...register('withdrawalName', {
-                  required: 'Campo Obrigatório',
-                })}
-              />
-            </GridItem>
-            <GridItem>
+        {(watchStatus === 'CONCLUDED' || watchStatus === 'FINISHED') && (
+          <GridItem>
+            <Input
+              label="Técnico Responsável"
+              errors={errors.technicianName}
+              type="text"
+              isDisabled={orderService.status === 'CONCLUDED'}
+              defaultValue={watchStatus === 'FINISHED' ? orderService.technicianName : 'Técnico Responsável'}
+              placeholder="Nome do Técnico"
+              {...register('technicianName', {
+                required: 'Campo Obrigatório',
+              })} />
+          </GridItem>
+        )}
+        {watchStatus === 'FINISHED' && (
+          <><GridItem>
+            <Input
+              label="Responsável pela retirada"
+              placeholder='Nome do Responsável'
+              errors={errors.withdrawalName}
+              isDisabled={orderService.status === 'FINISHED'}
+              type="text"
+              {...register('withdrawalName', {
+                required: 'Campo Obrigatório',
+              })} />
+          </GridItem><GridItem>
               <Input
                 label="CPF ou Nº Funcional"
                 errors={errors.withdrawalDocument}
                 type="text"
                 placeholder="CPF ou Nº Funcional"
-                isDisabled={orderService.status === 'CONCLUDED'}
+                isDisabled={orderService.status === 'FINISHED'}
                 {...register('withdrawalDocument', {
                   required: 'Campo Obrigatório',
                   pattern: {
                     value: /^[0-9]+$/,
                     message: 'Por favor, digite apenas números.',
                   },
-                })}
-              />
-            </GridItem>
-            <GridItem>
-              <Input
-                label="Técnico Responsável"
-                errors={errors.technicianName}
-                type="text"
-                isDisabled={orderService.status === 'CONCLUDED'}
-                placeholder="Nome do Técnico"
-                {...register('technicianName', {
-                  required: 'Campo Obrigatório',
-                })}
-              />
-            </GridItem>
-          </>
+                })} />
+            </GridItem></>
         )}
+
       </Grid>
       <Flex gap="9rem" mt="2rem" mb="2rem" justify="center">
         <GridItem>
