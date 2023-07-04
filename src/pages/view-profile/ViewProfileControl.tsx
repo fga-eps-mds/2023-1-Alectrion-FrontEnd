@@ -25,8 +25,6 @@ function ViewProfile() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
-  console.log(user);
-
   return (
     <form aria-label="form">
       <Grid templateColumns="1fr 5fr" gap={6}>
@@ -194,16 +192,18 @@ function ViewProfile() {
                   >
                     Voltar
                   </Button>
-                  <Button
-                    marginTop="100px"
-                    paddingX="24"
-                    width="20px"
-                    color="white"
-                    bg="black"
-                    onClick={() => navigate('/change-password')}
-                  >
-                    Alterar senha
-                  </Button>
+                  {user?.role !== 'consulta' && (
+                    <Button
+                      marginTop="100px"
+                      paddingX="24"
+                      width="20px"
+                      color="white"
+                      bg="black"
+                      onClick={() => navigate('/change-password')}
+                    >
+                      Alterar senha
+                    </Button>
+                  )}
                 </Flex>
               </Box>
             </Flex>

@@ -15,6 +15,7 @@
 import { Box, Button, Center, Divider, Flex, Input, Text } from '@chakra-ui/react';
 import { useState , useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { toast } from '@/utils/toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { api} from '../../config/lib/axios';
@@ -24,7 +25,8 @@ export function ChangePassword() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [actualPassword, setActualPassword] = useState('');
-    
+  const navigate = useNavigate();
+
   const atualizarSenha = () => {
     if (newPassword !== confirmPassword) {
       toast.error('As senhas informadas não coincidem. Por favor, verifique e tente novamente.');
@@ -41,12 +43,11 @@ export function ChangePassword() {
         api.put(apiUrl, data)
         .then(response => {
           if (response.status === 200) {
-            // Lógica de sucesso ao atualizar a senha
             toast.success('Senha atualizada com sucesso!');
+            navigate('/login');
           }
         })
         .catch(error => {
-          // Lógica para lidar com erros na requisição
           toast.error('Ocorreu um erro ao atualizar a senha. Por favor, tente novamente.');
           console.error(error);
         });
