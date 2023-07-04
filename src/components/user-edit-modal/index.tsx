@@ -12,11 +12,11 @@ type UserEditModalProps = {
 };
 
 function transformFields(data: any) {
-    if (!data) return;
-    const transformedData = { ...data };
+  if (!data) return;
+  const transformedData = { ...data };
 
-    return transformedData;
-  }
+  return transformedData;
+}
 
 export function UserEditModal({
   isOpen,

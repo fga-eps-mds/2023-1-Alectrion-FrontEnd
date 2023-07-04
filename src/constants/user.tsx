@@ -24,11 +24,6 @@ export type TipoJob =
   | 'superintendente';
 
 export type TipoRole = 'ADMIN' | 'BASICO' | 'CONSULTA';
-  // export type TipoRole =
-  // | 'administrador'
-  // | 'gerente'
-  // | 'basico'
-  // | 'consulta';
 
 export const TIPOS_JOB: SelectItem<TipoJob>[] = [
   { label: 'delegado', value: 'delegado' },
@@ -41,13 +36,6 @@ export const TIPOS_JOB: SelectItem<TipoJob>[] = [
   { label: 'estagiario', value: 'estagiario' },
   { label: 'superintendente', value: 'superintendente' },
 ];
-
-// export const TIPOS_ROLE: SelectItem<TipoRole>[] = [
-//   { label: 'administrador', value: 'administrador' },
-//   { label: 'gerente', value: 'gerente' },
-//   { label: 'basico', value: 'basico' },
-//   { label: 'consulta', value: 'consulta' },
-// ];
 
 export const TIPOS_ROLE: SelectItem<TipoRole>[] = [
   { label: 'ADMIN', value: 'ADMIN' },

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
-import { BiSearch } from 'react-icons/bi';
+import { BiSearch, BiEditAlt } from 'react-icons/bi';
 import {
   Text,
   Table,
@@ -23,7 +23,6 @@ import { FaFileAlt, FaTools } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import { LoginResponse, Job, Role } from '@/constants/user';
 import { UserRegisterModal } from '@/components/user-register-modal';
-import { BiEditAlt } from 'react-icons/bi';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -35,19 +34,19 @@ import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { UserEditModal } from '@/components/user-edit-modal';
 
 export interface UserData {
-  id: string
-  name: string
-  email: string
-  username: string
-  cpf: string
-  job: Job
-  role: Role
-  password: string
-  createdAt?: Date
-  updatedAt?: Date
-  deletedAt?: Date
-  temporaryPassword: boolean
-  isDeleted?: boolean
+  id: string;
+  name: string;
+  email: string;
+  username: string;
+  cpf: string;
+  job: Job;
+  role: Role;
+  password: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+  temporaryPassword: boolean;
+  isDeleted?: boolean;
 }
 
 function UsersTable() {
@@ -113,18 +112,14 @@ function UsersTable() {
 
   const handleDelete = async (userId: string) => {
     try {
-      const { data }: AxiosResponse<boolean> = await api.delete(
-        `user/delete`,
-        {
-          params: {
-            userId,
-          },
-          headers: {
-            Authorization: `Bearer ${loggedUser.token}`,
-          },
-
-        }
-      );
+      const { data }: AxiosResponse<boolean> = await api.delete(`user/delete`, {
+        params: {
+          userId,
+        },
+        headers: {
+          Authorization: `Bearer ${loggedUser.token}`,
+        },
+      });
       toast.success('Usuário deletado com sucesso');
     } catch (error) {
       toast.error('Não foi possível deletar o usuário');
@@ -219,26 +214,17 @@ function UsersTable() {
                     <Tbody fontWeight="semibold" maxHeight="200px">
                       {users.map((user) => (
                         <Tr key={user.id}>
-                          <Td fontWeight="semibold">
-                            {user.name}
-                          </Td>
-                          <Td fontWeight="semibold">
-                            {user.job}
-                          </Td>
+                          <Td fontWeight="semibold">{user.name}</Td>
+                          <Td fontWeight="semibold">{user.job}</Td>
+                          <Td fontWeight="semibold">{user.role}</Td>
+                          <Td>{user.cpf}</Td>
                           <Td
-                            fontWeight="semibold"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleEdit(user);
+                            }}
                           >
-                            {user.role}
-                          </Td>
-                          <Td>
-                            {user.cpf}
-                          </Td>
-                          <Td
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleEdit(user);
-                          }}>
-                            <button >
+                            <button>
                               <IconButton
                                 aria-label="Editar Usuário"
                                 variant="ghost"
