@@ -94,7 +94,7 @@ export interface OrderServiceData {
 
 type FilterValues = {
   type?: ISelectOption;
-  brand?: string;
+  brand?: ISelectOption;
   dateOS?: string;
   unit?: ISelectOption;
   status: ISelectOption;
@@ -194,12 +194,12 @@ function OrderServiceTable() {
     const uniqueBrands = new Set<string>();
   
     data?.forEach(item => {
-      uniqueBrands.add(item.brand.name);
+      uniqueBrands.add(item.equipment.brand.name);
     });
   
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueBrands).map(brands => ({
-      label: brands,
-      value: brands
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueBrands).map(brand => ({
+      label: brand,
+      value: brand
     }));
   
     return uniqueOptions;
@@ -210,7 +210,7 @@ function OrderServiceTable() {
   const getBrands = async () => {
     try {
       const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/getAllBrands`
+        `equipment/listOrderService`
       );
       setBrands(formattedBrands(data));
     } catch (error) {
