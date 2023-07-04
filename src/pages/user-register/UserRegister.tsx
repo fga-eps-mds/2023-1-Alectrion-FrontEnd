@@ -76,9 +76,9 @@
           toast.error('Erro ao tentar cadastrar o usuario', 'Erro');
         } catch (error: any) {
           toast.error(error.response.data.error, 'Erro');
+          setIsLoading(false);
          }
       });
-
       return (        
             <Flex
             aria-label="form"
@@ -188,7 +188,6 @@
                   <Input 
                     type="password"
                     placeholder="Senha" 
-                    defaultValue={selectedUserRegister?.password}
                     {...register('password', {
                       maxLength: 50,
                     })}
@@ -196,9 +195,8 @@
                   {errors.password && watchRole === 'CONSULTA' &&(
                     <span>
                     <Text color="red.400">Este campo é obrigatório</Text>
-                  </span>
-                )}
-                  
+                    </span>
+                  )}
               </Box>
 
               <Box flexDirection="column" alignSelf="center" >
