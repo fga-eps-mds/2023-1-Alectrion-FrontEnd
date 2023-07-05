@@ -74,7 +74,7 @@ export interface Brand{
 }
 export interface OrderServiceData {
   id: string;
-  date: string;
+  finishDate: string;
   description?: string;
   authorId: string;
   technicianName: string;
@@ -102,7 +102,9 @@ export interface OrderServiceData {
 type FilterValues = {
   type?: ISelectOption;
   brand?: ISelectOption;
-  dateOS?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  finishDate?: string;
   unit?: ISelectOption;
   status: ISelectOption;
   search: string;
@@ -167,16 +169,30 @@ function OrderServiceTable() {
   };
 
   const handleFilterChange = () => {
-    const { type, dateOS, status, unit, brand, model, technicianName, senderName, withdrawalName,} = watchFilter;
+    const { type, createdAt, status, unit, brand, model, technicianName, senderName, withdrawalName,updatedAt, finishDate,} = watchFilter;
 
-    let formattedDate;
-    if (dateOS !== null && dateOS !== '' && dateOS) {
-      formattedDate = new Date(dateOS).toLocaleDateString('en-us');
+    let formattedfinishDate;
+    if (finishDate !== null && finishDate !== '' && finishDate) {
+      formattedfinishDate = new Date(finishDate).toLocaleDateString('en-us');
     }
+
+    let formattedcreatedAt;
+    if (createdAt !== null && createdAt !== '' && createdAt) {
+      formattedcreatedAt = new Date(createdAt).toLocaleDateString('en-us');
+    }
+
+    let formattedupdatedAt;
+    if (updatedAt !== null && updatedAt !== '' && updatedAt) {
+      formattedupdatedAt = new Date(updatedAt).toLocaleDateString('en-us');
+    }
+
+
 
     const dataFormatted = {
       type,
-      date: formattedDate,
+      createdAt: formattedcreatedAt,
+      updatedAt: formattedupdatedAt,
+      finishDate: formattedfinishDate,
       status,
       unit,
       search,
@@ -552,7 +568,7 @@ function OrderServiceTable() {
                     name="withdrawalName"
                     id="withdrawalName"
                     options={withdrawalName}
-                    placeholder="Remetente"
+                    placeholder="Destinatário"
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
@@ -608,8 +624,20 @@ function OrderServiceTable() {
                   />
                   <Datepicker
                     border={false}
-                    placeholderText="Data OS"
-                    name="dateOS"
+                    placeholderText="Data de criação"
+                    name="createdAt"
+                    control={control}
+                  />
+                  <Datepicker
+                    border={false}
+                    placeholderText="Data de conclusão"
+                    name="finishDate"
+                    control={control}
+                  />
+                  <Datepicker
+                    border={false}
+                    placeholderText="Última atualização"
+                    name="updatedAt"
                     control={control}
                   />
                   <NewControlledSelect
