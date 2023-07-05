@@ -213,7 +213,9 @@ function OrderServiceTable() {
       uniqueSenderName.add(item.senderName);
     });
   
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueSenderName).map(senderName => ({
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueSenderName)
+    .filter(senderName => !!senderName)
+    .map(senderName => ({
       label: senderName,
       value: senderName
     }));
@@ -239,7 +241,9 @@ function OrderServiceTable() {
       uniqueWithdrawalName.add(item.withdrawalName);
     });
   
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueWithdrawalName).map(withdrawalName => ({
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueWithdrawalName)
+    .filter(withdrawalName => !!withdrawalName)
+    .map(withdrawalName => ({
       label: withdrawalName,
       value: withdrawalName
     }));
@@ -265,7 +269,9 @@ function OrderServiceTable() {
       uniqueTechnicianName.add(item.technicianName);
     });
   
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueTechnicianName).map(technicianName => ({
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueTechnicianName)
+    .filter(technicianName => !!technicianName)
+    .map(technicianName => ({
       label: technicianName,
       value: technicianName
     }));
@@ -320,7 +326,9 @@ function OrderServiceTable() {
       uniqueModels.add(item.equipment.model);
     });
   
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueModels).map(model => ({
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueModels)
+    .filter(model => !!model) 
+    .map(model => ({
       label: model,
       value: model
     }));
