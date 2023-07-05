@@ -218,13 +218,14 @@ function UsersTable() {
                           <Td fontWeight="semibold">{user.job}</Td>
                           <Td fontWeight="semibold">{user.role}</Td>
                           <Td>{user.cpf}</Td>
+                          {user.role !== 'administrador' && (
                           <Td
                             onClick={(event) => {
                               event.stopPropagation();
                               handleEdit(user);
                             }}
                           >
-                            <button>
+                          <button>
                               <IconButton
                                 aria-label="Editar Usuário"
                                 variant="ghost"
@@ -233,6 +234,8 @@ function UsersTable() {
                               />
                             </button>
                           </Td>
+                          )}
+                          {user.role !== 'administrador' && (
                           <Td>
                             <IconButton
                               aria-label="Excluir Usuário"
@@ -246,6 +249,15 @@ function UsersTable() {
                               }}
                             />
                           </Td>
+                          )}
+                          {user.role === 'administrador' && (
+                          <Td>
+                          </Td>
+                          )}
+                          {user.role === 'administrador' && (
+                          <Td>
+                          </Td>
+                          )}
                         </Tr>
                       ))}
                     </Tbody>
