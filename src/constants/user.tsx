@@ -23,7 +23,7 @@ export type TipoJob =
   | 'estagiario'
   | 'superintendente';
 
-export type TipoRole = 'ADMIN' | 'BASICO' | 'CONSULTA';
+export type TipoRole = 'administrador' | 'basico' | 'consulta';
 
 export const TIPOS_JOB: SelectItem<TipoJob>[] = [
   { label: 'delegado', value: 'delegado' },
@@ -38,9 +38,9 @@ export const TIPOS_JOB: SelectItem<TipoJob>[] = [
 ];
 
 export const TIPOS_ROLE: SelectItem<TipoRole>[] = [
-  { label: 'ADMIN', value: 'ADMIN' },
-  { label: 'BASICO', value: 'BASICO' },
-  { label: 'CONSULTA', value: 'CONSULTA' },
+  { label: 'administrador', value: 'administrador' },
+  { label: 'basico', value: 'basico' },
+  { label: 'consulta', value: 'consulta' },
 ];
 
 export enum USER_ACCESS {
