@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
 import { BiSearch } from 'react-icons/bi';
 import { LoginResponse } from '@/constants/user';
+import { UserRegisterModal } from '@/components/user-register-modal';
 import {
   Text,
   Table,
@@ -56,6 +57,9 @@ function UsersTable() {
   const [offset, setOffset] = useState(0);
   const limit = 10;
 
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
+
 /*
   const handleEdit = (user: OrderServiceData) => {
     if (orderService) {
@@ -107,7 +111,7 @@ function UsersTable() {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ refreshRequest ]);
 
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
@@ -135,7 +139,7 @@ function UsersTable() {
               <Text color="#00000" fontWeight="medium" fontSize="2xl">
                 Usuários Cadastrados
               </Text>
-              <Button colorScheme={theme.colors.primary} /*onClick={onOpen}*/>
+              <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                 Cadastrar Usuário
               </Button>
             </Flex>
@@ -267,6 +271,12 @@ function UsersTable() {
           </Flex>
         </Flex>
       </GridItem>
+      <UserRegisterModal
+        onClose={onClose}
+        isOpen={isOpen}
+        refreshRequest={refreshRequest}
+        setRefreshRequest={setRefreshRequest}
+      />
     </Grid>
   );
 }
