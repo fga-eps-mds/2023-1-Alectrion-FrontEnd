@@ -219,45 +219,39 @@ function UsersTable() {
                           <Td fontWeight="semibold">{user.role}</Td>
                           <Td>{user.cpf}</Td>
                           {user.role !== 'administrador' && (
-                          <Td
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleEdit(user);
-                            }}
-                          >
-                          <button>
-                              <IconButton
-                                aria-label="Editar Usuário"
-                                variant="ghost"
-                                icon={<BiEditAlt />}
-                                width="5%"
-                              />
-                            </button>
-                          </Td>
-                          )}
-                          {user.role !== 'administrador' && (
-                          <Td>
-                            <IconButton
-                              aria-label="Excluir Usuário"
-                              variant="ghost"
-                              icon={<MdDelete />}
-                              width="5%"
+                            <Td
                               onClick={(event) => {
                                 event.stopPropagation();
-                                handleDelete(user.id);
-                                setRefreshRequest(!refreshRequest);
+                                handleEdit(user);
                               }}
-                            />
-                          </Td>
+                            >
+                              <button>
+                                <IconButton
+                                  aria-label="Editar Usuário"
+                                  variant="ghost"
+                                  icon={<BiEditAlt />}
+                                  width="5%"
+                                />
+                              </button>
+                            </Td>
                           )}
-                          {user.role === 'administrador' && (
-                          <Td>
-                          </Td>
+                          {user.role !== 'administrador' && (
+                            <Td>
+                              <IconButton
+                                aria-label="Excluir Usuário"
+                                variant="ghost"
+                                icon={<MdDelete />}
+                                width="5%"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleDelete(user.id);
+                                  setRefreshRequest(!refreshRequest);
+                                }}
+                              />
+                            </Td>
                           )}
-                          {user.role === 'administrador' && (
-                          <Td>
-                          </Td>
-                          )}
+                          {user.role === 'administrador' && <Td />}
+                          {user.role === 'administrador' && <Td />}
                         </Tr>
                       ))}
                     </Tbody>
