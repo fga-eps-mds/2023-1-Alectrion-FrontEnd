@@ -94,7 +94,7 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
       fontSize: 8,
       flex: 1,
       textAlign: 'center',
-      paddingRight: 15
+      paddingRight: 15,
     },
     signature: {
       marginTop: 200,
@@ -169,12 +169,15 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
           <Text style={{ ...styles.columnHeader, minWidth: 45, maxWidth: 55 }}>
             Marca
           </Text>
-          <Text style={{ ...styles.columnHeader, minWidth: 70 }}>Descrição</Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 70 }}>
+            Descrição
+          </Text>
           <Text style={{ ...styles.columnHeader, minWidth: 70, maxWidth: 90 }}>
             Lotação
           </Text>
           <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
-            Status do<br/> Equipamento
+            Status do
+            <br /> Equipamento
           </Text>
           <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>
             Data da Aquisição
