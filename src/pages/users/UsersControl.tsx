@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
 import { BiSearch } from 'react-icons/bi';
-import { LoginResponse } from '@/constants/user';
-import { UserRegisterModal } from '@/components/user-register-modal';
 import {
   Text,
   Table,
@@ -22,6 +20,9 @@ import {
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { FaFileAlt, FaTools } from 'react-icons/fa';
+import { MdDelete } from 'react-icons/md';
+import { LoginResponse, Job, Role } from '@/constants/user';
+import { UserRegisterModal } from '@/components/user-register-modal';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -30,23 +31,21 @@ import { SelectItem } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
-import { MdDelete} from 'react-icons/md';
-import { Job, Role } from '@/constants/user';
 
 export interface UserData {
-  id?: string
-  name: string
-  email: string
-  username: string
-  cpf: string
-  job: Job
-  role: Role
-  password: string
-  createdAt?: Date
-  updatedAt?: Date
-  deletedAt?: Date
-  temporaryPassword: boolean
-  isDeleted?: boolean
+  id?: string;
+  name: string;
+  email: string;
+  username: string;
+  cpf: string;
+  job: Job;
+  role: Role;
+  password: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+  temporaryPassword: boolean;
+  isDeleted?: boolean;
 }
 
 function UsersTable() {
@@ -60,7 +59,7 @@ function UsersTable() {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
 
-/*
+  /*
   const handleEdit = (user: OrderServiceData) => {
     if (orderService) {
       setSelectedOrderServiceToEdit(orderService);
@@ -77,7 +76,7 @@ function UsersTable() {
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<UserData[]> = await api.get(
-        `user/get?allUsers=true`, 
+        `user/get?allUsers=true`,
         {
           headers: {
             Authorization: `Bearer ${loggedUser.token}`,
@@ -94,7 +93,7 @@ function UsersTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<UserData[]> = await api.get(
-        `user/get?allUsers=true`, 
+        `user/get?allUsers=true`,
         {
           headers: {
             Authorization: `Bearer ${loggedUser.token}`,
@@ -111,7 +110,7 @@ function UsersTable() {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ refreshRequest ]);
+  }, [refreshRequest]);
 
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
@@ -143,9 +142,8 @@ function UsersTable() {
                 Cadastrar Usuário
               </Button>
             </Flex>
-            <Divider borderColor="#00000" margin="15px 0 15px 0" p={2}/>
-            <Flex p={3}>
-            </Flex>
+            <Divider borderColor="#00000" margin="15px 0 15px 0" p={2} />
+            <Flex p={3} />
             <Flex
               flexDirection="column"
               justifyContent="center"
@@ -196,22 +194,12 @@ function UsersTable() {
                     <Tbody fontWeight="semibold" maxHeight="200px">
                       {users.map((user) => (
                         <Tr key={user.id}>
-                          <Td fontWeight="semibold">
-                            {user.name}
-                          </Td>
-                          <Td fontWeight="semibold">
-                            {user.job}
-                          </Td>
-                          <Td
-                            fontWeight="semibold"
-                          >
-                            {user.role}
-                          </Td>
+                          <Td fontWeight="semibold">{user.name}</Td>
+                          <Td fontWeight="semibold">{user.job}</Td>
+                          <Td fontWeight="semibold">{user.role}</Td>
+                          <Td>{user.cpf}</Td>
                           <Td>
-                            {user.cpf}
-                          </Td>
-                          <Td>
-                            <button >
+                            <button>
                               <IconButton
                                 aria-label="Editar Usuário"
                                 variant="ghost"
