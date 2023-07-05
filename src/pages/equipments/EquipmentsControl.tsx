@@ -40,6 +40,7 @@ import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { ReportModal } from '@/components/report-modal';
 import { getEquipments } from '@/services/requests/equipment';
+import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
 
 interface ISelectOption {
   label: string;
@@ -172,6 +173,12 @@ function EquipmentTable() {
     isOpen: isOpenRegister,
     onClose: onCloseRegister,
     onOpen: onOpenRegister,
+  } = useDisclosure();
+
+ const {
+    isOpen: isUploadOpen,
+    onClose: onUploadClose,
+    onOpen: onUploadOpen,
   } = useDisclosure();
 
   const {
@@ -573,6 +580,7 @@ function EquipmentTable() {
           isOpen={isOpen}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
+          onUploadOpen={onUploadOpen}
         />
         <EquipmentEditModal
           onClose={onCloseEditEquipment}
@@ -610,6 +618,12 @@ function EquipmentTable() {
           onClose={onReportClose}
           type={type}
           equipments={equipsToExport}
+        />
+        <EquipmentsUploadModal
+          onClose={onUploadClose}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+          isOpen={isUploadOpen}
         />
       </GridItem>
     </Grid>
