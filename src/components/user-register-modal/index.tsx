@@ -1,6 +1,7 @@
 import { Flex } from '@chakra-ui/react';
-import  UserRegisterForm  from '../user-register-form'
+import UserRegisterForm from '../user-register-form';
 import { Modal } from '../modal';
+
 type UserRegisterModalProps = {
   isOpen: boolean;
   onClose(): void;
