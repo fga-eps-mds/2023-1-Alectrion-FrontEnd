@@ -87,6 +87,10 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
       flexDirection: 'row',
       borderBottomWidth: 1,
       borderBottomColor: '#000',
+      borderLeftWidth: 1,
+      borderLeftColor: '#000',
+      borderRightWidth: 1,
+      borderRightColor: '#000',
       minHeight: 24,
       alignItems: 'center',
     },
@@ -94,6 +98,7 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
       fontSize: 8,
       flex: 1,
       textAlign: 'center',
+      paddingRight: 15
     },
     signature: {
       marginTop: 200,
@@ -153,9 +158,6 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
           <Text style={styles.subtitle}>
             Sistema de Controle Interno da DSTI
           </Text>
-          <Text style={styles.locale}>
-            {title === 'Baixa' ? '' : '26ª Delegacia de Polícia de Goiânia'}
-          </Text>
         </View>
         <Text style={styles.caption}>
           Data da emissão: {formattedEmissionDate()}
@@ -165,26 +167,22 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
           <Text style={{ ...styles.columnHeader, minWidth: 80, maxWidth: 100 }}>
             Tombamento
           </Text>
-          <Text style={{ ...styles.columnHeader, minWidth: 80, maxWidth: 100 }}>
-            Nº de série
-          </Text>
           <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
             Tipo
           </Text>
-          <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
-            SItuação
-          </Text>
-          <Text style={{ ...styles.columnHeader, minWidth: 38, maxWidth: 55 }}>
+          <Text style={{ ...styles.columnHeader, minWidth: 45, maxWidth: 55 }}>
             Marca
           </Text>
-          <Text style={{ ...styles.columnHeader, minWidth: 38, maxWidth: 55 }}>
-            Modelo
+          <Text style={{ ...styles.columnHeader, minWidth: 70 }}>Descrição</Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 70, maxWidth: 90 }}>
+            Lotação
           </Text>
-          <Text style={styles.columnHeader}>Descrição</Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
+            Status do<br/> Equipamento
+          </Text>
           <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>
-            Adquirido em
+            Data da Aquisição
           </Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Unidade</Text>
         </View>
         {equipments?.map((equipment, index) => (
           <View style={styles.tableRow} key={equipment?.id}>
@@ -192,27 +190,21 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
             <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
               {equipment?.tippingNumber}
             </Text>
-            <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
-              {equipment?.serialNumber}
-            </Text>
             <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
               {equipment?.type}
-            </Text>
-            <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-              {equipment?.situacao}
             </Text>
             <Text style={{ ...styles.rowData, minWidth: 38, maxWidth: 55 }}>
               {equipment?.brand?.name}
             </Text>
-            <Text style={{ ...styles.rowData, minWidth: 38, maxWidth: 55 }}>
-              {equipment?.model}
-            </Text>
             <Text style={styles.rowData}>{equipment?.description}</Text>
+            <Text style={{ ...styles.rowData, minWidth: 70, maxWidth: 90 }}>
+              {equipment?.unit.name}
+            </Text>
+            <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
+              {equipment?.situacao}
+            </Text>
             <Text style={{ ...styles.rowData, maxWidth: 56 }}>
               {formatDate(equipment?.acquisitionDate)}
-            </Text>
-            <Text style={{ ...styles.rowData, maxWidth: 60 }}>
-              {equipment?.unit.name}
             </Text>
           </View>
         ))}
