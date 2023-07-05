@@ -144,7 +144,10 @@ export function EquipmentsUploadModal({
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
         let erro = 0;
-
+        
+        if(jsonData.length >= 1){
+          toast.error('Planilha sem nenhum equipamento por favor verificar o arquivo','Erro')
+        }
         const formattedData = formatData(jsonData as any[][]);
 
         formattedData.forEach((item) => {
@@ -158,7 +161,6 @@ export function EquipmentsUploadModal({
                 );
                 setRefreshRequest(!refreshRequest);
                 onClose();
-                erro = 0;
               } else {
                 toast.error(
                   'Sua importação não foi bem sucedida! Verifique se os campos estão preenchidos corretamente.',
@@ -185,7 +187,6 @@ export function EquipmentsUploadModal({
                   'Erro'
                 );
               }
-              erro = 1;
               console.error(error);
             });
         });
