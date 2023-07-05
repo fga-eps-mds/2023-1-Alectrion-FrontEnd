@@ -143,10 +143,12 @@ export function EquipmentsUploadModal({
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        let erro = 0;
-        
-        if(jsonData.length >= 1){
-          toast.error('Planilha sem nenhum equipamento por favor verificar o arquivo','Erro')
+
+        if (jsonData.length <= 1) {
+          toast.error(
+            'Planilha sem nenhum equipamento, favor verificar o arquivo',
+            'Erro'
+          );
         }
         const formattedData = formatData(jsonData as any[][]);
 
