@@ -4,20 +4,26 @@ import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
 import { BiSearch } from 'react-icons/bi';
 import {
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Td,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Button,
-  IconButton,
-  TableContainer,
   Divider,
   Flex,
   Grid,
   GridItem,
+  IconButton,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Thead,
+  Tr,
   useDisclosure,
+  Box,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { FaTools } from 'react-icons/fa';
@@ -71,8 +77,9 @@ export interface OrderServiceData {
   date: string;
   description?: string;
   authorId: string;
-  receiverName: string;
-  sender?: string;
+  technicianName: string;
+  withdrawalName: string;
+  senderName: string;
   equipmentSnapshot: any;
   senderFunctionalNumber: string;
   createdAt: string;
@@ -100,6 +107,9 @@ type FilterValues = {
   status: ISelectOption;
   search: string;
   model?: ISelectOption;
+  senderName?: ISelectOption;
+  withdrawalName?: ISelectOption
+  technicianName?: ISelectOption;
 };
 
 export type StatusOS = 'Em manutenção' | 'Concluída' | 'Garantia';
@@ -120,7 +130,9 @@ function OrderServiceTable() {
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
   const [brands, setBrands] = useState<ISelectOption[]>();
   const[models, setModels] = useState<ISelectOption[]>();
-
+  const[senderName, setSenderName] = useState<ISelectOption[]>();
+  const[withdrawalName, setWithdrawalName] = useState<ISelectOption[]>();
+  const[technicianName, setTechnicianName] = useState<ISelectOption[]>();
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
@@ -155,7 +167,7 @@ function OrderServiceTable() {
   };
 
   const handleFilterChange = () => {
-    const { type, dateOS, status, unit, brand, model, } = watchFilter;
+    const { type, dateOS, status, unit, brand, model, technicianName, senderName, withdrawalName,} = watchFilter;
 
     let formattedDate;
     if (dateOS !== null && dateOS !== '' && dateOS) {
@@ -170,6 +182,10 @@ function OrderServiceTable() {
       search,
       brand,
       model,
+      technicianName,
+      senderName,
+      withdrawalName,
+
     };
 
     const filteredDataFormatted = [
@@ -189,6 +205,85 @@ function OrderServiceTable() {
     setSearch('');
     reset();
   };
+
+  const formattedSenderName = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueSenderName = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueSenderName.add(item.senderName);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueSenderName).map(senderName => ({
+      label: senderName,
+      value: senderName
+    }));
+  
+    return uniqueOptions;
+  };
+
+  const getSenderNames = async () => {
+    try {
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+        `equipment/listOrderService`
+      );
+      setSenderName(formattedSenderName(data));
+    } catch (error) {
+      setSenderName([]);
+    }
+  };
+
+  const formattedWithdrawalName = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueWithdrawalName = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueWithdrawalName.add(item.withdrawalName);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueWithdrawalName).map(withdrawalName => ({
+      label: withdrawalName,
+      value: withdrawalName
+    }));
+  
+    return uniqueOptions;
+  };
+
+  const getWithdrawalName = async () => {
+    try {
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+        `equipment/listOrderService`
+      );
+      setWithdrawalName(formattedWithdrawalName(data));
+    } catch (error) {
+      setWithdrawalName([]);
+    }
+  };
+
+  const formattedTechnicianName = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueTechnicianName = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueTechnicianName.add(item.technicianName);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueTechnicianName).map(technicianName => ({
+      label: technicianName,
+      value: technicianName
+    }));
+  
+    return uniqueOptions;
+  };
+
+  const getTechnicianName = async () => {
+    try {
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+        `equipment/listOrderService`
+      );
+      setTechnicianName(formattedTechnicianName(data));
+    } catch (error) {
+      setTechnicianName([]);
+    }
+  };
+
 
   const formattedBrands = (data: OrderServiceData[]): ISelectOption[] => {
     const uniqueBrands = new Set<string>();
@@ -304,6 +399,21 @@ function OrderServiceTable() {
   } = useDisclosure();
 
   useEffect(() => {
+    getTechnicianName();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getWithdrawalName();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getSenderNames();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     getModels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -411,6 +521,42 @@ function OrderServiceTable() {
                     id="type"
                     options={TIPOS_EQUIPAMENTO}
                     placeholder="Tipo"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
+                    name="senderName"
+                    id="senderName"
+                    options={senderName}
+                    placeholder="Remetente"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
+                    name="withdrawalName"
+                    id="withdrawalName"
+                    options={withdrawalName}
+                    placeholder="Remetente"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
+                    name="technicianName"
+                    id="technicianName"
+                    options={technicianName}
+                    placeholder="Técnico"
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
