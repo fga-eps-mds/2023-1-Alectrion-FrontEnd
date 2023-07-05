@@ -44,9 +44,9 @@ import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
 import { MdPictureAsPdf } from 'react-icons/md';
 import { BsFiletypeXlsx } from 'react-icons/bs';
-import { ReportModal } from '@/components/report-modal/Index';
-import { getEquipments } from '@/utils/getEquipments';
-import { EquipmentData } from '../equipments/EquipmentsControl';
+import { ReportModal } from '@/components/report-modal-order-service/Index';
+import { getOrderServices } from '@/utils/getOrderServices';
+import { GrDocumentCsv } from 'react-icons/gr';
 
 interface ISelectOption {
   label: string;
@@ -141,7 +141,7 @@ function OrderServiceTable() {
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const [type, setType] = useState<string>('');
-  const [equipmentsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
+  const [orderServicesToExport, setOrderServicesToExport] = useState<OrderServiceData[]>([]);
 
   const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
     useState<OrderServiceData>();
@@ -466,7 +466,7 @@ function OrderServiceTable() {
 
   const handleReportExport = async (selectedType: string) => {
     setType(selectedType);
-    setEquipsToExport(await getEquipments(filter));
+    setOrderServicesToExport(await getOrderServices(filter));
     onReportOpen();
   };
   
@@ -507,13 +507,13 @@ function OrderServiceTable() {
                   alignItems="center"
                   padding={4}
                 >
-                  {/* <GrDocumentCsv */}
-                    {/* size="2.2rem" */}
-                    {/* cursor="pointer" */}
-                    {/* onClick={() => { */}
-                      {/* handleReportExport('csv'); */}
-                    {/* }} */}
-                  {/* /> */}
+              <GrDocumentCsv
+                size="2.2rem"
+                cursor="pointer"
+                onClick={() => {
+                  handleReportExport('csv');
+                }}
+              />
                   <BsFiletypeXlsx
                     size="2.2rem"
                     cursor="pointer"
@@ -812,7 +812,7 @@ function OrderServiceTable() {
           isOpen={isReportOpen}
           onClose={onReportClose}
           type={type}
-          equipments={equipmentsToExport}
+          orderServices={orderServicesToExport}
         />
       </GridItem>
     </Grid>

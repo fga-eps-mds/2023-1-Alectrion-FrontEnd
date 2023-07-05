@@ -7,10 +7,10 @@ import {
     Image,
     Font,
   } from '@react-pdf/renderer';
-  import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
+  import { OrderServiceData} from '@/pages/order-service/OrderServiceControl';
   
-  interface EquipmentsPDFprops {
-    equipments: EquipmentData[];
+  interface OrderServicePDFprops {
+    orderServices: OrderServiceData[];
     title: string;
     date: string;
   }
@@ -31,7 +31,7 @@ import {
     ],
   });
   
-  export function EquipmentsPDF({ title, equipments, date }: EquipmentsPDFprops) {
+  export function OrderServicePDF({ title, orderServices, date }: OrderServicePDFprops) {
     const styles = StyleSheet.create({
       page: {
         flexDirection: 'column',
@@ -129,15 +129,23 @@ import {
   
     const formattedEmissionDate = `${emissionDay}/${emissionMonth}/${emissionYear} - ${emissionHours}:${emissionMinutes}:${emissionSeconds}`;
   
-    const movementDate = new Date(date);
-    const movementDay = movementDate.getDate().toString().padStart(2, '0');
-    const movementMonth = (movementDate.getMonth() + 1)
-      .toString()
-      .padStart(2, '0');
-    const movementYear = movementDate.getFullYear().toString().padStart(4, '0');
+
+    const formattedOrderServiceUpdatedAt = orderServices?.map((orderService) => {
+      const updatedAtDate = new Date(orderService?.updatedAt);
+      const year = updatedAtDate.getFullYear();
+      const month = String(updatedAtDate.getMonth() + 1).padStart(2, '0');
+      const day = String(updatedAtDate.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    });
   
-    const formattedMovementDate = `${movementDay}/${movementMonth}/${movementYear}`;
-  
+    const formattedOrderServiceCreatedAt = orderServices?.map((orderService) => {
+      const createdAtDate = new Date(orderService?.createdAt);
+      const year = createdAtDate.getFullYear();
+      const month = String(createdAtDate.getMonth() + 1).padStart(2, '0');
+      const day = String(createdAtDate.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    });
+
     return (
       <Document>
         <Page size="A4" style={styles.page} orientation="landscape">
@@ -157,9 +165,6 @@ import {
             <Text style={styles.subtitle}>
               Sistema de Controle Interno da DSTI
             </Text>
-            <Text style={styles.locale}>
-              {title === 'Baixa' ? '' : '26ª Delegacia de Polícia de Goiânia'}
-            </Text>
           </View>
           <Text style={styles.caption}>
             Data da emissão: {formattedEmissionDate}
@@ -172,28 +177,52 @@ import {
             <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
               Tipo
             </Text>
-            <Text style={{ ...styles.columnHeader, maxWidth: 40 }}>Marca</Text>
-            <Text style={styles.columnHeader}>Descrição</Text>
-            <Text style={styles.columnHeader}>
-              {title === 'Baixa' ? 'Última Lotação' : 'Lotação'}
+            <Text style={{ ...styles.columnHeader, maxWidth: 40 }}>
+              Marca
             </Text>
-            <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Data</Text>
+            <Text style={styles.columnHeader}>
+              Descrição</Text>
+            <Text style={styles.columnHeader}>
+              Lotação
+            </Text>
+            <Text style={{ ...styles.columnHeader, minWidth: 40, maxWidth: 80 }}>
+              Status O.S
+            </Text>
+            <Text style={styles.columnHeader}>
+              Entrada O.S
+            </Text>
+            <Text style={styles.columnHeader}>
+              Saída O.S
+            </Text>
           </View>
-          {equipments?.map((equipment, index) => (
-            <View style={styles.tableRow} key={equipment?.id}>
+          {orderServices?.map((orderService, index) => (
+            <View style={styles.tableRow} key={orderService?.id}>
               <Text style={{ ...styles.rowData, maxWidth: 24 }}>{index + 1}</Text>
               <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
-                {equipment?.tippingNumber}
+                {orderService?.equipment?.tippingNumber}
               </Text>
               <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-                {equipment?.type}
+                {orderService?.equipment?.type}
               </Text>
               <Text style={{ ...styles.rowData, maxWidth: 40 }}>
-                {equipment?.brand?.name}
+                {orderService?.equipment?.brand?.name}
               </Text>
-              <Text style={styles.rowData}>{equipment?.description}</Text>
-              <Text style={{ ...styles.rowData, maxWidth: 56 }}>
-                {formattedMovementDate}
+              <Text style={{ ...styles.rowData, maxWidth: 150 }}>
+                {orderService?.description}
+              </Text>
+              <Text style={{ ...styles.rowData, maxWidth: 150 }}>
+                {orderService?.unit?.name}
+                {/* lotação nao aparece */}
+              </Text>
+              <Text style={{ ...styles.rowData, maxWidth: 150 }}>
+                {orderService?.status}
+              </Text>
+              <Text style={{ ...styles.rowData, maxWidth: 150 }}>
+                {formattedOrderServiceCreatedAt[index]}
+              </Text>
+              <Text style={{ ...styles.rowData, maxWidth: 130 }}>
+                {formattedOrderServiceUpdatedAt[index]}
+                {/* é essa data? */}
               </Text>
             </View>
           ))}
@@ -201,22 +230,8 @@ import {
           <Text
             style={{ ...styles.caption, alignSelf: 'flex-end', marginTop: 8 }}
           >
-            Qtd. {equipments?.length}
+            Qtd. {orderServices?.length}
           </Text>
-  
-          {title !== 'Baixa' && (
-            <View style={styles.signature}>
-              <Text style={{ ...styles.caption, marginBottom: 4 }}>
-                {'_'.repeat(50)}
-              </Text>
-              <Text style={styles.caption}>
-                ASSINATURA / CARIMBO DO TITULAR DA UNIDADE
-              </Text>
-              <Text style={styles.caption}>
-                26ª DELEGACIA DE POLÍCIA DE GOIÂNIA
-              </Text>
-            </View>
-          )}
         </Page>
       </Document>
     );

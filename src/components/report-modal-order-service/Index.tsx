@@ -2,36 +2,36 @@ import { Flex, Text, Button } from '@chakra-ui/react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { MdDescription } from 'react-icons/md';
 import { useCallback } from 'react';
-// import { CSVLink } from 'react-csv';
+import { CSVLink } from 'react-csv';
 import { utils, writeFile } from 'xlsx';
 import { Modal } from '../modal';
-import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
+import { OrderServiceData } from '@/pages/order-service/OrderServiceControl';
 import { formatDate } from '@/utils/format-date';
-import { EquipmentsPDF } from './document';
+import { OrderServicePDF } from './document';
 
 type ReportModalProps = {
   isOpen: boolean;
   onClose(): void;
   type: string;
-  equipments: EquipmentData[];
+  orderServices: OrderServiceData[];
 };
 
 export function ReportModal({
   isOpen,
   onClose,
   type,
-  equipments,
+  orderServices,
 }: ReportModalProps) {
   const onCloseCallback = () => {
     onClose();
   };
 
   const exportFile = useCallback(() => {
-    const ws = utils.json_to_sheet(equipments);
+    const ws = utils.json_to_sheet(orderServices);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Data');
-    writeFile(wb, `relatorio_equipamentos_${formattedDate}.xls`);
-  }, [equipments]);
+    writeFile(wb, `relatorio_ordens_servico_${formattedDate}.xls`);
+  }, [orderServices]);
 
   const headers = [
     { label: 'Tombamento', key: 'tippingNumber' },
@@ -54,7 +54,7 @@ export function ReportModal({
 
   return (
     <Modal
-      title="Relatório de equipamentos"
+      title="Relatório de Ordens de Serviço"
       isOpen={isOpen}
       onClose={onCloseCallback}
       size="2xl"
@@ -76,28 +76,28 @@ export function ReportModal({
         {type === 'pdf' && (
           <PDFDownloadLink
             document={
-              <EquipmentsPDF
-                title="Relatório de equipamentos"
-                equipments={equipments}
+              <OrderServicePDF
+                title="Relatório de Ordens de Serviço"
+                orderServices={orderServices}
                 date=""
               />
             }
-            fileName={`relatorio_equipamentos_${'formattedDate'}`}
+            fileName={`relatorio_ordens_servico${'formattedDate'}`}
           >
             <Button>Imprimir</Button>
           </PDFDownloadLink>
         )}
-        {type === 'csv'
-          // <CSVLink
-          //   data={equipments}
-          //   headers={headers}
-          //   type="xls"
-          //   target="_blank"
-          //   filename={`relatorio_equipamentos_${formattedDate}`}
-          //   separator=';'
-          // >
-          //   <Button>Imprimir</Button>
-          // </CSVLink>
+        {type === 'csv' &&
+        <CSVLink
+          data={orderServices}
+          headers={headers}
+          type="csv"
+          target="_blank"
+          filename={`relatorio_ordens_servico_${formattedDate}.csv`}
+          separator=';'
+        >
+        <Button>Imprimir</Button>
+        </CSVLink>
         }
 
         {type === 'xls' && <Button onClick={exportFile}>Imprimir</Button>}
