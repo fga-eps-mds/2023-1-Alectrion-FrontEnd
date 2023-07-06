@@ -32,6 +32,8 @@ import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
 import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { UserEditModal } from '@/components/user-edit-modal';
+import { DeleteExtensiveIcon } from '../../components/action-buttons/delete-extensive-icon';
+
 
 export interface UserData {
   id: string;
@@ -237,16 +239,13 @@ function UsersTable() {
                           )}
                           {user.role !== 'administrador' && (
                             <Td>
-                              <IconButton
-                                aria-label="Excluir Usuário"
-                                variant="ghost"
-                                icon={<MdDelete />}
-                                width="5%"
-                                onClick={(event) => {
-                                  event.stopPropagation();
+                              <DeleteExtensiveIcon
+                                onClick={() => {
                                   handleDelete(user.id);
                                   setRefreshRequest(!refreshRequest);
                                 }}
+                                label="usuário"
+                                name="Excluir"
                               />
                             </Td>
                           )}
