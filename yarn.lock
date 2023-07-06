@@ -6267,6 +6267,11 @@ vite-tsconfig-paths@^4.0.3:
   optionalDependencies:
     fsevents "~2.3.2"
 
+vitest-sonar-reporter@^0.4.0:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/vitest-sonar-reporter/-/vitest-sonar-reporter-0.4.1.tgz#aba4f3dd41f5a9083039b1e802ffe1059fae7b6b"
+  integrity sha512-754xxoEe5h8QO8jFlNd/aLm9nUYwgu708KAiatdNH0DVwbS4LI9Mm2tBjKMPYbPVaD8UjQUO+/mGa+WTExzygQ==
+
 vitest@0.27.3:
   version "0.27.3"
   resolved "https://registry.npmjs.org/vitest/-/vitest-0.27.3.tgz"
