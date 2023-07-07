@@ -34,7 +34,6 @@ import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { UserEditModal } from '@/components/user-edit-modal';
 import { DeleteExtensiveIcon } from '../../components/action-buttons/delete-extensive-icon';
 
-
 export interface UserData {
   id: string;
   name: string;

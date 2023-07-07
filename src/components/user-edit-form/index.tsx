@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useForm } from 'react-hook-form';
-import { AxiosResponse } from 'axios';
-import { useEffect } from 'react';
-import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
-import { Datepicker } from '../form-fields/date';
+import { useState } from 'react';
+import { Button, Flex, Grid, Box, GridItem, Checkbox } from '@chakra-ui/react';
 
 import {
   TIPOS_JOB,
@@ -13,7 +11,6 @@ import {
   LoginResponse,
 } from '@/constants/user';
 import { Input } from '../form-fields/input';
-import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
@@ -26,7 +23,8 @@ export type EditUserFormValues = {
   cpf: string;
   job: Job;
   role: Role;
-  password: string;
+  password?: string;
+  actualPassword?: string;
 };
 
 interface EditUserFormProps {
@@ -54,6 +52,8 @@ export default function UserEditForm({
     defaultValues: userSelected,
   });
 
+  const [editarSenha, setEditarSenha] = useState<boolean>(false);
+
   const listOfYears: Array<{ value: number; label: string }> = (() => {
     const endYear: number = new Date().getFullYear();
     const startYear: number = endYear - 30;
@@ -71,10 +71,23 @@ export default function UserEditForm({
     return `${year}-${month}-${day}`;
   }
 
+  const handleCheckboxClick = () => {
+    setEditarSenha(!editarSenha);
+  };
+
   const onSubmit = handleSubmit(async (formData) => {
     try {
-      const { name, username, cpf, email, job, role, password, ...rest } =
-        formData;
+      const {
+        name,
+        username,
+        cpf,
+        email,
+        job,
+        role,
+        password,
+        actualPassword,
+        ...rest
+      } = formData;
 
       const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
 
@@ -87,12 +100,37 @@ export default function UserEditForm({
         job,
         role,
         password,
+        actualPassword,
         ...rest,
       };
 
       const loggedUser = JSON.parse(
         localStorage.getItem('@alectrion:user') || ''
       ) as unknown as LoginResponse;
+
+      // if (editarSenha) {
+      //   const data = {
+      //     // userId: loggedUser?.id,
+      //     username: loggedUser?.email,
+      //     password: payload.password,
+      //     actualPassword,
+      //   };
+      //   const apiUrl = 'user/updatePassword';
+      //   const responsePwd = await api.put('user/updatePassword', data)
+      //   if (responsePwd.status === 200) {
+      //     toast.success('Senha do usuário atualizada com sucesso', 'Sucesso');
+      //     // setRefreshRequest(!refreshRequest);
+      //     onClose();
+      //   } else {
+      //     toast.error('Ocorreu um erro ao atualizar a senha do usuário. Por favor, tente novamente.');
+      //   }
+      // }
+
+      // delete payload.password
+
+      if (!editarSenha) {
+        delete payload.password;
+      }
 
       const response = await api.put('user/update', payload, {
         headers: {
@@ -180,9 +218,33 @@ export default function UserEditForm({
           defaultValue={userSelected.role}
         />
 
-        {/* <Input
-          label="Password"
+        <GridItem gridColumn="1 / span 3">
+          <Checkbox
+            value="ADMIN"
+            colorScheme="orange"
+            onChange={() => {
+              handleCheckboxClick();
+            }}
+          >
+            Editar senha
+          </Checkbox>
+        </GridItem>
+        <Input
+          type="password"
+          label="Nova senha do usuário"
+          placeholder="Nova senha do usuário"
           errors={errors.password}
+          disabled={!editarSenha}
+          {...register('password', {
+            maxLength: 50,
+          })}
+        />
+        {/* <Input
+          type="password"
+          label="Senha de admin atual"
+          placeholder="Senha de admin atual"
+          errors={errors.password}
+          disabled={!editarSenha}
           {...register('password', {
             maxLength: 50,
           })}

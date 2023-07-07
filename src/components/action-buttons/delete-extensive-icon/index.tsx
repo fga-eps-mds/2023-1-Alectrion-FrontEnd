@@ -53,13 +53,13 @@ export function DeleteExtensiveIcon<Data>({
   return (
     <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="top">
       <PopoverAnchor>
-      <IconButton
-        aria-label="Excluir Usuário"
-        variant="ghost"
-        icon={<MdDelete />}
-        width="5%"
-        onClick={onOpen}
-      />
+        <IconButton
+          aria-label="Excluir Usuário"
+          variant="ghost"
+          icon={<MdDelete />}
+          width="5%"
+          onClick={onOpen}
+        />
       </PopoverAnchor>
       <PopoverContent
         data-testid="delete-confirmation-popover"
