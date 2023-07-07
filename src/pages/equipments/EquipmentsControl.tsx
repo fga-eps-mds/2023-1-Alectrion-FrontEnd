@@ -97,6 +97,8 @@ type FilterValues = {
   description?: string;
   processor?: string;
   storageType?: string;
+  initialDate?: string;
+  finalDate?: string;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -158,10 +160,30 @@ function EquipmentTable() {
     ) {
       formattedDate = new Date(lastModifiedDate).toLocaleDateString('en-us');
     }
+  const formattedDate = (date: string | undefined) => {
+    if (date !== null && date !== '' && date) {
+      return new Date(date).toLocaleDateString('en-us');
+    }
+  };
+
+  const handleFilterChange = () => {
+    const {
+      type,
+      lastModifiedDate,
+      situation,
+      unit,
+      model,
+      brand,
+      ram_size,
+      initialDate,
+      finalDate,
+      processor,
+      storageType,
+    } = watchFilter;
 
     const dataFormatted = {
       type,
-      updatedAt: formattedDate,
+      updatedAt: formattedDate(lastModifiedDate),
       situation,
       unit,
       search,
@@ -170,6 +192,8 @@ function EquipmentTable() {
       ram_size,
       processor,
       storageType,
+      initialDate: formattedDate(initialDate),
+      finalDate: formattedDate(finalDate),
     };
 
     const filteredDataFormatted = [
@@ -278,7 +302,7 @@ function EquipmentTable() {
   const getBrands = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/listEquipments`
+        `equipment/find`
       );
       setBrands(formattedBrands(data));
     } catch (error) {
@@ -362,7 +386,7 @@ function EquipmentTable() {
   const getStorageTypes = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/listEquipments`
+        `equipment/find`
       );
       setStorageTypes(formattedStorageTypes(data));
     } catch (error) {
@@ -549,24 +573,30 @@ function EquipmentTable() {
           width="100%"
         >
           <Flex flexDirection="column" width="80%">
-            <Text
-              margin="20px 0 15px 0"
-              color={theme.colors.black}
-              fontWeight="semibold"
-              fontSize="4xl"
+            <Flex
+              justifyContent="space-between"
+              width="100%"
+              alignItems="center"
             >
-              Controle de Equipamento
-            </Text>
+              <Text
+                margin="20px 0 15px 0"
+                color={theme.colors.black}
+                fontWeight="semibold"
+                fontSize="4xl"
+              >
+                Controle de Equipamento
+              </Text>
+              {user?.role !== 'consulta' && (
+                <Button colorScheme={theme.colors.primary} onClick={onOpen}>
+                  Cadastrar Equipamento
+                </Button>
+              )}
+            </Flex>
             <Flex justifyContent="space-between" width="100%">
               <Text color="#00000" fontWeight="medium" fontSize="2xl">
                 Últimos Equipamentos Modificados
               </Text>
               <Flex flexDirection="column">
-                {user?.role !== 'consulta' && (
-                  <Button colorScheme={theme.colors.primary} onClick={onOpen}>
-                    Cadastrar Equipamento
-                  </Button>
-                )}
                 <Flex
                   gap={5}
                   justifyContent="center"
@@ -598,7 +628,7 @@ function EquipmentTable() {
                 </Flex>
               </Flex>
             </Flex>
-            <Divider borderColor="#00000" margin="15px 0 15px 0" />
+            <Divider borderColor="#00000" margin="5px 0 5px 0" />
             <Flex
               flexDirection="column"
               justifyContent="center"
@@ -606,7 +636,12 @@ function EquipmentTable() {
               width="100%"
             >
               <form id="equipment-filter" style={{ width: '100%' }}>
-                <Flex gap="5px" alignItems="5px" mb="15px">
+                <Grid
+                  templateColumns="repeat(5, 5fr)"
+                  gap="5px"
+                  alignItems="5px"
+                  mb="15px"
+                >
                   <NewControlledSelect
                     control={control}
                     name="type"
@@ -626,6 +661,18 @@ function EquipmentTable() {
                     border={false}
                     placeholderText="Última modificação"
                     name="lastModifiedDate"
+                    control={control}
+                  />
+                  <Datepicker
+                    border={false}
+                    placeholderText="Cadastrado depois de"
+                    name="initialDate"
+                    control={control}
+                  />
+                  <Datepicker
+                    border={false}
+                    placeholderText="Cadastrado antes de"
+                    name="finalDate"
                     control={control}
                   />
                   <NewControlledSelect
@@ -658,7 +705,7 @@ function EquipmentTable() {
                     name="brand"
                     id="brand"
                     options={brands}
-                    placeholder="Marca"
+                    placeholder="Marca "
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
@@ -676,6 +723,19 @@ function EquipmentTable() {
                     fontWeight="semibold"
                     size="sm"
                   />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
+                    name="ram_size"
+                    id="ram_size"
+                    options={ram_sizes}
+                    placeholder="Ram "
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+
                   <Input
                     placeholder="Pesquisa"
                     minWidth="15vw"
