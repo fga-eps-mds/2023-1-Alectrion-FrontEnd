@@ -99,6 +99,8 @@ type FilterValues = {
   storageType?: string;
   initialDate?: string;
   finalDate?: string;
+  screenType?: string;
+  screenSize?: string;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -110,6 +112,8 @@ function EquipmentTable() {
   const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
   const [storageTypes, setStorageTypes] = useState<ISelectOption[]>();
   const [processors, setProcessors] = useState<ISelectOption[]>();
+  const [screenTypes, setScreenTypes] = useState<ISelectOption[]>();
+  const [screenSizes, setScreenSizes] = useState<ISelectOption[]>();
   const [selectedMovement, setSelectedMovement] = useState<movement>();
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
@@ -179,6 +183,8 @@ function EquipmentTable() {
       finalDate,
       processor,
       storageType,
+      screenSize,
+      screenType,
     } = watchFilter;
 
     const dataFormatted = {
@@ -194,6 +200,8 @@ function EquipmentTable() {
       storageType,
       initialDate: formattedDate(initialDate),
       finalDate: formattedDate(finalDate),
+      screenSize,
+      screenType,
     };
 
     const filteredDataFormatted = [
@@ -254,146 +262,6 @@ function EquipmentTable() {
     });
   };
 
-  const formattedModels = (data: EquipmentData[]): ISelectOption[] => {
-    const uniqueModels = new Set<string>();
-
-    data?.forEach((item) => {
-      uniqueModels.add(item.model);
-    });
-
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueModels)
-      .filter((model) => !!model)
-      .map((model) => ({
-        label: model,
-        value: model,
-      }));
-
-    return uniqueOptions;
-  };
-
-  const getModels = async () => {
-    try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/listEquipments`
-      );
-      setModels(formattedModels(data));
-    } catch (error) {
-      setModels([]);
-    }
-  };
-
-  const formattedBrands = (data: EquipmentData[]): ISelectOption[] => {
-    const uniqueBrands = new Set<string>();
-
-    data?.forEach((item) => {
-      uniqueBrands.add(item.equipment.brand);
-    });
-
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueBrands).map(
-      (brand) => ({
-        label: brand,
-        value: brand,
-      })
-    );
-
-    return uniqueOptions;
-  };
-
-  const getBrands = async () => {
-    try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find`
-      );
-      setBrands(formattedBrands(data));
-    } catch (error) {
-      setBrands([]);
-    }
-  };
-
-  const formattedRam_sizes = (data: EquipmentData[]): ISelectOption[] => {
-    const uniqueRam_sizes = new Set<string>();
-
-    data?.forEach((item) => {
-      uniqueRam_sizes.add(item.equipment.ram_size);
-    });
-
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueRam_sizes).map(
-      (ram_size) => ({
-        label: ram_size,
-        value: ram_size,
-      })
-    );
-
-    return uniqueOptions;
-  };
-
-  const getRam_sizes = async () => {
-    try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/listEquipments`
-      );
-      setRam_sizes(formattedRam_sizes(data));
-    } catch (error) {
-      setRam_sizes([]);
-    }
-  };
-
-  const formattedProcessors = (data: EquipmentData[]): ISelectOption[] => {
-    const uniqueProcessors = new Set<string>();
-
-    data?.forEach((item) => {
-      uniqueProcessors.add(item.equipment.Processor);
-    });
-
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueProcessors).map(
-      (processor) => ({
-        label: processor,
-        value: processor,
-      })
-    );
-
-    return uniqueOptions;
-  };
-
-  const getProcessors = async () => {
-    try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/listEquipments`
-      );
-      setProcessors(formattedProcessors(data));
-    } catch (error) {
-      setProcessors([]);
-    }
-  };
-
-  const formattedStorageTypes = (data: EquipmentData[]): ISelectOption[] => {
-    const uniqueStorageTypes = new Set<string>();
-
-    data?.forEach((item) => {
-      uniqueStorageTypes.add(item.equipment.storageType);
-    });
-
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueStorageTypes).map(
-      (storageType) => ({
-        label: storageType,
-        value: storageType,
-      })
-    );
-
-    return uniqueOptions;
-  };
-
-  const getStorageTypes = async () => {
-    try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find`
-      );
-      setStorageTypes(formattedStorageTypes(data));
-    } catch (error) {
-      setStorageTypes([]);
-    }
-  };
-
   const getWorkstations = async () => {
     apiSchedula
       .get<Workstation[]>('workstations')
@@ -440,27 +308,6 @@ function EquipmentTable() {
     }
   };
 
-  const [description, setDescription] = useState('');
-  const watchType = watch('type', '');
-
-  useEffect(() => {
-    resetField('ram_size');
-    resetField('description');
-  }, [resetField, watchType]);
-
-  useEffect(() => {
-    resetField('processor');
-    resetField('description');
-  }, [resetField, watchType]);
-
-  useEffect(() => {
-    if (watchType === 'CPU') {
-      setDescription(`${watchType}`);
-    }
-
-    setValue('description', description);
-  }, [setValue, description, watchType]);
-
   useEffect(() => {
     getWorkstations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -477,31 +324,6 @@ function EquipmentTable() {
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, refreshRequest, filter]);
-
-  useEffect(() => {
-    getBrands();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    getModels();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    getRam_sizes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    getProcessors();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    getStorageTypes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
@@ -705,7 +527,7 @@ function EquipmentTable() {
                     name="brand"
                     id="brand"
                     options={brands}
-                    placeholder="Marca "
+                    placeholder="Marca"
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
@@ -723,19 +545,6 @@ function EquipmentTable() {
                     fontWeight="semibold"
                     size="sm"
                   />
-                  <NewControlledSelect
-                    filterStyle
-                    control={control}
-                    name="ram_size"
-                    id="ram_size"
-                    options={ram_sizes}
-                    placeholder="Ram "
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                  />
-
                   <Input
                     placeholder="Pesquisa"
                     minWidth="15vw"
@@ -743,8 +552,8 @@ function EquipmentTable() {
                     {...register('search')}
                     rightElement={<BiSearch />}
                   />
-                </Flex>
-                {watchType === 'CPU' && (
+                </Grid>
+                {watchFilter.type === 'CPU' && (
                   <Flex gap="5px" alignItems="5px" mb="15px">
                     <NewControlledSelect
                       filterStyle
@@ -784,7 +593,36 @@ function EquipmentTable() {
                     />
                   </Flex>
                 )}
+                {watchFilter.type === 'Monitor' && (
+                  <Flex gap="5px" alignItems="5px" mb="15px">
+                    <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="screenSize"
+                      id="screenSize"
+                      options={screenSizes}
+                      placeholder="Tamanho da tela"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                    <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="screenType"
+                      id="screenType"
+                      options={screenTypes}
+                      placeholder="Tipo de tela"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                  </Flex>
+                )}
               </form>
+            </Flex>
               {filter !== '' ? (
                 <Flex w="100%" alignItems="center" justifyContent="start">
                   <Button
@@ -938,7 +776,6 @@ function EquipmentTable() {
               </Flex>
             </Flex>
           </Flex>
-        </Flex>
         <EquipmentRegisterModal
           onClose={onClose}
           isOpen={isOpen}
