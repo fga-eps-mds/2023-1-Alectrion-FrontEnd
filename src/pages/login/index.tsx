@@ -18,7 +18,7 @@ import { Box, Button, Center, Input, Text, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '@/components/modal';
 import { useAuth } from '@/contexts/AuthContext';
-import { AlectrionIcon } from './AlectrionIcon';
+import { AlectrionIcon } from '../../components/icons/AlectrionIcon';
 
 export function Login() {
   const { signIn } = useAuth();
@@ -36,12 +36,11 @@ export function Login() {
   } = useForm<CredentialUser>();
 
   const onSubmit: SubmitHandler<CredentialUser> = async ({
-    username,
+    identifier,
     password,
   }) => {
     setIsLoading(true);
-    // TODO: get function from authContext
-    await signIn({ username, password });
+    await signIn({ identifier, password });
     setIsLoading(false);
   };
 
@@ -94,22 +93,21 @@ export function Login() {
                 fontWeight="medium"
                 fontSize="lg"
               >
-                Nome de usuário
+                Username ou CPF
               </Text>
               <Input
                 size="lg"
                 fontSize="lg"
-                {...register('username', { required: true })}
-                placeholder="Nome de usuário"
+                {...register('identifier', { required: true })}
+                placeholder="Username ou CPF"
               />
-              {errors.username && (
+              {errors.identifier && (
                 <span>
                   <Text color="red.400">Este campo é obrigatório</Text>
                 </span>
               )}
             </Box>
             <Box mb="14%">
-              {' '}
               <Text
                 pl="5px"
                 pb="8px"
@@ -117,8 +115,7 @@ export function Login() {
                 fontWeight="medium"
                 fontSize="lg"
               >
-                {' '}
-                Senha{' '}
+                Senha
               </Text>
               <Input
                 size="lg"

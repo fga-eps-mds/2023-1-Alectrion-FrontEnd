@@ -37,12 +37,12 @@ interface RegisterUserPayload {
   cpf: string;
   role: string;
   jobFunction: string;
-  password: string;
+  password?: string;
   confirmPassword: string;
 }
 
 interface CredentialUser {
-  username: string;
+  identifier: string;
   password: string;
 }
 
