@@ -3,6 +3,11 @@ import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
 import { BiEditAlt, BiSearch } from 'react-icons/bi';
 import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Text,
   Table,
   Thead,
@@ -41,6 +46,8 @@ import { NewControlledSelect } from '@/components/form-fields/new-controlled-sel
 import { ReportModal } from '@/components/report-modal';
 import { getEquipments } from '@/services/requests/equipment';
 import { useAuth } from '@/contexts/AuthContext';
+import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
+import { listOfYears } from '@/utils/format-date';
 
 interface ISelectOption {
   label: string;
@@ -101,12 +108,15 @@ type FilterValues = {
   finalDate?: string;
   screenType?: string;
   screenSize?: string;
+  acquisitionYear?: string;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
+  const [equipsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
+  const [equipsForFilter, setEquipsForFilter] = useState<EquipmentData[]>([]);
   const [models, setModels] = useState<ISelectOption[]>();
   const [brands, setBrands] = useState<ISelectOption[]>();
   const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
@@ -128,17 +138,19 @@ function EquipmentTable() {
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const [type, setType] = useState<string>('');
-  const [equipsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
   const { user } = useAuth();
 
+  /* const setValues = (equips: EquipmentData[]) => {
+    equips.map(()=> {
+      setModels()
+    })
+  } */
   const {
     control,
     watch,
     register,
     formState: { errors },
     reset,
-    resetField,
-    setValue,
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
@@ -185,6 +197,7 @@ function EquipmentTable() {
       storageType,
       screenSize,
       screenType,
+      acquisitionYear,
     } = watchFilter;
 
     const dataFormatted = {
@@ -202,6 +215,7 @@ function EquipmentTable() {
       finalDate: formattedDate(finalDate),
       screenSize,
       screenType,
+      acquisitionYear,
     };
 
     const filteredDataFormatted = [
@@ -248,6 +262,12 @@ function EquipmentTable() {
     isOpen: isReportOpen,
     onClose: onReportClose,
     onOpen: onReportOpen,
+  } = useDisclosure();
+
+  const {
+    isOpen: isUploadOpen,
+    onClose: onUploadClose,
+    onOpen: onUploadOpen,
   } = useDisclosure();
 
   const {
@@ -308,8 +328,13 @@ function EquipmentTable() {
     }
   };
 
+  const fetchEquipmentsToFilter = async () => {
+    setEquipsForFilter(await getEquipments(''));
+  };
+
   useEffect(() => {
     getWorkstations();
+    fetchEquipmentsToFilter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -623,68 +648,98 @@ function EquipmentTable() {
                 )}
               </form>
             </Flex>
-              {filter !== '' ? (
-                <Flex w="100%" alignItems="center" justifyContent="start">
-                  <Button
-                    variant="unstyled"
-                    fontSize="14px"
-                    leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
-                    onClick={cleanFilters}
-                  >
-                    Limpar filtros aplicados
-                  </Button>
-                </Flex>
-              ) : null}
-              <Flex flexDirection="column" width="100%">
-                <TableContainer
-                  borderRadius="15px 15px 0 0 "
-                  height="55vh"
-                  whiteSpace="inherit"
-                  fontSize="sm"
-                  border="1px"
-                  borderColor={theme.colors.primary}
-                  overflowY="auto"
-                  css={{
-                    '&::-webkit-scrollbar': {
-                      width: '8px',
-                    },
-                    '&::-webkit-scrollbar-track': {
-                      width: '6px',
-                      background: '#C6C6C6',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      background: '#F49320',
-                      borderRadius: '24px',
-                    },
-                  }}
+            {filter !== '' ? (
+              <Flex w="100%" alignItems="center" justifyContent="start">
+                <Button
+                  variant="unstyled"
+                  fontSize="14px"
+                  leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
+                  onClick={cleanFilters}
                 >
-                  <Table variant="striped" colorScheme="orange" width="100%">
-                    <Thead
-                      bg={theme.colors.primary}
-                      fontWeight="semibold"
-                      order={theme.colors.primary}
-                      position="sticky"
-                      top="0"
-                      zIndex={+1}
-                    >
-                      <Tr width="100%" color={theme.colors.white}>
-                        <Td>Equipamento</Td>
-                        <Td>N Tombamento</Td>
-                        <Td>N Série</Td>
-                        <Td>Última Modificação</Td>
-                        <Td />
-                        <Td />
-                      </Tr>
-                    </Thead>
-                    <Tbody fontWeight="semibold" maxHeight="200px">
-                      {equipments.map((equipment) => (
-                        <Tr
+                  Limpar filtros aplicados
+                </Button>
+              </Flex>
+            ) : null}
+            <Flex flexDirection="column" width="100%">
+              <TableContainer
+                borderRadius="15px 15px 0 0 "
+                height="55vh"
+                whiteSpace="inherit"
+                fontSize="sm"
+                border="1px"
+                borderColor={theme.colors.primary}
+                overflowY="auto"
+                css={{
+                  '&::-webkit-scrollbar': {
+                    width: '8px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    width: '6px',
+                    background: '#C6C6C6',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: '#F49320',
+                    borderRadius: '24px',
+                  },
+                }}
+              >
+                <Table variant="striped" colorScheme="orange" width="100%">
+                  <Thead
+                    bg={theme.colors.primary}
+                    fontWeight="semibold"
+                    order={theme.colors.primary}
+                    position="sticky"
+                    top="0"
+                    zIndex={+1}
+                  >
+                    <Tr width="100%" color={theme.colors.white}>
+                      <Td>Equipamento</Td>
+                      <Td>N Tombamento</Td>
+                      <Td>N Série</Td>
+                      <Td>Última Modificação</Td>
+                      <Td />
+                      <Td />
+                    </Tr>
+                  </Thead>
+                  <Tbody fontWeight="semibold" maxHeight="200px">
+                    {equipments.map((equipment) => (
+                      <Tr
+                        onClick={(event) => {
+                          handleView(equipment);
+                          event.stopPropagation();
+                        }}
+                        key={equipment.id}
+                        cursor="pointer"
+                      >
+                        <Td fontWeight="medium">
+                          {equipment.situacao} - {equipment.unit.name}
+                          <Td p={0} fontWeight="semibold">
+                            {equipment.type} {equipment.brand.name}
+                          </Td>
+                        </Td>
+                        <Td>{equipment.tippingNumber}</Td>
+                        <Td>{equipment.serialNumber}</Td>
+                        <Td>
+                          {new Date(equipment.updatedAt).toLocaleDateString(
+                            'pt-BR'
+                          )}
+                        </Td>
+                        <Td
                           onClick={(event) => {
-                            handleView(equipment);
+                            event.stopPropagation();
+                            handleEdit(equipment);
+                          }}
+                          width="5%"
+                        >
+                          <button>
+                            <BiEditAlt size={23} />
+                          </button>
+                        </Td>
+                        <Td
+                          width="5%"
+                          onClick={(event) => {
                             event.stopPropagation();
                           }}
-                          key={equipment.id}
-                          cursor="pointer"
                         >
                           <Td fontWeight="medium">
                             {equipment.situacao} - {equipment.unit.name}
@@ -704,86 +759,68 @@ function EquipmentTable() {
                               event.stopPropagation();
                               handleEdit(equipment);
                             }}
-                            width="5%"
-                          >
-                            <button>
-                              <BiEditAlt size={23} />
-                            </button>
-                          </Td>
-                          <Td
-                            width="5%"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                            }}
-                          >
-                            <Checkbox
-                              onChange={() => {
-                                handleCheckboxClick(equipment);
-                              }}
-                            />
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-                <Box
-                  bgColor={theme.colors.primary}
-                  cursor="pointer"
-                  fontSize="sm"
-                  fontWeight="semibold"
-                  width="100%"
-                  textAlign="center"
-                  color={theme.colors.white}
-                  padding="1rem 0 1rem 0"
-                  borderRadius=" 0  0 15px 15px"
-                  onClick={handleMovement}
-                >
-                  Movimentar
-                </Box>
-                <Flex justifyContent="center" mt="15px">
-                  {currentPage > 1 && (
-                    <Button
-                      variant="link"
-                      color="#00000"
-                      p={2}
-                      leftIcon={<ArrowLeftIcon />}
-                      _hover={{ cursor: 'pointer', color: 'orange.500' }}
-                      onClick={() => {
-                        setCurrentPage(currentPage - 1);
-                        setOffset(offset - limit);
-                      }}
-                    >
-                      Anterior
-                    </Button>
-                  )}
-                  {nextEquipments.length > 0 && (
-                    <Button
-                      variant="link"
-                      color="#00000"
-                      p={2}
-                      rightIcon={<ArrowRightIcon />}
-                      _hover={{ cursor: 'pointer', color: 'orange.500' }}
-                      onClick={() => {
-                        setCurrentPage(currentPage + 1);
-                        setOffset(offset + limit);
-                      }}
-                    >
-                      Próximo
-                    </Button>
-                  )}
-                </Flex>
+                          />
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+              <Box
+                bgColor={theme.colors.primary}
+                cursor="pointer"
+                fontSize="sm"
+                fontWeight="semibold"
+                width="100%"
+                textAlign="center"
+                color={theme.colors.white}
+                padding="1rem 0 1rem 0"
+                borderRadius=" 0  0 15px 15px"
+                onClick={handleMovement}
+              >
+                Movimentar
+              </Box>
+              <Flex justifyContent="center" mt="15px">
+                {currentPage > 1 && (
+                  <Button
+                    variant="link"
+                    color="#00000"
+                    p={2}
+                    leftIcon={<ArrowLeftIcon />}
+                    _hover={{ cursor: 'pointer', color: 'orange.500' }}
+                    onClick={() => {
+                      setCurrentPage(currentPage - 1);
+                      setOffset(offset - limit);
+                    }}
+                  >
+                    Anterior
+                  </Button>
+                )}
+                {nextEquipments.length > 0 && (
+                  <Button
+                    variant="link"
+                    color="#00000"
+                    p={2}
+                    rightIcon={<ArrowRightIcon />}
+                    _hover={{ cursor: 'pointer', color: 'orange.500' }}
+                    onClick={() => {
+                      setCurrentPage(currentPage + 1);
+                      setOffset(offset + limit);
+                    }}
+                  >
+                    Próximo
+                  </Button>
+                )}
               </Flex>
             </Flex>
           </Flex>
+        </Flex>
         <EquipmentRegisterModal
           onClose={onClose}
           isOpen={isOpen}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
-          onUploadOpen={function (): void {
-            throw new Error('Function not implemented.');
-          }}
+          onUploadOpen={onUploadOpen}
         />
         <EquipmentEditModal
           onClose={onCloseEditEquipment}
@@ -821,6 +858,12 @@ function EquipmentTable() {
           onClose={onReportClose}
           type={type}
           equipments={equipsToExport}
+        />
+        <EquipmentsUploadModal
+          onClose={onUploadClose}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+          isOpen={isUploadOpen}
         />
       </GridItem>
     </Grid>
