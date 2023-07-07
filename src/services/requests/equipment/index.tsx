@@ -39,7 +39,6 @@ export const updateEquipment = async (
 };
 
 export const getEquipments = async (filter: string) => {
-  console.log(filter);
   try {
     const { data }: AxiosResponse<EquipmentData[]> = await api.get(
       `equipment/find?${filter}`

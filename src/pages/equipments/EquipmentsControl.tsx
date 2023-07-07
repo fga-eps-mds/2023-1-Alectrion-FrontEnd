@@ -40,6 +40,7 @@ import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { ReportModal } from '@/components/report-modal';
 import { getEquipments } from '@/services/requests/equipment';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ISelectOption {
   label: string;
@@ -92,14 +93,14 @@ type FilterValues = {
   situation?: ISelectOption;
   search: string;
   model?: ISelectOption;
-  ram_size?: String;
+  ram_size?: string;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
-  const[models, setModels] = useState<ISelectOption[]>();
+  const [models, setModels] = useState<ISelectOption[]>();
   const [brands, setBrands] = useState<ISelectOption[]>();
   const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
   const [selectedMovement, setSelectedMovement] = useState<movement>();
@@ -117,6 +118,7 @@ function EquipmentTable() {
   const [search, setSearch] = useState<string>('');
   const [type, setType] = useState<string>('');
   const [equipsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
+  const { user } = useAuth();
 
   const {
     control,
@@ -129,7 +131,8 @@ function EquipmentTable() {
   const watchFilter = watch();
 
   const handleFilterChange = () => {
-    const { type, lastModifiedDate, situation, unit, model, brand, ram_size } = watchFilter;
+    const { type, lastModifiedDate, situation, unit, model, brand, ram_size } =
+      watchFilter;
 
     let formattedDate;
     if (
@@ -150,7 +153,7 @@ function EquipmentTable() {
       brand,
       ram_size,
     };
-        
+
     const filteredDataFormatted = [
       ...Object.entries(dataFormatted).filter(
         (field) => field[1] !== undefined && field[1] !== ''
@@ -211,22 +214,22 @@ function EquipmentTable() {
 
   const formattedModels = (data: EquipmentData[]): ISelectOption[] => {
     const uniqueModels = new Set<string>();
-  
-    data?.forEach(item => {
+
+    data?.forEach((item) => {
       uniqueModels.add(item.model);
     });
-  
+
     const uniqueOptions: ISelectOption[] = Array.from(uniqueModels)
-    .filter(model => !!model) 
-    .map(model => ({
-      label: model,
-      value: model
-    }));
-  
+      .filter((model) => !!model)
+      .map((model) => ({
+        label: model,
+        value: model,
+      }));
+
     return uniqueOptions;
   };
 
-   const getModels = async () => {
+  const getModels = async () => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
         `equipment/listEquipments`
@@ -239,16 +242,18 @@ function EquipmentTable() {
 
   const formattedBrands = (data: EquipmentData[]): ISelectOption[] => {
     const uniqueBrands = new Set<string>();
-  
-    data?.forEach(item => {
+
+    data?.forEach((item) => {
       uniqueBrands.add(item.equipment.brand);
     });
-  
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueBrands).map(brand => ({
-      label: brand,
-      value: brand
-    }));
-  
+
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueBrands).map(
+      (brand) => ({
+        label: brand,
+        value: brand,
+      })
+    );
+
     return uniqueOptions;
   };
 
@@ -265,16 +270,18 @@ function EquipmentTable() {
 
   const formattedRam_sizes = (data: EquipmentData[]): ISelectOption[] => {
     const uniqueRam_sizes = new Set<string>();
-  
-    data?.forEach(item => {
+
+    data?.forEach((item) => {
       uniqueRam_sizes.add(item.equipment.ram_size);
     });
-  
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueRam_sizes).map(ram_size => ({
-      label: ram_size,
-      value: ram_size
-    }));
-  
+
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueRam_sizes).map(
+      (ram_size) => ({
+        label: ram_size,
+        value: ram_size,
+      })
+    );
+
     return uniqueOptions;
   };
 
@@ -288,7 +295,6 @@ function EquipmentTable() {
       setRam_sizes([]);
     }
   };
-  
 
   const getWorkstations = async () => {
     apiSchedula
@@ -311,7 +317,6 @@ function EquipmentTable() {
   const handleSearch = debounce(() => {
     setSearch(watchFilter.search);
   }, 400);
-
 
   const fetchItems = async () => {
     try {
@@ -451,9 +456,11 @@ function EquipmentTable() {
                 Últimos Equipamentos Modificados
               </Text>
               <Flex flexDirection="column">
-                <Button colorScheme={theme.colors.primary} onClick={onOpen}>
-                  Cadastrar Equipamento
-                </Button>
+                {user?.role !== 'consulta' && (
+                  <Button colorScheme={theme.colors.primary} onClick={onOpen}>
+                    Cadastrar Equipamento
+                  </Button>
+                )}
                 <Flex
                   gap={5}
                   justifyContent="center"
@@ -562,20 +569,20 @@ function EquipmentTable() {
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
-                   />
+                  />
                   <NewControlledSelect
                     filterStyle
                     control={control}
                     name="ram_size"
                     id="ram_size"
                     options={ram_sizes}
-                    placeholder="Ram " 
+                    placeholder="Ram "
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
                     size="sm"
-                   /> 
-                   
+                  />
+
                   <Input
                     placeholder="Pesquisa"
                     minWidth="15vw"
@@ -743,9 +750,11 @@ function EquipmentTable() {
           onClose={onClose}
           isOpen={isOpen}
           refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest} onUploadOpen={function (): void {
+          setRefreshRequest={setRefreshRequest}
+          onUploadOpen={function (): void {
             throw new Error('Function not implemented.');
-          } }        />
+          }}
+        />
         <EquipmentEditModal
           onClose={onCloseEditEquipment}
           isOpen={isOpenEditEquipment}
