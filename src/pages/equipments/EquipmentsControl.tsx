@@ -38,7 +38,6 @@ import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
-import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
 import { ReportModal } from '@/components/report-modal';
 import { getEquipments } from '@/services/requests/equipment';
 
@@ -53,6 +52,7 @@ interface TypeData {
 }
 
 export interface EquipmentData {
+  equipment: any;
   tippingNumber: string;
   serialNumber: string;
   type: {
@@ -91,12 +91,17 @@ type FilterValues = {
   unit?: ISelectOption;
   situation?: ISelectOption;
   search: string;
+  model?: ISelectOption;
+  ram_size?: String;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
 function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
+  const[models, setModels] = useState<ISelectOption[]>();
+  const [brands, setBrands] = useState<ISelectOption[]>();
+  const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
   const [selectedMovement, setSelectedMovement] = useState<movement>();
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
@@ -124,7 +129,7 @@ function EquipmentTable() {
   const watchFilter = watch();
 
   const handleFilterChange = () => {
-    const { type, lastModifiedDate, situation, unit } = watchFilter;
+    const { type, lastModifiedDate, situation, unit, model, brand, ram_size } = watchFilter;
 
     let formattedDate;
     if (
@@ -141,8 +146,11 @@ function EquipmentTable() {
       situation,
       unit,
       search,
+      model,
+      brand,
+      ram_size,
     };
-
+        
     const filteredDataFormatted = [
       ...Object.entries(dataFormatted).filter(
         (field) => field[1] !== undefined && field[1] !== ''
@@ -184,14 +192,7 @@ function EquipmentTable() {
   } = useDisclosure();
 
   const {
-    isOpen: isUploadOpen,
-    onClose: onUploadClose,
-    onOpen: onUploadOpen,
-  } = useDisclosure();
-
-  const {
     isOpen: isReportOpen,
-  
     onClose: onReportClose,
     onOpen: onReportOpen,
   } = useDisclosure();
@@ -207,6 +208,87 @@ function EquipmentTable() {
       return { label: item.name, value: item.name };
     });
   };
+
+  const formattedModels = (data: EquipmentData[]): ISelectOption[] => {
+    const uniqueModels = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueModels.add(item.model);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueModels)
+    .filter(model => !!model) 
+    .map(model => ({
+      label: model,
+      value: model
+    }));
+  
+    return uniqueOptions;
+  };
+
+   const getModels = async () => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/listEquipments`
+      );
+      setModels(formattedModels(data));
+    } catch (error) {
+      setModels([]);
+    }
+  };
+
+  const formattedBrands = (data: EquipmentData[]): ISelectOption[] => {
+    const uniqueBrands = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueBrands.add(item.equipment.brand);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueBrands).map(brand => ({
+      label: brand,
+      value: brand
+    }));
+  
+    return uniqueOptions;
+  };
+
+  const getBrands = async () => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/listEquipments`
+      );
+      setBrands(formattedBrands(data));
+    } catch (error) {
+      setBrands([]);
+    }
+  };
+
+  const formattedRam_sizes = (data: EquipmentData[]): ISelectOption[] => {
+    const uniqueRam_sizes = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueRam_sizes.add(item.equipment.ram_size);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueRam_sizes).map(ram_size => ({
+      label: ram_size,
+      value: ram_size
+    }));
+  
+    return uniqueOptions;
+  };
+
+  const getRam_sizes = async () => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/listEquipments`
+      );
+      setRam_sizes(formattedRam_sizes(data));
+    } catch (error) {
+      setRam_sizes([]);
+    }
+  };
+  
 
   const getWorkstations = async () => {
     apiSchedula
@@ -229,6 +311,7 @@ function EquipmentTable() {
   const handleSearch = debounce(() => {
     setSearch(watchFilter.search);
   }, 400);
+
 
   const fetchItems = async () => {
     try {
@@ -269,6 +352,21 @@ function EquipmentTable() {
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, refreshRequest, filter]);
+
+  useEffect(() => {
+    getBrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getModels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getRam_sizes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleEdit = (equipment: EquipmentData) => {
     if (equipment) setSelectedEquipmentToEdit(equipment);
@@ -441,6 +539,43 @@ function EquipmentTable() {
                     size="sm"
                     filterStyle
                   />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
+                    name="brand"
+                    id="brand"
+                    options={brands}
+                    placeholder="Marca "
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                  />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
+                    name="model"
+                    id="model"
+                    options={models}
+                    placeholder="Modelos"
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                   />
+                  <NewControlledSelect
+                    filterStyle
+                    control={control}
+                    name="ram_size"
+                    id="ram_size"
+                    options={ram_sizes}
+                    placeholder="Ram " 
+                    cursor="pointer"
+                    variant="unstyled"
+                    fontWeight="semibold"
+                    size="sm"
+                   /> 
+                   
                   <Input
                     placeholder="Pesquisa"
                     minWidth="15vw"
@@ -608,9 +743,9 @@ function EquipmentTable() {
           onClose={onClose}
           isOpen={isOpen}
           refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-          onUploadOpen={onUploadOpen}
-        />
+          setRefreshRequest={setRefreshRequest} onUploadOpen={function (): void {
+            throw new Error('Function not implemented.');
+          } }        />
         <EquipmentEditModal
           onClose={onCloseEditEquipment}
           isOpen={isOpenEditEquipment}
@@ -641,12 +776,6 @@ function EquipmentTable() {
           selectedMoviment={selectedMovement}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
-        />
-        <EquipmentsUploadModal
-          onClose={onUploadClose}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-          isOpen={isUploadOpen}
         />
         <ReportModal
           isOpen={isReportOpen}
