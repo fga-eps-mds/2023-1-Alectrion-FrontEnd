@@ -86,7 +86,7 @@ export interface EquipmentData {
 }
 
 type FilterValues = {
-  type?: ISelectOption;
+  type?: string;
   brand?: string;
   lastModifiedDate?: string;
   unit?: ISelectOption;
@@ -94,6 +94,9 @@ type FilterValues = {
   search: string;
   model?: ISelectOption;
   ram_size?: string;
+  description?: string;
+  processor?: string;
+  storageType?: string;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -103,6 +106,8 @@ function EquipmentTable() {
   const [models, setModels] = useState<ISelectOption[]>();
   const [brands, setBrands] = useState<ISelectOption[]>();
   const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
+  const [storageTypes, setStorageTypes] = useState<ISelectOption[]>();
+  const [processors, setProcessors] = useState<ISelectOption[]>();
   const [selectedMovement, setSelectedMovement] = useState<movement>();
   const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
     useState<EquipmentData>();
@@ -126,13 +131,24 @@ function EquipmentTable() {
     register,
     formState: { errors },
     reset,
+    resetField,
+    setValue,
   } = useForm<FilterValues>({ mode: 'onChange' });
 
   const watchFilter = watch();
 
   const handleFilterChange = () => {
-    const { type, lastModifiedDate, situation, unit, model, brand, ram_size } =
-      watchFilter;
+    const {
+      type,
+      lastModifiedDate,
+      situation,
+      unit,
+      model,
+      brand,
+      ram_size,
+      processor,
+      storageType,
+    } = watchFilter;
 
     let formattedDate;
     if (
@@ -152,6 +168,8 @@ function EquipmentTable() {
       model,
       brand,
       ram_size,
+      processor,
+      storageType,
     };
 
     const filteredDataFormatted = [
@@ -296,6 +314,62 @@ function EquipmentTable() {
     }
   };
 
+  const formattedProcessors = (data: EquipmentData[]): ISelectOption[] => {
+    const uniqueProcessors = new Set<string>();
+
+    data?.forEach((item) => {
+      uniqueProcessors.add(item.equipment.Processor);
+    });
+
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueProcessors).map(
+      (processor) => ({
+        label: processor,
+        value: processor,
+      })
+    );
+
+    return uniqueOptions;
+  };
+
+  const getProcessors = async () => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/listEquipments`
+      );
+      setProcessors(formattedProcessors(data));
+    } catch (error) {
+      setProcessors([]);
+    }
+  };
+
+  const formattedStorageTypes = (data: EquipmentData[]): ISelectOption[] => {
+    const uniqueStorageTypes = new Set<string>();
+
+    data?.forEach((item) => {
+      uniqueStorageTypes.add(item.equipment.storageType);
+    });
+
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueStorageTypes).map(
+      (storageType) => ({
+        label: storageType,
+        value: storageType,
+      })
+    );
+
+    return uniqueOptions;
+  };
+
+  const getStorageTypes = async () => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/listEquipments`
+      );
+      setStorageTypes(formattedStorageTypes(data));
+    } catch (error) {
+      setStorageTypes([]);
+    }
+  };
+
   const getWorkstations = async () => {
     apiSchedula
       .get<Workstation[]>('workstations')
@@ -341,6 +415,28 @@ function EquipmentTable() {
       toast.error('Nenhum Equipamento encontrado');
     }
   };
+
+  const [description, setDescription] = useState('');
+  const watchType = watch('type', '');
+
+  useEffect(() => {
+    resetField('ram_size');
+    resetField('description');
+  }, [resetField, watchType]);
+
+  useEffect(() => {
+    resetField('processor');
+    resetField('description');
+  }, [resetField, watchType]);
+
+  useEffect(() => {
+    if (watchType === 'CPU') {
+      setDescription(`${watchType}`);
+    }
+
+    setValue('description', description);
+  }, [setValue, description, watchType]);
+
   useEffect(() => {
     getWorkstations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -370,6 +466,16 @@ function EquipmentTable() {
 
   useEffect(() => {
     getRam_sizes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getProcessors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getStorageTypes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -552,7 +658,7 @@ function EquipmentTable() {
                     name="brand"
                     id="brand"
                     options={brands}
-                    placeholder="Marca "
+                    placeholder="Marca"
                     cursor="pointer"
                     variant="unstyled"
                     fontWeight="semibold"
@@ -570,19 +676,6 @@ function EquipmentTable() {
                     fontWeight="semibold"
                     size="sm"
                   />
-                  <NewControlledSelect
-                    filterStyle
-                    control={control}
-                    name="ram_size"
-                    id="ram_size"
-                    options={ram_sizes}
-                    placeholder="Ram "
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                  />
-
                   <Input
                     placeholder="Pesquisa"
                     minWidth="15vw"
@@ -591,6 +684,46 @@ function EquipmentTable() {
                     rightElement={<BiSearch />}
                   />
                 </Flex>
+                {watchType === 'CPU' && (
+                  <Flex gap="5px" alignItems="5px" mb="15px">
+                    <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="ram_size"
+                      id="ram_size"
+                      options={ram_sizes}
+                      placeholder="Ram"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                    <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="processor"
+                      id="processor"
+                      options={processors}
+                      placeholder="Processador"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                    <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="storageType"
+                      id="storageType"
+                      options={storageTypes}
+                      placeholder="Tipo de armazenamento"
+                      cursor="pointer"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                  </Flex>
+                )}
               </form>
               {filter !== '' ? (
                 <Flex w="100%" alignItems="center" justifyContent="start">
