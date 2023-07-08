@@ -49,3 +49,27 @@ export const getEquipments = async (filter: string) => {
     return [];
   }
 };
+
+export const getBrands = async () => {
+  try {
+    const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+      `equipment/brand`
+    );
+    return data;
+  } catch (error) {
+    toast.error('Nenhuma Marca encontrada');
+    return [];
+  }
+};
+
+export const getTypes = async () => {
+  try {
+    const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+      `equipment/type`
+    );
+    return data;
+  } catch (error) {
+    toast.error('Nenhum Tipo de Equipmento encontrado');
+    return [];
+  }
+};

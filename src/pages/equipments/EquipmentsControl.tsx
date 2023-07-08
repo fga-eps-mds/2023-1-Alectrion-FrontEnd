@@ -43,7 +43,11 @@ import { TermModal } from '@/components/term-modal';
 import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { ReportModal } from '@/components/report-modal';
-import { getEquipments } from '@/services/requests/equipment';
+import {
+  getBrands,
+  getEquipments,
+  getTypes,
+} from '@/services/requests/equipment';
 import { useAuth } from '@/contexts/AuthContext';
 import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
 import { listOfYears } from '@/utils/format-date';
@@ -296,6 +300,9 @@ function EquipmentTable() {
     const uniqueScreenSizes = new Set<ISelectOption>();
 
     const array = await getEquipments('');
+    // const requestedBrands = await getBrands();
+    // const requestedTypes = await getTypes();
+
     array.forEach((obj) => {
       if (obj.model !== null) {
         uniqueModels.add({ label: obj.model, value: obj.model });
