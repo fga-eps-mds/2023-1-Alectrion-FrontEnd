@@ -649,36 +649,30 @@ function OrderServiceTable() {
                               variant="unstyled"
                               fontWeight="semibold"
                               size="sm"
-                            />
-                            {/* <Flex zIndex={99} position="absolute" top="32.8%" left="61.5%"> */}                     
+                            />                    
                               <Datepicker
                                 border={false}
                                 placeholderText="Data de criação"
                                 name="createdAt"
                                 control={control}
                               />
-                            {/* </Flex> */}
                           </Grid>
                           <Grid
                             templateColumns="repeat(4, 1fr)"
                             gap="5px"
                           >
-                            {/* <Flex zIndex={99} position="absolute" top="32.8%" left="76.7%"> */}
                               <Datepicker
                                 border={false}
                                 placeholderText="Data de conclusão"
                                 name="finishDate"
                                 control={control}
                               />
-                            {/* </Flex> */}
-                            {/* <Flex zIndex={99} position="absolute" top="29%" left="76.7%"> */}
                               <Datepicker
                                 border={false}
                                 placeholderText="Última atualização"
                                 name="updatedAt"
                                 control={control}
                               />
-                            {/* </Flex> */}
                             <NewControlledSelect
                               filterStyle
                               control={control}

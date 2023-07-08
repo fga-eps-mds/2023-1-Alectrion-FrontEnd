@@ -66,11 +66,11 @@ export function Datepicker<FormValues extends FieldValues>({
   return (
     <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none">
       {label && <FormLabel cursor="pointer">{label}</FormLabel>}
-
-      <InputGroup display="block" zIndex={+2}>
-        <Box>
+      <InputGroup display="block">
+        <Box zIndex={2}>
           <ReactDatePicker
-            selected={value as Date}
+            portalId="root-portal"
+            selected={value as Date}  
             name={name}
             ref={ref}
             onChange={onChange}
