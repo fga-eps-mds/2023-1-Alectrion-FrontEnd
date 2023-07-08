@@ -330,6 +330,7 @@ function OrderServiceTable() {
                     size="sm"
                   />
                   <Datepicker
+                    outsideModal
                     border={false}
                     placeholderText="Data OS"
                     name="dateOS"

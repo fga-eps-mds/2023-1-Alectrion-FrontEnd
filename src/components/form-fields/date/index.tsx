@@ -45,6 +45,7 @@ type Props<FormValues extends FieldValues> = Omit<
     startDate?: Date;
     endDate?: Date;
     monthPicker?: boolean;
+    outsideModal?: boolean;
   };
 
 export function Datepicker<FormValues extends FieldValues>({
@@ -58,6 +59,7 @@ export function Datepicker<FormValues extends FieldValues>({
   startDate,
   endDate,
   monthPicker = false,
+  outsideModal = false,
   ...props
 }: Props<FormValues>) {
   const {
@@ -88,41 +90,73 @@ export function Datepicker<FormValues extends FieldValues>({
     <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none">
       {label && <FormLabel cursor="pointer">{label}</FormLabel>}
 
-      <InputGroup display="block">
-        <Box zIndex={2}>
-          <ReactDatePicker
-            portalId="root-portal"
-            selected={value as Date}
-            name={name}
-            ref={ref}
-            onChange={onChange}
-            onBlur={onBlur}
-            value={value as string}
-            locale="pt"
-            dateFormat="dd/MM/yyyy"
-            minDate={lowerDate}
-            maxDate={higherDate}
-            showMonthYearPicker={monthPicker}
-            customInput={
-              border ? (
-                <Input borderColor="#212121" fontSize="sm" />
-              ) : (
-                <Input
-                  fontSize="sm"
-                  border="0px"
-                  boxShadow="none"
-                  placeholder={placeHolder}
-                  sx={{ '::placeholder': { color: '#212121' } }}
-                  _focus={{ border: 'none', boxShadow: 'none' }}
-                />
-              )
-            }
-            // minDate={new Date()}
-            // showTimeInput
-            // timeInputLabel="Hora"
-            fixedHeight
-            {...props}
-          />
+      <InputGroup display="block" zIndex={+2}>
+        <Box>
+          {outsideModal ? (
+            <ReactDatePicker
+              portalId="root-portal"
+              selected={value as Date}
+              name={name}
+              ref={ref}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value as string}
+              locale="pt"
+              dateFormat="dd/MM/yyyy"
+              minDate={lowerDate}
+              maxDate={higherDate}
+              showMonthYearPicker={monthPicker}
+              customInput={
+                border ? (
+                  <Input borderColor="#212121" fontSize="sm" />
+                ) : (
+                  <Input
+                    fontSize="sm"
+                    border="0px"
+                    boxShadow="none"
+                    placeholder={placeHolder}
+                    sx={{ '::placeholder': { color: '#212121' } }}
+                    _focus={{ border: 'none', boxShadow: 'none' }}
+                  />
+                )
+              }
+              // minDate={new Date()}
+              // showTimeInput
+              // timeInputLabel="Hora"
+              fixedHeight
+              {...props}
+            />
+          ) : (
+            <ReactDatePicker
+              selected={value as Date}
+              name={name}
+              ref={ref}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value as string}
+              locale="pt"
+              dateFormat="dd/MM/yyyy"
+              minDate={lowerDate}
+              maxDate={higherDate}
+              showMonthYearPicker={monthPicker}
+              customInput={
+                border ? (
+                  <Input borderColor="#212121" fontSize="sm" />
+                ) : (
+                  <Input
+                    fontSize="sm"
+                    border="0px"
+                    boxShadow="none"
+                    placeholder={placeHolder}
+                    sx={{ '::placeholder': { color: '#212121' } }}
+                    _focus={{ border: 'none', boxShadow: 'none' }}
+                  />
+                )
+              }
+              fixedHeight
+              {...props}
+            />
+          )}
         </Box>
         <InputRightElement color="gray.500" pointerEvents="none" zIndex={-1}>
           <Icon as={BsCalendar3} color="#212121" fontSize="lg" />

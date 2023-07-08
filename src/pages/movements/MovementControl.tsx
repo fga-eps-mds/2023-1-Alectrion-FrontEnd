@@ -430,12 +430,14 @@ function MovementsTable() {
                               minWidth="1200px"
                             />
                             <Datepicker
+                              outsideModal
                               name="lowerDate"
                               control={control}
                               border={false}
                               placeholderText="Data inicial"
                             />
                             <Datepicker
+                              outsideModal
                               name="higherDate"
                               control={control}
                               border={false}
@@ -447,6 +449,7 @@ function MovementsTable() {
                             gap="5px"
                           >
                             <Datepicker
+                              outsideModal
                               name="month"
                               control={control}
                               border={false}
@@ -454,6 +457,7 @@ function MovementsTable() {
                               showMonthYearPicker
                             />
                             <Datepicker
+                              outsideModal
                               name="year"
                               control={control}
                               border={false}
