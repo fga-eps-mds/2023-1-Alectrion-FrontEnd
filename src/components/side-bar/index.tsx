@@ -47,22 +47,20 @@ export const SideBar = memo(() => {
         </Text>
       ))}
       <Box position="absolute" bottom="20px" fontSize="4xs">
-        {user?.role === 'administrador' ? (
-          optionUser.map((option) => (
-            <Text
-              key={option.name}
-              fontSize="4xs"
-              fontWeight="bold"
-              marginTop="10"
-              _hover={{ cursor: 'pointer', color: 'orange.500' }}
-              onClick={() => navigate(option.link)}
-            >
-              {option.name}
-            </Text>
-          ))
-        ) : (
-          ''
-        )}
+        {user?.role === 'administrador'
+          ? optionUser.map((option) => (
+              <Text
+                key={option.name}
+                fontSize="4xs"
+                fontWeight="bold"
+                marginTop="10"
+                _hover={{ cursor: 'pointer', color: 'orange.500' }}
+                onClick={() => navigate(option.link)}
+              >
+                {option.name}
+              </Text>
+            ))
+          : ''}
         <Text
           fontSize="4xs"
           fontWeight="bold"

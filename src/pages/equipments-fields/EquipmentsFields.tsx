@@ -1,17 +1,10 @@
-import {
-  Text,
-  Divider,
-  Flex,
-  Grid,
-  GridItem,
-} from '@chakra-ui/react';
+import { Text, Divider, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
 import EditBrandsForm from '@/components/edit-brands-form';
 import EditTypeForm from '@/components/edit-type-form';
 
 function EquipmentsFields() {
-
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>
@@ -45,7 +38,6 @@ function EquipmentsFields() {
               <EditBrandsForm />
               <EditTypeForm />
             </Flex>
-
           </Flex>
         </Flex>
       </GridItem>

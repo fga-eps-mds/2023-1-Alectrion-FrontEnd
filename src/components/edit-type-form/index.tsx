@@ -1,15 +1,10 @@
-import {
-  Input,
-  Text,
-  Box,
-  Button,
-} from '@chakra-ui/react';
-import { theme } from '@/styles/theme';
+import { Input, Text, Box, Button } from '@chakra-ui/react';
 import { Select, SingleValue } from 'chakra-react-select';
 import { useRef, useState } from 'react';
-import { api } from '@/config/lib/axios';
 import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
+import { api } from '@/config/lib/axios';
+import { theme } from '@/styles/theme';
 import { toast } from '@/utils/toast';
 
 type FormValues = {
@@ -51,7 +46,7 @@ export default function EditTypeForm() {
   };
 
   const formattedOptions = <T, K extends keyof T>(
-    data: TypeData[],
+    data: TypeData[]
   ): ISelectOption[] => {
     return data?.map((item) => {
       const optionLable = String(item.name);
@@ -60,7 +55,6 @@ export default function EditTypeForm() {
     });
   };
 
-
   const handleSearch = debounce(async (str) => {
     if (str !== '') {
       fetchTypes(str);
@@ -68,9 +62,7 @@ export default function EditTypeForm() {
   }, 500);
 
   const handleChange = (event: SingleValue<ISelectOption>) => {
-    const selectedOption = types.find(
-      (type) => type.name === event?.value
-    );
+    const selectedOption = types.find((type) => type.name === event?.value);
     setSelectedType(selectedOption);
   };
 
@@ -78,35 +70,31 @@ export default function EditTypeForm() {
     register: registerCreate,
     handleSubmit: handleSubmitCreate,
     formState: { errors: errorsCreate },
-    reset : resetCreateForm
+    reset: resetCreateForm,
   } = useForm<FormValues>();
 
   const {
     register: registerEdit,
     handleSubmit: handleSubmitEdit,
     formState: { errors: errorsEdit },
-    reset : resetEditForm
-
+    reset: resetEditForm,
   } = useForm<FormValues>();
 
   const {
     register: registerDelete,
     handleSubmit: handleSubmitDelete,
     formState: { errors: errorsDelete },
-    reset : resetDeleteForm
+    reset: resetDeleteForm,
   } = useForm<FormValues>();
 
   const onSubmitEdit = handleSubmitEdit(async (formData) => {
     try {
       const payload = {
         id: selectedType?.id,
-        name: formData.edit
+        name: formData.edit,
       };
-      const response = await api.put(
-        `equipment/type`,
-        payload
-      );
-      resetEditForm()
+      const response = await api.put(`equipment/type`, payload);
+      resetEditForm();
       toast.success('Tipo alterado com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -115,7 +103,6 @@ export default function EditTypeForm() {
         : 'Erro ao alterar o Tipo!';
       toast.error(message);
     }
-
   });
 
   const onSubmitDelete = handleSubmitDelete(async () => {
@@ -123,7 +110,7 @@ export default function EditTypeForm() {
       const response = await api.delete(
         `equipment/type?id=${selectedType?.id}`
       );
-      resetDeleteForm()
+      resetDeleteForm();
       toast.success('Tipo deletado com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -135,16 +122,12 @@ export default function EditTypeForm() {
   });
 
   const onSubmitAdd = handleSubmitCreate(async (formData) => {
-
     try {
       const payload = {
-        name: formData.create
+        name: formData.create,
       };
-      const response = await api.post(
-        `equipment/type`,
-        payload
-      );
-      resetCreateForm()
+      const response = await api.post(`equipment/type`, payload);
+      resetCreateForm();
       toast.success('Tipo criado com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -191,9 +174,7 @@ export default function EditTypeForm() {
             placeholder="Pesquisar por Nome"
             onInputChange={handleSearch}
             onChange={handleChange}
-            options={formattedOptions(
-              types
-            )}
+            options={formattedOptions(types)}
           />
 
           <Text
@@ -244,9 +225,7 @@ export default function EditTypeForm() {
             placeholder="Pesquisar por Nome"
             onInputChange={handleSearch}
             onChange={handleChange}
-            options={formattedOptions(
-              types
-            )}
+            options={formattedOptions(types)}
           />
           <Button
             marginTop="5%"
@@ -291,8 +270,7 @@ export default function EditTypeForm() {
             Cadastrar
           </Button>
         </form>
-
       </Box>
     </div>
-  )
+  );
 }

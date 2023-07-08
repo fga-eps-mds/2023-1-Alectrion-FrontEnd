@@ -1,15 +1,10 @@
-import {
-  Input,
-  Text,
-  Box,
-  Button,
-} from '@chakra-ui/react';
-import { theme } from '@/styles/theme';
+import { Input, Text, Box, Button } from '@chakra-ui/react';
 import { Select, SingleValue } from 'chakra-react-select';
 import { useRef, useState } from 'react';
-import { api } from '@/config/lib/axios';
 import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
+import { api } from '@/config/lib/axios';
+import { theme } from '@/styles/theme';
 import { toast } from '@/utils/toast';
 
 type FormValues = {
@@ -51,7 +46,7 @@ export default function EditBrandsForm() {
   };
 
   const formattedOptions = <T, K extends keyof T>(
-    data: BrandData[],
+    data: BrandData[]
   ): ISelectOption[] => {
     return data?.map((item) => {
       const optionLable = String(item.name);
@@ -60,7 +55,6 @@ export default function EditBrandsForm() {
     });
   };
 
-
   const handleSearch = debounce(async (str) => {
     if (str !== '') {
       fetchBrands(str);
@@ -68,9 +62,7 @@ export default function EditBrandsForm() {
   }, 500);
 
   const handleChange = (event: SingleValue<ISelectOption>) => {
-    const selectedOption = brands.find(
-      (brand) => brand.name === event?.value
-    );
+    const selectedOption = brands.find((brand) => brand.name === event?.value);
     setSelectedBrand(selectedOption);
   };
 
@@ -78,35 +70,31 @@ export default function EditBrandsForm() {
     register: registerCreate,
     handleSubmit: handleSubmitCreate,
     formState: { errors: errorsCreate },
-    reset : resetCreateForm
+    reset: resetCreateForm,
   } = useForm<FormValues>();
 
   const {
     register: registerEdit,
     handleSubmit: handleSubmitEdit,
     formState: { errors: errorsEdit },
-    reset : resetEditForm
-
+    reset: resetEditForm,
   } = useForm<FormValues>();
 
   const {
     register: registerDelete,
     handleSubmit: handleSubmitDelete,
     formState: { errors: errorsDelete },
-    reset : resetDeleteForm
+    reset: resetDeleteForm,
   } = useForm<FormValues>();
 
   const onSubmitEdit = handleSubmitEdit(async (formData) => {
     try {
       const payload = {
         id: selectedBrand?.id,
-        name: formData.edit
+        name: formData.edit,
       };
-      const response = await api.put(
-        `equipment/brand`,
-        payload
-      );
-      resetEditForm()
+      const response = await api.put(`equipment/brand`, payload);
+      resetEditForm();
       toast.success('Marca alterada com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -115,7 +103,6 @@ export default function EditBrandsForm() {
         : 'Erro ao alterar a Marca!';
       toast.error(message);
     }
-
   });
 
   const onSubmitDelete = handleSubmitDelete(async () => {
@@ -123,7 +110,7 @@ export default function EditBrandsForm() {
       const response = await api.delete(
         `equipment/brand?id=${selectedBrand?.id}`
       );
-      resetDeleteForm()
+      resetDeleteForm();
       toast.success('Marca deletada com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -135,16 +122,12 @@ export default function EditBrandsForm() {
   });
 
   const onSubmitAdd = handleSubmitCreate(async (formData) => {
-
     try {
       const payload = {
-        name: formData.create
+        name: formData.create,
       };
-      const response = await api.post(
-        `equipment/brand`,
-        payload
-      );
-      resetCreateForm()
+      const response = await api.post(`equipment/brand`, payload);
+      resetCreateForm();
       toast.success('Marca criada com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -191,9 +174,7 @@ export default function EditBrandsForm() {
             placeholder="Pesquisar por Nome"
             onInputChange={handleSearch}
             onChange={handleChange}
-            options={formattedOptions(
-              brands
-            )}
+            options={formattedOptions(brands)}
           />
 
           <Text
@@ -244,9 +225,7 @@ export default function EditBrandsForm() {
             placeholder="Pesquisar por Nome"
             onInputChange={handleSearch}
             onChange={handleChange}
-            options={formattedOptions(
-              brands
-            )}
+            options={formattedOptions(brands)}
           />
           <Button
             marginTop="5%"
@@ -291,8 +270,7 @@ export default function EditBrandsForm() {
             Cadastrar
           </Button>
         </form>
-
       </Box>
     </div>
-  )
+  );
 }
