@@ -327,6 +327,7 @@ function EquipmentTable() {
                     filterStyle
                   />
                   <Datepicker
+                    outsideModal
                     border={false}
                     placeholderText="Última modificação"
                     name="lastModifiedDate"
