@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react';
 import { theme } from '@/styles/theme';
 import { Select, SingleValue } from 'chakra-react-select';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { api } from '@/config/lib/axios';
 import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
@@ -30,7 +30,6 @@ interface BrandData {
 export default function EditBrandsForm() {
   const [brands, setBrands] = useState<BrandData[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<BrandData>();
-  const take = 5;
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
@@ -79,18 +78,22 @@ export default function EditBrandsForm() {
     register: registerCreate,
     handleSubmit: handleSubmitCreate,
     formState: { errors: errorsCreate },
+    reset : resetCreateForm
   } = useForm<FormValues>();
 
   const {
     register: registerEdit,
     handleSubmit: handleSubmitEdit,
     formState: { errors: errorsEdit },
+    reset : resetEditForm
+
   } = useForm<FormValues>();
 
   const {
     register: registerDelete,
     handleSubmit: handleSubmitDelete,
     formState: { errors: errorsDelete },
+    reset : resetDeleteForm
   } = useForm<FormValues>();
 
   const onSubmitEdit = handleSubmitEdit(async (formData) => {
@@ -103,6 +106,7 @@ export default function EditBrandsForm() {
         `equipment/brand`,
         payload
       );
+      resetEditForm()
       toast.success('Marca alterada com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -119,6 +123,7 @@ export default function EditBrandsForm() {
       const response = await api.delete(
         `equipment/brand?id=${selectedBrand?.id}`
       );
+      resetDeleteForm()
       toast.success('Marca deletada com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -135,12 +140,11 @@ export default function EditBrandsForm() {
       const payload = {
         name: formData.create
       };
-      console.log("ADD " + payload.name);
-
       const response = await api.post(
         `equipment/brand`,
         payload
       );
+      resetCreateForm()
       toast.success('Marca criada com sucesso!', 'Sucesso');
     } catch (error: any) {
       console.error(error);
@@ -149,7 +153,6 @@ export default function EditBrandsForm() {
         : 'Erro ao criar a Marca!';
       toast.error(message);
     }
-
   });
 
   return (
