@@ -91,6 +91,7 @@ export function Datepicker<FormValues extends FieldValues>({
       <InputGroup display="block">
         <Box zIndex={2}>
           <ReactDatePicker
+            portalId="root-portal"
             selected={value as Date}
             name={name}
             ref={ref}
