@@ -484,36 +484,42 @@ function OrderServiceTable() {
           width="100%"
         >
           <Flex flexDirection="column" width="80%">
-            <Text
-              margin="20px 0 15px 0"
-              color={theme.colors.black}
-              fontWeight="semibold"
-              fontSize="4xl"
+            <Flex
+              justifyContent="space-between"
+              width="100%"
+              alignItems="center"
             >
-              Ordem de Serviço
-            </Text>
-            <Flex justifyContent="space-between" width="100%">
-              <Text color="#00000" fontWeight="medium" fontSize="2xl">
-                Últimas Ordens de Serviço
+              <Text
+                margin="20px 0 15px 0"
+                color={theme.colors.black}
+                fontWeight="semibold"
+                fontSize="4xl"
+              >
+                Ordem de Serviço
               </Text>
               <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                 Nova Ordem de Serviço
               </Button>
             </Flex>
-              <Flex
+            <Flex justifyContent="space-between" width="100%">
+              <Text color="#00000" fontWeight="medium" fontSize="2xl">
+                Últimas Ordens de Serviço
+              </Text>
+              <Flex flexDirection="column">
+                <Flex
                   gap={5}
-                  justifyContent="flex-end"
+                  justifyContent="center"
                   width="100%"
                   alignItems="center"
                   padding={4}
                 >
-              <GrDocumentCsv
-                size="2.2rem"
-                cursor="pointer"
-                onClick={() => {
-                  handleReportExport('csv');
-                }}
-              />
+                  <GrDocumentCsv
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('csv');
+                    }}
+                  />
                   <BsFiletypeXlsx
                     size="2.2rem"
                     cursor="pointer"
@@ -529,6 +535,8 @@ function OrderServiceTable() {
                     }}
                   />
                 </Flex>
+              </Flex>
+            </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
             <Flex
               flexDirection="column"
@@ -537,9 +545,7 @@ function OrderServiceTable() {
               width="100%"
             >
               <form id="orderService-filter" style={{ width: '100%' }}>
-                <Flex 
-                gap="5px" alignItems="5px" mb="15px"
-                >
+                <Flex gap="5px" alignItems="5px" mb="15px">
                 <Accordion allowMultiple>
                       <AccordionItem>
                         <h2>
@@ -550,7 +556,7 @@ function OrderServiceTable() {
                             <AccordionIcon />
                           </AccordionButton>
                         </h2>
-                        <AccordionPanel zIndex={4}>
+                        <AccordionPanel position="relative" zIndex="1">
                           <Grid
                             templateColumns="repeat(4, 1fr)"
                             gap="5px"
@@ -644,29 +650,35 @@ function OrderServiceTable() {
                               fontWeight="semibold"
                               size="sm"
                             />
-                            <Datepicker
-                              border={false}
-                              placeholderText="Data de criação"
-                              name="createdAt"
-                              control={control}
-                            />
+                            {/* <Flex zIndex={99} position="absolute" top="32.8%" left="61.5%"> */}                     
+                              <Datepicker
+                                border={false}
+                                placeholderText="Data de criação"
+                                name="createdAt"
+                                control={control}
+                              />
+                            {/* </Flex> */}
                           </Grid>
                           <Grid
                             templateColumns="repeat(4, 1fr)"
                             gap="5px"
                           >
-                            <Datepicker
-                              border={false}
-                              placeholderText="Data de conclusão"
-                              name="finishDate"
-                              control={control}
-                            />
-                            <Datepicker
-                              border={false}
-                              placeholderText="Última atualização"
-                              name="updatedAt"
-                              control={control}
-                            />
+                            {/* <Flex zIndex={99} position="absolute" top="32.8%" left="76.7%"> */}
+                              <Datepicker
+                                border={false}
+                                placeholderText="Data de conclusão"
+                                name="finishDate"
+                                control={control}
+                              />
+                            {/* </Flex> */}
+                            {/* <Flex zIndex={99} position="absolute" top="29%" left="76.7%"> */}
+                              <Datepicker
+                                border={false}
+                                placeholderText="Última atualização"
+                                name="updatedAt"
+                                control={control}
+                              />
+                            {/* </Flex> */}
                             <NewControlledSelect
                               filterStyle
                               control={control}
