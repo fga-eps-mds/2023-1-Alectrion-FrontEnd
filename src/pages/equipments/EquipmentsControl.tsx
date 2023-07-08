@@ -106,12 +106,14 @@ type FilterValues = {
   ram_size?: string;
   description?: string;
   processor?: string;
+  power?: string;
   storageType?: string;
   initialDate?: string;
   finalDate?: string;
   screenType?: string;
   screenSize?: string;
   acquisitionYear?: string;
+  acquisition?: string;
 };
 
 // função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
@@ -123,7 +125,9 @@ function EquipmentTable() {
   const [brands, setBrands] = useState<ISelectOption[]>();
   const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
   const [storageTypes, setStorageTypes] = useState<ISelectOption[]>();
+  const [acquisitionTypes, setAcquisitionTypes] = useState<ISelectOption[]>();
   const [processors, setProcessors] = useState<ISelectOption[]>();
+  const [powers, setPowers] = useState<ISelectOption[]>();
   const [screenTypes, setScreenTypes] = useState<ISelectOption[]>();
   const [screenSizes, setScreenSizes] = useState<ISelectOption[]>();
   const [selectedMovement, setSelectedMovement] = useState<movement>();
@@ -191,10 +195,12 @@ function EquipmentTable() {
       initialDate,
       finalDate,
       processor,
+      power,
       storageType,
       screenSize,
       screenType,
       acquisitionYear,
+      acquisition,
     } = watchFilter;
 
     const dataFormatted = {
@@ -207,12 +213,14 @@ function EquipmentTable() {
       brand,
       ram_size,
       processor,
+      power,
       storageType,
       initialDate: formattedDate(initialDate),
       finalDate: formattedDate(finalDate),
       screenSize,
       screenType,
       acquisitionYear,
+      acquisition,
     };
 
     const filteredDataFormatted = [
@@ -296,37 +304,47 @@ function EquipmentTable() {
     const uniqueRamSizes = new Set<ISelectOption>();
     const uniqueStorageTypes = new Set<ISelectOption>();
     const uniqueProcessors = new Set<ISelectOption>();
+    const uniquePowers = new Set<ISelectOption>();
     const uniqueScreenTypes = new Set<ISelectOption>();
     const uniqueScreenSizes = new Set<ISelectOption>();
+    const uniqueAcquisitionTypes = new Set<ISelectOption>();
 
     const array = await getEquipments('');
     // const requestedBrands = await getBrands();
     // const requestedTypes = await getTypes();
-
     array.forEach((obj) => {
-      if (obj.model !== null) {
-        uniqueModels.add({ label: obj.model, value: obj.model });
+      if (obj.model) {
+        uniqueBrands.add({ label: obj.model, value: obj.model });
       }
-      if (obj.brand.name !== null) {
+      if (obj.brand.name) {
         uniqueBrands.add({ label: obj.brand.name, value: obj.brand.name });
       }
-      if (obj.ram_size !== undefined) {
+      if (obj.ram_size) {
         uniqueRamSizes.add({ label: obj.ram_size, value: obj.ram_size });
       }
-      if (obj.storageType !== undefined) {
+      if (obj.storageType) {
         uniqueStorageTypes.add({
           label: obj.storageType,
           value: obj.storageType,
         });
       }
-      if (obj.processor !== undefined) {
+      if (obj.processor) {
         uniqueProcessors.add({ label: obj.processor, value: obj.processor });
       }
-      if (obj.screenType !== undefined) {
+      if (obj.power) {
+        uniquePowers.add({ label: obj.power, value: obj.power });
+      }
+      if (obj.screenType) {
         uniqueScreenTypes.add({ label: obj.screenType, value: obj.screenType });
       }
-      if (obj.screenSize !== undefined) {
+      if (obj.screenSize) {
         uniqueScreenSizes.add({ label: obj.screenSize, value: obj.screenSize });
+      }
+      if (obj.acquisition.name) {
+        uniqueAcquisitionTypes.add({
+          label: obj.acquisition.name,
+          value: obj.acquisition.name,
+        });
       }
     });
 
@@ -335,8 +353,10 @@ function EquipmentTable() {
     setRam_sizes([...uniqueRamSizes] as ISelectOption[]);
     setStorageTypes([...uniqueStorageTypes] as ISelectOption[]);
     setProcessors([...uniqueProcessors] as ISelectOption[]);
+    setPowers([...uniquePowers] as ISelectOption[]);
     setScreenTypes([...uniqueScreenTypes] as ISelectOption[]);
     setScreenSizes([...uniqueScreenSizes] as ISelectOption[]);
+    setAcquisitionTypes([...uniqueAcquisitionTypes] as ISelectOption[]);
   }
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
@@ -525,169 +545,219 @@ function EquipmentTable() {
               width="100%"
             >
               <form id="equipment-filter" style={{ width: '100%' }}>
-                <Grid
-                  templateColumns="repeat(5, 5fr)"
-                  gap="5px"
-                  alignItems="5px"
-                  mb="15px"
-                >
-                  <NewControlledSelect
-                    control={control}
-                    name="type"
-                    id="type"
-                    options={types.map((type) => ({
-                      label: type?.name ?? '',
-                      value: type?.name ?? '',
-                    }))}
-                    placeholder="Tipo"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                    filterStyle
-                  />
-                  <Datepicker
-                    border={false}
-                    placeholderText="Última modificação"
-                    name="lastModifiedDate"
-                    control={control}
-                  />
-                  <Datepicker
-                    border={false}
-                    placeholderText="Cadastrado depois de"
-                    name="initialDate"
-                    control={control}
-                  />
-                  <Datepicker
-                    border={false}
-                    placeholderText="Cadastrado antes de"
-                    name="finalDate"
-                    control={control}
-                  />
-                  <NewControlledSelect
-                    control={control}
-                    name="unit"
-                    id="unit"
-                    options={workstations}
-                    placeholder="Localização"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                    filterStyle
-                  />
-                  <NewControlledSelect
-                    control={control}
-                    name="situation"
-                    id="situation"
-                    options={STATUS}
-                    placeholder="Situação"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                    filterStyle
-                  />
-                  <NewControlledSelect
-                    filterStyle
-                    control={control}
-                    name="brand"
-                    id="brand"
-                    options={brands}
-                    placeholder="Marca"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                  />
-                  <NewControlledSelect
-                    filterStyle
-                    control={control}
-                    name="model"
-                    id="model"
-                    options={models}
-                    placeholder="Modelos"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                  />
-                  <Input
-                    placeholder="Pesquisa"
-                    minWidth="15vw"
-                    errors={errors.search}
-                    {...register('search')}
-                    rightElement={<BiSearch />}
-                  />
-                </Grid>
-                {watchFilter.type === 'CPU' && (
-                  <Flex gap="5px" alignItems="5px" mb="15px">
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="ram_size"
-                      id="ram_size"
-                      options={ram_sizes}
-                      placeholder="Ram"
-                      cursor="pointer"
-                      variant="unstyled"
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="processor"
-                      id="processor"
-                      options={processors}
-                      placeholder="Processador"
-                      cursor="pointer"
-                      variant="unstyled"
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="storageType"
-                      id="storageType"
-                      options={storageTypes}
-                      placeholder="Tipo de armazenamento"
-                      cursor="pointer"
-                      variant="unstyled"
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                  </Flex>
-                )}
-                {watchFilter.type === 'Monitor' && (
-                  <Flex gap="5px" alignItems="5px" mb="15px">
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="screenSize"
-                      id="screenSize"
-                      options={screenSizes}
-                      placeholder="Tamanho da tela"
-                      cursor="pointer"
-                      variant="unstyled"
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                    <NewControlledSelect
-                      filterStyle
-                      control={control}
-                      name="screenType"
-                      id="screenType"
-                      options={screenTypes}
-                      placeholder="Tipo de tela"
-                      cursor="pointer"
-                      variant="unstyled"
-                      fontWeight="semibold"
-                      size="sm"
-                    />
-                  </Flex>
-                )}
+                <Accordion allowMultiple>
+                  <AccordionItem>
+                    <h2>
+                      <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                          Filtros
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel zIndex={4}>
+                      <Grid
+                        templateColumns="repeat(5, 5fr)"
+                        gap="5px"
+                        alignItems="5px"
+                        mb="15px"
+                      >
+                        <NewControlledSelect
+                          control={control}
+                          name="type"
+                          id="type"
+                          options={TIPOS_EQUIPAMENTO}
+                          placeholder="Tipo"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                          filterStyle
+                        />
+                        {watchFilter.type === 'Monitor' && (
+                          <>
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="screenSize"
+                              id="screenSize"
+                              options={screenSizes}
+                              placeholder="Tamanho da tela"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="screenType"
+                              id="screenType"
+                              options={screenTypes}
+                              placeholder="Tipo de tela"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                          </>
+                        )}
+                        {watchFilter.type === 'CPU' && (
+                          <>
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="ram_size"
+                              id="ram_size"
+                              options={ram_sizes}
+                              placeholder="Ram"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="processor"
+                              id="processor"
+                              options={processors}
+                              placeholder="Processador"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="storageType"
+                              id="storageType"
+                              options={storageTypes}
+                              placeholder="Tipo de armazenamento"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                          </>
+                        )}
+                        {(watchFilter.type === 'Estabilizador' ||
+                          watchFilter.type === 'Nobreak') && (
+                          <NewControlledSelect
+                            filterStyle
+                            control={control}
+                            name="power"
+                            id="power"
+                            options={powers}
+                            placeholder="Potência"
+                            cursor="pointer"
+                            variant="unstyled"
+                            fontWeight="semibold"
+                            size="sm"
+                          />
+                        )}
+                        <Datepicker
+                          border={false}
+                          placeholderText="Última modificação"
+                          name="lastModifiedDate"
+                          control={control}
+                        />
+                        <Datepicker
+                          border={false}
+                          placeholderText="Cadastrado depois de"
+                          name="initialDate"
+                          control={control}
+                        />
+                        <Datepicker
+                          border={false}
+                          placeholderText="Cadastrado antes de"
+                          name="finalDate"
+                          control={control}
+                        />
+                        <NewControlledSelect
+                          control={control}
+                          name="unit"
+                          id="unit"
+                          options={workstations}
+                          placeholder="Localização"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                          filterStyle
+                        />
+                        <NewControlledSelect
+                          control={control}
+                          name="acquisitionYear"
+                          id="unit"
+                          options={listOfYears}
+                          placeholder="Ano de Aquisição"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                          filterStyle
+                        />
+                        <NewControlledSelect
+                          control={control}
+                          name="acquisition"
+                          id="acquisition"
+                          options={acquisitionTypes}
+                          placeholder="Tipo de aquisição"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                          filterStyle
+                        />
+                        <NewControlledSelect
+                          control={control}
+                          name="situation"
+                          id="situation"
+                          options={STATUS}
+                          placeholder="Situação"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                          filterStyle
+                        />
+                        <NewControlledSelect
+                          filterStyle
+                          control={control}
+                          name="brand"
+                          id="brand"
+                          options={brands}
+                          placeholder="Marca"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                        />
+                        <NewControlledSelect
+                          filterStyle
+                          control={control}
+                          name="model"
+                          id="model"
+                          options={models}
+                          placeholder="Modelos"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                        />
+                        <Input
+                          placeholder="Pesquisa"
+                          minWidth="15vw"
+                          errors={errors.search}
+                          {...register('search')}
+                          rightElement={<BiSearch />}
+                        />
+                      </Grid>
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
               </form>
             </Flex>
             {filter !== '' ? (

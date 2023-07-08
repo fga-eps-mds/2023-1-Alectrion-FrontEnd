@@ -72,6 +72,7 @@ export function Datepicker<FormValues extends FieldValues>({
           <ReactDatePicker
             selected={value as Date}
             name={name}
+            portalId="root-portal"
             ref={ref}
             onChange={onChange}
             onBlur={onBlur}
