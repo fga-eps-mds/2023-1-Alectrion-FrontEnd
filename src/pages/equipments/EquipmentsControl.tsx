@@ -570,12 +570,6 @@ function EquipmentTable() {
           setRefreshRequest={setRefreshRequest}
           isOpen={isUploadOpen}
         />
-        <EquipmentsUploadModal
-          onClose={onUploadClose}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-          isOpen={isUploadOpen}
-        />
       </GridItem>
     </Grid>
   );
