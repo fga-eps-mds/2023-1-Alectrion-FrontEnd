@@ -35,7 +35,6 @@ import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
 import { EquipmentViewModal } from '@/components/equipment-view-modal';
 import { theme } from '@/styles/theme';
 import { EquipmentEditModal } from '@/components/equipment-edit-modal';
-import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
@@ -116,7 +115,6 @@ function EquipmentTable() {
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
   const [equipsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
-  const [equipsForFilter, setEquipsForFilter] = useState<EquipmentData[]>([]);
   const [models, setModels] = useState<ISelectOption[]>();
   const [brands, setBrands] = useState<ISelectOption[]>();
   const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
@@ -140,11 +138,6 @@ function EquipmentTable() {
   const [type, setType] = useState<string>('');
   const { user } = useAuth();
 
-  /* const setValues = (equips: EquipmentData[]) => {
-    equips.map(()=> {
-      setModels()
-    })
-  } */
   const {
     control,
     watch,
@@ -293,6 +286,52 @@ function EquipmentTable() {
       });
   };
 
+  async function setFilterOptions() {
+    const uniqueModels = new Set<ISelectOption>();
+    const uniqueBrands = new Set<ISelectOption>();
+    const uniqueRamSizes = new Set<ISelectOption>();
+    const uniqueStorageTypes = new Set<ISelectOption>();
+    const uniqueProcessors = new Set<ISelectOption>();
+    const uniqueScreenTypes = new Set<ISelectOption>();
+    const uniqueScreenSizes = new Set<ISelectOption>();
+
+    const array = await getEquipments('');
+    array.forEach((obj) => {
+      if (obj.model !== null) {
+        uniqueModels.add({ label: obj.model, value: obj.model });
+      }
+      if (obj.brand.name !== null) {
+        uniqueBrands.add({ label: obj.brand.name, value: obj.brand.name });
+      }
+      if (obj.ram_size !== undefined) {
+        uniqueRamSizes.add({ label: obj.ram_size, value: obj.ram_size });
+      }
+      if (obj.storageType !== undefined) {
+        uniqueStorageTypes.add({
+          label: obj.storageType,
+          value: obj.storageType,
+        });
+      }
+      if (obj.processor !== undefined) {
+        uniqueProcessors.add({ label: obj.processor, value: obj.processor });
+      }
+      if (obj.screenType !== undefined) {
+        uniqueScreenTypes.add({ label: obj.screenType, value: obj.screenType });
+      }
+      if (obj.screenSize !== undefined) {
+        uniqueScreenSizes.add({ label: obj.screenSize, value: obj.screenSize });
+      }
+    });
+
+    setModels([...uniqueModels] as ISelectOption[]);
+    setBrands([...uniqueBrands] as ISelectOption[]);
+    setRam_sizes([...uniqueRamSizes] as ISelectOption[]);
+    setStorageTypes([...uniqueStorageTypes] as ISelectOption[]);
+    setProcessors([...uniqueProcessors] as ISelectOption[]);
+    setScreenTypes([...uniqueScreenTypes] as ISelectOption[]);
+    setScreenSizes([...uniqueScreenSizes] as ISelectOption[]);
+  }
+
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     return function (this: any, ...args: Parameters<T>) {
@@ -328,13 +367,9 @@ function EquipmentTable() {
     }
   };
 
-  const fetchEquipmentsToFilter = async () => {
-    setEquipsForFilter(await getEquipments(''));
-  };
-
   useEffect(() => {
     getWorkstations();
-    fetchEquipmentsToFilter();
+    setFilterOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
