@@ -110,16 +110,6 @@ export default function EquipmentForm({
     watchStorageAmount,
   ]);
 
-  const listOfYears: Array<{ value: number; label: string }> = (() => {
-    const endYear: number = new Date().getFullYear();
-    const startYear: number = endYear - 30;
-
-    return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
-      const year = startYear + index;
-      return { value: year, label: year.toString() };
-    }).reverse();
-  })();
-
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const { type, estado, storageType, screenType, ...rest } = formData;

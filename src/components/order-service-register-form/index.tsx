@@ -47,6 +47,7 @@ export function OrderServiceRegisterForm({
   setRefreshRequest,
   onOpenTerm,
 }: OrderServiceFormProps) {
+  console.log({ Select });
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
 
@@ -338,3 +339,4 @@ export function OrderServiceRegisterForm({
     </form>
   );
 }
+//

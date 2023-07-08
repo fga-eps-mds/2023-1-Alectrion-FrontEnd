@@ -79,16 +79,6 @@ export default function EquipmentEditForm({
     resetField('type');
   }, []);
 
-  const listOfYears: Array<{ value: number; label: string }> = (() => {
-    const endYear: number = new Date().getFullYear();
-    const startYear: number = endYear - 30;
-
-    return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
-      const year = startYear + index;
-      return { value: year, label: year.toString() };
-    }).reverse();
-  })();
-
   function formatDate(date: Date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -107,7 +97,6 @@ export default function EquipmentEditForm({
         ...rest
       } = formData;
 
-      const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
       const dateString = formatDate(acquisitionDate);
 
       const payload = {
