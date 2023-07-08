@@ -13,8 +13,8 @@ import { useForm } from 'react-hook-form';
 import { toast } from '@/utils/toast';
 
 type FormValues = {
-  oldBrand: string;
-  newBrand: string;
+  create: string;
+  edit: string;
 };
 
 interface ISelectOption {
@@ -23,7 +23,8 @@ interface ISelectOption {
 }
 
 interface BrandData {
-  brand: { name: string };
+  id: number;
+  name: string;
 }
 
 export default function EditBrandsForm() {
@@ -40,10 +41,9 @@ export default function EditBrandsForm() {
   };
 
   const fetchBrands = async (str: string) => {
-    // TODO: EDITAR ROTA
     try {
       const { data }: AxiosResponse<BrandData[]> = await api.get(
-        `equipment/find?searchTipping=${str}&take=${take}`
+        `equipment/brand?search=${str}`
       );
       setBrands(data);
     } catch (error) {
@@ -52,14 +52,11 @@ export default function EditBrandsForm() {
   };
 
   const formattedOptions = <T, K extends keyof T>(
-    // TODO: FAZER FUNCIONAR RS
-    data: T[],
-    label: K,
-    value: K
+    data: BrandData[],
   ): ISelectOption[] => {
-    return data?.map((item: T) => {
-      const optionLable = String(item[label]);
-      const optionValue: number | string = String(item[value]);
+    return data?.map((item) => {
+      const optionLable = String(item.name);
+      const optionValue: number | string = String(item.name);
       return { label: optionLable, value: optionValue };
     });
   };
@@ -73,30 +70,37 @@ export default function EditBrandsForm() {
 
   const handleChange = (event: SingleValue<ISelectOption>) => {
     const selectedOption = brands.find(
-      (brand) => brand.brand.name === event?.value
+      (brand) => brand.name === event?.value
     );
     setSelectedBrand(selectedOption);
   };
 
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
+    register: registerCreate,
+    handleSubmit: handleSubmitCreate,
+    formState: { errors: errorsCreate },
   } = useForm<FormValues>();
 
-  const onSubmitEdit = handleSubmit(async (formData) => {
+  const {
+    register: registerEdit,
+    handleSubmit: handleSubmitEdit,
+    formState: { errors: errorsEdit },
+  } = useForm<FormValues>();
+
+  const {
+    register: registerDelete,
+    handleSubmit: handleSubmitDelete,
+    formState: { errors: errorsDelete },
+  } = useForm<FormValues>();
+
+  const onSubmitEdit = handleSubmitEdit(async (formData) => {
     try {
-      const {
-        oldBrand,
-        newBrand
-      } = formData;
       const payload = {
-        oldBrand: selectedBrand?.brand,
-        newBrand
+        id: selectedBrand?.id,
+        name: formData.edit
       };
-      // TODO: ALTERAR ROTA
-      const response = await api.post(
-        `rota para o back`,
+      const response = await api.put(
+        `equipment/brand`,
         payload
       );
       toast.success('Marca alterada com sucesso!', 'Sucesso');
@@ -110,20 +114,10 @@ export default function EditBrandsForm() {
 
   });
 
-  const onSubmitDelete= handleSubmit(async (formData) => {
+  const onSubmitDelete = handleSubmitDelete(async () => {
     try {
-      const {
-        oldBrand,
-        newBrand
-      } = formData;
-      const payload = {
-        oldBrand: selectedBrand?.brand,
-        newBrand
-      };
-      // TODO: ALTERAR ROTA
-      const response = await api.post(
-        `rota para o back`,
-        payload
+      const response = await api.delete(
+        `equipment/brand?id=${selectedBrand?.id}`
       );
       toast.success('Marca deletada com sucesso!', 'Sucesso');
     } catch (error: any) {
@@ -133,20 +127,18 @@ export default function EditBrandsForm() {
         : 'Erro ao deletar a Marca!';
       toast.error(message);
     }
-
   });
 
-  const onSubmitAdd = handleSubmit(async (formData) => {
+  const onSubmitAdd = handleSubmitCreate(async (formData) => {
+
     try {
-      const {
-        newBrand
-      } = formData;
       const payload = {
-        newBrand
+        name: formData.create
       };
-      // TODO: ALTERAR ROTA
+      console.log("ADD " + payload.name);
+
       const response = await api.post(
-        `rota para o back`,
+        `equipment/brand`,
         payload
       );
       toast.success('Marca criada com sucesso!', 'Sucesso');
@@ -197,9 +189,7 @@ export default function EditBrandsForm() {
             onInputChange={handleSearch}
             onChange={handleChange}
             options={formattedOptions(
-              brands,
-              'brand',
-              'brand'
+              brands
             )}
           />
 
@@ -216,10 +206,13 @@ export default function EditBrandsForm() {
           <Input
             size="lg"
             fontSize="lg"
-            name="nome"
             width="100%"
             marginRight="75px"
             placeholder="Novo nome para a marca"
+            {...registerEdit('edit', {
+              required: 'Campo Obrigatório',
+              maxLength: 50,
+            })}
           />
 
           <Button
@@ -249,9 +242,7 @@ export default function EditBrandsForm() {
             onInputChange={handleSearch}
             onChange={handleChange}
             options={formattedOptions(
-              brands,
-              'brand',
-              'brand'
+              brands
             )}
           />
           <Button
@@ -279,9 +270,12 @@ export default function EditBrandsForm() {
           <Input
             size="lg"
             fontSize="lg"
-            name="nome"
             width="100%"
             placeholder="Nome da Marca"
+            {...registerCreate('create', {
+              required: 'Campo Obrigatório',
+              maxLength: 50,
+            })}
           />
 
           <Button
