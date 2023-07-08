@@ -8,6 +8,7 @@ import {
 import { SideBar } from '@/components/side-bar';
 import { theme } from '@/styles/theme';
 import EditBrandsForm from '@/components/edit-brands-form';
+import EditTypeForm from '@/components/edit-type-form';
 
 function EquipmentsFields() {
 
@@ -40,7 +41,10 @@ function EquipmentsFields() {
             </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
 
-            <EditBrandsForm />
+            <Flex justifyContent="space-between" width="100%">
+              <EditBrandsForm />
+              <EditTypeForm />
+            </Flex>
 
           </Flex>
         </Flex>
