@@ -26,10 +26,12 @@ import {
 import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
-import { MdDeleteForever } from 'react-icons/md';
 import { BiSearch } from 'react-icons/bi';
 import { useForm } from 'react-hook-form';
 import { debounce } from 'lodash';
+import { GrDocumentCsv } from 'react-icons/gr';
+import { MdDeleteForever, MdPictureAsPdf } from 'react-icons/md';
+import { BsFiletypeXlsx } from 'react-icons/bs';
 import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
@@ -41,9 +43,8 @@ import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
-import { PDF } from '@/components/movements-reports/pdf';
-// import { Excel } from '@/components/movements-reports/xls';
-// import { CSV } from '@/components/movements-reports/csv';
+import { getMovements } from '@/utils/getMovements';
+import { ReportModal } from '@/components/movements-reports/pdf';
 
 interface ISelectOption {
   label: string;
@@ -107,30 +108,6 @@ export interface movement {
   equipments: movementEquipment[];
 }
 
-const generateSemesterOptions = (): ISelectOption[] => {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1; // Janeiro é o mês 0, por isso adicionamos 1
-
-  const options: ISelectOption[] = [];
-
-  for (let year = currentYear; year >= currentYear - 20; year - 1) {
-    for (let semester = 1; semester <= 2; semester + 1) {
-      const label = `Semestre ${semester} - ${year}`;
-
-      if (
-        (year === currentYear && semester <= Math.ceil(currentMonth / 6)) ||
-        year < currentYear
-      ) {
-        const value = `${year}-${semester}`;
-        options.push({ label, value });
-      }
-    }
-  }
-
-  return options;
-};
-
 function MovementsTable() {
   const [movements, setMovements] = useState<movement[]>([]);
   const [nextMovements, setNextMovements] = useState<movement[]>([]);
@@ -140,6 +117,8 @@ function MovementsTable() {
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const limit = 10;
+  const [type, setType] = useState<string>('');
+  const [movementsToExport, setMovementsToExport] = useState<movement[]>([]);
 
   const {
     control,
@@ -284,6 +263,12 @@ function MovementsTable() {
     reset();
   };
 
+  const {
+    isOpen: isReportOpen,
+    onClose: onReportClose,
+    onOpen: onReportOpen,
+  } = useDisclosure();
+
   useEffect(() => {
     fetchItems();
     fetchNextItems();
@@ -313,6 +298,12 @@ function MovementsTable() {
     } catch (error) {
       toast.error('Não é mais possível deletar a movimentação');
     }
+  };
+
+  const handleReportExport = async (selectedType: string) => {
+    setType(selectedType);
+    setMovementsToExport(await getMovements(filter));
+    onReportOpen();
   };
 
   return (
@@ -368,9 +359,27 @@ function MovementsTable() {
                       alignItems="center"
                       padding={4}
                     >
-                      {/* <CSV /> */}
-                      {/* <Excel /> */}
-                      <PDF movements={[]} />
+                      <GrDocumentCsv
+                        size="2.2rem"
+                        cursor="pointer"
+                        onClick={() => {
+                          handleReportExport('csv');
+                        }}
+                      />
+                      <BsFiletypeXlsx
+                        size="2.2rem"
+                        cursor="pointer"
+                        onClick={() => {
+                          handleReportExport('xls');
+                        }}
+                      />
+                      <MdPictureAsPdf
+                        size="2.2rem"
+                        cursor="pointer"
+                        onClick={() => {
+                          handleReportExport('pdf');
+                        }}
+                      />
                     </Flex>
                   </Flex>
                 </Flex>
@@ -430,12 +439,14 @@ function MovementsTable() {
                               minWidth="1200px"
                             />
                             <Datepicker
+                              outsideModal
                               name="lowerDate"
                               control={control}
                               border={false}
                               placeholderText="Data inicial"
                             />
                             <Datepicker
+                              outsideModal
                               name="higherDate"
                               control={control}
                               border={false}
@@ -447,6 +458,7 @@ function MovementsTable() {
                             gap="5px"
                           >
                             <Datepicker
+                              outsideModal
                               name="month"
                               control={control}
                               border={false}
@@ -454,6 +466,7 @@ function MovementsTable() {
                               showMonthYearPicker
                             />
                             <Datepicker
+                              outsideModal
                               name="year"
                               control={control}
                               border={false}
@@ -622,6 +635,12 @@ function MovementsTable() {
         selectedMoviment={selectedMovement}
         refreshRequest={refreshRequest}
         setRefreshRequest={setRefreshRequest}
+      />
+      <ReportModal
+        isOpen={isReportOpen}
+        onClose={onReportClose}
+        type={type}
+        movements={movementsToExport}
       />
     </>
   );
