@@ -257,7 +257,7 @@ export default function EquipmentForm({
           }))}
           placeholder="Selecione uma opção"
           label="Posto de trabalho"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+          rules={{ shouldUnregister: true }}
         />
 
         <Input
