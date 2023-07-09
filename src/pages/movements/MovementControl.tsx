@@ -47,7 +47,6 @@ interface TypeData {
   name: string;
 }
 
-
 type FormValues = {
   type: ISelectOption;
   inChargeName: ISelectOption;
@@ -66,7 +65,7 @@ export interface movementEquipment {
     name: string;
   };
 
-  type: {name: string};
+  type: { name: string };
 
   id: string;
   selected?: boolean;
@@ -285,9 +284,8 @@ function MovementsTable() {
   };
 
   useEffect(() => {
-    fetchTypes("")
+    fetchTypes('');
   }, []);
-
 
   return (
     <>

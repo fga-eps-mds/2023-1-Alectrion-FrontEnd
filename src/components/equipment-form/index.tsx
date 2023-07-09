@@ -4,7 +4,6 @@ import { Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { Select, SingleValue } from 'chakra-react-select';
 import { AxiosResponse } from 'axios';
 
-
 import { Datepicker } from '../form-fields/date';
 
 import {
@@ -175,7 +174,6 @@ export default function EquipmentForm({
   const [types, setTypes] = useState<TypeData[]>([]);
   const [selectedType, setSelectedType] = useState<TypeData>();
 
-
   const fetchBrands = async (str: string) => {
     try {
       const { data }: AxiosResponse<BrandData[]> = await api.get(
@@ -199,8 +197,8 @@ export default function EquipmentForm({
   };
 
   useEffect(() => {
-    fetchTypes("")
-    fetchBrands("")
+    fetchTypes('');
+    fetchBrands('');
   }, []);
 
   return (

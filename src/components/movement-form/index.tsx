@@ -30,7 +30,7 @@ import { useAuth } from '@/contexts/AuthContext';
 interface equipamentData {
   tippingNumber: string;
   serialNumber: string;
-  type: {name: string};
+  type: { name: string };
   situacao: string;
   estado: string;
   model: string;

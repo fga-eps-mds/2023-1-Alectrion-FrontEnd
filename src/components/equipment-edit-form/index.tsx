@@ -20,7 +20,7 @@ import { NewControlledSelect } from '../form-fields/new-controlled-select';
 export type EditEquipFormValues = {
   tippingNumber: string;
   serialNumber: string;
-  type: {name: string};
+  type: { name: string };
   situacao: string;
   model: string;
   description?: string;
@@ -129,9 +129,6 @@ export default function EquipmentEditForm({
         ...rest,
       };
 
-      console.log(payload);
-      
-
       const response = await api.put('equipment/updateEquipment', payload);
 
       if (response.status === 200) {
@@ -173,8 +170,8 @@ export default function EquipmentEditForm({
   };
 
   useEffect(() => {
-    fetchTypes("")
-    fetchBrands("")
+    fetchTypes('');
+    fetchBrands('');
   }, []);
 
   return (
@@ -345,7 +342,8 @@ export default function EquipmentEditForm({
           </>
         )}
 
-        {(watchType.name === 'Estabilizador' || watchType.name === 'Nobreak') && (
+        {(watchType.name === 'Estabilizador' ||
+          watchType.name === 'Nobreak') && (
           <Input
             label="Potência (VA)"
             errors={errors.storageAmount}

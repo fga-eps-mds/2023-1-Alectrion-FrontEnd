@@ -304,7 +304,7 @@ function EquipmentTable() {
   };
 
   useEffect(() => {
-    fetchTypes("")
+    fetchTypes('');
   }, []);
 
   return (

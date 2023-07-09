@@ -54,7 +54,7 @@ export interface Equipment {
   brand: {
     name: string;
   };
-  type: {name: string};
+  type: { name: string };
   id: string;
   model: string;
   unit: {
@@ -285,9 +285,8 @@ function OrderServiceTable() {
   };
 
   useEffect(() => {
-    fetchTypes("")
+    fetchTypes('');
   }, []);
-
 
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
