@@ -7,13 +7,13 @@ import {
   Image,
   Font,
 } from '@react-pdf/renderer';
-import { movementEquipment } from '@/pages/movements/MovementControl';
+import React from 'react';
+import { movement } from '@/pages/movements/MovementControl';
+import { formatDate } from '@/utils/format-date';
 
-interface MovementsReportPDFProps {
-  equipments: movementEquipment[];
+interface MovementsPdfProps {
+  movements: movement[];
   title: string;
-  date: string;
-  destination: string;
 }
 
 Font.register({
@@ -32,12 +32,7 @@ Font.register({
   ],
 });
 
-export function MovementsReportPDF({
-  title,
-  equipments,
-  date,
-  destination,
-}: MovementsReportPDFProps) {
+export function MovementsPDF({ title, movements }: MovementsPdfProps) {
   const styles = StyleSheet.create({
     page: {
       flexDirection: 'column',
@@ -100,6 +95,7 @@ export function MovementsReportPDF({
       fontSize: 8,
       flex: 1,
       textAlign: 'center',
+      paddingRight: 15,
     },
     signature: {
       marginTop: 200,
@@ -109,40 +105,35 @@ export function MovementsReportPDF({
     },
   });
 
-  const currentEmissionDate = new Date();
-  const emissionDay = currentEmissionDate.getDate().toString().padStart(2, '0');
-  const emissionMonth = currentEmissionDate
-    .getMonth()
-    .toString()
-    .padStart(2, '0');
-  const emissionYear = currentEmissionDate
-    .getFullYear()
-    .toString()
-    .padStart(4, '0');
+  const formattedEmissionDate = (): string => {
+    const currentEmissionDate = new Date();
+    const emissionDay = currentEmissionDate
+      .getDate()
+      .toString()
+      .padStart(2, '0');
+    const emissionMonth = (currentEmissionDate.getMonth() + 1)
+      .toString()
+      .padStart(2, '0');
+    const emissionYear = currentEmissionDate
+      .getFullYear()
+      .toString()
+      .padStart(4, '0');
 
-  const emissionHours = currentEmissionDate
-    .getHours()
-    .toString()
-    .padStart(2, '0');
-  const emissionMinutes = currentEmissionDate
-    .getMinutes()
-    .toString()
-    .padStart(2, '0');
-  const emissionSeconds = currentEmissionDate
-    .getSeconds()
-    .toString()
-    .padStart(2, '0');
+    const emissionHours = currentEmissionDate
+      .getHours()
+      .toString()
+      .padStart(2, '0');
+    const emissionMinutes = currentEmissionDate
+      .getMinutes()
+      .toString()
+      .padStart(2, '0');
+    const emissionSeconds = currentEmissionDate
+      .getSeconds()
+      .toString()
+      .padStart(2, '0');
 
-  const formattedEmissionDate = `${emissionDay}/${emissionMonth}/${emissionYear} - ${emissionHours}:${emissionMinutes}:${emissionSeconds}`;
-
-  const movementDate = new Date(date);
-  const movementDay = movementDate.getDate().toString().padStart(2, '0');
-  const movementMonth = (movementDate.getMonth() + 1)
-    .toString()
-    .padStart(2, '0');
-  const movementYear = movementDate.getFullYear().toString().padStart(4, '0');
-
-  const formattedMovementDate = `${movementDay}/${movementMonth}/${movementYear}`;
+    return `${emissionDay}/${emissionMonth}/${emissionYear} - ${emissionHours}:${emissionMinutes}:${emissionSeconds}`;
+  };
 
   return (
     <Document>
@@ -151,24 +142,19 @@ export function MovementsReportPDF({
           <Image src="/PoliciaCivilLogo.jpeg" style={styles.logo} />
           <Text style={styles.caption}>ESTADO DE GOIÁS</Text>
           <Text style={styles.caption}>DIRETORIA GERAL DA POLÍCIA CIVIL</Text>
-
           <Text style={styles.caption}>
             SUPERINTENDÊNCIA DE GESTÃO INTEGRADA
           </Text>
-
           <Text style={styles.caption}>
             DIVISÃO DE SUPORTE TÉCNICO EM INFORMÁTICA
           </Text>
-          <Text style={styles.title}>Termo de {title}</Text>
+          <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>
             Sistema de Controle Interno da DSTI
           </Text>
-          <Text style={styles.locale}>
-            {title === 'Baixa' ? '' : '26ª Delegacia de Polícia de Goiânia'}
-          </Text>
         </View>
         <Text style={styles.caption}>
-          Data da emissão: {formattedEmissionDate}
+          Data da emissão: {formattedEmissionDate()}
         </Text>
         <View style={styles.tableHeader}>
           <Text style={{ ...styles.columnHeader, maxWidth: 24 }}>Item</Text>
@@ -178,52 +164,54 @@ export function MovementsReportPDF({
           <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
             Tipo
           </Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 40 }}>Marca</Text>
-          <Text style={styles.columnHeader}>Descrição</Text>
-          <Text style={styles.columnHeader}>
-            {title === 'Baixa' ? 'Última Lotação' : 'Lotação'}
+          <Text style={{ ...styles.columnHeader, minWidth: 45, maxWidth: 55 }}>
+            Marca
           </Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Data</Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 70 }}>
+            Descrição
+          </Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 70, maxWidth: 90 }}>
+            Lotação
+          </Text>
+          <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
+            Status
+          </Text>
+          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Entrada</Text>
+          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Saída</Text>
         </View>
-        {equipments?.map((equipment, index) => (
-          <View style={styles.tableRow} key={equipment?.id}>
+        {movements?.map((movement, index) => (
+          <View style={styles.tableRow} key={movement?.id}>
             <Text style={{ ...styles.rowData, maxWidth: 24 }}>{index + 1}</Text>
-            <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
-              {equipment?.tippingNumber}
+            {movement?.equipments?.map((equipment) => (
+              <React.Fragment key={equipment?.id}>
+                <Text
+                  style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}
+                >
+                  {equipment?.tippingNumber}
+                </Text>
+                <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
+                  {equipment?.type}
+                </Text>
+                <Text style={{ ...styles.rowData, minWidth: 38, maxWidth: 55 }}>
+                  {equipment?.brand?.name}
+                </Text>
+                <Text style={styles.rowData}>{equipment?.description}</Text>
+                {/* <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
+                  {equipment?.situacao}
+                </Text> */}
+              </React.Fragment>
+            ))}
+            <Text style={{ ...styles.rowData, minWidth: 70, maxWidth: 90 }}>
+              {movement?.destination?.name}
             </Text>
-            <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-              {equipment?.type}
-            </Text>
-            <Text style={{ ...styles.rowData, maxWidth: 40 }}>
-              {equipment?.brand?.name}
-            </Text>
-            <Text style={styles.rowData}>{equipment?.description}</Text>
-            <Text style={styles.rowData}>{destination}</Text>
             <Text style={{ ...styles.rowData, maxWidth: 56 }}>
-              {formattedMovementDate}
+              {movement?.date}
+            </Text>
+            <Text style={{ ...styles.rowData, maxWidth: 56 }}>
+              {formatDate(movement?.updatedAt)}
             </Text>
           </View>
         ))}
-
-        <Text
-          style={{ ...styles.caption, alignSelf: 'flex-end', marginTop: 8 }}
-        >
-          Qtd. {equipments?.length}
-        </Text>
-
-        {title !== 'Baixa' && (
-          <View style={styles.signature}>
-            <Text style={{ ...styles.caption, marginBottom: 4 }}>
-              {'_'.repeat(50)}
-            </Text>
-            <Text style={styles.caption}>
-              ASSINATURA / CARIMBO DO TITULAR DA UNIDADE
-            </Text>
-            <Text style={styles.caption}>
-              26ª DELEGACIA DE POLÍCIA DE GOIÂNIA
-            </Text>
-          </View>
-        )}
       </Page>
     </Document>
   );
