@@ -66,7 +66,7 @@ export interface movementEquipment {
     name: string;
   };
 
-  type: string;
+  type: {name: string};
 
   id: string;
   selected?: boolean;
