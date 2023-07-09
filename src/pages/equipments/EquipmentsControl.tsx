@@ -308,38 +308,73 @@ function EquipmentTable() {
     const uniqueScreenTypes: ISelectOption[] = [];
     const uniqueScreenSizes: ISelectOption[] = [];
     const uniqueAcquisitionTypes: ISelectOption[] = [];
-  
+
     const array = await getEquipments('');
     array.forEach((obj) => {
       if (obj.model && !uniqueModels.some((item) => item.value === obj.model)) {
         uniqueModels.push({ label: obj.model, value: obj.model });
       }
-      if (obj.brand.name && !uniqueBrands.some((item) => item.value === obj.brand.name)) {
+      if (
+        obj.brand.name &&
+        !uniqueBrands.some((item) => item.value === obj.brand.name)
+      ) {
         uniqueBrands.push({ label: obj.brand.name, value: obj.brand.name });
       }
-      if (obj.ram_size && !uniqueRamSizes.some((item) => item.value === obj.ram_size)) {
+      if (
+        obj.ram_size &&
+        !uniqueRamSizes.some((item) => item.value === obj.ram_size)
+      ) {
         uniqueRamSizes.push({ label: obj.ram_size, value: obj.ram_size });
       }
-      if (obj.storageType && !uniqueStorageTypes.some((item) => item.value === obj.storageType)) {
-        uniqueStorageTypes.push({ label: obj.storageType, value: obj.storageType });
+      if (
+        obj.storageType &&
+        !uniqueStorageTypes.some((item) => item.value === obj.storageType)
+      ) {
+        uniqueStorageTypes.push({
+          label: obj.storageType,
+          value: obj.storageType,
+        });
       }
-      if (obj.processor && !uniqueProcessors.some((item) => item.value === obj.processor)) {
+      if (
+        obj.processor &&
+        !uniqueProcessors.some((item) => item.value === obj.processor)
+      ) {
         uniqueProcessors.push({ label: obj.processor, value: obj.processor });
       }
       if (obj.power && !uniquePowers.some((item) => item.value === obj.power)) {
         uniquePowers.push({ label: obj.power, value: obj.power });
       }
-      if (obj.screenType && !uniqueScreenTypes.some((item) => item.value === obj.screenType)) {
-        uniqueScreenTypes.push({ label: obj.screenType, value: obj.screenType });
+      if (
+        obj.screenType &&
+        !uniqueScreenTypes.some((item) => item.value === obj.screenType)
+      ) {
+        uniqueScreenTypes.push({
+          label: obj.screenType,
+          value: obj.screenType,
+        });
       }
-      if (obj.screenSize && !uniqueScreenSizes.some((item) => item.value === obj.screenSize)) {
-        uniqueScreenSizes.push({ label: obj.screenSize, value: obj.screenSize });
+      if (
+        obj.screenSize &&
+        !uniqueScreenSizes.some((item) => item.value === obj.screenSize)
+      ) {
+        uniqueScreenSizes.push({
+          label: obj.screenSize,
+          value: obj.screenSize,
+        });
       }
-      if (obj.acquisition.name && !uniqueAcquisitionTypes.some((item) => item.value === obj.acquisition.name)) {
-        uniqueAcquisitionTypes.push({ label: obj.acquisition.name, value: obj.acquisition.name });
+      if (
+        obj.acquisition.name &&
+        !uniqueAcquisitionTypes.some(
+          (item) => item.value === obj.acquisition.name
+        )
+      ) {
+        uniqueAcquisitionTypes.push({
+          label: obj.acquisition.name,
+          value: obj.acquisition.name,
+        });
       }
     });
-  
+
     setModels(uniqueModels);
     setBrands(uniqueBrands);
     setRam_sizes(uniqueRamSizes);
@@ -350,7 +385,6 @@ function EquipmentTable() {
     setScreenSizes(uniqueScreenSizes);
     setAcquisitionTypes(uniqueAcquisitionTypes);
   }
-  
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
