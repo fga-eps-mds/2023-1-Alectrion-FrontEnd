@@ -204,7 +204,7 @@ export default function OrderServiceEditForm({
             errors={undefined}
             type="text"
             placeholder="Tipo"
-            defaultValue={selectedEquipment.type || ''}
+            defaultValue={selectedEquipment.type.name || ''}
             isDisabled
             readOnly
           />

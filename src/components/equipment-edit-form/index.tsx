@@ -20,7 +20,7 @@ import { NewControlledSelect } from '../form-fields/new-controlled-select';
 export type EditEquipFormValues = {
   tippingNumber: string;
   serialNumber: string;
-  type: { name: string };
+  type: {name: string};
   situacao: string;
   model: string;
   description?: string;
@@ -121,15 +121,17 @@ export default function EquipmentEditForm({
       const dateString = formatDate(acquisitionDate);
 
       const payload = {
-        type: type.name,
+        type,
         estado,
         storageType,
         screenType,
         acquisitionDate: dateString,
         ...rest,
       };
+
       console.log(payload);
       
+
       const response = await api.put('equipment/updateEquipment', payload);
 
       if (response.status === 200) {
@@ -182,13 +184,13 @@ export default function EquipmentEditForm({
           control={control}
           id="type"
           options={types.map((type) => ({
-            label: type?.name ?? '',
             value: type?.name ?? '',
+            label: type?.name ?? '',
           }))}
           placeholder="Selecione uma opção"
-          label="Tipo de equipamento"
+          label="Tipo"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-          {...register('brandName', {
+          {...register('type', {
             required: 'Campo Obrigatório',
             maxLength: 50,
           })}

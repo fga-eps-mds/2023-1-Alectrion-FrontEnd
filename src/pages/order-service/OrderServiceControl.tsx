@@ -54,7 +54,7 @@ export interface Equipment {
   brand: {
     name: string;
   };
-  type: string;
+  type: {name: string};
   id: string;
   model: string;
   unit: {
@@ -440,7 +440,7 @@ function OrderServiceTable() {
                           <Td fontWeight="medium">
                             Tombamento - {orderService.equipment.tippingNumber}
                             <Td p={0} fontWeight="semibold">
-                              {orderService.equipment.type}{' '}
+                              {orderService.equipment.type.name}{' '}
                               {orderService.equipment.brand.name}{' '}
                               {orderService.equipment.serialNumber}
                             </Td>
