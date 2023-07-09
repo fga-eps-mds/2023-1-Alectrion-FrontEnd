@@ -24,6 +24,7 @@ import {
 } from '../../constants/user';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { Input } from '../form-fields/input';
+import { AlectrionIcon } from '../icons/AlectrionIcon';
 
 type FormValues = {
   id?: string;
@@ -48,40 +49,31 @@ export default function UserRegisterForm({
   refreshRequest,
   setRefreshRequest,
 }: UserFormProps) {
+  const [selectedUserRegister, setSelectedUserRegister] =
+    useState<RegisterUserPayload>();
+
+  const [statusModal, setStatusModal] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const toggleModal = () => {
+    setStatusModal(!statusModal);
+  };
+
   const {
+    watch,
     control,
     register,
     handleSubmit,
-    resetField,
-    setValue,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<RegisterUserPayload>();
 
-  const [selectedUserRegister, setSelectedUserRegister] =
-    useState<RegisterUserPayload>();
-  const [statusModal, setStatusModal] = useState<boolean>(false);
+  const watchRole = watch('role');
 
   const onSubmit = handleSubmit(async (formData) => {
+    setIsLoading(true);
     try {
-      const {
-        username,
-        email,
-        name,
-        cpf,
-        role,
-        job,
-        password,
-        confirmPassword,
-        ...rest
-      } = formData;
-
-      if (password !== formData.confirmPassword) {
-        toast.error(
-          'A senha e a confirmação de senha não correspondem',
-          'Erro'
-        );
-        return;
-      }
+      const { username, email, name, cpf, role, jobFunction, ...rest } =
+        formData;
 
       const payload = {
         username: formData.username,
@@ -89,125 +81,221 @@ export default function UserRegisterForm({
         name: formData.name,
         cpf: formData.cpf,
         role: formData.role,
-        jobFunction: formData.job,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
+        jobFunction: formData.jobFunction,
         ...rest,
       };
-
       const loggedUser = JSON.parse(
         localStorage.getItem('@alectrion:user') || ''
       ) as unknown as LoginResponse;
+
       const response = await api.post('user/create', payload, {
         headers: {
           Authorization: `Bearer ${loggedUser.token}`,
         },
       });
-
+      setIsLoading(false);
       if (response.status === 200) {
         setRefreshRequest(!refreshRequest);
-        onClose();
+        window.history.back();
         toast.success('Usuário cadastrado com sucesso', 'Sucesso');
         return;
       }
       toast.error('Erro ao tentar cadastrar o usuario', 'Erro');
     } catch (error: any) {
       toast.error(error.response.data.error, 'Erro');
+      setIsLoading(false);
     }
   });
 
   return (
-    <form id="user-register-form" onSubmit={onSubmit}>
-      <Grid templateColumns="repeat(2, 2fr)" gap={6}>
-        <Input
-          placeholder="Nome"
-          defaultValue={selectedUserRegister?.name}
-          errors={errors.name}
-          label="Nome"
-          {...register('name', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
-        />
-        <Input
-          placeholder="UserName"
-          defaultValue={selectedUserRegister?.username}
-          errors={errors.username}
-          label="Username"
-          {...register('username', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
-        />
-        <Input
-          placeholder="Apenas números"
-          errors={errors.cpf}
-          label="CPF"
-          {...register('cpf', {
-            required: 'Campo Obrigatório',
-            maxLength: 11,
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Por favor, digite apenas números.',
-            },
-          })}
-        />
-        <Input
-          placeholder="Digite seu E-mail"
-          defaultValue={selectedUserRegister?.email}
-          errors={errors.email}
-          label="E-mail Funcional"
-          {...register('email', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
-        />
-        <Input
-          type="password"
-          placeholder="Digite sua Senha"
-          defaultValue={selectedUserRegister?.password}
-          errors={errors.password}
-          label="Senha"
-          {...register('password', {
-            required: 'Campo Obrigatório',
-            maxLength: 12,
-          })}
-        />
-        <Input
-          type="password"
-          placeholder="Confirme sua senha"
-          errors={errors.confirmPassword}
-          label="Confirmar Senha"
-          {...register('confirmPassword', {
-            required: 'Campo Obrigatório',
-            maxLength: 12,
-          })}
-        />
+    <form id="user-register-form" onSubmit={onSubmit} aria-label="form">
+      <Grid
+        templateColumns="repeat(2, 2fr)"
+        width="100%"
+        gap={6}
+        mt={6}
+        alignSelf="center"
+      >
+        <Box flexDirection="column" alignSelf="center">
+          <Text>Nome</Text>
+          <Input
+            errors={undefined}
+            placeholder="Nome"
+            defaultValue={selectedUserRegister?.name}
+            {...register('name', {
+              required: 'Campo Obrigatório',
+              maxLength: 50,
+            })}
+          />
+          {errors.name && (
+            <span>
+              <Text color="red.400">Este campo é obrigatório</Text>
+            </span>
+          )}
+        </Box>
+
+        <Box flexDirection="column">
+          <Text>UserName</Text>
+          <Input
+            errors={undefined}
+            placeholder="UserName"
+            defaultValue={selectedUserRegister?.username}
+            {...register('username', {
+              required: 'Campo Obrigatório',
+              maxLength: 50,
+            })}
+          />
+          {errors.username && (
+            <span>
+              <Text color="red.400">Este campo é obrigatório</Text>
+            </span>
+          )}
+        </Box>
+      </Grid>
+
+      <Grid templateColumns="repeat(2, 2fr)" width="100%" gap={6} mt={6}>
+        <Box flexDirection="column">
+          <Text>CPF</Text>
+          <Input
+            errors={undefined}
+            placeholder="Apenas números"
+            pattern="[0-9]*"
+            title="Por favor, digite apenas números"
+            {...register('cpf', {
+              required: 'Campo Obrigatório',
+              maxLength: 11,
+            })}
+          />
+        </Box>
+
+        <Box flexDirection="column">
+          <Text>E-mail Funcional</Text>
+          <Input
+            errors={undefined}
+            placeholder="E-mail Funcional"
+            type="email"
+            defaultValue={selectedUserRegister?.email}
+            {...register('email', {
+              required: 'Campo Obrigatório',
+              maxLength: 50,
+            })}
+          />
+          {errors.email && (
+            <span>
+              <Text color="red.400">Este campo é obrigatório</Text>
+            </span>
+          )}
+        </Box>
+      </Grid>
+
+      <Grid
+        templateColumns="repeat(2, 2fr)"
+        width="100%"
+        gap={6}
+        mt={6}
+        mb={6}
+        alignSelf="center"
+      >
+        {watchRole === 'CONSULTA' && (
+          <>
+            <Box flexDirection="column" alignSelf="center">
+              <Text>Senha</Text>
+              <Input
+                errors={undefined}
+                type="password"
+                placeholder="Senha"
+                {...register('password', {
+                  maxLength: 50,
+                })}
+              />
+              {errors.password && watchRole === 'CONSULTA' && (
+                <span>
+                  <Text color="red.400">Este campo é obrigatório</Text>
+                </span>
+              )}
+            </Box>
+
+            <Box flexDirection="column" alignSelf="center">
+              <Text>Confirmar senha</Text>
+              <Input
+                errors={undefined}
+                type="password"
+                placeholder="Confirmar senha"
+                {...register('confirmPassword', {
+                  maxLength: 50,
+                })}
+              />
+              {errors.confirmPassword && watchRole === 'CONSULTA' && (
+                <span>
+                  <Text color="red.400">Este campo é obrigatório</Text>
+                </span>
+              )}
+            </Box>
+          </>
+        )}
         <NewControlledSelect
           control={control}
-          name="job"
-          id="job"
+          name="jobFunction"
+          id="jobFunction"
           options={TIPOS_JOB}
           placeholder="Selecione uma opção"
           label="Tipo de Cargo"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
-        <NewControlledSelect
-          control={control}
-          name="role"
-          id="role"
-          options={TIPOS_ROLE}
-          placeholder="Selecione uma opção"
-          label="Tipo de usuário"
-          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
-        />
       </Grid>
-      <Flex gap="4rem" mt="2rem" mb="1rem" justify="center">
-        <Button variant="secondary" onClick={() => window.history.back()}>
+      <Box>
+        <Center mb={2}>Tipo de Usuário</Center>
+        <Flex justify="center" mb={4}>
+          <RadioGroup defaultValue="user">
+            <HStack spacing={6}>
+              <Radio
+                value="ADMIN"
+                colorScheme="orange"
+                {...register('role', {
+                  required: 'Campo Obrigatório',
+                })}
+              >
+                Admin
+              </Radio>
+              <Radio
+                value="BASICO"
+                colorScheme="orange"
+                {...register('role', {
+                  required: 'Campo Obrigatório',
+                })}
+              >
+                Básico
+              </Radio>
+              <Radio
+                value="CONSULTA"
+                colorScheme="orange"
+                {...register('role', {
+                  required: 'Campo Obrigatório',
+                })}
+              >
+                Consulta
+              </Radio>
+            </HStack>
+          </RadioGroup>
+        </Flex>
+      </Box>
+      <Flex gap="4rem" mt="2rem" mb="2rem" justify="center">
+        <Button
+          variant="secondary"
+          width="100%"
+          onClick={() => window.history.back()}
+        >
           Cancelar
         </Button>
-        <Button type="submit" form="user-register-form" variant="primary">
-          Confirmar
+
+        <Button
+          type="submit"
+          form="user-register-form"
+          variant="primary"
+          width="100%"
+          isLoading={isLoading}
+        >
+          Registrar
         </Button>
       </Flex>
     </form>

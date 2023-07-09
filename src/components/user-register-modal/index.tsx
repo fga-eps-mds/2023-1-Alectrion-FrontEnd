@@ -20,7 +20,7 @@ export function UserRegisterModal({
       title="Cadastro de Usuário"
       isOpen={isOpen}
       onClose={onClose}
-      size="4xl"
+      size="2xl"
     >
       <Flex
         height="100%"
