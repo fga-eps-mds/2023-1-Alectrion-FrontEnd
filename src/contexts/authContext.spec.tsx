@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { renderHook, act } from '@testing-library/react-hooks';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { AuthProvider, useAuth } from './AuthContext';
 
 function MockChildComponent() {
@@ -34,31 +35,31 @@ describe('AuthProvider', () => {
         temporaryPassword: false,
       },
     };
-    const mockPost = jest.fn().mockResolvedValue(mockApiResponse);
-    const mockNavigate = jest.fn();
-    const mockUseNavigate = jest.fn(() => mockNavigate);
+    const mockPost = vi.fn().mockResolvedValue(mockApiResponse);
+    const mockNavigate = vi.fn();
+    const mockUseNavigate = vi.fn(() => mockNavigate);
     const mockLocation = {
       state: { from: { pathname: '/dashboard' } },
     };
-    const mockUseLocation = jest.fn(() => mockLocation);
+    const mockUseLocation = vi.fn(() => mockLocation);
 
     global.localStorage = {
-      getItem: jest.fn(),
-      setItem: jest.fn(),
-      removeItem: jest.fn(),
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
       length: 0,
-      key: jest.fn(),
-      clear: jest.fn(),
+      key: vi.fn(),
+      clear: vi.fn(),
     } as Storage;
 
-    jest.mock('@/config/lib/axios', () => ({
+    vi.mock('@/config/lib/axios', () => ({
       api: { post: mockPost, defaults: { headers: { common: {} } } },
     }));
-    jest.mock('react-router-dom', () => ({
+    vi.mock('react-router-dom', () => ({
       useNavigate: mockUseNavigate,
       useLocation: mockUseLocation,
     }));
-    jest.mock('@/utils/toast', () => ({ toast: { error: jest.fn() } }));
+    vi.mock('@/utils/toast', () => ({ toast: { error: vi.fn() } }));
 
     render(
       <AuthProvider>

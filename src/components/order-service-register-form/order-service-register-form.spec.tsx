@@ -1,14 +1,15 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { OrderServiceRegisterForm } from '.';
 
 describe('OrderServiceRegisterForm', () => {
   it('renders the form fields', () => {
     render(
       <OrderServiceRegisterForm
-        onClose={jest.fn()}
+        onClose={vi.fn()}
         refreshRequest={false}
-        setRefreshRequest={jest.fn()}
-        onOpenTerm={jest.fn()}
+        setRefreshRequest={vi.fn()}
+        onOpenTerm={vi.fn()}
       />
     );
 
@@ -40,13 +41,13 @@ describe('OrderServiceRegisterForm', () => {
   });
 
   it('triggers the onClose callback when "Cancelar" button is clicked', () => {
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     render(
       <OrderServiceRegisterForm
         onClose={onClose}
         refreshRequest={false}
-        setRefreshRequest={jest.fn()}
-        onOpenTerm={jest.fn()}
+        setRefreshRequest={vi.fn()}
+        onOpenTerm={vi.fn()}
       />
     );
 
@@ -58,13 +59,13 @@ describe('OrderServiceRegisterForm', () => {
   });
 
   it('triggers the onSubmit callback when the form is submitted', () => {
-    const onSubmit = jest.fn();
+    const onSubmit = vi.fn();
     render(
       <OrderServiceRegisterForm
-        onClose={jest.fn()}
+        onClose={vi.fn()}
         refreshRequest={false}
-        setRefreshRequest={jest.fn()}
-        onOpenTerm={jest.fn()}
+        setRefreshRequest={vi.fn()}
+        onOpenTerm={vi.fn()}
       />
     );
 
@@ -90,10 +91,10 @@ describe('OrderServiceRegisterForm', () => {
   it('displays error messages when required fields are not filled', () => {
     render(
       <OrderServiceRegisterForm
-        onClose={jest.fn()}
+        onClose={vi.fn()}
         refreshRequest={false}
-        setRefreshRequest={jest.fn()}
-        onOpenTerm={jest.fn()}
+        setRefreshRequest={vi.fn()}
+        onOpenTerm={vi.fn()}
       />
     );
 
