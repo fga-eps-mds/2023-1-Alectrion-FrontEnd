@@ -346,12 +346,14 @@ function MovementsTable() {
                       size="sm"
                     />
                     <Datepicker
+                      outsideModal
                       name="lowerDate"
                       control={control}
                       border={false}
                       placeholderText="Data inicial"
                     />
                     <Datepicker
+                      outsideModal
                       name="higherDate"
                       control={control}
                       border={false}

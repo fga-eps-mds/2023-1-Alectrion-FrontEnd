@@ -651,6 +651,7 @@ function OrderServiceTable() {
                               size="sm"
                             />                    
                               <Datepicker
+                                outsideModal
                                 border={false}
                                 placeholderText="Data de criação"
                                 name="createdAt"
@@ -662,12 +663,14 @@ function OrderServiceTable() {
                             gap="5px"
                           >
                               <Datepicker
+                                outsideModal
                                 border={false}
                                 placeholderText="Data de conclusão"
                                 name="finishDate"
                                 control={control}
                               />
                               <Datepicker
+                                outsideModal
                                 border={false}
                                 placeholderText="Última atualização"
                                 name="updatedAt"
