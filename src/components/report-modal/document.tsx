@@ -82,6 +82,12 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
       textAlign: 'center',
       fontSize: 8,
       fontWeight: 'bold',
+      borderRightWidth: 2,
+      paddingVertical: 7,
+      justifyContent: 'center', 
+      height: 24,
+      borderRightColor: '#D8D8D8',
+      alignItems: 'center',
     },
     tableRow: {
       flexDirection: 'row',
@@ -95,6 +101,12 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
       flex: 1,
       textAlign: 'center',
       paddingRight: 15,
+      borderRightWidth: 2,
+      borderRightColor: '#D8D8D8',
+      justifyContent: 'center', 
+      paddingVertical: 7, 
+      height: 24, 
+      alignItems: 'center',
     },
     signature: {
       marginTop: 200,
@@ -142,7 +154,7 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
           <Image src="/PoliciaCivilLogo.jpeg" style={styles.logo} />
           <Text style={styles.caption}>ESTADO DE GOIÁS</Text>
           <Text style={styles.caption}>DIRETORIA GERAL DA POLÍCIA CIVIL</Text>
-
+          
           <Text style={styles.caption}>
             SUPERINTENDÊNCIA DE GESTÃO INTEGRADA
           </Text>
@@ -206,7 +218,7 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
               {formatDate(equipment?.acquisitionDate)}
             </Text>
           </View>
-        ))}
+       ))}
 
         <Text
           style={{ ...styles.caption, alignSelf: 'flex-end', marginTop: 8 }}
