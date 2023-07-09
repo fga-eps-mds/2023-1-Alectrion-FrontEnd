@@ -16,7 +16,7 @@ export type ViewEquipFormValues = {
   id: any;
   tippingNumber: string;
   serialNumber: string;
-  type: string;
+  type: { name: string };
   situacao: string;
   model: string;
   description?: string;
@@ -102,7 +102,7 @@ export default function EquipmentViewForm({
           placeholder="Selecione uma opção"
           label="Tipo de equipamento"
           isReadOnly
-          defaultValue={equipment.type}
+          defaultValue={equipment.type.name}
         />
 
         <Input
@@ -163,7 +163,7 @@ export default function EquipmentViewForm({
           disabled
         />
 
-        {equipment.type === 'CPU' && (
+        {equipment.type.name === 'CPU' && (
           <>
             <Input
               disabled
@@ -201,7 +201,7 @@ export default function EquipmentViewForm({
           </>
         )}
 
-        {equipment.type === 'Monitor' && (
+        {equipment.type.name === 'Monitor' && (
           <>
             <NewControlledSelect
               control={control}
@@ -223,8 +223,8 @@ export default function EquipmentViewForm({
           </>
         )}
 
-        {(equipment.type === 'Estabilizador' ||
-          equipment.type === 'Nobreak') && (
+        {(equipment.type.name === 'Estabilizador' ||
+          equipment.type.name === 'Nobreak') && (
           <Input
             disabled
             label="Potência (VA)"

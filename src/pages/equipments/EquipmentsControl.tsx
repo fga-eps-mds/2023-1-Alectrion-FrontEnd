@@ -50,7 +50,10 @@ interface TypeData {
 export interface EquipmentData {
   tippingNumber: string;
   serialNumber: string;
-  type: string;
+  type: {
+    id: string;
+    name: string;
+  };
   situacao: string;
   estado: string;
   model: string;
@@ -463,7 +466,7 @@ function EquipmentTable() {
                           <Td fontWeight="medium">
                             {equipment.situacao} - {equipment.unit.name}
                             <Td p={0} fontWeight="semibold">
-                              {equipment.type} {equipment.brand.name}
+                              {equipment.type.name} {equipment.brand.name}
                             </Td>
                           </Td>
                           <Td>{equipment.tippingNumber}</Td>

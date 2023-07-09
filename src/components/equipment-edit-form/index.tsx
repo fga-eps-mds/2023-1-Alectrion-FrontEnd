@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Datepicker } from '../form-fields/date';
 
@@ -20,7 +20,7 @@ import { NewControlledSelect } from '../form-fields/new-controlled-select';
 export type EditEquipFormValues = {
   tippingNumber: string;
   serialNumber: string;
-  type: string;
+  type: { name: string };
   situacao: string;
   model: string;
   description?: string;
@@ -43,6 +43,16 @@ interface EditEquipmentFormProps {
   equip: EditEquipFormValues;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+interface TypeData {
+  id: number;
+  name: string;
+}
+
+interface BrandData {
+  id: number;
+  name: string;
 }
 
 export default function EquipmentEditForm({
@@ -111,14 +121,15 @@ export default function EquipmentEditForm({
       const dateString = formatDate(acquisitionDate);
 
       const payload = {
-        type,
+        type: type.name,
         estado,
         storageType,
         screenType,
         acquisitionDate: dateString,
         ...rest,
       };
-
+      console.log(payload);
+      
       const response = await api.put('equipment/updateEquipment', payload);
 
       if (response.status === 200) {
@@ -134,24 +145,65 @@ export default function EquipmentEditForm({
     }
   });
 
+  const [types, setTypes] = useState<TypeData[]>([]);
+  const [brands, setBrands] = useState<BrandData[]>([]);
+
+  const fetchTypes = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<TypeData[]> = await api.get(
+        `equipment/type?search=${str}`
+      );
+      setTypes(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  const fetchBrands = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<BrandData[]> = await api.get(
+        `equipment/brand?search=${str}`
+      );
+      setBrands(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes("")
+    fetchBrands("")
+  }, []);
+
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
         <NewControlledSelect
-          label="Tipo de equipamento"
           control={control}
-          name="type"
           id="type"
-          options={TIPOS_EQUIPAMENTO}
-          placeholder="Tipo"
-          cursor="pointer"
-          defaultValue={equip?.type}
+          options={types.map((type) => ({
+            label: type?.name ?? '',
+            value: type?.name ?? '',
+          }))}
+          placeholder="Selecione uma opção"
+          label="Tipo de equipamento"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+          {...register('brandName', {
+            required: 'Campo Obrigatório',
+            maxLength: 50,
+          })}
         />
 
-        <Input
+        <NewControlledSelect
+          control={control}
+          id="brandName"
+          options={brands.map((brand) => ({
+            value: brand?.name ?? '',
+            label: brand?.name ?? '',
+          }))}
+          placeholder="Selecione uma opção"
           label="Marca"
-          errors={errors.brandName}
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
           {...register('brandName', {
             required: 'Campo Obrigatório',
             maxLength: 50,
@@ -219,7 +271,7 @@ export default function EquipmentEditForm({
           control={control}
         />
 
-        {watchType === 'CPU' && (
+        {watchType.name === 'CPU' && (
           <>
             <Input
               label="Qtd. Memória RAM (GB)"
@@ -267,7 +319,7 @@ export default function EquipmentEditForm({
           </>
         )}
 
-        {watchType === 'Monitor' && (
+        {watchType.name === 'Monitor' && (
           <>
             <NewControlledSelect
               control={control}
@@ -291,7 +343,7 @@ export default function EquipmentEditForm({
           </>
         )}
 
-        {(watchType === 'Estabilizador' || watchType === 'Nobreak') && (
+        {(watchType.name === 'Estabilizador' || watchType.name === 'Nobreak') && (
           <Input
             label="Potência (VA)"
             errors={errors.storageAmount}
