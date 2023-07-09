@@ -299,65 +299,58 @@ function EquipmentTable() {
   };
 
   async function setFilterOptions() {
-    const uniqueModels = new Set<ISelectOption>();
-    const uniqueBrands = new Set<ISelectOption>();
-    const uniqueRamSizes = new Set<ISelectOption>();
-    const uniqueStorageTypes = new Set<ISelectOption>();
-    const uniqueProcessors = new Set<ISelectOption>();
-    const uniquePowers = new Set<ISelectOption>();
-    const uniqueScreenTypes = new Set<ISelectOption>();
-    const uniqueScreenSizes = new Set<ISelectOption>();
-    const uniqueAcquisitionTypes = new Set<ISelectOption>();
-
+    const uniqueModels: ISelectOption[] = [];
+    const uniqueBrands: ISelectOption[] = [];
+    const uniqueRamSizes: ISelectOption[] = [];
+    const uniqueStorageTypes: ISelectOption[] = [];
+    const uniqueProcessors: ISelectOption[] = [];
+    const uniquePowers: ISelectOption[] = [];
+    const uniqueScreenTypes: ISelectOption[] = [];
+    const uniqueScreenSizes: ISelectOption[] = [];
+    const uniqueAcquisitionTypes: ISelectOption[] = [];
+  
     const array = await getEquipments('');
-    // const requestedBrands = await getBrands();
-    // const requestedTypes = await getTypes();
     array.forEach((obj) => {
-      if (obj.model) {
-        uniqueBrands.add({ label: obj.model, value: obj.model });
+      if (obj.model && !uniqueModels.some((item) => item.value === obj.model)) {
+        uniqueModels.push({ label: obj.model, value: obj.model });
       }
-      if (obj.brand.name) {
-        uniqueBrands.add({ label: obj.brand.name, value: obj.brand.name });
+      if (obj.brand.name && !uniqueBrands.some((item) => item.value === obj.brand.name)) {
+        uniqueBrands.push({ label: obj.brand.name, value: obj.brand.name });
       }
-      if (obj.ram_size) {
-        uniqueRamSizes.add({ label: obj.ram_size, value: obj.ram_size });
+      if (obj.ram_size && !uniqueRamSizes.some((item) => item.value === obj.ram_size)) {
+        uniqueRamSizes.push({ label: obj.ram_size, value: obj.ram_size });
       }
-      if (obj.storageType) {
-        uniqueStorageTypes.add({
-          label: obj.storageType,
-          value: obj.storageType,
-        });
+      if (obj.storageType && !uniqueStorageTypes.some((item) => item.value === obj.storageType)) {
+        uniqueStorageTypes.push({ label: obj.storageType, value: obj.storageType });
       }
-      if (obj.processor) {
-        uniqueProcessors.add({ label: obj.processor, value: obj.processor });
+      if (obj.processor && !uniqueProcessors.some((item) => item.value === obj.processor)) {
+        uniqueProcessors.push({ label: obj.processor, value: obj.processor });
       }
-      if (obj.power) {
-        uniquePowers.add({ label: obj.power, value: obj.power });
+      if (obj.power && !uniquePowers.some((item) => item.value === obj.power)) {
+        uniquePowers.push({ label: obj.power, value: obj.power });
       }
-      if (obj.screenType) {
-        uniqueScreenTypes.add({ label: obj.screenType, value: obj.screenType });
+      if (obj.screenType && !uniqueScreenTypes.some((item) => item.value === obj.screenType)) {
+        uniqueScreenTypes.push({ label: obj.screenType, value: obj.screenType });
       }
-      if (obj.screenSize) {
-        uniqueScreenSizes.add({ label: obj.screenSize, value: obj.screenSize });
+      if (obj.screenSize && !uniqueScreenSizes.some((item) => item.value === obj.screenSize)) {
+        uniqueScreenSizes.push({ label: obj.screenSize, value: obj.screenSize });
       }
-      if (obj.acquisition.name) {
-        uniqueAcquisitionTypes.add({
-          label: obj.acquisition.name,
-          value: obj.acquisition.name,
-        });
+      if (obj.acquisition.name && !uniqueAcquisitionTypes.some((item) => item.value === obj.acquisition.name)) {
+        uniqueAcquisitionTypes.push({ label: obj.acquisition.name, value: obj.acquisition.name });
       }
     });
-
-    setModels([...uniqueModels] as ISelectOption[]);
-    setBrands([...uniqueBrands] as ISelectOption[]);
-    setRam_sizes([...uniqueRamSizes] as ISelectOption[]);
-    setStorageTypes([...uniqueStorageTypes] as ISelectOption[]);
-    setProcessors([...uniqueProcessors] as ISelectOption[]);
-    setPowers([...uniquePowers] as ISelectOption[]);
-    setScreenTypes([...uniqueScreenTypes] as ISelectOption[]);
-    setScreenSizes([...uniqueScreenSizes] as ISelectOption[]);
-    setAcquisitionTypes([...uniqueAcquisitionTypes] as ISelectOption[]);
+  
+    setModels(uniqueModels);
+    setBrands(uniqueBrands);
+    setRam_sizes(uniqueRamSizes);
+    setStorageTypes(uniqueStorageTypes);
+    setProcessors(uniqueProcessors);
+    setPowers(uniquePowers);
+    setScreenTypes(uniqueScreenTypes);
+    setScreenSizes(uniqueScreenSizes);
+    setAcquisitionTypes(uniqueAcquisitionTypes);
   }
+  
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
