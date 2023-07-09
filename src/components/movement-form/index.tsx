@@ -19,7 +19,7 @@ import { AxiosResponse } from 'axios';
 import { useForm } from 'react-hook-form';
 import { set } from 'lodash';
 import { TIPOS_LOTACAO } from '@/constants/movements';
-import { api } from '../../config/lib/axios';
+import { api, apiSchedula } from '../../config/lib/axios';
 import { Input } from '../form-fields/input';
 import { toast } from '@/utils/toast';
 import { movement, movementEquipment } from '@/pages/movements/MovementControl';
@@ -56,10 +56,13 @@ interface equipamentData {
   };
 }
 
-interface unit {
+export interface unit {
   id?: string;
   name: string;
   localization: string;
+  city: {
+    name: string;
+  };
 }
 
 type FormValues = {
@@ -141,6 +144,8 @@ export default function MovementForm({
         destination: formData?.destination || '',
       };
 
+      console.log(body.destination);
+
       const response = await api.post('equipment/createMovement', body);
 
       if (response.status === 200) {
@@ -181,13 +186,13 @@ export default function MovementForm({
 
   const getUnits = async () => {
     try {
-      const { data }: AxiosResponse<unit[]> = await api.get(
-        `equipment/getAllUnits`
+      const { data }: AxiosResponse<unit[]> = await apiSchedula.get(
+        '/workstations'
       );
       setUnits(data);
     } catch (error) {
       setUnits([]);
-      toast.error('Nenhuma movimentação registrada');
+      toast.error('Não foi possível encontrar destino');
     }
   };
 
@@ -269,7 +274,7 @@ export default function MovementForm({
             isDisabled
             defaultValue={
               units.find((iterationUnit) => iterationUnit.id === selectedUnit)
-                ?.localization
+                ?.city.name
             }
           />
 

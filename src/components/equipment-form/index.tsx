@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
+import { AxiosResponse } from 'axios';
 import { Datepicker } from '../form-fields/date';
 
 import {
@@ -12,8 +13,9 @@ import {
 import { Input } from '../form-fields/input';
 import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
-import { api } from '@/config/lib/axios';
+import { api, apiSchedula } from '@/config/lib/axios';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
+import { unit } from '../movement-form';
 
 type FormValues = {
   tippingNumber: string;
@@ -57,6 +59,8 @@ export default function EquipmentForm({
     formState: { errors },
   } = useForm<FormValues>();
 
+  const [units, setUnits] = useState<unit[]>([]);
+  const selectedUnit: string | undefined = watch('unitId');
   const [description, setDescription] = useState('');
 
   const watchType = watch('type', '');
@@ -109,6 +113,23 @@ export default function EquipmentForm({
     watchStorageType,
     watchStorageAmount,
   ]);
+
+  const getUnits = async () => {
+    try {
+      const { data }: AxiosResponse<unit[]> = await apiSchedula.get(
+        '/workstations'
+      );
+      setUnits(data);
+    } catch (error) {
+      setUnits([]);
+      toast.error('Não foi possível encontrar destino');
+    }
+  };
+
+  useEffect(() => {
+    getUnits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
@@ -224,6 +245,29 @@ export default function EquipmentForm({
           name="acquisitionDate"
           required
           control={control}
+        />
+
+        <NewControlledSelect
+          control={control}
+          name="unitId"
+          id="unitId"
+          options={units.map((unit) => ({
+            value: unit?.id ?? '',
+            label: unit?.name ?? '',
+          }))}
+          placeholder="Selecione uma opção"
+          label="Posto de trabalho"
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
+        />
+
+        <Input
+          label="Cidade"
+          errors={errors.unitId}
+          isDisabled
+          defaultValue={
+            units.find((iterationUnit) => iterationUnit.id === selectedUnit)
+              ?.city.name
+          }
         />
         {watchType === 'CPU' && (
           <>
