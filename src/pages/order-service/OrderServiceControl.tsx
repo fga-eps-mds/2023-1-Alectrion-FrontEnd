@@ -42,6 +42,11 @@ interface ISelectOption {
   value: number | string;
 }
 
+interface TypeData {
+  id: number;
+  name: string;
+}
+
 export interface Equipment {
   description: string;
   tippingNumber: string;
@@ -266,6 +271,24 @@ function OrderServiceTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, refreshRequest, filter]);
 
+  const [types, setTypes] = useState<TypeData[]>([]);
+
+  const fetchTypes = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<TypeData[]> = await api.get(
+        `equipment/type?search=${str}`
+      );
+      setTypes(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes("")
+  }, []);
+
+
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>
@@ -310,7 +333,10 @@ function OrderServiceTable() {
                     control={control}
                     name="type"
                     id="type"
-                    options={TIPOS_EQUIPAMENTO}
+                    options={types.map((type) => ({
+                      label: type?.name ?? '',
+                      value: type?.name ?? '',
+                    }))}
                     placeholder="Tipo"
                     cursor="pointer"
                     variant="unstyled"
