@@ -34,21 +34,22 @@ export function ReportModal({
   }, [orderServices]);
 
   const headers = [
-    { label: 'Tombamento', key: 'tippingNumber' },
-    { label: 'Nº de série', key: 'serialNumber' },
-    { label: 'Tipo', key: 'type' },
-    { label: 'Marca', key: 'brand.name' },
-    { label: 'Modelo', key: 'model' },
-    { label: 'Processador', key: 'processor' },
-    { label: 'Tipo de Armazenamento', key: 'storageType' },
-    { label: 'Memória RAM', key: 'ram_size' },
-    { label: 'Tipo de Tela', key: 'screenType' },
-    { label: 'Tamanho da tela', key: 'screenSize' },
-    { label: 'Potência', key: 'power' },
-    { label: 'Situação', key: 'situacao' },
-    { label: 'Localização', key: 'unit.name' },
+    { label: 'Id da OS', key: 'id' },
+    { label: 'Id do autor', key: 'authorId' },
+    { label: 'Processo SEI', key: 'seiProcess' },
     { label: 'Descrição', key: 'description' },
-    { label: 'Data de Aquisição', key: 'acquisitionData' },
+    { label: 'Remetente', key: 'senderName' },
+    { label: 'Documento do remetente', key: 'senderDocument' },
+    { label: 'Telefone do remetente', key: 'senderPhone' },
+    { label: 'Id do técnico', key: 'technicianId' },
+    { label: 'Nome do técnico', key: 'technicianName' },
+    { label: 'Nome do destinatário', key: 'withdrawalName' },
+    { label: 'Documento do destinatário', key: 'withdrawalDocument' },
+    { label: 'Data de conclusão', key: 'finishDate' },
+    { label: 'Status', key: 'status' },
+    { label: 'Data de criação', key: 'createdAt' },
+    { label: 'Data de atualização', key: 'updatedAt' },
+    { label: 'ID do equipamento', key: 'equipment.id' }
   ];
   const formattedDate = formatDate(new Date());
 
