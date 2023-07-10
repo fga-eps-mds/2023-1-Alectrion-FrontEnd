@@ -5,7 +5,7 @@ import MovementForm from '.';
 const SELECTED_EQUIPMENT_MOCK = {
   tippingNumber: 'tippingNumber',
   serialNumber: 'serialNumber',
-  type: 'type',
+  type: { id: '1', name: 'type' },
   situacao: 'situacao',
   estado: 'estado',
   model: 'model',
