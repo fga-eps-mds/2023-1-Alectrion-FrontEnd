@@ -60,8 +60,8 @@ describe('OrderServiceEditForm', () => {
     expect(screen.getByText('Salvar')).toBeInTheDocument();
   });
 
-  it('should render concluded status fields', () => {
-    const orderServiceMock = { ...ORDER_SERVICE_MOCK, status: 'CONCLUDED' };
+  it('should render finished status fields', () => {
+    const orderServiceMock = { ...ORDER_SERVICE_MOCK, status: 'FINISHED' };
 
     render(
       <OrderServiceEditForm

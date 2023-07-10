@@ -41,7 +41,7 @@ import {
 } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
-import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
+import { OSStatusMap, OSStatusStyleMap, OSSTATUS } from '@/constants/orderservice';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
@@ -123,14 +123,6 @@ type FilterValues = {
   withdrawalName?: ISelectOption
   technicianName?: ISelectOption;
 };
-
-export type StatusOS = 'Em manutenção' | 'Concluída' | 'Garantia';
-
-const STATUS_OS: SelectItem<StatusOS>[] = [
-  { label: 'Em manutenção', value: 'MAINTENANCE' },
-  { label: 'Concluída', value: 'CONCLUDED' },
-  { label: 'Garantia', value: 'WARRANTY' },
-];
 
 function OrderServiceTable() {
   const [orderServices, setOrderServices] = useState<OrderServiceData[]>([]);
@@ -715,7 +707,7 @@ function OrderServiceTable() {
                               control={control}
                               name="status"
                               id="status"
-                              options={STATUS_OS}
+                              options={OSSTATUS}
                               placeholder="Status OS"
                               cursor="pointer"
                               variant="unstyled"
