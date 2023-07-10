@@ -17,7 +17,7 @@ interface ISelectOption {
   value: number | string;
 }
 
-interface BrandData {
+export interface BrandData {
   id: number;
   name: string;
 }

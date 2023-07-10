@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
-import { BiEditAlt, BiSearch } from 'react-icons/bi';
+import { BiSearch } from 'react-icons/bi';
 import {
   Text,
   Table,
@@ -20,63 +20,22 @@ import {
   Checkbox,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
+import { AiFillFilePdf } from 'react-icons/ai';
+import { TIPOS_RELATORIO } from '@/constants/reports';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
-import { EquipmentRegisterModal } from '@/components/equipment-register-modal';
-import { EquipmentViewModal } from '@/components/equipment-view-modal';
 import { theme } from '@/styles/theme';
-import { EquipmentEditModal } from '@/components/equipment-edit-modal';
-import { ControlledSelect } from '@/components/form-fields/controlled-select';
 import { STATUS, TIPOS_EQUIPAMENTO, Workstation } from '@/constants/equipment';
 import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
-import { MovementRegisterModal } from '@/components/movement-register-modal';
-import { TermModal } from '@/components/term-modal';
-import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
-import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
+import { ReportRegisterModal } from '@/components/report-register-modal';
+import { ReportViewModal } from '@/components/report-view-modal';
 
 interface ISelectOption {
   label: string;
   value: number | string;
-}
-
-interface TypeData {
-  id: number;
-  name: string;
-}
-
-export interface EquipmentData {
-  tippingNumber: string;
-  serialNumber: string;
-  type: {
-    id: string;
-    name: string;
-  };
-  situacao: string;
-  estado: string;
-  model: string;
-  acquisitionDate: Date;
-  description?: string;
-  screenSize?: string;
-  power?: string;
-  screenType?: string;
-  processor?: string;
-  storageType?: string;
-  storageAmount?: string;
-  ram_size?: string;
-  createdAt?: string;
-  updatedAt: string;
-  id: string;
-  brand: {
-    name: string;
-  };
-  acquisition: { name: string };
-  unit: {
-    name: string;
-    localization: string;
-  };
 }
 
 type FilterValues = {
@@ -86,18 +45,14 @@ type FilterValues = {
   unit?: ISelectOption;
   situation?: ISelectOption;
   search: string;
+  lowerDate: Date;
+  higherDate: Date;
 };
 
-// função que define os eestados searchTerm e searchType com o useState, searchTerm é o termo de pesquisa que o usuário insere na caixa de entrada, enquanto searchType é o tipo de equipamento que o usuário seleciona no menu suspenso.//
-function EquipmentTable() {
-  const [equipments, setEquipments] = useState<EquipmentData[]>([]);
-  const [nextEquipments, setNextEquipments] = useState<EquipmentData[]>([]);
-  const [selectedMovement, setSelectedMovement] = useState<movement>();
-
-  const [selectedEquipmentToEdit, setSelectedEquipmentToEdit] =
-    useState<EquipmentData>();
-  const [selectedEquipmentToMovement, setSelectedEquipmentToMovement] =
-    useState<EquipmentData[]>([]);
+function ReportsTable() {
+  const [reports, setReports] = useState<any[]>([]);
+  const [nextReports, setNextReports] = useState<any[]>([]);
+  const [selectedReport, setSelectedReport] = useState<any | undefined>();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
 
@@ -155,44 +110,23 @@ function EquipmentTable() {
     reset();
   };
 
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
-
-  const {
-    isOpen: isOpenEditEquipment,
-    onClose: onCloseEditEquipment,
-    onOpen: onOpenEditEquipment,
-  } = useDisclosure();
-
-  const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const {
-    isOpen: isOpenTerm,
-    onClose: onCloseTerm,
-    onOpen: onOpenTerm,
-  } = useDisclosure();
-
-  const {
-    isOpen: isOpenRegister,
-    onClose: onCloseRegister,
-    onOpen: onOpenRegister,
-  } = useDisclosure();
-
-  const {
-    isOpen: isUploadOpen,
-    onClose: onUploadClose,
-    onOpen: onUploadOpen,
-  } = useDisclosure();
-
   const {
     isOpen: isViewOpen,
     onClose: onViewClose,
     onOpen: onViewOpen,
   } = useDisclosure();
 
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
     return data?.map((item: Workstation) => {
       return { label: item.name, value: item.name };
     });
+  };
+
+  const handleView = (report: any) => {
+    if (report) setSelectedReport(report);
+    onViewOpen();
   };
 
   const getWorkstations = async () => {
@@ -219,25 +153,25 @@ function EquipmentTable() {
 
   const fetchItems = async () => {
     try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+      const { data }: AxiosResponse<any[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset}&${filter}`
       );
-      setEquipments(data);
+      setReports(data);
     } catch (error) {
-      setEquipments([]);
-      toast.error('Nenhum Equipamento encontrado');
+      setReports([]);
+      toast.error('Nenhum relaório encontrado');
     }
   };
 
   const fetchNextItems = async () => {
     try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+      const { data }: AxiosResponse<any[]> = await api.get(
         `equipment/find?take=${limit}&skip=${offset + limit}&${filter}`
       );
-      setNextEquipments(data);
+      setNextReports(data);
     } catch (error) {
-      setNextEquipments([]);
-      toast.error('Nenhum Equipamento encontrado');
+      setNextReports([]);
+      toast.error('Nenhum relaório encontrado');
     }
   };
   useEffect(() => {
@@ -256,56 +190,6 @@ function EquipmentTable() {
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, refreshRequest, filter]);
-
-  const handleEdit = (equipment: EquipmentData) => {
-    if (equipment) setSelectedEquipmentToEdit(equipment);
-    onOpenEditEquipment();
-  };
-
-  const handleView = (equipment: EquipmentData) => {
-    if (equipment) setSelectedEquipment(equipment);
-    onViewOpen();
-  };
-
-  const handleMovement = () => {
-    if (
-      selectedEquipmentToMovement === undefined ||
-      selectedEquipmentToMovement.length === 0
-    ) {
-      toast.error('Selecione ao menos um equipamento para movimentar');
-    } else {
-      onOpenRegister();
-    }
-  };
-  const handleCheckboxClick = (equipment: EquipmentData) => {
-    if (selectedEquipmentToMovement.includes(equipment)) {
-      setSelectedEquipmentToMovement(
-        selectedEquipmentToMovement.filter((equip) => equip.id !== equipment.id)
-      );
-    } else {
-      setSelectedEquipmentToMovement([
-        ...selectedEquipmentToMovement,
-        equipment,
-      ]);
-    }
-  };
-
-  const [types, setTypes] = useState<TypeData[]>([]);
-
-  const fetchTypes = async (str: string) => {
-    try {
-      const { data }: AxiosResponse<TypeData[]> = await api.get(
-        `equipment/type?search=${str}`
-      );
-      setTypes(data);
-    } catch (error) {
-      console.error('Nenhum Equipamento encontrado');
-    }
-  };
-
-  useEffect(() => {
-    fetchTypes('');
-  }, []);
 
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
@@ -327,21 +211,22 @@ function EquipmentTable() {
               fontWeight="semibold"
               fontSize="4xl"
             >
-              Controle de Equipamento
+              Relatórios
             </Text>
             <Flex justifyContent="space-between" width="100%">
               <Text color="#00000" fontWeight="medium" fontSize="2xl">
-                Últimos Equipamentos Modificados
+                Relatórios Gerados
               </Text>
               <Button colorScheme={theme.colors.primary} onClick={onOpen}>
-                Cadastrar Equipamento
+                Gerar Relatório
               </Button>
             </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
+
             <Flex
               flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
+              justifyContent="flex-end"
+              alignItems="left"
               width="100%"
             >
               <form id="equipment-filter" style={{ width: '100%' }}>
@@ -350,10 +235,7 @@ function EquipmentTable() {
                     control={control}
                     name="type"
                     id="type"
-                    options={types.map((type) => ({
-                      label: type?.name ?? '',
-                      value: type?.name ?? '',
-                    }))}
+                    options={TIPOS_RELATORIO}
                     placeholder="Tipo"
                     cursor="pointer"
                     variant="unstyled"
@@ -362,39 +244,21 @@ function EquipmentTable() {
                     filterStyle
                   />
                   <Datepicker
-                    outsideModal
+                    name="lowerDate"
+                    control={control}
                     border={false}
-                    placeholderText="Última modificação"
-                    name="lastModifiedDate"
-                    control={control}
+                    placeholderText="Data inicial"
                   />
-                  <NewControlledSelect
+                  <Datepicker
+                    name="higherDate"
                     control={control}
-                    name="unit"
-                    id="unit"
-                    options={workstations}
-                    placeholder="Localização"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                    filterStyle
-                  />
-                  <NewControlledSelect
-                    control={control}
-                    name="situation"
-                    id="situation"
-                    options={STATUS}
-                    placeholder="Situação"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                    filterStyle
+                    border={false}
+                    placeholderText="Data final"
                   />
                   <Input
+                    alignSelf="right"
                     placeholder="Pesquisa"
-                    minWidth="15vw"
+                    minWidth="10vw"
                     errors={errors.search}
                     {...register('search')}
                     rightElement={<BiSearch />}
@@ -446,79 +310,42 @@ function EquipmentTable() {
                       zIndex={+1}
                     >
                       <Tr width="100%" color={theme.colors.white}>
-                        <Td>Equipamento</Td>
-                        <Td>N Tombamento</Td>
-                        <Td>N Série</Td>
-                        <Td>Última Modificação</Td>
-                        <Td />
+                        <Td>Tipo - ID</Td>
+                        <Td>Gerado por</Td>
+                        <Td>Data</Td>
                         <Td />
                       </Tr>
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
-                      {equipments.map((equipment) => (
+                      {reports.map((report) => (
                         <Tr
                           onClick={(event) => {
-                            handleView(equipment);
+                            handleView(report);
                             event.stopPropagation();
                           }}
-                          key={equipment.id}
+                          key={report.id}
                           cursor="pointer"
                         >
                           <Td fontWeight="medium">
-                            {equipment.situacao} - {equipment.unit.name}
+                            {/* {report.type} */}
+                            EXEMPLO
                             <Td p={0} fontWeight="semibold">
-                              {equipment.type.name} {equipment.brand.name}
+                              {/* {report.id} */}
+                              exemplo
                             </Td>
                           </Td>
-                          <Td>{equipment.tippingNumber}</Td>
-                          <Td>{equipment.serialNumber}</Td>
                           <Td>
-                            {new Date(equipment.updatedAt).toLocaleDateString(
-                              'pt-BR'
-                            )}
+                            {/* {report.generatedBy} - {report.role} */}Pupak
                           </Td>
-                          <Td
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleEdit(equipment);
-                            }}
-                            width="5%"
-                          >
-                            <button>
-                              <BiEditAlt size={23} />
-                            </button>
-                          </Td>
-                          <Td
-                            width="5%"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                            }}
-                          >
-                            <Checkbox
-                              onChange={() => {
-                                handleCheckboxClick(equipment);
-                              }}
-                            />
+                          <Td>{/* { {report.date} } */}21/11/2023</Td>
+                          <Td>
+                            <AiFillFilePdf size="1.7rem" />
                           </Td>
                         </Tr>
                       ))}
                     </Tbody>
                   </Table>
                 </TableContainer>
-                <Box
-                  bgColor={theme.colors.primary}
-                  cursor="pointer"
-                  fontSize="sm"
-                  fontWeight="semibold"
-                  width="100%"
-                  textAlign="center"
-                  color={theme.colors.white}
-                  padding="1rem 0 1rem 0"
-                  borderRadius=" 0  0 15px 15px"
-                  onClick={handleMovement}
-                >
-                  Movimentar
-                </Box>
                 <Flex justifyContent="center" mt="15px">
                   {currentPage > 1 && (
                     <Button
@@ -535,7 +362,7 @@ function EquipmentTable() {
                       Anterior
                     </Button>
                   )}
-                  {nextEquipments.length > 0 && (
+                  {nextReports.length > 0 && (
                     <Button
                       variant="link"
                       color="#00000"
@@ -555,52 +382,19 @@ function EquipmentTable() {
             </Flex>
           </Flex>
         </Flex>
-        <EquipmentRegisterModal
+        <ReportRegisterModal
           onClose={onClose}
           isOpen={isOpen}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
-          onUploadOpen={onUploadOpen}
         />
-        <EquipmentEditModal
-          onClose={onCloseEditEquipment}
-          isOpen={isOpenEditEquipment}
-          equip={selectedEquipmentToEdit}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-        />
-        <EquipmentViewModal
+        <ReportViewModal
           onClose={onViewClose}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-          selectedEquipment={selectedEquipment}
+          selectedReport={selectedReport}
           isOpen={isViewOpen}
-          handleEdit={handleEdit}
-        />
-        <MovementRegisterModal
-          isOpen={isOpenRegister}
-          onClose={onCloseRegister}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-          selectedEquipmentToMovement={selectedEquipmentToMovement}
-          setSelectedMovement={setSelectedMovement}
-          onOpenTerm={onOpenTerm}
-        />
-        <TermModal
-          isOpen={isOpenTerm}
-          onClose={onCloseTerm}
-          selectedMoviment={selectedMovement}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-        />
-        <EquipmentsUploadModal
-          onClose={onUploadClose}
-          refreshRequest={refreshRequest}
-          setRefreshRequest={setRefreshRequest}
-          isOpen={isUploadOpen}
         />
       </GridItem>
     </Grid>
   );
 }
-export { EquipmentTable };
+export { ReportsTable };
