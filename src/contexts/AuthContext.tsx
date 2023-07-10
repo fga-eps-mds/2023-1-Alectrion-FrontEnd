@@ -84,9 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           navigate(from, { replace: true });
         }
       } catch (err: any) {
-        toast.error(
-          err.response.data.error
-        );
+        toast.error(err.response.data.error);
       }
     },
     [navigate, location.state?.from?.pathname]
