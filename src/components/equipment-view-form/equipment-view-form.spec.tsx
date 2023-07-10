@@ -5,7 +5,7 @@ import EquipmentViewForm from '.';
 const EQUIPMENT_EDIT_MOCK = {
   tippingNumber: 'tippingNumber',
   serialNumber: 'serialNumber',
-  type: 'type',
+  type: { id: '1', name: 'type' },
   situacao: 'situacao',
   estado: 'estado',
   model: 'model',
@@ -35,7 +35,7 @@ const EQUIPMENT_MOCK = {
   id: 'id',
   tippingNumber: 'tippingNumber',
   serialNumber: 'serialNumber',
-  type: 'type',
+  type: { id: '1', name: 'type' },
   situacao: 'situacao',
   model: 'model',
   description: 'description',
@@ -71,7 +71,7 @@ describe('EquipmentViewForm', () => {
   });
 
   it('should render cpu fields', async () => {
-    const equipmentMock = { ...EQUIPMENT_MOCK, type: 'CPU' };
+    const equipmentMock = { ...EQUIPMENT_MOCK, type: { name: 'CPU' } };
 
     render(
       <EquipmentViewForm
@@ -93,7 +93,7 @@ describe('EquipmentViewForm', () => {
   });
 
   it('should render monitor fields', async () => {
-    const equipmentMock = { ...EQUIPMENT_MOCK, type: 'Monitor' };
+    const equipmentMock = { ...EQUIPMENT_MOCK, type: { name: 'Monitor' } };
 
     render(
       <EquipmentViewForm
@@ -111,7 +111,10 @@ describe('EquipmentViewForm', () => {
   });
 
   it('should render estabilizador fields', async () => {
-    const equipmentMock = { ...EQUIPMENT_MOCK, type: 'Estabilizador' };
+    const equipmentMock = {
+      ...EQUIPMENT_MOCK,
+      type: { name: 'Estabilizador' },
+    };
 
     render(
       <EquipmentViewForm
@@ -128,7 +131,7 @@ describe('EquipmentViewForm', () => {
   });
 
   it('should render Nobreak fields', async () => {
-    const equipmentMock = { ...EQUIPMENT_MOCK, type: 'Nobreak' };
+    const equipmentMock = { ...EQUIPMENT_MOCK, type: { name: 'Nobreak' } };
 
     render(
       <EquipmentViewForm

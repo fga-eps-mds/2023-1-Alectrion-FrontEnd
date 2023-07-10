@@ -5,7 +5,7 @@ import EquipmentEditForm from '.';
 const EQUIPMENT_MOCK = {
   tippingNumber: 'tippingNumber',
   serialNumber: 'serialNumber',
-  type: 'type',
+  type: { name: 'type' },
   situacao: 'situacao',
   model: 'model',
   description: 'description',
@@ -39,7 +39,7 @@ describe('EquipmentEditForm', () => {
   });
 
   it('should render cpu fields', () => {
-    const equipmentMock = { ...EQUIPMENT_MOCK, type: 'CPU' };
+    const equipmentMock = { ...EQUIPMENT_MOCK, type: { name: 'CPU' } };
     render(
       <EquipmentEditForm
         onClose={vi.fn()}
@@ -58,7 +58,7 @@ describe('EquipmentEditForm', () => {
   });
 
   it('should render monitor fields', () => {
-    const equipmentMock = { ...EQUIPMENT_MOCK, type: 'Monitor' };
+    const equipmentMock = { ...EQUIPMENT_MOCK, type: { name: 'Monitor' } };
     render(
       <EquipmentEditForm
         onClose={vi.fn()}
@@ -73,7 +73,10 @@ describe('EquipmentEditForm', () => {
   });
 
   it('should render estabilizador fields', () => {
-    const equipmentMock = { ...EQUIPMENT_MOCK, type: 'Estabilizador' };
+    const equipmentMock = {
+      ...EQUIPMENT_MOCK,
+      type: { name: 'Estabilizador' },
+    };
     render(
       <EquipmentEditForm
         onClose={vi.fn()}
@@ -87,7 +90,7 @@ describe('EquipmentEditForm', () => {
   });
 
   it('should render Nobreak fields', () => {
-    const equipmentMock = { ...EQUIPMENT_MOCK, type: 'Nobreak' };
+    const equipmentMock = { ...EQUIPMENT_MOCK, type: { name: 'Nobreak' } };
     render(
       <EquipmentEditForm
         onClose={vi.fn()}

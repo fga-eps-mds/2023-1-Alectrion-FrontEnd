@@ -6,7 +6,7 @@ const ORDER_SERVICE_MOCK = {
   equipment: {
     tippingNumber: 'tippingNumber',
     serialNumber: 'serialNumber',
-    type: 'type',
+    type: { id: '1', name: 'type' },
     situacao: 'situacao',
     estado: 'estado',
     model: 'model',

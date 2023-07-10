@@ -13,11 +13,11 @@ export const SideBar = memo(() => {
     { name: 'Movimentações', link: '/movements' },
     { name: 'Relatórios', link: '/reports' },
   ];
-
   const optionUser = [
     { name: 'Controle de Cadastro', link: '/equipments-fields' },
-    { name: 'Cadastro Usuário', link: '/user-register' },
+    { name: 'Controle de Usuário', link: '/users' },
   ];
+
   return (
     <Box
       position="fixed"
