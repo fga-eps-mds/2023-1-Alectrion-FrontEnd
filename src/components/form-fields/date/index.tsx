@@ -45,6 +45,7 @@ type Props<FormValues extends FieldValues> = Omit<
     startDate?: Date;
     endDate?: Date;
     monthPicker?: boolean;
+    yearPicker?: boolean;
     outsideModal?: boolean;
   };
 
@@ -55,11 +56,12 @@ export function Datepicker<FormValues extends FieldValues>({
   label,
   placeHolder,
   border = true,
+  yearPicker = false,
+  outsideModal = false,
   rules,
   startDate,
   endDate,
   monthPicker = false,
-  outsideModal = false,
   ...props
 }: Props<FormValues>) {
   const {
@@ -106,6 +108,7 @@ export function Datepicker<FormValues extends FieldValues>({
               minDate={lowerDate}
               maxDate={higherDate}
               showMonthYearPicker={monthPicker}
+              showYearPicker={yearPicker}
               customInput={
                 border ? (
                   <Input borderColor="#212121" fontSize="sm" />
@@ -139,6 +142,7 @@ export function Datepicker<FormValues extends FieldValues>({
               minDate={lowerDate}
               maxDate={higherDate}
               showMonthYearPicker={monthPicker}
+              showYearPicker={yearPicker}
               customInput={
                 border ? (
                   <Input borderColor="#212121" fontSize="sm" />
@@ -162,7 +166,6 @@ export function Datepicker<FormValues extends FieldValues>({
           <Icon as={BsCalendar3} color="#212121" fontSize="lg" />
         </InputRightElement>
       </InputGroup>
-
       <FormErrorMessage>{error && error.message}</FormErrorMessage>
     </FormControl>
   );

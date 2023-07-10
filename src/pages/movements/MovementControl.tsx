@@ -2,6 +2,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Button,
   Divider,
   Flex,
@@ -21,10 +26,12 @@ import {
 import { AxiosResponse } from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from '@chakra-ui/icons';
 import { FaFileAlt } from 'react-icons/fa';
-import { MdDeleteForever } from 'react-icons/md';
 import { BiSearch } from 'react-icons/bi';
 import { useForm } from 'react-hook-form';
 import { debounce } from 'lodash';
+import { GrDocumentCsv } from 'react-icons/gr';
+import { MdDeleteForever, MdPictureAsPdf } from 'react-icons/md';
+import { BsFiletypeXlsx } from 'react-icons/bs';
 import { toast } from '@/utils/toast';
 import { api, apiSchedula } from '../../config/lib/axios';
 import { SideBar } from '@/components/side-bar';
@@ -36,6 +43,8 @@ import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
+import { ReportModal } from '@/components/movements-reports/pdf';
+import { getMovements } from '@/utils/getMovements';
 
 interface ISelectOption {
   label: string;
@@ -55,7 +64,10 @@ type FormValues = {
   lowerDate: string;
   higherDate: string;
   searchTerm: string;
+  month: string;
+  year: string;
 };
+
 export interface movementEquipment {
   tippingNumber: string;
 
@@ -71,6 +83,7 @@ export interface movementEquipment {
   selected?: boolean;
   model: string;
   description?: string;
+  situacao?: string;
 }
 export interface movement {
   updatedAt: string | number | Date;
@@ -110,6 +123,8 @@ function MovementsTable() {
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const limit = 10;
+  const [type, setType] = useState<string>('');
+  const [movementsToExport, setMovementsToExport] = useState<movement[]>([]);
 
   const {
     control,
@@ -119,6 +134,7 @@ function MovementsTable() {
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
   const watchedData = watch();
+
   const [filter, setFilter] = useState<string>('');
 
   const [destinations, setDestinations] = useState<ISelectOption[]>([]);
@@ -187,6 +203,29 @@ function MovementsTable() {
     }
   };
 
+  const handleFormattedDate = (date: string): string => {
+    return new Date(date).toLocaleDateString('en-us');
+  };
+
+  const data = () => {
+    const { month, year } = watchedData;
+
+    const dates: string[] = [];
+    let date: Date;
+    if (month !== undefined) {
+      date = new Date(month);
+      dates.push(handleFormattedDate(month));
+      date.setMonth(date.getMonth() + 1);
+      dates.push(handleFormattedDate(date.toString()));
+    } else if (year !== undefined) {
+      date = new Date(year);
+      dates.push(handleFormattedDate(year));
+      date.setFullYear(date.getFullYear() + 1);
+      dates.push(handleFormattedDate(date.toString()));
+    }
+    return dates;
+  };
+
   const handleChangeForm = async () => {
     try {
       const {
@@ -196,15 +235,23 @@ function MovementsTable() {
         equipmentId,
         lowerDate,
         higherDate,
+        month,
+        year,
       } = watchedData;
+
+      let formattedHigherDate;
       let formattedLowerDate;
+
+      if (
+        (year !== null && year !== '' && year) ||
+        (month !== null && month !== '' && month)
+      ) {
+        [formattedLowerDate, formattedHigherDate] = data();
+      }
 
       if (lowerDate !== null && lowerDate !== '' && lowerDate) {
         formattedLowerDate = new Date(lowerDate).toLocaleDateString('en-us');
       }
-
-      let formattedHigherDate;
-
       if (higherDate !== null && higherDate !== '' && higherDate) {
         formattedHigherDate = new Date(higherDate).toLocaleDateString('en-us');
       }
@@ -239,6 +286,12 @@ function MovementsTable() {
     reset();
   };
 
+  const {
+    isOpen: isReportOpen,
+    onClose: onReportClose,
+    onOpen: onReportOpen,
+  } = useDisclosure();
+
   useEffect(() => {
     fetchItems();
     fetchNextItems();
@@ -268,6 +321,12 @@ function MovementsTable() {
     } catch (error) {
       toast.error('Não é mais possível deletar a movimentação');
     }
+  };
+
+  const handleReportExport = async (selectedType: string) => {
+    setType(selectedType);
+    setMovementsToExport(await getMovements(filter));
+    onReportOpen();
   };
 
   const [types, setTypes] = useState<TypeData[]>([]);
@@ -329,9 +388,40 @@ function MovementsTable() {
                   <Text color="#00000" fontWeight="medium" fontSize="2xl">
                     Últimas Movimentações
                   </Text>
-                  <Button colorScheme="#F49320" onClick={onOpenRegister}>
-                    Cadastrar Movimentação
-                  </Button>
+                  <Flex flexDirection="column">
+                    <Button colorScheme="#F49320" onClick={onOpenRegister}>
+                      Cadastrar Movimentação
+                    </Button>
+                    <Flex
+                      gap={5}
+                      justifyContent="center"
+                      width="100%"
+                      alignItems="center"
+                      padding={4}
+                    >
+                      <GrDocumentCsv
+                        size="2.2rem"
+                        cursor="pointer"
+                        onClick={() => {
+                          handleReportExport('csv');
+                        }}
+                      />
+                      <BsFiletypeXlsx
+                        size="2.2rem"
+                        cursor="pointer"
+                        onClick={() => {
+                          handleReportExport('xls');
+                        }}
+                      />
+                      <MdPictureAsPdf
+                        size="2.2rem"
+                        cursor="pointer"
+                        onClick={() => {
+                          handleReportExport('pdf');
+                        }}
+                      />
+                    </Flex>
+                  </Flex>
                 </Flex>
               </Box>
               <Divider borderColor="#00000" margin="15px 0 15px 0" />
@@ -342,8 +432,88 @@ function MovementsTable() {
                 width="100%"
               >
                 <form id="movement-filter" style={{ width: '100%' }}>
-                  <Flex width="100%" gap="5px" mb="15px">
-                    <NewControlledSelect
+                  <Flex gap="5px" alignItems="5px" mb="15px">
+                    <Accordion allowMultiple>
+                      <AccordionItem>
+                        <h2>
+                          <AccordionButton>
+                            <Box flex="1" textAlign="left">
+                              Filtros
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel position="relative" zIndex="1">
+                          <Grid templateColumns="repeat(4, 1fr)" gap="5px">
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="type"
+                              id="type"
+                              options={TIPOS_MOVIMENTACAO}
+                              placeholder="Tipos"
+                              cursor="pointer"
+                              variant="unstyled"
+                              _placeholder={{ opacity: 0.4, color: 'inherit' }}
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="destinationId"
+                              id="destinationId"
+                              options={destinations}
+                              placeholder="Destino"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <Datepicker
+                              outsideModal
+                              name="lowerDate"
+                              control={control}
+                              border={false}
+                              placeholderText="Data inicial"
+                            />
+                            <Datepicker
+                              outsideModal
+                              name="higherDate"
+                              control={control}
+                              border={false}
+                              placeholderText="Data final"
+                            />
+                          </Grid>
+                          <Grid templateColumns="repeat(4, 1fr)" gap="5px">
+                            <Datepicker
+                              outsideModal
+                              name="month"
+                              control={control}
+                              border={false}
+                              placeholderText="Mês"
+                              showMonthYearPicker
+                            />
+                            <Datepicker
+                              outsideModal
+                              name="year"
+                              control={control}
+                              border={false}
+                              placeholderText="Ano"
+                              showYearPicker
+                            />
+                            <Input
+                              errors={errors.searchTerm}
+                              {...register('searchTerm')}
+                              rightElement={<BiSearch />}
+                              placeholder="Pesquisa"
+                              minWidth="15vw"
+                            />
+                          </Grid>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
+
+                    {/* <NewControlledSelect
                       filterStyle
                       control={control}
                       name="type"
@@ -390,7 +560,7 @@ function MovementsTable() {
                       {...register('searchTerm')}
                       rightElement={<BiSearch />}
                       placeholder="Pesquisa"
-                    />
+                    /> */}
                   </Flex>
                 </form>
                 {filter !== '' ? (
@@ -538,6 +708,12 @@ function MovementsTable() {
         selectedMoviment={selectedMovement}
         refreshRequest={refreshRequest}
         setRefreshRequest={setRefreshRequest}
+      />
+      <ReportModal
+        isOpen={isReportOpen}
+        onClose={onReportClose}
+        type={type}
+        movements={movementsToExport}
       />
     </>
   );
