@@ -95,7 +95,13 @@ export default function EquipmentEditForm({
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-
+  // eslint-disable-next-line no-param-reassign
+  equip.acquisitionDate = new Date(
+    new Date(equip.acquisitionDate).setMinutes(
+      equip.acquisitionDate.getMinutes() +
+        equip.acquisitionDate.getTimezoneOffset()
+    )
+  );
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const {

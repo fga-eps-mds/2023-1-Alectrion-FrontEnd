@@ -13,7 +13,7 @@ import { NewControlledSelect } from '../form-fields/new-controlled-select';
 import { Input } from '../form-fields/input';
 
 export type ViewEquipFormValues = {
-  id: any;
+  id: string;
   tippingNumber: string;
   serialNumber: string;
   type: { name: string };
@@ -74,7 +74,13 @@ export default function EquipmentViewForm({
   useEffect(() => {
     resetField('type');
   }, [resetField]);
-
+  // eslint-disable-next-line no-param-reassign
+  equipment.acquisitionDate = new Date(
+    new Date(equipment.acquisitionDate).setMinutes(
+      equipment.acquisitionDate.getMinutes() +
+        equipment.acquisitionDate.getTimezoneOffset()
+    )
+  );
   const handleDelete = async () => {
     try {
       const response = await api.delete('equipment/deleteEquipment', {

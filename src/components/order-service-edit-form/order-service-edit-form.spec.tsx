@@ -4,6 +4,7 @@ import OrderServiceEditForm from '.';
 
 const ORDER_SERVICE_MOCK = {
   equipment: {
+    equipment: 'aaa',
     tippingNumber: 'tippingNumber',
     serialNumber: 'serialNumber',
     type: { id: '1', name: 'type' },
