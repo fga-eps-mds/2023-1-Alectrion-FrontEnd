@@ -26,6 +26,7 @@ import { movement, movementEquipment } from '@/pages/movements/MovementControl';
 import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
 import { useAuth } from '@/contexts/AuthContext';
+import { LoginResponse } from '@/constants/user';
 
 interface equipamentData {
   tippingNumber: string;
@@ -141,7 +142,14 @@ export default function MovementForm({
         destination: formData?.destination || '',
       };
 
-      const response = await api.post('equipment/createMovement', body);
+      const loggedUser = JSON.parse(
+        localStorage.getItem('@alectrion:user') || ''
+      ) as unknown as LoginResponse;
+      
+      const response = await api.post('equipment/createMovement', body, {
+        headers: {
+          Authorization: `Bearer ${loggedUser.token}`,
+        }});
 
       if (response.status === 200) {
         toast.success('Movimentação cadastrada com sucesso');
