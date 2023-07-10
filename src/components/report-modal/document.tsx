@@ -84,7 +84,7 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
       fontWeight: 'bold',
       borderRightWidth: 2,
       paddingVertical: 7,
-      justifyContent: 'center', 
+      justifyContent: 'center',
       height: 24,
       borderRightColor: '#D8D8D8',
       alignItems: 'center',
@@ -103,9 +103,9 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
       paddingRight: 15,
       borderRightWidth: 2,
       borderRightColor: '#D8D8D8',
-      justifyContent: 'center', 
-      paddingVertical: 7, 
-      height: 24, 
+      justifyContent: 'center',
+      paddingVertical: 7,
+      height: 24,
       alignItems: 'center',
     },
     signature: {
@@ -154,7 +154,6 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
           <Image src="/PoliciaCivilLogo.jpeg" style={styles.logo} />
           <Text style={styles.caption}>ESTADO DE GOIÁS</Text>
           <Text style={styles.caption}>DIRETORIA GERAL DA POLÍCIA CIVIL</Text>
-          
           <Text style={styles.caption}>
             SUPERINTENDÊNCIA DE GESTÃO INTEGRADA
           </Text>
@@ -202,7 +201,7 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
               {equipment?.tippingNumber}
             </Text>
             <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-              {equipment?.type}
+              {equipment?.type.name}
             </Text>
             <Text style={{ ...styles.rowData, minWidth: 38, maxWidth: 55 }}>
               {equipment?.brand?.name}
@@ -218,7 +217,7 @@ export function EquipmentsPDF({ title, equipments }: EquipmentsPDFprops) {
               {formatDate(equipment?.acquisitionDate)}
             </Text>
           </View>
-       ))}
+        ))}
 
         <Text
           style={{ ...styles.caption, alignSelf: 'flex-end', marginTop: 8 }}

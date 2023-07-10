@@ -13,7 +13,7 @@ import { filterData } from '@/utils/filterEquipmentData';
 type ReportModalProps = {
   isOpen: boolean;
   onClose(): void;
-  type: string;
+  type: string | undefined;
   equipments: EquipmentData[];
 };
 

@@ -34,7 +34,7 @@ export function EquipmentViewModal({
 }: EquipmentViewModalProps) {
   return (
     <Modal
-      title={`Equipamento: ${selectedEquipment?.type} ${selectedEquipment?.brand.name} `}
+      title={`Equipamento: ${selectedEquipment?.type.name} ${selectedEquipment?.brand.name} `}
       isOpen={isOpen}
       onClose={onClose}
       size="6xl"

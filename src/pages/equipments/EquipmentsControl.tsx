@@ -43,11 +43,7 @@ import { TermModal } from '@/components/term-modal';
 import { movement } from '../movements/MovementControl';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { ReportModal } from '@/components/report-modal';
-import {
-  getBrands,
-  getEquipments,
-  getTypes,
-} from '@/services/requests/equipment';
+import { getBrands, getEquipments } from '@/services/requests/equipment';
 import { useAuth } from '@/contexts/AuthContext';
 import { EquipmentsUploadModal } from '@/components/equipment-upload-modal';
 import { listOfYears } from '@/utils/format-date';
@@ -58,6 +54,11 @@ interface ISelectOption {
 }
 
 interface TypeData {
+  id: number;
+  name: string;
+}
+
+export interface BrandData {
   id: number;
   name: string;
 }
@@ -123,7 +124,6 @@ function EquipmentTable() {
   const [equipsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
   const [models, setModels] = useState<ISelectOption[]>();
   const [brands, setBrands] = useState<ISelectOption[]>();
-  const [types, setTypes] = useState<ISelectOption[]>();
   const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
   const [storageTypes, setStorageTypes] = useState<ISelectOption[]>();
   const [acquisitionTypes, setAcquisitionTypes] = useState<ISelectOption[]>();
@@ -157,27 +157,6 @@ function EquipmentTable() {
 
   const watchFilter = watch();
 
-  const handleFilterChange = () => {
-    const {
-      type,
-      lastModifiedDate,
-      situation,
-      unit,
-      model,
-      brand,
-      ram_size,
-      processor,
-      storageType,
-    } = watchFilter;
-
-    let formattedDate;
-    if (
-      lastModifiedDate !== null &&
-      lastModifiedDate !== '' &&
-      lastModifiedDate
-    ) {
-      formattedDate = new Date(lastModifiedDate).toLocaleDateString('en-us');
-    }
   const formattedDate = (date: string | undefined) => {
     if (date !== null && date !== '' && date) {
       return new Date(date).toLocaleDateString('en-us');
@@ -223,7 +202,6 @@ function EquipmentTable() {
       acquisitionYear,
       acquisition,
     };
-
     const filteredDataFormatted = [
       ...Object.entries(dataFormatted).filter(
         (field) => field[1] !== undefined && field[1] !== ''
@@ -299,11 +277,45 @@ function EquipmentTable() {
       });
   };
 
+  const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return function (this: any, ...args: Parameters<T>) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    };
+  };
+  const handleSearch = debounce(() => {
+    setSearch(watchFilter.search);
+  }, 400);
+
+  const fetchItems = async () => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/find?take=${limit}&skip=${offset}&${filter}`
+      );
+      setEquipments(data);
+    } catch (error) {
+      setEquipments([]);
+      toast.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  const fetchNextItems = async () => {
+    try {
+      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+        `equipment/find?take=${limit}&skip=${offset + limit}&${filter}`
+      );
+      setNextEquipments(data);
+    } catch (error) {
+      setNextEquipments([]);
+      toast.error('Nenhum Equipamento encontrado');
+    }
+  };
+
   async function setFilterOptions() {
     const uniqueModels: ISelectOption[] = [];
-    const uniqueTypes: ISelectOption[] = [];
-    const uniqueBrands: ISelectOption[] = [];
     const uniqueRamSizes: ISelectOption[] = [];
+    const uniqueBrands: ISelectOption[] = [];
     const uniqueStorageTypes: ISelectOption[] = [];
     const uniqueProcessors: ISelectOption[] = [];
     const uniquePowers: ISelectOption[] = [];
@@ -313,14 +325,9 @@ function EquipmentTable() {
 
     const array = await getEquipments('');
     const requestedBrands = await getBrands();
-    const requestedTypes = await getTypes();
 
-    requestedBrands.forEach((obj: BrandAndTypeData) => {
-      uniqueBrands.push({ label: obj.name, value: obj.name });
-    });
-
-    requestedTypes.forEach((obj: BrandAndTypeData) => {
-      uniqueTypes.push({ label: obj.name, value: obj.name });
+    requestedBrands.forEach((obj: BrandData) => {
+      uniqueBrands.push({ label: obj.name, value: obj.id });
     });
 
     array.forEach((obj) => {
@@ -388,46 +395,10 @@ function EquipmentTable() {
     setStorageTypes(uniqueStorageTypes);
     setProcessors(uniqueProcessors);
     setPowers(uniquePowers);
-    setTypes(uniqueTypes);
     setScreenTypes(uniqueScreenTypes);
     setScreenSizes(uniqueScreenSizes);
     setAcquisitionTypes(uniqueAcquisitionTypes);
   }
-
-  const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return function (this: any, ...args: Parameters<T>) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn.apply(this, args), ms);
-    };
-  };
-  const handleSearch = debounce(() => {
-    setSearch(watchFilter.search);
-  }, 400);
-
-  const fetchItems = async () => {
-    try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset}&${filter}`
-      );
-      setEquipments(data);
-    } catch (error) {
-      setEquipments([]);
-      toast.error('Nenhum Equipamento encontrado');
-    }
-  };
-
-  const fetchNextItems = async () => {
-    try {
-      const { data }: AxiosResponse<EquipmentData[]> = await api.get(
-        `equipment/find?take=${limit}&skip=${offset + limit}&${filter}`
-      );
-      setNextEquipments(data);
-    } catch (error) {
-      setNextEquipments([]);
-      toast.error('Nenhum Equipamento encontrado');
-    }
-  };
 
   useEffect(() => {
     getWorkstations();
@@ -601,7 +572,10 @@ function EquipmentTable() {
                           control={control}
                           name="type"
                           id="type"
-                          options={types}
+                          options={types.map((type) => ({
+                            label: type?.name ?? '',
+                            value: type?.id ?? '',
+                          }))}
                           placeholder="Tipo"
                           cursor="pointer"
                           variant="unstyled"
@@ -861,7 +835,7 @@ function EquipmentTable() {
                         <Td fontWeight="medium">
                           {equipment.situacao} - {equipment.unit.name}
                           <Td p={0} fontWeight="semibold">
-                            {equipment.type} {equipment.brand.name}
+                            {equipment.type.name} {equipment.brand.name}
                           </Td>
                         </Td>
                         <Td>{equipment.tippingNumber}</Td>
@@ -888,23 +862,9 @@ function EquipmentTable() {
                             event.stopPropagation();
                           }}
                         >
-                          <Td fontWeight="medium">
-                            {equipment.situacao} - {equipment.unit.name}
-                            <Td p={0} fontWeight="semibold">
-                              {equipment.type.name} {equipment.brand.name}
-                            </Td>
-                          </Td>
-                          <Td>{equipment.tippingNumber}</Td>
-                          <Td>{equipment.serialNumber}</Td>
-                          <Td>
-                            {new Date(equipment.updatedAt).toLocaleDateString(
-                              'pt-BR'
-                            )}
-                          </Td>
-                          <Td
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleEdit(equipment);
+                          <Checkbox
+                            onChange={() => {
+                              handleCheckboxClick(equipment);
                             }}
                           />
                         </Td>
