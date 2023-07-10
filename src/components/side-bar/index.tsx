@@ -11,7 +11,6 @@ export const SideBar = memo(() => {
     { name: 'Controle de Equipamento', link: '/equipments' },
     { name: 'Controle Ordem Serviço', link: '/order-services' },
     { name: 'Movimentações', link: '/movements' },
-    { name: 'Relatórios', link: '/reports' },
   ];
   const optionUser = [
     { name: 'Controle de Cadastro', link: '/equipments-fields' },

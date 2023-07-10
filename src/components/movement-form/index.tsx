@@ -203,11 +203,11 @@ export default function MovementForm({
           materiais.includes(equipment.id) ? 'rgba(244, 147, 32, 0.2)' : 'white'
         }
       >
-        <Td>{equipment.type.name}</Td>
-        <Td>{equipment.brand.name}</Td>
-        <Td>{equipment.model}</Td>
-        <Td>{equipment.tippingNumber}</Td>
-        <Td>{equipment.serialNumber}</Td>
+        <Td>{equipment?.type?.name}</Td>
+        <Td>{equipment?.brand?.name}</Td>
+        <Td>{equipment?.model}</Td>
+        <Td>{equipment?.tippingNumber}</Td>
+        <Td>{equipment?.serialNumber}</Td>
         <Td>
           <Checkbox
             onChange={toggleMaterial(equipment.id)}

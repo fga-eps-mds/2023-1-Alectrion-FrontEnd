@@ -198,7 +198,7 @@ export function MovementsModal({
                           }
                         >
                           <Td textAlign="center">{equipment?.tippingNumber}</Td>
-                          <Td textAlign="center">{equipment?.type.name}</Td>
+                          <Td textAlign="center">{equipment?.type?.name}</Td>
                           <Td textAlign="center">{equipment?.brand?.name}</Td>
                           <Td textAlign="center">{equipment?.model}</Td>
                           <Td textAlign="center">{equipment?.serialNumber}</Td>
@@ -247,7 +247,7 @@ export function MovementsModal({
                     }
                     equipments={selectedMoviment.equipments}
                     date={selectedMoviment.date}
-                    destination={selectedMoviment.destination.name}
+                    destination={selectedMoviment?.destination?.name}
                   />
                 }
                 fileName={`termo_de_${
