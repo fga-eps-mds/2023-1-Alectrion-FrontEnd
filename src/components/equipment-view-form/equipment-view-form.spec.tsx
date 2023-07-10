@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 import EquipmentViewForm from '.';
 
 const EQUIPMENT_EDIT_MOCK = {
+  equipment: 'aaa',
   tippingNumber: 'tippingNumber',
   serialNumber: 'serialNumber',
   type: { id: '1', name: 'type' },
