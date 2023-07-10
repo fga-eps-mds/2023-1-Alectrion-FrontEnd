@@ -27,6 +27,9 @@ import {
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { FaTools } from 'react-icons/fa';
+import { MdPictureAsPdf } from 'react-icons/md';
+import { BsFiletypeXlsx } from 'react-icons/bs';
+import { GrDocumentCsv } from 'react-icons/gr';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -42,11 +45,8 @@ import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
-import { MdPictureAsPdf } from 'react-icons/md';
-import { BsFiletypeXlsx } from 'react-icons/bs';
 import { ReportModal } from '@/components/report-modal-order-service/Index';
 import { getOrderServices } from '@/utils/getOrderServices';
-import { GrDocumentCsv } from 'react-icons/gr';
 
 interface ISelectOption {
   label: string;

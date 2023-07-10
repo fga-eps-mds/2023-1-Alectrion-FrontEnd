@@ -26,12 +26,14 @@ export function ReportModal({
     onClose();
   };
 
+  const formattedDate = formatDate(new Date());
+
   const exportFile = useCallback(() => {
     const ws = utils.json_to_sheet(orderServices);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Data');
     writeFile(wb, `relatorio_ordens_servico_${formattedDate}.xls`);
-  }, [orderServices]);
+  }, [orderServices, formattedDate]);
 
   const headers = [
     { label: 'Id da OS', key: 'id' },
@@ -49,9 +51,8 @@ export function ReportModal({
     { label: 'Status', key: 'status' },
     { label: 'Data de criação', key: 'createdAt' },
     { label: 'Data de atualização', key: 'updatedAt' },
-    { label: 'ID do equipamento', key: 'equipment.id' }
+    { label: 'ID do equipamento', key: 'equipment.id' },
   ];
-  const formattedDate = formatDate(new Date());
 
   return (
     <Modal
@@ -88,23 +89,21 @@ export function ReportModal({
             <Button>Imprimir</Button>
           </PDFDownloadLink>
         )}
-        {type === 'csv' &&
-        <CSVLink
-          data={orderServices}
-          headers={headers}
-          type="csv"
-          target="_blank"
-          filename={`relatorio_ordens_servico_${formattedDate}.csv`}
-          separator=';'
-        >
-        <Button>Imprimir</Button>
-        </CSVLink>
-        }
+        {type === 'csv' && (
+          <CSVLink
+            data={orderServices}
+            headers={headers}
+            type="csv"
+            target="_blank"
+            filename={`relatorio_ordens_servico_${formattedDate}.csv`}
+            separator=";"
+          >
+            <Button>Imprimir</Button>
+          </CSVLink>
+        )}
 
         {type === 'xls' && <Button onClick={exportFile}>Imprimir</Button>}
       </Flex>
     </Modal>
   );
 }
-
-
