@@ -43,8 +43,8 @@ import { Input } from '@/components/form-fields/input';
 import { MovementRegisterModal } from '@/components/movement-register-modal';
 import { TermModal } from '@/components/term-modal';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
-import { getMovements } from '@/utils/getMovements';
 import { ReportModal } from '@/components/movements-reports/pdf';
+import { getMovements } from '@/utils/getMovements';
 
 interface ISelectOption {
   label: string;
@@ -78,6 +78,7 @@ export interface movementEquipment {
   selected?: boolean;
   model: string;
   description?: string;
+  situacao?: string;
 }
 export interface movement {
   updatedAt: string | number | Date;
@@ -197,6 +198,29 @@ function MovementsTable() {
     }
   };
 
+  const handleFormattedDate = (date: string): string => {
+    return new Date(date).toLocaleDateString('en-us');
+  };
+
+  const data = () => {
+    const { month, year } = watchedData;
+
+    const dates: string[] = [];
+    let date: Date;
+    if (month !== undefined) {
+      date = new Date(month);
+      dates.push(handleFormattedDate(month));
+      date.setMonth(date.getMonth() + 1);
+      dates.push(handleFormattedDate(date.toString()));
+    } else if (year !== undefined) {
+      date = new Date(year);
+      dates.push(handleFormattedDate(year));
+      date.setFullYear(date.getFullYear() + 1);
+      dates.push(handleFormattedDate(date.toString()));
+    }
+    return dates;
+  };
+
   const handleChangeForm = async () => {
     try {
       const {
@@ -210,26 +234,21 @@ function MovementsTable() {
         year,
       } = watchedData;
 
+      let formattedHigherDate;
       let formattedLowerDate;
+
+      if (
+        (year !== null && year !== '' && year) ||
+        (month !== null && month !== '' && month)
+      ) {
+        [formattedLowerDate, formattedHigherDate] = data();
+      }
 
       if (lowerDate !== null && lowerDate !== '' && lowerDate) {
         formattedLowerDate = new Date(lowerDate).toLocaleDateString('en-us');
       }
-
-      let formattedHigherDate;
-
       if (higherDate !== null && higherDate !== '' && higherDate) {
         formattedHigherDate = new Date(higherDate).toLocaleDateString('en-us');
-      }
-
-      let formattedMonth; // variável para armazenar o valor do mês formatado
-
-      if (month) {
-        const [selectedMonth, selectedYear] = month.split('/');
-        formattedMonth = new Date(
-          Number(selectedYear),
-          Number(selectedMonth) - 1 // subtrai 1 porque os meses são indexados a partir de 0
-        );
       }
 
       const formattedFormData = {
@@ -240,7 +259,6 @@ function MovementsTable() {
         lowerDate: formattedLowerDate,
         higherDate: formattedHigherDate,
         searchTerm: search,
-        month: formattedMonth,
       };
 
       const filteredFormData = [
@@ -392,11 +410,7 @@ function MovementsTable() {
                 width="100%"
               >
                 <form id="movement-filter" style={{ width: '100%' }}>
-                  <Flex
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
+                  <Flex gap="5px" alignItems="5px" mb="15px">
                     <Accordion allowMultiple>
                       <AccordionItem>
                         <h2>
@@ -407,11 +421,8 @@ function MovementsTable() {
                             <AccordionIcon />
                           </AccordionButton>
                         </h2>
-                        <AccordionPanel zIndex={4}>
-                          <Grid
-                            templateColumns="repeat(auto-fit, minmax(0, 1fr))"
-                            gap="5px"
-                          >
+                        <AccordionPanel position="relative" zIndex="1">
+                          <Grid templateColumns="repeat(4, 1fr)" gap="5px">
                             <NewControlledSelect
                               filterStyle
                               control={control}
@@ -424,7 +435,6 @@ function MovementsTable() {
                               _placeholder={{ opacity: 0.4, color: 'inherit' }}
                               fontWeight="semibold"
                               size="sm"
-                              minWidth="1200px"
                             />
                             <NewControlledSelect
                               filterStyle
@@ -436,7 +446,6 @@ function MovementsTable() {
                               variant="unstyled"
                               fontWeight="semibold"
                               size="sm"
-                              minWidth="1200px"
                             />
                             <Datepicker
                               outsideModal
@@ -453,10 +462,7 @@ function MovementsTable() {
                               placeholderText="Data final"
                             />
                           </Grid>
-                          <Grid
-                            templateColumns="repeat(2, minmax(0, 1fr))"
-                            gap="5px"
-                          >
+                          <Grid templateColumns="repeat(4, 1fr)" gap="5px">
                             <Datepicker
                               outsideModal
                               name="month"
@@ -473,35 +479,31 @@ function MovementsTable() {
                               placeholderText="Ano"
                               showYearPicker
                             />
+                            <Input
+                              errors={errors.searchTerm}
+                              {...register('searchTerm')}
+                              rightElement={<BiSearch />}
+                              placeholder="Pesquisa"
+                              minWidth="15vw"
+                            />
                           </Grid>
-                          {filter !== '' ? (
-                            <Flex alignItems="center" justifyContent="start">
-                              <Button
-                                variant="unstyled"
-                                fontSize="14px"
-                                leftIcon={
-                                  <CloseIcon mr="0.5rem" boxSize="0.6rem" />
-                                }
-                                onClick={cleanFilters}
-                              >
-                                Limpar filtros aplicados
-                              </Button>
-                            </Flex>
-                          ) : null}
                         </AccordionPanel>
                       </AccordionItem>
                     </Accordion>
-                    <Box marginLeft="10px" marginRight="10px">
-                      <Input
-                        errors={errors.searchTerm}
-                        {...register('searchTerm')}
-                        rightElement={<BiSearch />}
-                        placeholder="Pesquisa"
-                        minWidth="15vw"
-                      />
-                    </Box>
                   </Flex>
                 </form>
+                {filter !== '' ? (
+                  <Flex w="100%" alignItems="center" justifyContent="start">
+                    <Button
+                      variant="unstyled"
+                      fontSize="14px"
+                      leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
+                      onClick={cleanFilters}
+                    >
+                      Limpar filtros aplicados
+                    </Button>
+                  </Flex>
+                ) : null}
                 <Flex flexDirection="column" width="100%">
                   <TableContainer
                     borderRadius="15px"

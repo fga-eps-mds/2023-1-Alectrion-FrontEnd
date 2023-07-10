@@ -35,16 +35,6 @@ export function ReportModal({
     writeFile(wb, `relatorio_movimentacoes_${formattedDate}.xls`);
   }, [formattedDate, movements]);
 
-  const headers = [
-    { label: 'Tombamento', key: 'tippingNumber' },
-    { label: 'Tipo', key: 'type' },
-    { label: 'Marca', key: 'brand.name' },
-    { label: 'Modelo', key: 'model' },
-    { label: 'Situação', key: 'situacao' },
-    { label: 'Localização', key: 'unit.name' },
-    { label: 'Descrição', key: 'description' },
-  ];
-
   return (
     <Modal
       title="Relatório de movimentações"
@@ -70,7 +60,7 @@ export function ReportModal({
           <PDFDownloadLink
             document={
               <MovementsPDF
-                title="Relatório de movimentacoes"
+                title="Relatório de movimentações"
                 movements={movements}
               />
             }
@@ -82,10 +72,9 @@ export function ReportModal({
         {type === 'csv' && (
           <CSVLink
             data={movements}
-            headers={headers}
             type="csv"
             target="_blank"
-            filename={`relatorio_equipamentos_${formattedDate}.csv`}
+            filename={`relatorio_movimentacoes_${formattedDate}.csv`}
             separator=";"
           >
             <Button>Imprimir</Button>

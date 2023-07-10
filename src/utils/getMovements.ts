@@ -7,7 +7,7 @@ export const getMovements = async (filter: string) => {
   console.log(filter);
   try {
     const { data }: AxiosResponse<movement[]> = await api.get(
-      `equipment/listMovement?${filter}`
+      `equipment/findMovements?${filter}`
     );
     return data;
   } catch (error) {

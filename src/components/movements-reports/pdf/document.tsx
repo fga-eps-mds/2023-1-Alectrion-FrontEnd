@@ -7,7 +7,6 @@ import {
   Image,
   Font,
 } from '@react-pdf/renderer';
-import React from 'react';
 import { movement } from '@/pages/movements/MovementControl';
 import { formatDate } from '@/utils/format-date';
 
@@ -176,42 +175,40 @@ export function MovementsPDF({ title, movements }: MovementsPdfProps) {
           <Text style={{ ...styles.columnHeader, minWidth: 60, maxWidth: 80 }}>
             Status
           </Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Entrada</Text>
-          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>Saída</Text>
+          <Text style={{ ...styles.columnHeader, maxWidth: 56 }}>
+            Data da Movimentação
+          </Text>
         </View>
-        {movements?.map((movement, index) => (
-          <View style={styles.tableRow} key={movement?.id}>
-            <Text style={{ ...styles.rowData, maxWidth: 24 }}>{index + 1}</Text>
-            {movement?.equipments?.map((equipment) => (
-              <React.Fragment key={equipment?.id}>
-                <Text
-                  style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}
-                >
-                  {equipment?.tippingNumber}
-                </Text>
-                <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-                  {equipment?.type}
-                </Text>
-                <Text style={{ ...styles.rowData, minWidth: 38, maxWidth: 55 }}>
-                  {equipment?.brand?.name}
-                </Text>
-                <Text style={styles.rowData}>{equipment?.description}</Text>
-                {/* <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-                  {equipment?.situacao}
-                </Text> */}
-              </React.Fragment>
-            ))}
-            <Text style={{ ...styles.rowData, minWidth: 70, maxWidth: 90 }}>
-              {movement?.destination?.name}
-            </Text>
-            <Text style={{ ...styles.rowData, maxWidth: 56 }}>
-              {movement?.date}
-            </Text>
-            <Text style={{ ...styles.rowData, maxWidth: 56 }}>
-              {formatDate(movement?.updatedAt)}
-            </Text>
-          </View>
-        ))}
+        {movements.map((move: movement, moveIndex: number) =>
+          move.equipments.map((equipment: any, equipmentIndex: number) => (
+            <View style={styles.tableRow} key={equipment?.id}>
+              <Text style={{ ...styles.rowData, maxWidth: 24 }}>
+                {equipmentIndex + 1}
+              </Text>
+              <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
+                {equipment?.tippingNumber}
+              </Text>
+              <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
+                {equipment?.type}
+              </Text>
+              <Text style={{ ...styles.rowData, minWidth: 45, maxWidth: 55 }}>
+                {equipment?.brand?.name}
+              </Text>
+              <Text style={{ ...styles.rowData, textAlign: 'center' }}>
+                {equipment?.description}
+              </Text>
+              <Text style={{ ...styles.rowData, minWidth: 70, maxWidth: 90 }}>
+                {move.destination.name}
+              </Text>
+              <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
+                {equipment?.situacao}
+              </Text>
+              <Text style={{ ...styles.rowData, maxWidth: 56 }}>
+                {formatDate(move?.date)}
+              </Text>
+            </View>
+          ))
+        )}
       </Page>
     </Document>
   );
