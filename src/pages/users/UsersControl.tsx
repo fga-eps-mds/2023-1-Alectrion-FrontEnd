@@ -69,7 +69,6 @@ function UsersTable() {
     onOpen: onOpenEditUser,
   } = useDisclosure();
 
-
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<UserData[]> = await api.get(

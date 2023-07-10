@@ -3,20 +3,22 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SpyInstance, vi } from 'vitest';
 import * as ReactPdf from '@react-pdf/renderer';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { api } from '../../config/lib/axios';
 import { UsersTable } from './UsersControl';
 import { useAuth } from '@/contexts/AuthContext';
 import { RequireAuth } from '@/config/routes/require-auth';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'intersection-observer';
 
 vi.mock('@/contexts/AuthContext'); // Mock da função useAuth
 
-const MockedComponent = () => {
+function MockedComponent() {
   const { isAuthenticated } = useAuth();
 
-  return isAuthenticated ? <div data-testid="table">Tabela de Usuários</div> : null;
-};
+  return isAuthenticated ? (
+    <div data-testid="table">Tabela de Usuários</div>
+  ) : null;
+}
 
 const USERS_RESPONSE_MOCK = {
   data: [
@@ -44,7 +46,7 @@ const renderComponent = () =>
     <BrowserRouter>
       <ChakraProvider>
         <Routes>
-          <Route path="*" element={<UsersTable/> } />
+          <Route path="*" element={<UsersTable />} />
         </Routes>
       </ChakraProvider>
     </BrowserRouter>
@@ -73,7 +75,6 @@ describe('Users', () => {
     const editUserButton = await findByLabelText('Editar Usuário');
 
     await fireEvent.click(editUserButton);
-
   });
 
   it('should display a button to create user', async () => {
