@@ -123,6 +123,7 @@ function EquipmentTable() {
   const [equipsToExport, setEquipsToExport] = useState<EquipmentData[]>([]);
   const [models, setModels] = useState<ISelectOption[]>();
   const [brands, setBrands] = useState<ISelectOption[]>();
+  const [types, setTypes] = useState<ISelectOption[]>();
   const [ram_sizes, setRam_sizes] = useState<ISelectOption[]>();
   const [storageTypes, setStorageTypes] = useState<ISelectOption[]>();
   const [acquisitionTypes, setAcquisitionTypes] = useState<ISelectOption[]>();
@@ -300,6 +301,7 @@ function EquipmentTable() {
 
   async function setFilterOptions() {
     const uniqueModels: ISelectOption[] = [];
+    const uniqueTypes: ISelectOption[] = [];
     const uniqueBrands: ISelectOption[] = [];
     const uniqueRamSizes: ISelectOption[] = [];
     const uniqueStorageTypes: ISelectOption[] = [];
@@ -310,15 +312,20 @@ function EquipmentTable() {
     const uniqueAcquisitionTypes: ISelectOption[] = [];
 
     const array = await getEquipments('');
+    const requestedBrands = await getBrands();
+    const requestedTypes = await getTypes();
+
+    requestedBrands.forEach((obj: BrandAndTypeData) => {
+      uniqueBrands.push({ label: obj.name, value: obj.name });
+    });
+
+    requestedTypes.forEach((obj: BrandAndTypeData) => {
+      uniqueTypes.push({ label: obj.name, value: obj.name });
+    });
+
     array.forEach((obj) => {
       if (obj.model && !uniqueModels.some((item) => item.value === obj.model)) {
         uniqueModels.push({ label: obj.model, value: obj.model });
-      }
-      if (
-        obj.brand.name &&
-        !uniqueBrands.some((item) => item.value === obj.brand.name)
-      ) {
-        uniqueBrands.push({ label: obj.brand.name, value: obj.brand.name });
       }
       if (
         obj.ram_size &&
@@ -381,6 +388,7 @@ function EquipmentTable() {
     setStorageTypes(uniqueStorageTypes);
     setProcessors(uniqueProcessors);
     setPowers(uniquePowers);
+    setTypes(uniqueTypes);
     setScreenTypes(uniqueScreenTypes);
     setScreenSizes(uniqueScreenSizes);
     setAcquisitionTypes(uniqueAcquisitionTypes);
@@ -593,7 +601,7 @@ function EquipmentTable() {
                           control={control}
                           name="type"
                           id="type"
-                          options={TIPOS_EQUIPAMENTO}
+                          options={types}
                           placeholder="Tipo"
                           cursor="pointer"
                           variant="unstyled"

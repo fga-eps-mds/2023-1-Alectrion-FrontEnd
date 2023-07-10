@@ -3,7 +3,10 @@ import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { api } from '@/config/lib/axios';
 import { CreateEquipmentPayload, UpdateEquipmentPayload } from './types';
-import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
+import {
+  EquipmentData,
+  BrandAndTypeData,
+} from '@/pages/equipments/EquipmentsControl';
 
 export const createEquipment = async (
   equipmentPayload: CreateEquipmentPayload
@@ -52,7 +55,7 @@ export const getEquipments = async (filter: string) => {
 
 export const getBrands = async () => {
   try {
-    const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+    const { data }: AxiosResponse<BrandAndTypeData[]> = await api.get(
       `equipment/brand`
     );
     return data;
@@ -64,7 +67,7 @@ export const getBrands = async () => {
 
 export const getTypes = async () => {
   try {
-    const { data }: AxiosResponse<EquipmentData[]> = await api.get(
+    const { data }: AxiosResponse<BrandAndTypeData[]> = await api.get(
       `equipment/type`
     );
     return data;
