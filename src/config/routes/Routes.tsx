@@ -14,7 +14,6 @@ import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
 import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
 import { RequireAuth } from './require-auth';
-import { UserRegister } from '@/pages/user-register/UserRegister';
 import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 import { ChangePassword } from '@/pages/change-password';
 import { ViewProfile } from '@/pages/view-profile/ViewProfileControl';
@@ -68,12 +67,6 @@ export function Router() {
           </RequireAuth>
         }
       />
-      <Route 
-        path="/user-register" 
-        element={
-          <RequireAuth>
-            <UserRegister />
-          </RequireAuth>} />
 
       <Route
         path="/change-password"
