@@ -42,6 +42,11 @@ interface ISelectOption {
   value: number | string;
 }
 
+interface TypeData {
+  id: number;
+  name: string;
+}
+
 type FormValues = {
   type: ISelectOption;
   inChargeName: ISelectOption;
@@ -60,7 +65,7 @@ export interface movementEquipment {
     name: string;
   };
 
-  type: string;
+  type: { name: string };
 
   id: string;
   selected?: boolean;
@@ -265,6 +270,23 @@ function MovementsTable() {
     }
   };
 
+  const [types, setTypes] = useState<TypeData[]>([]);
+
+  const fetchTypes = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<TypeData[]> = await api.get(
+        `equipment/type?search=${str}`
+      );
+      setTypes(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes('');
+  }, []);
+
   return (
     <>
       <MovementsModal
@@ -326,7 +348,10 @@ function MovementsTable() {
                       control={control}
                       name="type"
                       id="type"
-                      options={TIPOS_MOVIMENTACAO}
+                      options={types.map((type) => ({
+                        label: type?.name ?? '',
+                        value: type?.name ?? '',
+                      }))}
                       placeholder="Tipos"
                       cursor="pointer"
                       variant="unstyled"

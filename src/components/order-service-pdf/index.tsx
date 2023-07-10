@@ -231,7 +231,7 @@ export function OrderServicePdf({ orderService }: OrderServicePdfProps) {
             {orderService.equipment?.tippingNumber}
           </Text>
           <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-            {orderService.equipment?.type}
+            {orderService.equipment?.type?.name}
           </Text>
           <Text style={{ ...styles.rowData, maxWidth: 60 }}>
             {orderService.equipment?.brand?.name}
