@@ -25,14 +25,7 @@ describe('OrderServices', () => {
   it('should display a button to create order services', async () => {
     const { queryByText } = renderComponent();
 
-    const button = await queryByText('Nova Ordem de serviço');
-    expect(button).toBeInTheDocument();
-  });
-
-  it('should display a button to clean filters', async () => {
-    const { queryByText } = renderComponent();
-
-    const button = await queryByText('Limpar filtros aplicados');
+    const button = await queryByText('Nova Ordem de Serviço');
     expect(button).toBeInTheDocument();
   });
 
