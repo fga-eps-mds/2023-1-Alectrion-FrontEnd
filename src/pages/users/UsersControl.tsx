@@ -69,9 +69,6 @@ function UsersTable() {
     onOpen: onOpenEditUser,
   } = useDisclosure();
 
-  const loggedUser = JSON.parse(
-    localStorage.getItem('@alectrion:user') || ''
-  ) as unknown as LoginResponse;
 
   const fetchItems = async () => {
     try {
@@ -79,7 +76,7 @@ function UsersTable() {
         `user/get?allUsers=true`,
         {
           headers: {
-            Authorization: `Bearer ${loggedUser.token}`,
+            Authorization: `Bearer ${localStorage.getItem('@alectrion:token')}`,
           },
         }
       );
@@ -96,7 +93,7 @@ function UsersTable() {
         `user/get?allUsers=true`,
         {
           headers: {
-            Authorization: `Bearer ${loggedUser.token}`,
+            Authorization: `Bearer ${localStorage.getItem('@alectrion:token')}`,
           },
         }
       );
@@ -118,7 +115,7 @@ function UsersTable() {
           userId,
         },
         headers: {
-          Authorization: `Bearer ${loggedUser.token}`,
+          Authorization: `Bearer ${localStorage.getItem('@alectrion:token')}`,
         },
       });
       toast.success('Usuário deletado com sucesso');
