@@ -206,7 +206,6 @@ export function OrderServicePDF({
             </Text>
             <Text style={{ ...styles.rowData, maxWidth: 150 }}>
               {orderService?.unit?.name}
-              {/* lotação nao aparece */}
             </Text>
             <Text style={{ ...styles.rowData, maxWidth: 150 }}>
               {orderService?.status}
@@ -216,7 +215,6 @@ export function OrderServicePDF({
             </Text>
             <Text style={{ ...styles.rowData, maxWidth: 130 }}>
               {formattedOrderServiceUpdatedAt[index]}
-              {/* é essa data? */}
             </Text>
           </View>
         ))}
