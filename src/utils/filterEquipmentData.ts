@@ -28,10 +28,10 @@ export function filterData(equipments: EquipmentData[]) {
     return {
       Tombamento: tippingNumber,
       'Nº de série': serialNumber,
-      Tipo: type,
+      Tipo: type?.name,
       Estado: estado,
       Situacao: situacao,
-      Marca: brand.name,
+      Marca: brand?.name,
       Modelo: model,
       Processador: processor,
       'Tipo de armazenamento': storageType,
@@ -42,10 +42,10 @@ export function filterData(equipments: EquipmentData[]) {
       Potência: power,
       'Adicionado em': formatDateTime(createdAt as string),
       'Atualizado em': formatDateTime(updatedAt as string),
-      Aquisição: acquisition.name,
+      Aquisição: acquisition?.name,
       'Data da aquisição': acquisitionDate,
-      'Nome da unidade': unit.name,
-      'Localização da unidade': unit.localization,
+      'Nome da unidade': unit?.name,
+      'Localização da unidade': unit?.localization,
       Descrição: description,
     };
   });

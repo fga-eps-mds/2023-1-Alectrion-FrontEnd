@@ -17,6 +17,7 @@ import { RequireAuth } from './require-auth';
 import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 import { ChangePassword } from '@/pages/change-password';
 import { ViewProfile } from '@/pages/view-profile/ViewProfileControl';
+import { ReportsTable } from '@/pages/reports/Reports' 
 import { UsersTable } from '@/pages/users/UsersControl';
 import { EquipmentsFields } from '@/pages/equipments-fields/EquipmentsFields';
 
@@ -36,6 +37,7 @@ export function Router() {
       {/* ROTAS PUBLICAS */}
       <Route path="/login" element={<Login />} />
       <Route path="/pass-recover" element={<PasswordRecover/>}/>
+      <Route path="/reports" element={<ReportsTable/>}/>
       <Route
         path="/movements"
         element={

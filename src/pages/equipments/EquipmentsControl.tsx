@@ -667,18 +667,21 @@ function EquipmentTable() {
                           />
                         )}
                         <Datepicker
+                          outsideModal
                           border={false}
                           placeholderText="Última modificação"
                           name="lastModifiedDate"
                           control={control}
                         />
                         <Datepicker
+                          outsideModal
                           border={false}
                           placeholderText="Cadastrado depois de"
                           name="initialDate"
                           control={control}
                         />
                         <Datepicker
+                          outsideModal
                           border={false}
                           placeholderText="Cadastrado antes de"
                           name="finalDate"

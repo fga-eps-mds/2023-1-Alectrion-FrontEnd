@@ -1,24 +1,34 @@
+/* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowRightIcon, ArrowLeftIcon, CloseIcon } from '@chakra-ui/icons';
 import { BiSearch } from 'react-icons/bi';
 import {
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Td,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Button,
-  IconButton,
-  TableContainer,
   Divider,
   Flex,
   Grid,
   GridItem,
+  IconButton,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Thead,
+  Tr,
   useDisclosure,
+  Box,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
+import { MdPictureAsPdf } from 'react-icons/md';
+import { BsFiletypeXlsx } from 'react-icons/bs';
+import { GrDocumentCsv } from 'react-icons/gr';
 import { FaFileAlt, FaTools } from 'react-icons/fa';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
@@ -35,7 +45,10 @@ import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
+import { ReportModal } from '@/components/report-modal-order-service/Index';
+import { getOrderServices } from '@/utils/getOrderServices';
 import { OrderServiceTermModal } from '@/components/order-service-term-modal';
+import { BrandData } from '@/components/edit-brands-form';
 
 interface ISelectOption {
   label: string;
@@ -63,9 +76,12 @@ export interface Equipment {
   };
 }
 
+export interface Brand{
+  name: string;
+  id: string;
+}
 export interface OrderServiceData {
   id: string;
-  date: string;
   description?: string;
   authorId: string;
   withdrawalName: string;
@@ -95,11 +111,17 @@ export interface OrderServiceData {
 
 type FilterValues = {
   type?: ISelectOption;
-  brand?: string;
-  dateOS?: string;
+  brand?: ISelectOption;
+  createdAt?: string;
+  updatedAt?: string;
+  finishDate?: string;
   unit?: ISelectOption;
   status: ISelectOption;
   search: string;
+  model?: ISelectOption;
+  senderName?: ISelectOption;
+  withdrawalName?: ISelectOption
+  technicianName?: ISelectOption;
 };
 
 export type StatusOS = 'Em manutenção' | 'Concluída' | 'Garantia';
@@ -118,13 +140,18 @@ function OrderServiceTable() {
 
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
-  const [brands, setBrands] = useState<ISelectOption[]>();
-
+  const [brands, setBrands] = useState<BrandData[]>([]);
+  const[models, setModels] = useState<ISelectOption[]>();
+  const[senderName, setSenderName] = useState<ISelectOption[]>();
+  const[withdrawalName, setWithdrawalName] = useState<ISelectOption[]>();
+  const[technicianName, setTechnicianName] = useState<ISelectOption[]>();
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [orderServicesToExport, setOrderServicesToExport] = useState<OrderServiceData[]>([]);
 
   const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
     useState<OrderServiceData>();
@@ -170,19 +197,39 @@ function OrderServiceTable() {
   };
 
   const handleFilterChange = () => {
-    const { type, dateOS, status, unit } = watchFilter;
+    const { type, createdAt, status, unit, brand, model, technicianName, senderName, withdrawalName,updatedAt, finishDate,} = watchFilter;
 
-    let formattedDate;
-    if (dateOS !== null && dateOS !== '' && dateOS) {
-      formattedDate = new Date(dateOS).toLocaleDateString('en-us');
+    let formattedfinishDate;
+    if (finishDate !== null && finishDate !== '' && finishDate) {
+      formattedfinishDate = new Date(finishDate).toLocaleDateString('en-us');
     }
+
+    let formattedcreatedAt;
+    if (createdAt !== null && createdAt !== '' && createdAt) {
+      formattedcreatedAt = new Date(createdAt).toLocaleDateString('en-us');
+    }
+
+    let formattedupdatedAt;
+    if (updatedAt !== null && updatedAt !== '' && updatedAt) {
+      formattedupdatedAt = new Date(updatedAt).toLocaleDateString('en-us');
+    }
+
+
 
     const dataFormatted = {
       type,
-      date: formattedDate,
+      createdAt: formattedcreatedAt,
+      updatedAt: formattedupdatedAt,
+      finishDate: formattedfinishDate,
       status,
       unit,
       search,
+      brand,
+      model,
+      technicianName,
+      senderName,
+      withdrawalName,
+
     };
 
     const filteredDataFormatted = [
@@ -202,6 +249,132 @@ function OrderServiceTable() {
     setSearch('');
     reset();
   };
+
+  const formattedSenderName = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueSenderName = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueSenderName.add(item.senderName);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueSenderName)
+    .filter(senderName => !!senderName)
+    .map(senderName => ({
+      label: senderName,
+      value: senderName
+    }));
+  
+    return uniqueOptions;
+  };
+
+  const getSenderNames = async () => {
+    try {
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+        `equipment/listOrderService`
+      );
+      setSenderName(formattedSenderName(data));
+    } catch (error) {
+      setSenderName([]);
+    }
+  };
+
+  const formattedWithdrawalName = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueWithdrawalName = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueWithdrawalName.add(item.withdrawalName);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueWithdrawalName)
+    .filter(withdrawalName => !!withdrawalName)
+    .map(withdrawalName => ({
+      label: withdrawalName,
+      value: withdrawalName
+    }));
+  
+    return uniqueOptions;
+  };
+
+  const getWithdrawalName = async () => {
+    try {
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+        `equipment/listOrderService`
+      );
+      setWithdrawalName(formattedWithdrawalName(data));
+    } catch (error) {
+      setWithdrawalName([]);
+    }
+  };
+
+  const formattedTechnicianName = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueTechnicianName = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueTechnicianName.add(item.technicianName);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueTechnicianName)
+    .filter(technicianName => !!technicianName)
+    .map(technicianName => ({
+      label: technicianName,
+      value: technicianName
+    }));
+  
+    return uniqueOptions;
+  };
+
+  const getTechnicianName = async () => {
+    try {
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+        `equipment/listOrderService`
+      );
+      setTechnicianName(formattedTechnicianName(data));
+    } catch (error) {
+      setTechnicianName([]);
+    }
+  };
+
+  const fetchBrands = async () => {
+    try {
+      const { data }: AxiosResponse<BrandData[]> = await api.get(
+        `equipment/brand`
+      );
+      setBrands(data);
+    } catch (error) {
+      setBrands([]);
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  const formattedModels = (data: OrderServiceData[]): ISelectOption[] => {
+    const uniqueModels = new Set<string>();
+  
+    data?.forEach(item => {
+      uniqueModels.add(item.equipment.model);
+    });
+  
+    const uniqueOptions: ISelectOption[] = Array.from(uniqueModels)
+    .filter(model => !!model) 
+    .map(model => ({
+      label: model,
+      value: model
+    }));
+  
+    return uniqueOptions;
+  };
+
+   const getModels = async () => {
+    try {
+      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
+        `equipment/listOrderService`
+      );
+      setModels(formattedModels(data));
+    } catch (error) {
+      setModels([]);
+    }
+  };
+
+
 
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
     return data?.map((item) => {
@@ -254,8 +427,39 @@ function OrderServiceTable() {
     }
   };
 
+  const {
+    isOpen: isReportOpen,
+    onClose: onReportClose,
+    onOpen: onReportOpen,
+  } = useDisclosure();
+
+  useEffect(() => {
+    getTechnicianName();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getWithdrawalName();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getSenderNames();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getModels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     getWorkstations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    fetchBrands();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -271,6 +475,12 @@ function OrderServiceTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, refreshRequest, filter]);
 
+  const handleReportExport = async (selectedType: string) => {
+    setType(selectedType);
+    setOrderServicesToExport(await getOrderServices(filter));
+    onReportOpen();
+  };
+  
   const [types, setTypes] = useState<TypeData[]>([]);
 
   const fetchTypes = async (str: string) => {
@@ -302,21 +512,58 @@ function OrderServiceTable() {
           width="100%"
         >
           <Flex flexDirection="column" width="80%">
-            <Text
-              margin="20px 0 15px 0"
-              color={theme.colors.black}
-              fontWeight="semibold"
-              fontSize="4xl"
+            <Flex
+              justifyContent="space-between"
+              width="100%"
+              alignItems="center"
             >
-              Ordem de Serviço
-            </Text>
-            <Flex justifyContent="space-between" width="100%">
-              <Text color="#00000" fontWeight="medium" fontSize="2xl">
-                Últimas Ordens de Serviço
+              <Text
+                margin="20px 0 15px 0"
+                color={theme.colors.black}
+                fontWeight="semibold"
+                fontSize="4xl"
+              >
+                Ordem de Serviço
               </Text>
               <Button colorScheme={theme.colors.primary} onClick={onOpen}>
                 Nova Ordem de Serviço
               </Button>
+            </Flex>
+            <Flex justifyContent="space-between" width="100%">
+              <Text color="#00000" fontWeight="medium" fontSize="2xl">
+                Últimas Ordens de Serviço
+              </Text>
+              <Flex flexDirection="column">
+                <Flex
+                  gap={5}
+                  justifyContent="center"
+                  width="100%"
+                  alignItems="center"
+                  padding={4}
+                >
+                  <GrDocumentCsv
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('csv');
+                    }}
+                  />
+                  <BsFiletypeXlsx
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('xls');
+                    }}
+                  />
+                  <MdPictureAsPdf
+                    size="2.2rem"
+                    cursor="pointer"
+                    onClick={() => {
+                      handleReportExport('pdf');
+                    }}
+                  />
+                </Flex>
+              </Flex>
             </Flex>
             <Divider borderColor="#00000" margin="15px 0 15px 0" />
             <Flex
@@ -327,58 +574,165 @@ function OrderServiceTable() {
             >
               <form id="orderService-filter" style={{ width: '100%' }}>
                 <Flex gap="5px" alignItems="5px" mb="15px">
-                  <NewControlledSelect
-                    filterStyle
-                    control={control}
-                    name="type"
-                    id="type"
-                    options={types.map((type) => ({
-                      label: type?.name ?? '',
-                      value: type?.name ?? '',
-                    }))}
-                    placeholder="Tipo"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                  />
-                  <NewControlledSelect
-                    filterStyle
-                    control={control}
-                    name="unit"
-                    id="unit"
-                    options={workstations}
-                    placeholder="Localização"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                  />
-                  <Datepicker
-                    border={false}
-                    placeholderText="Data OS"
-                    name="dateOS"
-                    control={control}
-                  />
-                  <NewControlledSelect
-                    filterStyle
-                    control={control}
-                    name="status"
-                    id="status"
-                    options={STATUS_OS}
-                    placeholder="Status OS"
-                    cursor="pointer"
-                    variant="unstyled"
-                    fontWeight="semibold"
-                    size="sm"
-                  />
-                  <Input
-                    placeholder="Pesquisa"
-                    minWidth="15vw"
-                    errors={errors.search}
-                    {...register('search')}
-                    rightElement={<BiSearch />}
-                  />
+                <Accordion allowMultiple>
+                      <AccordionItem>
+                        <h2>
+                          <AccordionButton>
+                            <Box flex="1" textAlign="left">
+                              Filtros
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel position="relative" zIndex="1">
+                          <Grid
+                            templateColumns="repeat(4, 1fr)"
+                            gap="5px"
+                          >
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="type"
+                              id="type"
+                              options={types.map((type) => ({
+                                label: type?.name ?? '',
+                                value: type?.id ?? '',
+                              }))}
+                              placeholder="Tipo"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="senderName"
+                              id="senderName"
+                              options={senderName}
+                              placeholder="Remetente"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="withdrawalName"
+                              id="withdrawalName"
+                              options={withdrawalName}
+                              placeholder="Destinatário"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="technicianName"
+                              id="technicianName"
+                              options={technicianName}
+                              placeholder="Técnico"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                          </Grid>
+                          <Grid
+                            templateColumns="repeat(4, 1fr)"
+                            gap="5px"
+                          >
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="brand"
+                              id="brand"
+                              options={brands.map((brand) => ({
+                                value: brand?.id ?? '',
+                                label: brand?.name ?? '',
+                              }))}
+                              placeholder="Marca"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="model"
+                              id="model"
+                              options={models}
+                              placeholder="Modelos"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="unit"
+                              id="unit"
+                              options={workstations}
+                              placeholder="Local"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />                    
+                              <Datepicker
+                                outsideModal
+                                border={false}
+                                placeholderText="Data de criação"
+                                name="createdAt"
+                                control={control}
+                              />
+                          </Grid>
+                          <Grid
+                            templateColumns="repeat(4, 1fr)"
+                            gap="5px"
+                          >
+                              <Datepicker
+                                outsideModal
+                                border={false}
+                                placeholderText="Data de conclusão"
+                                name="finishDate"
+                                control={control}
+                              />
+                              <Datepicker
+                                outsideModal
+                                border={false}
+                                placeholderText="Última atualização"
+                                name="updatedAt"
+                                control={control}
+                              />
+                            <NewControlledSelect
+                              filterStyle
+                              control={control}
+                              name="status"
+                              id="status"
+                              options={STATUS_OS}
+                              placeholder="Status OS"
+                              cursor="pointer"
+                              variant="unstyled"
+                              fontWeight="semibold"
+                              size="sm"
+                            />
+                            <Input
+                              placeholder="Pesquisa"
+                              minWidth="15vw"
+                              errors={errors.search}
+                              {...register('search')}
+                              rightElement={<BiSearch />}
+                            />
+                          </Grid>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
                 </Flex>
               </form>
               {filter !== '' ? (
@@ -547,6 +901,12 @@ function OrderServiceTable() {
           selectedOrderService={selectedOrderServiceToPrint as OrderServiceData}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
+        />
+        <ReportModal
+          isOpen={isReportOpen}
+          onClose={onReportClose}
+          type={type}
+          orderServices={orderServicesToExport}
         />
       </GridItem>
     </Grid>
