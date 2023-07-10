@@ -14,7 +14,7 @@ import { EquipmentData } from '@/pages/equipments/EquipmentsControl';
 import { TextArea } from '../form-fields/text-area';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
 import { OSSTATUS } from '@/constants/orderservice';
-import { User } from '@/constants/user';
+import { LoginResponse, User } from '@/constants/user';
 
 type EditOrderServiceFormValues = {
   equipment: EquipmentData;
@@ -52,7 +52,7 @@ export default function OrderServiceEditForm({
   const take = 5;
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
   const [buttonText, setButtonText] = useState('Salvar');
-
+  
   const fetchEquipments = async (str: string) => {
     try {
       const { data }: AxiosResponse<EquipmentData[]> = await api.get(
@@ -141,7 +141,14 @@ export default function OrderServiceEditForm({
         technicianName,
       };
 
-      const response = await api.put('equipment/updateOrderService', payload);
+      const loggedUser = JSON.parse(
+        localStorage.getItem('@alectrion:user') || ''
+      ) as unknown as LoginResponse;
+
+      const response = await api.put('equipment/updateOrderService', payload, {
+        headers: {
+          Authorization: `Bearer ${loggedUser.token}`,
+        }});
 
       if (response.status === 200) {
         toast.success('Ordem de serviço editada com sucesso', 'Sucesso');

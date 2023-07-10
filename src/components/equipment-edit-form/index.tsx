@@ -16,6 +16,7 @@ import { TextArea } from '../form-fields/text-area';
 import { toast } from '@/utils/toast';
 import { api } from '@/config/lib/axios';
 import { NewControlledSelect } from '../form-fields/new-controlled-select';
+import { LoginResponse } from '@/constants/user';
 
 export type EditEquipFormValues = {
   tippingNumber: string;
@@ -110,7 +111,7 @@ export default function EquipmentEditForm({
       const dateString = formatDate(acquisitionDate);
 
       const payload = {
-        type,
+        type: type.name,
         estado,
         storageType,
         screenType,
@@ -118,7 +119,14 @@ export default function EquipmentEditForm({
         ...rest,
       };
 
-      const response = await api.put('equipment/updateEquipment', payload);
+      const loggedUser = JSON.parse(
+        localStorage.getItem('@alectrion:user') || ''
+      ) as unknown as LoginResponse;
+
+      const response = await api.put('equipment/updateEquipment', payload, {
+        headers: {
+        Authorization: `Bearer ${loggedUser.token}`,
+      }});
 
       if (response.status === 200) {
         toast.success('Equipamento editado com sucesso', 'Sucesso');

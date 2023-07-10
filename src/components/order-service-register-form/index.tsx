@@ -47,7 +47,6 @@ export function OrderServiceRegisterForm({
   setRefreshRequest,
   onOpenTerm,
 }: OrderServiceFormProps) {
-  console.log({ Select });
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>();
   const [equipments, setEquipments] = useState<EquipmentData[]>([]);
 
@@ -143,10 +142,16 @@ export function OrderServiceRegisterForm({
         senderPhone,
       };
 
+      const loggedUser = JSON.parse(
+        localStorage.getItem('@alectrion:user') || ''
+      ) as unknown as LoginResponse;
+      
       const response = await api.post(
         `equipment/create-order-service/`,
-        payload
-      );
+        payload, {
+          headers: {
+            Authorization: `Bearer ${loggedUser.token}`,
+          }});
       toast.success('Ordem de serviço cadastrada com sucesso', 'Sucesso');
       setRefreshRequest(!refreshRequest);
       onClose();
