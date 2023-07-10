@@ -120,7 +120,7 @@ function ReportsTable() {
 
   const formattedWorkstations = (data: Workstation[]): ISelectOption[] => {
     return data?.map((item: Workstation) => {
-      return { label: item.name, value: item.name };
+      return { label: item?.name, value: item?.name };
     });
   };
 
