@@ -56,12 +56,12 @@ export function Datepicker<FormValues extends FieldValues>({
   label,
   placeHolder,
   border = true,
-  startDate,
-  endDate,
-  monthPicker = false,
   yearPicker = false,
   outsideModal = false,
   rules,
+  startDate,
+  endDate,
+  monthPicker = false,
   ...props
 }: Props<FormValues>) {
   const {
@@ -87,23 +87,6 @@ export function Datepicker<FormValues extends FieldValues>({
 
   const lowerDate = monthPicker ? firstDayOfMonth : startDate;
   const higherDate = monthPicker ? lastDayOfMonth : endDate;
-
-  // const handleChange = (selectedDate: Date | null) => {
-  //   if (selectedDate) {
-  //     let filteredDate = selectedDate;
-  //     if (monthPicker) {
-  //       filteredDate = new Date(
-  //         selectedDate.getFullYear(),
-  //         selectedDate.getMonth()
-  //       );
-  //     } else if (yearPicker) {
-  //       filteredDate = new Date(selectedDate.getFullYear(), 0);
-  //     }
-  //     onChange(filteredDate);
-  //   } else {
-  //     onChange(null);
-  //   }
-  // };
 
   return (
     <FormControl isInvalid={!!error} id={id} cursor="pointer" userSelect="none">

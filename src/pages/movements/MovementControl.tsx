@@ -51,6 +51,11 @@ interface ISelectOption {
   value: number | string;
 }
 
+interface TypeData {
+  id: number;
+  name: string;
+}
+
 type FormValues = {
   type: ISelectOption;
   inChargeName: ISelectOption;
@@ -72,7 +77,7 @@ export interface movementEquipment {
     name: string;
   };
 
-  type: string;
+  type: { name: string };
 
   id: string;
   selected?: boolean;
@@ -324,6 +329,23 @@ function MovementsTable() {
     onReportOpen();
   };
 
+  const [types, setTypes] = useState<TypeData[]>([]);
+
+  const fetchTypes = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<TypeData[]> = await api.get(
+        `equipment/type?search=${str}`
+      );
+      setTypes(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes('');
+  }, []);
+
   return (
     <>
       <MovementsModal
@@ -490,6 +512,55 @@ function MovementsTable() {
                         </AccordionPanel>
                       </AccordionItem>
                     </Accordion>
+
+                    {/* <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="type"
+                      id="type"
+                      options={types.map((type) => ({
+                        label: type?.name ?? '',
+                        value: type?.name ?? '',
+                      }))}
+                      placeholder="Tipos"
+                      cursor="pointer"
+                      variant="unstyled"
+                      _placeholder={{ opacity: 0.4, color: 'inherit' }}
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                    <NewControlledSelect
+                      filterStyle
+                      control={control}
+                      name="destinationId"
+                      id="destinationId"
+                      options={destinations}
+                      placeholder="Destino"
+                      variant="unstyled"
+                      fontWeight="semibold"
+                      size="sm"
+                    />
+                    <Datepicker
+                      outsideModal
+                      name="lowerDate"
+                      control={control}
+                      border={false}
+                      placeholderText="Data inicial"
+                    />
+                    <Datepicker
+                      outsideModal
+                      name="higherDate"
+                      control={control}
+                      border={false}
+                      placeholderText="Data final"
+                    />
+                    <Input
+                      minWidth="15vw"
+                      errors={errors.searchTerm}
+                      {...register('searchTerm')}
+                      rightElement={<BiSearch />}
+                      placeholder="Pesquisa"
+                    /> */}
                   </Flex>
                 </form>
                 {filter !== '' ? (

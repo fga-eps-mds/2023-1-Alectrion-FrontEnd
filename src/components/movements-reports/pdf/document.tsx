@@ -189,7 +189,7 @@ export function MovementsPDF({ title, movements }: MovementsPdfProps) {
                 {equipment?.tippingNumber}
               </Text>
               <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-                {equipment?.type}
+                {equipment?.type?.name}
               </Text>
               <Text style={{ ...styles.rowData, minWidth: 45, maxWidth: 55 }}>
                 {equipment?.brand?.name}

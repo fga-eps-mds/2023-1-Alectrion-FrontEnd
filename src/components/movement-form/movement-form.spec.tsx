@@ -3,9 +3,10 @@ import { vi } from 'vitest';
 import MovementForm from '.';
 
 const SELECTED_EQUIPMENT_MOCK = {
+  equipment: 'aaa',
   tippingNumber: 'tippingNumber',
   serialNumber: 'serialNumber',
-  type: 'type',
+  type: { id: '1', name: 'type' },
   situacao: 'situacao',
   estado: 'estado',
   model: 'model',

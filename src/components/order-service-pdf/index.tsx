@@ -34,6 +34,8 @@ Font.register({
 export function OrderServicePdf({ orderService }: OrderServicePdfProps) {
   const { user } = useAuth();
 
+  console.log(orderService);
+
   const styles = StyleSheet.create({
     page: {
       flexDirection: 'column',
@@ -149,15 +151,15 @@ export function OrderServicePdf({ orderService }: OrderServicePdfProps) {
 
   const formattedEmissionDate = `${emissionDay}/${emissionMonth}/${emissionYear} - ${emissionHours}:${emissionMinutes}:${emissionSeconds}`;
 
-  const receiverDateYear = new Date(orderService.finishDate)
+  const receiverDateYear = new Date(orderService?.finishDate)
     ?.getFullYear()
     .toString()
     .padStart(4, '0');
-  const receiverDateMonth = new Date(orderService.finishDate)
+  const receiverDateMonth = new Date(orderService?.finishDate)
     ?.getMonth()
     .toString()
     .padStart(2, '0');
-  const receiverDateDay = new Date(orderService.finishDate)
+  const receiverDateDay = new Date(orderService?.finishDate)
     ?.getDay()
     .toString()
     .padStart(2, '0');
@@ -179,16 +181,16 @@ export function OrderServicePdf({ orderService }: OrderServicePdfProps) {
           <Text style={styles.caption}>
             DIVISÃO DE SUPORTE TÉCNICO EM INFORMÁTICA
           </Text>
-          <Text style={styles.overtitle}>O.S. nº {orderService.id}</Text>
+          <Text style={styles.overtitle}>O.S. nº {orderService?.id}</Text>
           <Text style={styles.title}>
-            {orderService.equipment.unit.localization}
+            {orderService?.equipment?.unit?.localization}
           </Text>
           <Text style={styles.subtitle}>
             Sistema de Controle Interno da DSTI
           </Text>
 
           <Text style={styles.locale}>
-            Status da O.S.: {OSStatusMap.get(orderService.status)}
+            Status da O.S.: {OSStatusMap.get(orderService?.status)}
           </Text>
         </View>
         <Text style={styles.caption}>
@@ -228,19 +230,19 @@ export function OrderServicePdf({ orderService }: OrderServicePdfProps) {
         </View>
         <View style={styles.tableRow}>
           <Text style={{ ...styles.rowData, minWidth: 80, maxWidth: 100 }}>
-            {orderService.equipment?.tippingNumber}
+            {orderService?.equipment?.tippingNumber}
           </Text>
           <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-            {orderService.equipment?.type}
+            {orderService?.equipment?.type?.name}
           </Text>
           <Text style={{ ...styles.rowData, maxWidth: 60 }}>
-            {orderService.equipment?.brand?.name}
+            {orderService?.equipment?.brand?.name}
           </Text>
           <Text style={styles.rowData}>
-            {orderService.equipment.description}
+            {orderService?.equipment?.description}
           </Text>
           <Text style={{ ...styles.rowData, maxWidth: 72 }}>
-            {orderService.seiProcess}
+            {orderService?.seiProcess}
           </Text>
           <Text
             style={{
@@ -251,11 +253,11 @@ export function OrderServicePdf({ orderService }: OrderServicePdfProps) {
             <>
               {'_'.repeat(20)}
               {'\n'}
-              {orderService.senderName}
+              {orderService?.senderName}
             </>
           </Text>
           <Text style={{ ...styles.rowData, maxWidth: 72 }}>
-            {orderService.senderDocument}
+            {orderService?.senderDocument}
           </Text>
         </View>
         <View style={{ ...styles.tableHeader, borderTopWidth: 0 }}>
@@ -276,11 +278,11 @@ export function OrderServicePdf({ orderService }: OrderServicePdfProps) {
               paddingTop: undefined,
             }}
           >
-            {orderService.description}
+            {orderService?.description}
           </Text>
         </View>
 
-        {OSStatusMap.get(orderService.status) === 'Concluído' && (
+        {OSStatusMap.get(orderService?.status) === 'Concluído' && (
           <>
             <View
               style={{
@@ -361,14 +363,14 @@ export function OrderServicePdf({ orderService }: OrderServicePdfProps) {
                 <>
                   {'_'.repeat(20)}
                   {'\n'}
-                  {orderService.withdrawalName}
+                  {orderService?.withdrawalName}
                 </>
               </Text>
               <Text style={{ ...styles.rowData, minHeight: 44 }}>
-                {orderService.withdrawalDocument}
+                {orderService?.withdrawalDocument}
               </Text>
               <Text style={{ ...styles.rowData, maxWidth: 200, minHeight: 44 }}>
-                {orderService.technicianName}
+                {orderService?.technicianName}
               </Text>
             </View>
           </>

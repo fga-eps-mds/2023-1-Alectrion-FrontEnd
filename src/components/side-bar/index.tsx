@@ -11,10 +11,13 @@ export const SideBar = memo(() => {
     { name: 'Controle de Equipamento', link: '/equipments' },
     { name: 'Controle Ordem Serviço', link: '/order-services' },
     { name: 'Movimentações', link: '/movements' },
-    { name: 'Relatórios', link: '' },
+    { name: 'Relatórios', link: '/reports' },
+  ];
+  const optionUser = [
+    { name: 'Controle de Cadastro', link: '/equipments-fields' },
+    { name: 'Controle de Usuário', link: '/users' },
   ];
 
-  const optionUser = { name: 'Cadastro Usuário', link: '/user-register' };
   return (
     <Box
       position="fixed"
@@ -44,20 +47,20 @@ export const SideBar = memo(() => {
         </Text>
       ))}
       <Box position="absolute" bottom="20px" fontSize="4xs">
-        {user?.role === 'administrador' ? (
-          <Text
-            key={optionUser.name}
-            fontSize="4xs"
-            fontWeight="bold"
-            marginTop="10"
-            _hover={{ cursor: 'pointer', color: 'orange.500' }}
-            onClick={() => navigate(optionUser.link)}
-          >
-            {optionUser.name}
-          </Text>
-        ) : (
-          ''
-        )}
+        {user?.role === 'administrador'
+          ? optionUser.map((option) => (
+              <Text
+                key={option.name}
+                fontSize="4xs"
+                fontWeight="bold"
+                marginTop="10"
+                _hover={{ cursor: 'pointer', color: 'orange.500' }}
+                onClick={() => navigate(option.link)}
+              >
+                {option.name}
+              </Text>
+            ))
+          : ''}
         <Text
           fontSize="4xs"
           fontWeight="bold"

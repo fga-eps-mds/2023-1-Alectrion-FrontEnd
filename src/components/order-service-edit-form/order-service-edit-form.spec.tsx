@@ -4,9 +4,10 @@ import OrderServiceEditForm from '.';
 
 const ORDER_SERVICE_MOCK = {
   equipment: {
+    equipment: 'aaa',
     tippingNumber: 'tippingNumber',
     serialNumber: 'serialNumber',
-    type: 'type',
+    type: { id: '1', name: 'type' },
     situacao: 'situacao',
     estado: 'estado',
     model: 'model',
@@ -59,8 +60,8 @@ describe('OrderServiceEditForm', () => {
     expect(screen.getByText('Salvar')).toBeInTheDocument();
   });
 
-  it('should render concluded status fields', () => {
-    const orderServiceMock = { ...ORDER_SERVICE_MOCK, status: 'CONCLUDED' };
+  it('should render finished status fields', () => {
+    const orderServiceMock = { ...ORDER_SERVICE_MOCK, status: 'FINISHED' };
 
     render(
       <OrderServiceEditForm
