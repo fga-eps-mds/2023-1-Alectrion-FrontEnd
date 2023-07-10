@@ -7,6 +7,7 @@ type OrderServiceRegisterModalProps = {
   onClose(): void;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
+  onOpenTerm(): void;
 };
 
 export function OrderServiceRegisterModal({
@@ -14,6 +15,7 @@ export function OrderServiceRegisterModal({
   onClose,
   refreshRequest,
   setRefreshRequest,
+  onOpenTerm,
 }: OrderServiceRegisterModalProps) {
   return (
     <Modal
@@ -33,6 +35,7 @@ export function OrderServiceRegisterModal({
           onClose={onClose}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
+          onOpenTerm={onOpenTerm}
         />
       </Flex>
     </Modal>

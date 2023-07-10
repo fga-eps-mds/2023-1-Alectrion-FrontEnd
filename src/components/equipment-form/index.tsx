@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { SetStateAction, useEffect, useState } from 'react';
-import { Button, Flex, Grid, GridItem } from '@chakra-ui/react';
+import { Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Select, SingleValue } from 'chakra-react-select';
+import { AxiosResponse } from 'axios';
+
 import { Datepicker } from '../form-fields/date';
 
 import {
@@ -40,6 +43,16 @@ interface EquipmentFormProps {
   onClose: () => void;
   refreshRequest: boolean;
   setRefreshRequest: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+interface BrandData {
+  id: number;
+  name: string;
+}
+
+interface TypeData {
+  id: number;
+  name: string;
 }
 
 export default function EquipmentForm({
@@ -110,16 +123,6 @@ export default function EquipmentForm({
     watchStorageAmount,
   ]);
 
-  const listOfYears: Array<{ value: number; label: string }> = (() => {
-    const endYear: number = new Date().getFullYear();
-    const startYear: number = endYear - 30;
-
-    return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
-      const year = startYear + index;
-      return { value: year, label: year.toString() };
-    }).reverse();
-  })();
-
   const onSubmit = handleSubmit(async (formData) => {
     try {
       const { type, estado, storageType, screenType, ...rest } = formData;
@@ -156,6 +159,38 @@ export default function EquipmentForm({
     }
   });
 
+  const [brands, setBrands] = useState<BrandData[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<BrandData>();
+  const [types, setTypes] = useState<TypeData[]>([]);
+  const [selectedType, setSelectedType] = useState<TypeData>();
+
+  const fetchBrands = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<BrandData[]> = await api.get(
+        `equipment/brand?search=${str}`
+      );
+      setBrands(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  const fetchTypes = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<TypeData[]> = await api.get(
+        `equipment/type?search=${str}`
+      );
+      setTypes(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes('');
+    fetchBrands('');
+  }, []);
+
   return (
     <form id="equipment-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
@@ -163,18 +198,26 @@ export default function EquipmentForm({
           control={control}
           name="type"
           id="type"
-          options={TIPOS_EQUIPAMENTO}
+          options={types.map((type) => ({
+            label: type?.name ?? '',
+            value: type?.name ?? '',
+          }))}
           placeholder="Selecione uma opção"
           label="Tipo de equipamento"
           rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
-        <Input
+
+        <NewControlledSelect
+          control={control}
+          name="brandName"
+          id="brandName"
+          options={brands.map((brand) => ({
+            value: brand?.name ?? '',
+            label: brand?.name ?? '',
+          }))}
+          placeholder="Selecione uma opção"
           label="Marca"
-          errors={errors.brandName}
-          {...register('brandName', {
-            required: 'Campo Obrigatório',
-            maxLength: 50,
-          })}
+          rules={{ required: 'Campo obrigatório', shouldUnregister: true }}
         />
 
         <Input

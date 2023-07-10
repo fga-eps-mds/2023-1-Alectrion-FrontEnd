@@ -9,6 +9,7 @@
     Quaisquer erros ou bugs nesta implementação são de nossa responsabilidade.
  */
 import {
+  Flex,
   Heading,
   Modal as ModalContainer,
   ModalBody,
@@ -22,9 +23,10 @@ import React from 'react';
 
 export interface ModalProps extends ChakraModalProps {
   title: string;
+  headerButton?: React.ReactNode;
 }
 
-export function Modal({ children, title, ...props }: ModalProps) {
+export function Modal({ children, title, headerButton, ...props }: ModalProps) {
   return (
     <ModalContainer blockScrollOnMount={false} {...props}>
       <ModalOverlay bg="blackAlpha.500" />
@@ -34,10 +36,13 @@ export function Modal({ children, title, ...props }: ModalProps) {
         backdropFilter="blur(8px)"
       >
         <ModalCloseButton />
-        <ModalHeader pl="44px" borderTopRadius="md" bg="white">
+        <ModalHeader pl="44px" borderTopRadius="md" bg="white" display="flex">
           <Heading fontWeight="bold" fontSize="40px" textColor="#212121">
             {title}
           </Heading>
+          <Flex ml="auto" mr="16px">
+            {headerButton}
+          </Flex>
         </ModalHeader>
 
         <ModalBody px="44px" bg="white">

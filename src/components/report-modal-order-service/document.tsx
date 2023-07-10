@@ -149,6 +149,8 @@ export function OrderServicePDF({
     return `${year}-${month}-${day}`;
   });
 
+  console.log(orderServices);
+
   return (
     <Document>
       <Page size="A4" style={styles.page} orientation="landscape">
@@ -196,7 +198,7 @@ export function OrderServicePDF({
               {orderService?.equipment?.tippingNumber}
             </Text>
             <Text style={{ ...styles.rowData, minWidth: 60, maxWidth: 80 }}>
-              {orderService?.equipment?.type}
+              {orderService?.equipment?.type?.name}
             </Text>
             <Text style={{ ...styles.rowData, maxWidth: 40 }}>
               {orderService?.equipment?.brand?.name}

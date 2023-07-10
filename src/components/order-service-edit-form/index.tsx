@@ -4,13 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { SingleValue } from 'chakra-react-select';
 import { format } from 'date-fns';
 import { Input } from '../form-fields/input';
@@ -100,7 +94,6 @@ export default function OrderServiceEditForm({
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData>(
     orderService.equipment
   );
-  console.log(orderService);
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     return function (this: any, ...args: Parameters<T>) {
@@ -132,7 +125,7 @@ export default function OrderServiceEditForm({
         status,
         withdrawalName,
         withdrawalDocument,
-        technicianName
+        technicianName,
       } = formData;
       const currentDate = new Date();
       const formattedDate = format(currentDate, 'yyyy-MM-dd');
@@ -145,13 +138,10 @@ export default function OrderServiceEditForm({
         status,
         finishDate: formattedDate,
         id: orderService.id,
-        technicianName
+        technicianName,
       };
 
-      const response = await api.put(
-        'equipment/updateOrderService',
-        payload
-      );
+      const response = await api.put('equipment/updateOrderService', payload);
 
       if (response.status === 200) {
         toast.success('Ordem de serviço editada com sucesso', 'Sucesso');
@@ -169,10 +159,12 @@ export default function OrderServiceEditForm({
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    watchStatus === 'CONCLUDED' ? setButtonText('Finalizar') : setButtonText('Salvar');
+    watchStatus === 'CONCLUDED'
+      ? setButtonText('Finalizar')
+      : setButtonText('Salvar');
   }, [watchStatus]);
 
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
   return (
     <form id="order-service-register-form" onSubmit={onSubmit}>
       <Grid templateColumns="repeat(3, 3fr)" gap={6}>
@@ -191,7 +183,7 @@ export default function OrderServiceEditForm({
           <Box flex="1">
             <NewControlledSelect
               isDisabled={orderService.status === 'CONCLUDED'}
-              label='Status'
+              label="Status"
               name="status"
               control={control}
               options={OSSTATUS}
@@ -204,7 +196,7 @@ export default function OrderServiceEditForm({
             errors={undefined}
             type="text"
             placeholder="Tipo"
-            defaultValue={selectedEquipment.type || ''}
+            defaultValue={selectedEquipment.type.name || ''}
             isDisabled
             readOnly
           />
@@ -301,7 +293,7 @@ export default function OrderServiceEditForm({
               maxLength: {
                 value: 15,
                 message: 'O Processo SEI deve ter no máximo 15 dígitos',
-              }
+              },
             })}
           />
         </GridItem>
@@ -321,13 +313,12 @@ export default function OrderServiceEditForm({
             <GridItem>
               <Input
                 label="Responsável pela retirada"
-                placeholder='Nome do Responsável'
+                placeholder="Nome do Responsável"
                 errors={errors.withdrawalName}
                 isDisabled={orderService.status === 'CONCLUDED'}
                 type="text"
                 {...register('withdrawalName', {
                   required: 'Campo Obrigatório',
-
                 })}
               />
             </GridItem>
@@ -356,8 +347,10 @@ export default function OrderServiceEditForm({
                 placeholder="Nome do Técnico"
                 {...register('technicianName', {
                   required: 'Campo Obrigatório',
-                })} />
-            </GridItem></>
+                })}
+              />
+            </GridItem>
+          </>
         )}
       </Grid>
       <Flex gap="9rem" mt="2rem" mb="2rem" justify="center">
@@ -367,12 +360,15 @@ export default function OrderServiceEditForm({
           </Button>
         </GridItem>
         <GridItem>
-          <Button type="submit" variant="primary" form='order-service-register-form'
+          <Button
+            type="submit"
+            variant="primary"
+            form="order-service-register-form"
           >
             {buttonText}
           </Button>
         </GridItem>
       </Flex>
-    </form >
+    </form>
   );
 }

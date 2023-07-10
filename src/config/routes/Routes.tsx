@@ -14,11 +14,12 @@ import { MovementsTable } from '@/pages/movements/MovementControl';
 import { EquipmentTable } from '@/pages/equipments/EquipmentsControl';
 import { OrderServiceTable } from '@/pages/order-service/OrderServiceControl';
 import { RequireAuth } from './require-auth';
-import { UserRegister } from '@/pages/user-register/UserRegister';
 import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 import { ChangePassword } from '@/pages/change-password';
 import { ViewProfile } from '@/pages/view-profile/ViewProfileControl';
 import { ReportsTable } from '@/pages/reports/Reports' 
+import { UsersTable } from '@/pages/users/UsersControl';
+import { EquipmentsFields } from '@/pages/equipments-fields/EquipmentsFields';
 
 export function Router() {
   return (
@@ -54,6 +55,14 @@ export function Router() {
         }
       />
       <Route
+        path="/users"
+        element={
+          <RequireAuth>
+            <UsersTable />
+          </RequireAuth>
+        }
+      />
+      <Route
         path="/order-services"
         element={
           <RequireAuth>
@@ -61,12 +70,6 @@ export function Router() {
           </RequireAuth>
         }
       />
-      <Route 
-        path="/user-register" 
-        element={
-          <RequireAuth>
-            <UserRegister />
-          </RequireAuth>} />
 
       <Route
         path="/change-password"
@@ -76,11 +79,19 @@ export function Router() {
           </RequireAuth>
         }
       />
-       <Route
+      <Route
         path="/view-profile"
         element={
           <RequireAuth>
             <ViewProfile />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/equipments-fields"
+        element={
+          <RequireAuth>
+            <EquipmentsFields />
           </RequireAuth>
         }
       />

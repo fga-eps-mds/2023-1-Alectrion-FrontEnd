@@ -37,15 +37,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isAuthenticated = !!user?.token;
 
   const signIn = useCallback(
-    async ({ username, password }: SignInCredentials) => {
+    async ({ identifier, password }: SignInCredentials) => {
       try {
         const response = await api.post<AuthResponse>(`/user/login`, {
-          username,
+          identifier,
           password,
         });
 
-        const { email, expireIn, job, name, role, token, cpf, id } =
-          response.data;
+        const {
+          email,
+          expireIn,
+          job,
+          name,
+          role,
+          token,
+          cpf,
+          id,
+          temporaryPassword,
+        } = response.data;
 
         localStorage.setItem('@alectrion:token', token);
         localStorage.setItem(
@@ -59,6 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             role,
             cpf,
             id,
+            temporaryPassword,
           })
         );
 
@@ -68,11 +78,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         const from = location.state?.from?.pathname || '/';
 
-        navigate(from, { replace: true });
-      } catch (err) {
-        toast.error(
-          'Não foi possível realizar o login! Verifique o nome de usuário e a senha e tente novamente.'
-        );
+        if (temporaryPassword) {
+          navigate('/change-password');
+        } else {
+          navigate(from, { replace: true });
+        }
+      } catch (err: any) {
+        toast.error(err.response.data.error);
       }
     },
     [navigate, location.state?.from?.pathname]

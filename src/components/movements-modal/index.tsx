@@ -124,7 +124,6 @@ export function MovementsModal({
                   isDisabled
                   defaultValue={selectedMoviment?.chiefName}
                   {...register('chiefName', {
-                    required: 'Campo Obrigatório',
                     maxLength: 50,
                   })}
                 />
@@ -136,7 +135,6 @@ export function MovementsModal({
                 isDisabled
                 defaultValue={selectedMoviment?.chiefRole}
                 {...register('chiefRole', {
-                  required: 'Campo Obrigatório',
                   maxLength: 50,
                 })}
               />
@@ -200,7 +198,7 @@ export function MovementsModal({
                           }
                         >
                           <Td textAlign="center">{equipment?.tippingNumber}</Td>
-                          <Td textAlign="center">{equipment?.type}</Td>
+                          <Td textAlign="center">{equipment?.type.name}</Td>
                           <Td textAlign="center">{equipment?.brand?.name}</Td>
                           <Td textAlign="center">{equipment?.model}</Td>
                           <Td textAlign="center">{equipment?.serialNumber}</Td>

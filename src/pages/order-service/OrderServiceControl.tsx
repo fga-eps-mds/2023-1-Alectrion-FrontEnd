@@ -26,10 +26,10 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { FaTools } from 'react-icons/fa';
 import { MdPictureAsPdf } from 'react-icons/md';
 import { BsFiletypeXlsx } from 'react-icons/bs';
 import { GrDocumentCsv } from 'react-icons/gr';
+import { FaFileAlt, FaTools } from 'react-icons/fa';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api, apiSchedula } from '../../config/lib/axios';
@@ -47,19 +47,27 @@ import { OrderServiceEditModal } from '@/components/order-service-edit-modal';
 import { OrderServiceRegisterModal } from '@/components/order-service-register-modal';
 import { ReportModal } from '@/components/report-modal-order-service/Index';
 import { getOrderServices } from '@/utils/getOrderServices';
+import { OrderServiceTermModal } from '@/components/order-service-term-modal';
+import { BrandData } from '@/components/edit-brands-form';
 
 interface ISelectOption {
   label: string;
   value: number | string;
 }
 
+interface TypeData {
+  id: number;
+  name: string;
+}
+
 export interface Equipment {
+  description: string;
   tippingNumber: string;
   serialNumber: string;
   brand: {
     name: string;
   };
-  type: string;
+  type: { name: string };
   id: string;
   model: string;
   unit: {
@@ -74,20 +82,22 @@ export interface Brand{
 }
 export interface OrderServiceData {
   id: string;
-  finishDate: string;
   description?: string;
   authorId: string;
-  technicianName: string;
   withdrawalName: string;
-  senderName: string;
+  sender?: string;
   equipmentSnapshot: any;
   senderFunctionalNumber: string;
   createdAt: string;
   updatedAt: string;
   equipment: Equipment;
+  seiProcess: string;
+  senderName: string;
+  senderDocument: string;
   history: History;
-  receiverFunctionalNumber: string;
-  technicians?: string[];
+  withdrawalDocument: string;
+  technicianId: string;
+  technicianName: string;
   status: string;
   unit: {
     name: string;
@@ -96,7 +106,7 @@ export interface OrderServiceData {
   brand: {
     name: string;
   };
-  receiverDate?: Date;
+  finishDate: string;
 }
 
 type FilterValues = {
@@ -130,7 +140,7 @@ function OrderServiceTable() {
 
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<ISelectOption[]>();
-  const [brands, setBrands] = useState<ISelectOption[]>();
+  const [brands, setBrands] = useState<BrandData[]>([]);
   const[models, setModels] = useState<ISelectOption[]>();
   const[senderName, setSenderName] = useState<ISelectOption[]>();
   const[withdrawalName, setWithdrawalName] = useState<ISelectOption[]>();
@@ -145,12 +155,19 @@ function OrderServiceTable() {
 
   const [selectedOrderServiceToEdit, setSelectedOrderServiceToEdit] =
     useState<OrderServiceData>();
+  const [selectedOrderServiceToPrint, setSelectedOrderServiceToPrint] =
+    useState<OrderServiceData>();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
     isOpen: isOpenEditOrderService,
     onClose: onCloseEditOrderService,
     onOpen: onOpenEditOrderService,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenPrintOrderService,
+    onClose: onClosePrintOrderService,
+    onOpen: onOpenPrintOrderService,
   } = useDisclosure();
 
   const {
@@ -164,8 +181,19 @@ function OrderServiceTable() {
   const watchFilter = watch();
 
   const handleEdit = (orderService: OrderServiceData) => {
-    if (orderService) setSelectedOrderServiceToEdit(orderService);
+    if (orderService) {
+      setSelectedOrderServiceToEdit(orderService);
+    }
+
     onOpenEditOrderService();
+  };
+
+  const handlePrint = (orderService: OrderServiceData) => {
+    if (orderService) {
+      setSelectedOrderServiceToPrint(orderService);
+    }
+
+    onOpenPrintOrderService();
   };
 
   const handleFilterChange = () => {
@@ -306,32 +334,15 @@ function OrderServiceTable() {
     }
   };
 
-
-  const formattedBrands = (data: OrderServiceData[]): ISelectOption[] => {
-    const uniqueBrands = new Set<string>();
-  
-    data?.forEach(item => {
-      uniqueBrands.add(item.equipment.brand.name);
-    });
-  
-    const uniqueOptions: ISelectOption[] = Array.from(uniqueBrands).map(brand => ({
-      label: brand,
-      value: brand
-    }));
-  
-    return uniqueOptions;
-  };
-
-  
-
-  const getBrands = async () => {
+  const fetchBrands = async () => {
     try {
-      const { data }: AxiosResponse<OrderServiceData[]> = await api.get(
-        `equipment/listOrderService`
+      const { data }: AxiosResponse<BrandData[]> = await api.get(
+        `equipment/brand`
       );
-      setBrands(formattedBrands(data));
+      setBrands(data);
     } catch (error) {
       setBrands([]);
+      console.error('Nenhum Equipamento encontrado');
     }
   };
 
@@ -448,7 +459,7 @@ function OrderServiceTable() {
   }, []);
 
   useEffect(() => {
-    getBrands();
+    fetchBrands();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -470,6 +481,23 @@ function OrderServiceTable() {
     onReportOpen();
   };
   
+  const [types, setTypes] = useState<TypeData[]>([]);
+
+  const fetchTypes = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<TypeData[]> = await api.get(
+        `equipment/type?search=${str}`
+      );
+      setTypes(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes('');
+  }, []);
+
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>
@@ -566,7 +594,10 @@ function OrderServiceTable() {
                               control={control}
                               name="type"
                               id="type"
-                              options={TIPOS_EQUIPAMENTO}
+                              options={types.map((type) => ({
+                                label: type?.name ?? '',
+                                value: type?.id ?? '',
+                              }))}
                               placeholder="Tipo"
                               cursor="pointer"
                               variant="unstyled"
@@ -619,7 +650,10 @@ function OrderServiceTable() {
                               control={control}
                               name="brand"
                               id="brand"
-                              options={brands}
+                              options={brands.map((brand) => ({
+                                value: brand?.id ?? '',
+                                label: brand?.name ?? '',
+                              }))}
                               placeholder="Marca"
                               cursor="pointer"
                               variant="unstyled"
@@ -750,6 +784,7 @@ function OrderServiceTable() {
                         <Td>Status da OS</Td>
                         <Td>Data da OS</Td>
                         <Td />
+                        <Td />
                       </Tr>
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
@@ -758,7 +793,7 @@ function OrderServiceTable() {
                           <Td fontWeight="medium">
                             Tombamento - {orderService.equipment.tippingNumber}
                             <Td p={0} fontWeight="semibold">
-                              {orderService.equipment.type}{' '}
+                              {orderService.equipment.type.name}{' '}
                               {orderService.equipment.brand.name}{' '}
                               {orderService.equipment.serialNumber}
                             </Td>
@@ -792,6 +827,17 @@ function OrderServiceTable() {
                                 }}
                               />
                             </button>
+                          </Td>
+                          <Td>
+                            <IconButton
+                              aria-label="Gerar termo de ordem de serviço"
+                              variant="ghost"
+                              icon={<FaFileAlt />}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handlePrint(orderService);
+                              }}
+                            />
                           </Td>
                         </Tr>
                       ))}
@@ -845,6 +891,14 @@ function OrderServiceTable() {
         <OrderServiceRegisterModal
           onClose={onClose}
           isOpen={isOpen}
+          refreshRequest={refreshRequest}
+          setRefreshRequest={setRefreshRequest}
+          onOpenTerm={onOpenPrintOrderService}
+        />
+        <OrderServiceTermModal
+          isOpen={isOpenPrintOrderService}
+          onClose={onClosePrintOrderService}
+          selectedOrderService={selectedOrderServiceToPrint as OrderServiceData}
           refreshRequest={refreshRequest}
           setRefreshRequest={setRefreshRequest}
         />

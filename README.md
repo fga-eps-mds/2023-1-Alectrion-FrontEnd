@@ -28,7 +28,7 @@ Aplicação disponível em: [link da aplicação](https://alectrion-2023.herokua
 
 3. Crie um arquivo .env da mesma forma do arquivo .env.example 
 ### Localmente
-4. instale as depencencias
+4. instale as dependências
 
 > yarn
 

@@ -2,6 +2,7 @@ import { Flex, Text, Button } from '@chakra-ui/react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { MdDescription } from 'react-icons/md';
 import { useCallback } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { CSVLink } from 'react-csv';
 import { utils, writeFile } from 'xlsx';
 import { Modal } from '../modal';
