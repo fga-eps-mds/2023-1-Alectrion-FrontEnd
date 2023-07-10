@@ -42,10 +42,18 @@ interface ISelectOption {
   value: number | string;
 }
 
+interface TypeData {
+  id: number;
+  name: string;
+}
+
 export interface EquipmentData {
   tippingNumber: string;
   serialNumber: string;
-  type: string;
+  type: {
+    id: string;
+    name: string;
+  };
   situacao: string;
   estado: string;
   model: string;
@@ -282,6 +290,23 @@ function EquipmentTable() {
     }
   };
 
+  const [types, setTypes] = useState<TypeData[]>([]);
+
+  const fetchTypes = async (str: string) => {
+    try {
+      const { data }: AxiosResponse<TypeData[]> = await api.get(
+        `equipment/type?search=${str}`
+      );
+      setTypes(data);
+    } catch (error) {
+      console.error('Nenhum Equipamento encontrado');
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes('');
+  }, []);
+
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
       <GridItem>
@@ -325,7 +350,10 @@ function EquipmentTable() {
                     control={control}
                     name="type"
                     id="type"
-                    options={TIPOS_EQUIPAMENTO}
+                    options={types.map((type) => ({
+                      label: type?.name ?? '',
+                      value: type?.name ?? '',
+                    }))}
                     placeholder="Tipo"
                     cursor="pointer"
                     variant="unstyled"
@@ -438,7 +466,7 @@ function EquipmentTable() {
                           <Td fontWeight="medium">
                             {equipment.situacao} - {equipment.unit.name}
                             <Td p={0} fontWeight="semibold">
-                              {equipment.type} {equipment.brand.name}
+                              {equipment.type.name} {equipment.brand.name}
                             </Td>
                           </Td>
                           <Td>{equipment.tippingNumber}</Td>

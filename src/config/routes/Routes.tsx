@@ -18,6 +18,7 @@ import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 import { ChangePassword } from '@/pages/change-password';
 import { ViewProfile } from '@/pages/view-profile/ViewProfileControl';
 import { UsersTable } from '@/pages/users/UsersControl';
+import { EquipmentsFields } from '@/pages/equipments-fields/EquipmentsFields';
 
 export function Router() {
   return (
@@ -76,11 +77,19 @@ export function Router() {
           </RequireAuth>
         }
       />
-       <Route
+      <Route
         path="/view-profile"
         element={
           <RequireAuth>
             <ViewProfile />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/equipments-fields"
+        element={
+          <RequireAuth>
+            <EquipmentsFields />
           </RequireAuth>
         }
       />

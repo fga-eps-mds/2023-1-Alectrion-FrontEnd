@@ -30,7 +30,7 @@ import { useAuth } from '@/contexts/AuthContext';
 interface equipamentData {
   tippingNumber: string;
   serialNumber: string;
-  type: string;
+  type: { name: string };
   situacao: string;
   estado: string;
   model: string;
@@ -203,7 +203,7 @@ export default function MovementForm({
           materiais.includes(equipment.id) ? 'rgba(244, 147, 32, 0.2)' : 'white'
         }
       >
-        <Td>{equipment.type}</Td>
+        <Td>{equipment.type.name}</Td>
         <Td>{equipment.brand.name}</Td>
         <Td>{equipment.model}</Td>
         <Td>{equipment.tippingNumber}</Td>
