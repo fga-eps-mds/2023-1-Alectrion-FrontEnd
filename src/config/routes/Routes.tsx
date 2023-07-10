@@ -33,11 +33,6 @@ export function Router() {
           </RequireAuth>
         }
       />
-
-      {/* ROTAS PUBLICAS */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/pass-recover" element={<PasswordRecover/>}/>
-      <Route path="/reports" element={<ReportsTable/>}/>
       <Route
         path="/movements"
         element={
@@ -95,6 +90,10 @@ export function Router() {
           </RequireAuth>
         }
       />
+
+      {/* ROTAS PUBLICAS */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/pass-recover" element={<PasswordRecover/>}/>
       <Route path="*" element={<p>404</p>} />
     </Routes>
   );
