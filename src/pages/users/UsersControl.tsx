@@ -26,8 +26,6 @@ import {
   Checkbox,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { FaFileAlt, FaTools } from 'react-icons/fa';
-import { MdDelete } from 'react-icons/md';
 import {
   LoginResponse,
   Job,
@@ -36,13 +34,13 @@ import {
   TIPOS_ROLE,
 } from '@/constants/user';
 import { UserRegisterModal } from '@/components/user-register-modal';
+import { UserViewModal } from '@/components/user-view-modal';
+import { UserEditModal } from '@/components/user-edit-modal';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
 import { api } from '../../config/lib/axios';
 import { theme } from '@/styles/theme';
-import { SelectItem } from '@/constants/equipment';
 import { Input } from '@/components/form-fields/input';
-import { UserEditModal } from '@/components/user-edit-modal';
 import { DeleteExtensiveIcon } from '../../components/action-buttons/delete-extensive-icon';
 import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 
@@ -72,6 +70,7 @@ type FilterValues = {
 
 function UsersTable() {
   const [users, setUsers] = useState<UserData[]>([]);
+  const [selectedUser, setSeletedUser] = useState<UserData>();
   const [nextUsers, setNextUsers] = useState<UserData[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,6 +98,12 @@ function UsersTable() {
     isOpen: isOpenEditUser,
     onClose: onCloseEditUser,
     onOpen: onOpenEditUser,
+  } = useDisclosure();
+
+  const {
+    isOpen: isViewOpen,
+    onClose: onViewClose,
+    onOpen: onViewOpen,
   } = useDisclosure();
 
   const cleanFilters = () => {
@@ -143,6 +148,11 @@ function UsersTable() {
   const handleEdit = (user: UserData) => {
     if (user) setSelectedUserToEdit(user);
     onOpenEditUser();
+  };
+
+  const handleView = (user: UserData) => {
+    if (user) setSeletedUser(user);
+    onViewOpen();
   };
 
   const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
@@ -357,8 +367,15 @@ function UsersTable() {
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
                       {users.map((user) => (
-                        <Tr key={user.id}>
-                          <Td fontWeight="semibold">{user.name}</Td>
+                        <Tr
+                          onClick={(event) => {
+                            handleView(user);
+                            event.stopPropagation();
+                          }}
+                          cursor="pointer"
+                          key={user.id}
+                        >
+                          <Td fontWeight="semibold">{user.username}</Td>
                           <Td fontWeight="semibold">{user.job}</Td>
                           <Td fontWeight="semibold">{user.role}</Td>
                           <Td>{user.cpf}</Td>
@@ -391,6 +408,9 @@ function UsersTable() {
                                   name="Excluir"
                                 />
                               )}
+                            {user.isDeleted && (
+                              <Text color="red">Desabilitado</Text>
+                            )}
                           </Td>
                         </Tr>
                       ))}
@@ -447,6 +467,11 @@ function UsersTable() {
         isOpen={isOpen}
         refreshRequest={refreshRequest}
         setRefreshRequest={setRefreshRequest}
+      />
+      <UserViewModal
+        onClose={onViewClose}
+        isOpen={isViewOpen}
+        selectedUser={selectedUser}
       />
     </Grid>
   );
