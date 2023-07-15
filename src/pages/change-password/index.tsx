@@ -48,7 +48,10 @@ export function ChangePassword() {
           }
         })
         .catch(error => {
-          toast.error('Ocorreu um erro ao atualizar a senha. Por favor, tente novamente.');
+          const message = error.response.data.error
+        ? error.response.data.error
+        : 'Erro ao alterar senha!';
+      toast.error(message);
           console.error(error);
         });
       }
