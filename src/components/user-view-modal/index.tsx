@@ -23,10 +23,10 @@ export function UserViewModal({
 }: UserViewModalProps) {
   return (
     <Modal
-      title="Informações de Usuário"
+      title={`Informações de ${selectedUser?.name}`}
       isOpen={isOpen}
       onClose={onClose}
-      size="3xl"
+      size="4xl"
     >
       <Flex
         height="100%"

@@ -396,7 +396,10 @@ function UsersTable() {
                                 </button>
                               )}
                           </Td>
-                          <Td>
+                          <Td
+                          onClick={(event) => {
+                            event.stopPropagation();
+                          }}>
                             {user.role !== 'administrador' &&
                               !user.isDeleted && (
                                 <DeleteExtensiveIcon

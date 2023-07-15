@@ -1,23 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+
 import {
   Button,
   Flex,
-  Box,
-  Text,
 	Grid,
 } from '@chakra-ui/react';
-import { theme } from '@/styles/theme';
 
 import {
   Job,
   Role,
 } from '@/constants/user';
 import { Input } from '../form-fields/input';
-import { toast } from '@/utils/toast';
-import { api } from '@/config/lib/axios';
-import { NewControlledSelect } from '../form-fields/new-controlled-select';
 
 export type UserFormValues = {
   name: string;
