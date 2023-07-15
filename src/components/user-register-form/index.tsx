@@ -85,7 +85,7 @@ export default function UserRegisterForm({
       if (response.status === 200) {
         setRefreshRequest(!refreshRequest);
         toast.success('Usuário cadastrado com sucesso', 'Sucesso');
-        onClose()
+        onClose();
         return;
       }
       toast.error('Erro ao tentar cadastrar o usuario', 'Erro');
@@ -275,11 +275,7 @@ export default function UserRegisterForm({
         </Flex>
       </Box>
       <Flex gap="4rem" mt="2rem" mb="2rem" justify="center">
-        <Button
-          variant="secondary"
-          width="100%"
-          onClick={onClose}
-        >
+        <Button variant="secondary" width="100%" onClick={onClose}>
           Cancelar
         </Button>
 

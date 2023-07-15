@@ -147,8 +147,8 @@ export default function EquipmentForm({
     } catch (error: any) {
       const message = error.response.data.error
         ? error.response.data.error
-        :  'Erro ao cadastrar equipamento'
-      toast.error(message)
+        : 'Erro ao cadastrar equipamento';
+      toast.error(message);
     }
   });
 
