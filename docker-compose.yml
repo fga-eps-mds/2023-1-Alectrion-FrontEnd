@@ -12,7 +12,7 @@ services:
       - alectrion-network
     ports:
       - 3000:3000
-    command: sh -c "yarn && yarn build && yarn start"
+    command: sh -c "npm install && npm i -D esbuild && npm run build && npm run start"
 
 networks:
   alectrion-network:
