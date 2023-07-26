@@ -17,22 +17,32 @@ import {
   Grid,
   GridItem,
   useDisclosure,
+  AccordionPanel,
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  Box,
+  Checkbox,
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
-import { FaFileAlt, FaTools } from 'react-icons/fa';
-import { MdDelete } from 'react-icons/md';
-import { LoginResponse, Job, Role } from '@/constants/user';
+import {
+  LoginResponse,
+  Job,
+  Role,
+  TIPOS_JOB,
+  TIPOS_ROLE,
+} from '@/constants/user';
 import { UserRegisterModal } from '@/components/user-register-modal';
+import { UserViewModal } from '@/components/user-view-modal';
+import { UserEditModal } from '@/components/user-edit-modal';
 import { toast } from '@/utils/toast';
 import { SideBar } from '@/components/side-bar';
-import { api, apiSchedula } from '../../config/lib/axios';
+import { api } from '../../config/lib/axios';
 import { theme } from '@/styles/theme';
-import { SelectItem } from '@/constants/equipment';
-import { Datepicker } from '@/components/form-fields/date';
 import { Input } from '@/components/form-fields/input';
-import { OSStatusMap, OSStatusStyleMap } from '@/constants/orderservice';
-import { UserEditModal } from '@/components/user-edit-modal';
 import { DeleteExtensiveIcon } from '../../components/action-buttons/delete-extensive-icon';
+import { NewControlledSelect } from '@/components/form-fields/new-controlled-select';
 
 export interface UserData {
   id: string;
@@ -50,18 +60,39 @@ export interface UserData {
   isDeleted?: boolean;
 }
 
+type FilterValues = {
+  role: string;
+  job: string;
+  username: string;
+  deletedUsers: boolean;
+  search: string;
+};
+
 function UsersTable() {
   const [users, setUsers] = useState<UserData[]>([]);
+  const [selectedUser, setSeletedUser] = useState<UserData>();
   const [nextUsers, setNextUsers] = useState<UserData[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const limit = 10;
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
-
   const [selectedUserToEdit, setSelectedUserToEdit] = useState<UserData>();
   const [refreshRequest, setRefreshRequest] = useState<boolean>(false);
+  const [filter, setFilter] = useState<string>('');
+  const [search, setSearch] = useState<string>('');
+
+  const {
+    control,
+    watch,
+    register,
+    formState: { errors },
+    reset,
+  } = useForm<FilterValues>({ mode: 'onChange' });
+
+  const watchFilter = watch();
+
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const {
     isOpen: isOpenEditUser,
@@ -69,10 +100,22 @@ function UsersTable() {
     onOpen: onOpenEditUser,
   } = useDisclosure();
 
+  const {
+    isOpen: isViewOpen,
+    onClose: onViewClose,
+    onOpen: onViewOpen,
+  } = useDisclosure();
+
+  const cleanFilters = () => {
+    setFilter('');
+    setSearch('');
+    reset();
+  };
+
   const fetchItems = async () => {
     try {
       const { data }: AxiosResponse<UserData[]> = await api.get(
-        `user/get?allUsers=true`,
+        `user/get?allUsers=true&take=${limit}&skip=${offset}&${filter}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('@alectrion:token')}`,
@@ -89,7 +132,7 @@ function UsersTable() {
   const fetchNextItems = async () => {
     try {
       const { data }: AxiosResponse<UserData[]> = await api.get(
-        `user/get?allUsers=true`,
+        `user/get?allUsers=true&take=${limit}&skip=${offset + limit}&${filter}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('@alectrion:token')}`,
@@ -107,6 +150,44 @@ function UsersTable() {
     onOpenEditUser();
   };
 
+  const handleView = (user: UserData) => {
+    if (user) setSeletedUser(user);
+    onViewOpen();
+  };
+
+  const debounce = <T extends (...args: any[]) => void>(fn: T, ms = 400) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return function (this: any, ...args: Parameters<T>) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    };
+  };
+  const handleSearch = debounce(() => {
+    setSearch(watchFilter.search);
+  }, 400);
+
+  const handleFilterChange = () => {
+    const { role, job, deletedUsers } = watchFilter;
+
+    const data = {
+      role,
+      job,
+      search,
+      deletedUsers,
+    };
+
+    const filteredDataFormatted = [
+      ...Object.entries(data).filter(
+        (field) => field[1] !== undefined && field[1] !== ''
+      ),
+    ];
+
+    const query = `${filteredDataFormatted
+      .map((field) => `${field[0]}=${field[1]}`)
+      .join('&')}`;
+    setFilter(query);
+  };
+
   const handleDelete = async (userId: string) => {
     try {
       const { data }: AxiosResponse<boolean> = await api.delete(`user/delete`, {
@@ -118,8 +199,8 @@ function UsersTable() {
         },
       });
       toast.success('Usuário deletado com sucesso');
-    } catch (error) {
-      toast.error('Não foi possível deletar o usuário');
+    } catch (error: any) {
+      toast.error(error.response.data);
     }
   };
 
@@ -127,7 +208,13 @@ function UsersTable() {
     fetchItems();
     fetchNextItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshRequest]);
+  }, [currentPage, refreshRequest, filter]);
+
+  useEffect(() => {
+    handleSearch();
+    handleFilterChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchFilter]);
 
   return (
     <Grid templateColumns="1fr 5fr" gap={6}>
@@ -159,8 +246,78 @@ function UsersTable() {
                 Cadastrar Usuário
               </Button>
             </Flex>
-            <Divider borderColor="#00000" margin="15px 0 15px 0" p={2} />
+            <Divider borderColor="#00000" margin="15px 0 15px 0" />
             <Flex p={3} />
+            <form id="user-filter" style={{ width: '100%' }}>
+              <Flex gap="10px" alignItems="5px" mb="15px">
+                <Accordion allowMultiple>
+                  <AccordionItem>
+                    <h2>
+                      <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                          Filtros
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel position="relative" zIndex="1">
+                      <Flex gap="15px" alignItems="center">
+                        <NewControlledSelect
+                          filterStyle
+                          control={control}
+                          name="role"
+                          id="role"
+                          options={TIPOS_ROLE}
+                          placeholder="Perfil"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                        />
+                        <NewControlledSelect
+                          filterStyle
+                          control={control}
+                          name="job"
+                          id="job"
+                          options={TIPOS_JOB}
+                          placeholder="Cargo"
+                          cursor="pointer"
+                          variant="unstyled"
+                          fontWeight="semibold"
+                          size="sm"
+                        />
+                        <Checkbox
+                          value="true"
+                          colorScheme="red"
+                          {...register('deletedUsers')}
+                        >
+                          Desabilitados
+                        </Checkbox>
+                        <Input
+                          placeholder="Pesquisa"
+                          minWidth="15vw"
+                          errors={errors.search}
+                          {...register('search')}
+                          rightElement={<BiSearch />}
+                        />
+                      </Flex>
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
+              </Flex>
+            </form>
+            {filter !== 'deletedUsers=false' ? (
+              <Flex w="100%" alignItems="center" justifyContent="start">
+                <Button
+                  variant="unstyled"
+                  fontSize="14px"
+                  leftIcon={<CloseIcon mr="0.5rem" boxSize="0.6rem" />}
+                  onClick={cleanFilters}
+                >
+                  Limpar filtros aplicados
+                </Button>
+              </Flex>
+            ) : null}
             <Flex
               flexDirection="column"
               justifyContent="center"
@@ -210,42 +367,55 @@ function UsersTable() {
                     </Thead>
                     <Tbody fontWeight="semibold" maxHeight="200px">
                       {users.map((user) => (
-                        <Tr key={user.id}>
-                          <Td fontWeight="semibold">{user.name}</Td>
+                        <Tr
+                          onClick={(event) => {
+                            handleView(user);
+                            event.stopPropagation();
+                          }}
+                          cursor="pointer"
+                          key={user.id}
+                        >
+                          <Td fontWeight="semibold">{user.username}</Td>
                           <Td fontWeight="semibold">{user.job}</Td>
                           <Td fontWeight="semibold">{user.role}</Td>
                           <Td>{user.cpf}</Td>
-                          {user.role !== 'administrador' && (
-                            <Td
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                handleEdit(user);
-                              }}
-                            >
-                              <button>
-                                <IconButton
-                                  aria-label="Editar Usuário"
-                                  variant="ghost"
-                                  icon={<BiEditAlt />}
-                                  width="5%"
+                          <Td>
+                            {user.role !== 'administrador' &&
+                              !user.isDeleted && (
+                                <button>
+                                  <IconButton
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      handleEdit(user);
+                                    }}
+                                    aria-label="Editar Usuário"
+                                    variant="ghost"
+                                    icon={<BiEditAlt />}
+                                    width="5%"
+                                  />
+                                </button>
+                              )}
+                          </Td>
+                          <Td
+                            onClick={(event) => {
+                              event.stopPropagation();
+                            }}
+                          >
+                            {user.role !== 'administrador' &&
+                              !user.isDeleted && (
+                                <DeleteExtensiveIcon
+                                  onClick={() => {
+                                    handleDelete(user.id);
+                                    setRefreshRequest(!refreshRequest);
+                                  }}
+                                  label="usuário"
+                                  name="Excluir"
                                 />
-                              </button>
-                            </Td>
-                          )}
-                          {user.role !== 'administrador' && (
-                            <Td>
-                              <DeleteExtensiveIcon
-                                onClick={() => {
-                                  handleDelete(user.id);
-                                  setRefreshRequest(!refreshRequest);
-                                }}
-                                label="usuário"
-                                name="Excluir"
-                              />
-                            </Td>
-                          )}
-                          {user.role === 'administrador' && <Td />}
-                          {user.role === 'administrador' && <Td />}
+                              )}
+                            {user.isDeleted && (
+                              <Text color="red">Desabilitado</Text>
+                            )}
+                          </Td>
                         </Tr>
                       ))}
                     </Tbody>
@@ -301,6 +471,11 @@ function UsersTable() {
         isOpen={isOpen}
         refreshRequest={refreshRequest}
         setRefreshRequest={setRefreshRequest}
+      />
+      <UserViewModal
+        onClose={onViewClose}
+        isOpen={isViewOpen}
+        selectedUser={selectedUser}
       />
     </Grid>
   );

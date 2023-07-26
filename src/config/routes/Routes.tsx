@@ -17,7 +17,6 @@ import { RequireAuth } from './require-auth';
 import { PasswordRecover } from '@/pages/password-recover/PasswordRecover';
 import { ChangePassword } from '@/pages/change-password';
 import { ViewProfile } from '@/pages/view-profile/ViewProfileControl';
-import { ReportsTable } from '@/pages/reports/Reports' 
 import { UsersTable } from '@/pages/users/UsersControl';
 import { EquipmentsFields } from '@/pages/equipments-fields/EquipmentsFields';
 

@@ -1,0 +1,12 @@
+<testExecutions version="1">
+  <file path="src/components/equipment-view-form/equipment-view-form.spec.tsx">
+    <testCase name="EquipmentViewForm - should render correctly" duration="301" />
+    <testCase name="EquipmentViewForm - should render cpu fields" duration="148" />
+    <testCase name="EquipmentViewForm - should render monitor fields" duration="105" />
+    <testCase name="EquipmentViewForm - should render estabilizador fields" duration="102" />
+    <testCase name="EquipmentViewForm - should render Nobreak fields" duration="79" />
+  </file>
+  <file path="src/components/list-item/list-item.spec.tsx">
+    <testCase name="ListItem - should display item data" duration="71" />
+  </file>
+</testExecutions>

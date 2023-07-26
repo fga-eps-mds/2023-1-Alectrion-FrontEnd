@@ -26,18 +26,6 @@ import { NewControlledSelect } from '@/components/form-fields/new-controlled-sel
 import { Input } from '../form-fields/input';
 import { AlectrionIcon } from '../icons/AlectrionIcon';
 
-type FormValues = {
-  id?: string;
-  name: string;
-  email: string;
-  username: string;
-  cpf: string;
-  job: Job;
-  role: Role;
-  password: string;
-  confirmPassword: string;
-};
-
 interface UserFormProps {
   onClose: () => void;
   refreshRequest: boolean;
@@ -96,8 +84,8 @@ export default function UserRegisterForm({
       setIsLoading(false);
       if (response.status === 200) {
         setRefreshRequest(!refreshRequest);
-        window.history.back();
         toast.success('Usuário cadastrado com sucesso', 'Sucesso');
+        onClose();
         return;
       }
       toast.error('Erro ao tentar cadastrar o usuario', 'Erro');
@@ -157,13 +145,20 @@ export default function UserRegisterForm({
         <Box flexDirection="column">
           <Text>CPF</Text>
           <Input
-            errors={undefined}
+            errors={errors.cpf}
             placeholder="Apenas números"
             pattern="[0-9]*"
             title="Por favor, digite apenas números"
             {...register('cpf', {
               required: 'Campo Obrigatório',
-              maxLength: 11,
+              minLength: {
+                value: 11,
+                message: 'CPF deve ter no mínimo 11 dígitos',
+              },
+              maxLength: {
+                value: 11,
+                message: 'CPF deve ter no máximo 11 dígitos',
+              },
             })}
           />
         </Box>
@@ -280,11 +275,7 @@ export default function UserRegisterForm({
         </Flex>
       </Box>
       <Flex gap="4rem" mt="2rem" mb="2rem" justify="center">
-        <Button
-          variant="secondary"
-          width="100%"
-          onClick={() => window.history.back()}
-        >
+        <Button variant="secondary" width="100%" onClick={onClose}>
           Cancelar
         </Button>
 
